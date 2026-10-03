@@ -65,7 +65,10 @@ class FineAtlas:
 
     def exact(self, text: str, limit: int = 20) -> list[dict]:
         """Return exact normalized label/alias matches; preserve ambiguous UIDs."""
-        return [self.node(uid) for uid in self._index.exact_label_uids(text, limit) if self.node(uid)]
+        if limit < 1:
+            raise ValueError('limit must be positive')
+        rows = [self.node(uid) for uid in self._index.exact_label_uids(text, limit)]
+        return [row for row in rows if row]
 
     def search(self, text: str, limit: int = 20, domain: str | None = None) -> list[dict]:
         """Search base lexical stores and every retained overlay's aliases.
@@ -76,7 +79,7 @@ class FineAtlas:
         if limit < 1:
             raise ValueError('limit must be positive')
         query = norm(text)
-        terms = tokens(text)[:6]
+        terms = tokens(text)[:6] or query.split()[:6]
         if not terms:
             return []
         exact_uids = self._index.exact_label_uids(text, max(limit * 4, 80))

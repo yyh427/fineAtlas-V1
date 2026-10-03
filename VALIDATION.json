@@ -15,5 +15,12 @@
     "source_bytes_and_sha256_match": true
   },
   "package_build_and_installed_cli": "PASS",
-  "scope": "Read-only graph packaging and query parity; no model or image evaluation."
+  "scope": "Read-only graph packaging and query parity; no model or image evaluation.",
+  "download_and_relocation": {
+    "status": "PASS",
+    "assets_downloaded": 2,
+    "databases_extracted_and_sha256_verified": 31,
+    "portable_directory_with_spaces": true
+  },
+  "completed_download_resume": "PASS"
 }
