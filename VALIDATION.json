@@ -22,5 +22,25 @@
     "databases_extracted_and_sha256_verified": 31,
     "portable_directory_with_spaces": true
   },
-  "completed_download_resume": "PASS"
+  "completed_download_resume": "PASS",
+  "github_assets": {
+    "status": "PASS",
+    "assets": [
+      {
+        "name": "fineatlas-v1-v33-data.tar.zst.part-000",
+        "size": 1073741824,
+        "digest": "sha256:eb7ff02287fbd2f707b91e4ced4d765a01a5d3bc9d22cf2dc6602208e1da0c40"
+      },
+      {
+        "name": "fineatlas-v1-v33-data.tar.zst.part-001",
+        "size": 755939098,
+        "digest": "sha256:9b41c4e486d42e714d075147f20e634bc69b41a18d491ac4f2a95763b4276ffd"
+      },
+      {
+        "name": "SHA256SUMS",
+        "size": 210,
+        "digest": "sha256:d82ae654b81aea991413677b327b10cda714b82667c1c57653c52899f9d7f04f"
+      }
+    ]
+  }
 }
