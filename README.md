@@ -20,6 +20,7 @@ python3 -m pip install -e .
 python3 scripts/download_data.py
 
 fineatlas stats
+python3 scripts/check_installation.py
 fineatlas exact 'laser diode'
 fineatlas neighbors 'wikidata:Q321098' --direction parents
 fineatlas path 'wikidata:Q321098'
@@ -56,7 +57,7 @@ fineatlas --data-dir /path/to/fineatlas-data stats
 
 上述节点/边数按依赖数据库实际表行统计。不同来源可分别保存同一概念，因此节点记录数不是全局去重概念数。存储边包含辅助证据和已隔离的原始记录，也不是当前有效 `IS_A` 边总数。具体每个文件的大小、SHA-256、表行数、关系和 UID 来源分布见 [`bundle.json`](bundle.json)。
 
-统一接口提供当前有效查询视图，保留 V33 的来源对齐、身份桥和错边屏蔽。190 条已隔离的历史错边不会从该接口重新出现。直接读原始 `edges` 表会看到部分历史记录，不能把它们全部当作有效分类。
+本次打包的查询一致性与校验记录见 [`VALIDATION.json`](VALIDATION.json)。统一接口提供当前有效查询视图，保留 V33 的来源对齐、身份桥和错边屏蔽。190 条已隔离的历史错边不会从该接口重新出现。直接读原始 `edges` 表会看到部分历史记录，不能把它们全部当作有效分类。
 
 ## 覆盖的领域
 

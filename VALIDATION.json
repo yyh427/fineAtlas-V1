@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "checks": {
+    "all_new_paths": 59,
+    "exact_lookup_parity": 59,
+    "neighbors_parity": 59,
+    "path_parity": 59,
+    "hidden_quarantined_pairs": 190,
+    "dataset_targets_retained": 755
+  },
+  "snapshot": "V33",
+  "interface_version": "1.0.0",
+  "database_snapshot_checks": {
+    "files": 31,
+    "source_bytes_and_sha256_match": true
+  },
+  "package_build_and_installed_cli": "PASS",
+  "scope": "Read-only graph packaging and query parity; no model or image evaluation."
+}

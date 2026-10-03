@@ -28,6 +28,12 @@ def download(url: str, path: Path, expected: dict) -> None:
         print(f'Already verified {path.name}', flush=True)
         return
     temporary = path.with_name(path.name + '.download')
+    if temporary.is_file() and temporary.stat().st_size >= expected['bytes']:
+        if temporary.stat().st_size == expected['bytes'] and digest(temporary) == expected['sha256']:
+            temporary.replace(path)
+            print(f'Recovered verified {path.name}', flush=True)
+            return
+        temporary.unlink()
     for attempt in range(6):
         try:
             offset = temporary.stat().st_size if temporary.exists() else 0
