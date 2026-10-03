@@ -12,16 +12,21 @@ def main() -> None:
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('stats')
     p = sub.add_parser('node'); p.add_argument('uid')
+    p = sub.add_parser('connection-status'); p.add_argument('uid')
     p = sub.add_parser('exact'); p.add_argument('text'); p.add_argument('--limit', type=int, default=20)
     p = sub.add_parser('search'); p.add_argument('text'); p.add_argument('--domain'); p.add_argument('--limit', type=int, default=20)
     p = sub.add_parser('neighbors'); p.add_argument('uid'); p.add_argument('--direction', choices=['parents','children'], default='children'); p.add_argument('--limit', type=int, default=20); p.add_argument('--include-auxiliary', action='store_true')
-    p = sub.add_parser('path'); p.add_argument('uid'); p.add_argument('--anchor', action='append'); p.add_argument('--max-depth', type=int, default=32)
+    p = sub.add_parser('path'); p.add_argument('uid'); p.add_argument('--anchor', action='append'); p.add_argument('--max-depth', type=int, default=64)
     p = sub.add_parser('equivalents'); p.add_argument('uid')
     p = sub.add_parser('target'); p.add_argument('dataset'); p.add_argument('class_id')
     args = parser.parse_args()
     with FineAtlas(args.data_dir, view=args.view) as graph:
         if args.command == 'stats': result = graph.stats()
         elif args.command == 'node': result = graph.node(args.uid)
+        elif args.command == 'connection-status':
+            if not hasattr(graph, 'connection_status'):
+                parser.error('connection-status requires a consolidated single database')
+            result = graph.connection_status(args.uid)
         elif args.command == 'exact': result = graph.exact(args.text, args.limit)
         elif args.command == 'search': result = graph.search(args.text, args.limit, args.domain)
         elif args.command == 'neighbors': result = graph.neighbors(args.uid, args.direction, args.limit, not args.include_auxiliary)

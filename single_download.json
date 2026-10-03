@@ -1,22 +1,22 @@
 {
-  "release": "v1.1.0",
-  "graph_version": "V34",
-  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.1.0",
+  "release": "v1.2.0",
+  "graph_version": "V35",
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.2.0",
   "database": {
     "name": "fineatlas.sqlite",
-    "bytes": 28397703168,
-    "sha256": "1c6570691e7429a18f952211c3478c6fbfa43d347438bb4826dc4ce2582b0232"
+    "bytes": 28508917760,
+    "sha256": "5f9484388762f5b7422e3b50fdc350668fa1f9dcec7c0abca77e06024102c539"
   },
   "assets": [
     {
-      "name": "fineatlas-v1-v34-single.sqlite.zst.part-000",
+      "name": "fineatlas-v1-v35-single.sqlite.zst.part-000",
       "bytes": 1073741824,
-      "sha256": "44ea8494345425411909a490d5be3cc8788bccb17b2c02ec2b4dc98965e64fe4"
+      "sha256": "d3a01dcf4f60f5b17bfd53775685c7d691944abeb7a28d8c985f4514a3372786"
     },
     {
-      "name": "fineatlas-v1-v34-single.sqlite.zst.part-001",
-      "bytes": 953786776,
-      "sha256": "f39ef3f28c60e364dca5d96b6ad56fd5baab7c7f8c5453f18dd1d2eefa890ec0"
+      "name": "fineatlas-v1-v35-single.sqlite.zst.part-001",
+      "bytes": 973661531,
+      "sha256": "70298db307afcde417d21e19063062c99873e177051224801b0fa39000e66dc0"
     }
   ]
 }

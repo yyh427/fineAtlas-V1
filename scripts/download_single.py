@@ -37,7 +37,7 @@ def install(root: Path, metadata: dict) -> Path:
         path = downloads / item['name']
         download(metadata['base_url'] + '/' + item['name'], path, item)
         assets.append(path)
-    compressed = downloads / 'fineatlas-v34.sqlite.zst'
+    compressed = downloads / 'fineatlas.sqlite.zst'
     with compressed.open('wb') as target:
         for asset in assets:
             with asset.open('rb') as stream:

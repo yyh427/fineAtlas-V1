@@ -1,0 +1,10 @@
+{
+  "schema": "FINEATLAS_SINGLE_DB_INDEX_V1",
+  "kind": "fineatlas_single_db",
+  "graph_version": "V35",
+  "database": "fineatlas.sqlite",
+  "root_uid": "wordnet31:00001740-n",
+  "navigation_view": "wordnet",
+  "sha256": "5f9484388762f5b7422e3b50fdc350668fa1f9dcec7c0abca77e06024102c539",
+  "interface": "fineatlas.FineAtlas"
+}

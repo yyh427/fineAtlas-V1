@@ -51,6 +51,38 @@ class SingleAtlas:
         return self._node(self.con.execute('''SELECT n.*,c.wordnet_reachable,c.depth AS wordnet_depth
             FROM nodes n JOIN components c ON c.id=n.component_id WHERE n.uid=?''', (uid,)).fetchone())
 
+    def connection_status(self, uid: str) -> dict | None:
+        """Explain the structural connection state without inventing a parent."""
+        node = self.node(uid)
+        if not node:
+            return None
+        result = {'uid': uid, 'wordnet_reachable': bool(node['wordnet_reachable']),
+                  'wordnet_depth': node['wordnet_depth']}
+        if node['visibility'] != 'ACTIVE':
+            return {**result, 'status': 'ARCHIVED', 'reason': node['visibility']}
+        if node['wordnet_reachable']:
+            return {**result, 'status': 'CONNECTED', 'reason': 'Validated path to the WordNet root'}
+        if self.con.execute("SELECT 1 FROM sqlite_master WHERE name='source_scope_reviews'").fetchone():
+            row = self.con.execute('SELECT flags,verdict FROM source_scope_reviews WHERE uid=?', (uid,)).fetchone()
+            if row:
+                return {**result, 'status': 'SOURCE_SCOPE_REVIEW', 'reason': row['verdict'], 'source_flags': row['flags']}
+        hierarchy = self.con.execute('''SELECT 1 FROM nodes u JOIN edges e
+            ON e.child_uid=u.uid OR e.parent_uid=u.uid
+            WHERE u.component_id=? AND e.status='ACTIVE' LIMIT 1''', (node['component_id'],)).fetchone()
+        auxiliary_use = self.con.execute("SELECT 1 FROM edges WHERE parent_uid=? AND relation IN ('HAS_ATTRIBUTE','MANUFACTURED_BY') AND status='AUXILIARY' LIMIT 1", (uid,)).fetchone()
+        if not hierarchy and (node['rank'] in ('manufacturer', 'make', 'attribute') or auxiliary_use):
+            return {**result, 'status': 'AUXILIARY_RECORD',
+                    'reason': 'Source record describes provenance or attributes; it has no accepted classification'}
+        if self.con.execute("SELECT 1 FROM bridges WHERE status='REVIEW' AND (left_uid=? OR right_uid=?) LIMIT 1", (uid, uid)).fetchone():
+            return {**result, 'status': 'IDENTITY_REVIEW',
+                    'reason': 'A source identity claim needs independent review'}
+        if self.con.execute('SELECT 1 FROM suppressed_edges WHERE child_uid=? LIMIT 1', (uid,)).fetchone():
+            return {**result, 'status': 'HISTORICAL_QUARANTINE',
+                    'reason': 'A source relation was previously rejected as classification'}
+        return {**result, 'status': 'MISSING_ROOT_CONNECTION' if hierarchy else 'INSUFFICIENT_HIERARCHY_EVIDENCE',
+                'reason': 'Accepted source hierarchy lacks a proved root entry' if hierarchy
+                          else 'No accepted classification connects this identity component'}
+
     def _visible_sql(self, alias: str) -> str:
         expression = f"{alias}.visibility='ACTIVE'"
         if self.view == 'wordnet':
@@ -172,7 +204,7 @@ class SingleAtlas:
         return {'uid': child, 'label': self.node(child)['label'], 'parent_uid': parent,
                 'parent_label': self.node(parent)['label'], 'edge': edge}
 
-    def path(self, uid: str, anchors: list[str] | None = None, max_depth: int = 32) -> list[dict]:
+    def path(self, uid: str, anchors: list[str] | None = None, max_depth: int = 64) -> list[dict]:
         if max_depth < 0:
             raise ValueError('max_depth must be nonnegative')
         own = self.node(uid)

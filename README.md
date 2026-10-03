@@ -2,13 +2,13 @@
 
 FineAtlas 是可在本地使用的细粒度分类图：以 WordNet 的通用概念为入口，向下连接物种、品种、车型、型号、器件类型及具体菜品。
 
-**最新版为公开发行 v1.1.0 / 内部 V34（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** V34 合并 V33 的全部 31 个数据依赖，保留来源、别名、身份对齐、证据和历史隔离记录，并建立经过全图环路检查的 WordNet 导航视图。
+**最新版为公开发行 v1.2.0 / 内部 V35（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** V35 在 V34 单库基础上修复有依据的 WordNet 分支入口，校正车辆目录范围，并撤回与来源层级冲突的名称对齐及非分类记录路径。来源、别名、证据和历史隔离记录继续保留。
 
 Python 3.10+，查询仅使用标准库和 SQLite，无需 GPU、模型权重、API key 或数据库服务器。
 
 ## 下载与使用
 
-完整数据库在 [Release v1.1.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.1.0)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
+完整数据库在 [Release v1.2.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.2.0)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
 
 ```bash
 git clone https://github.com/yyh427/fineAtlas-V1.git
@@ -25,34 +25,51 @@ fineatlas --data-dir /path/to/fineatlas-data path 'wikidata:Q321098'
 python3 scripts/check_installation.py --data-dir /path/to/fineatlas-data
 ```
 
-下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.40 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
+下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.51 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
 
-手动安装时，下载所有 `fineatlas-v1-v34-single.sqlite.zst.part-*` 文件及 `SHA256SUMS-V34`：
+手动安装时，下载所有 `fineatlas-v1-v35-single.sqlite.zst.part-*` 文件及 `SHA256SUMS-V35`：
 
 ```bash
-sha256sum -c SHA256SUMS-V34
-cat fineatlas-v1-v34-single.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
+sha256sum -c SHA256SUMS-V35
+cat fineatlas-v1-v35-single.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
 python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
 ```
 
-也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。原 V33 的 31 文件版本仍可使用，见 [历史版本说明](docs/legacy-v33.md) 和 [v1.0.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.0.0)。
+也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。[V34 单库版](docs/legacy-v34.md) 和原 V33 的 31 文件版本仍可使用，见 [历史版本说明](docs/legacy-v33.md) 和 [v1.0.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.0.0)。
 
 ## 节点数量与连接情况
 
-| 项目 | V34 |
+| 项目 | V35 |
 |---|---:|
 | 全部来源 UID 节点 | 8,917,050 |
 | 当前保留节点 | 8,916,971 |
-| 从 WordNet 根可达的保留节点 | **7,955,564（89.2%）** |
-| 尚未接通 WordNet 的保留节点 | 961,407 |
-| 全部来源有效 `IS_A` 记录 | 8,647,831 |
+| 从 WordNet 根可达的保留节点 | **8,475,080（95.0%）** |
+| 尚未接通 WordNet 的保留节点 | 441,891 |
+| 全部来源有效 `IS_A` 记录 | 8,562,910 |
 | 别名记录 | 17,105,498 |
 | 已裁剪 WordNet 节点 | 79 |
 | 数据库文件 | **1** |
 
 UID 数不是去重后的现实概念数，不同来源可能分别表示同一概念。有效边数包含未接通分支和来源重复证据，也不是默认 WordNet 视图的独立概念边数。完整计数、哈希和裁剪结果见 [SINGLE_DATABASE.json](SINGLE_DATABASE.json)，按来源命名空间的连接情况见 [coverage.csv](docs/coverage.csv)。
 
-**六个数据集共 755 个目标类别全部保留，且 755/755 通过从 WordNet 根到目标的实际路径检查；V33 新增 59 个节点也全部通过。** 这验证类别节点和路径，不等于图像识别准确率，也不代表所有来源断言都经过新一轮语义审查。检查记录见 [VALIDATION_V34.json](VALIDATION_V34.json)。
+**六个数据集共 755 个目标类别全部保留，且 755/755 通过从 WordNet 根到目标的实际路径检查；V33 新增 59 个节点也全部通过。** 这验证类别节点和路径，不等于图像识别准确率，也不代表所有来源断言都经过新一轮语义审查。检查记录见 [VALIDATION_V35.json](VALIDATION_V35.json)。
+
+## 本次接通修复
+
+相比 V34，新接通 **589,672** 个来源 UID，同时撤回 **70,156** 个依赖非分类记录或待审身份对齐的旧可达状态，净增 **519,516** 个。新增 34 个经来源范围核对的分支入口；31,869 条 vPIC 型号分类改用包含拖车的“车辆”范围；224 条与原生层级冲突的名称身份对齐转为待审。全部分类图重新检查，剩余 1 条循环分类记录继续隔离。
+
+剩余 441,891 个来源 UID 的原因如下，不能统一当作“待挂接的类别”：
+
+| 原因 | UID 数 |
+|---|---:|
+| 缺少可接受的分类层级证据 | 264,717 |
+| 来源标记的非分类记录或容器（序列、样本等） | 85,098 |
+| 厂商、品牌、属性等辅助记录 | 80,843 |
+| 已有有效来源层级，仍缺有依据的根入口 | 10,876 |
+| 身份对齐待审 | 175 |
+| 历史关系隔离 | 182 |
+
+辅助记录与非分类来源记录留在同一数据库供溯源，不直接充当分类节点。详细修复、来源对比、逐节点诊断接口及剩余清单见 [连接诊断说明](docs/connectivity.md)。当前最大分类深度为 48，单库 `path()` 与 CLI 默认深度上限已提高到 64。
 
 ## 覆盖的领域
 
@@ -104,6 +121,7 @@ with FineAtlas("/path/to/fineatlas.sqlite") as tree:
     candidates = tree.exact("laser diode")
     uid = candidates[0]["uid"]
     print(tree.node(uid))
+    print(tree.connection_status(uid))
     print(tree.neighbors(uid, direction="parents"))
     print(tree.path(uid))
     print(tree.neighbors("wordnet31:02961779-n", direction="children", limit=100))
@@ -115,11 +133,12 @@ with FineAtlas("/path/to/fineatlas.sqlite", view="all") as tree:
 
 | 方法 | 返回内容 |
 |---|---|
+| `connection_status(uid)` | 单库节点的接通状态与当前未接通原因 |
 | `node(uid)` | 节点、来源、原始元数据、显示状态及 WordNet 可达性；可检查裁剪节点 |
 | `exact(text, limit=20)` | 当前视图内的规范化标签/别名精确匹配；保留歧义 UID |
 | `search(text, limit=20, domain=None)` | 当前视图内的别名全文查询 |
 | `neighbors(uid, direction="children", limit=20)` | 有效父/子节点及边证据；跨来源身份路径会标记 `via_alignment` |
-| `path(uid, anchors=None, max_depth=32)` | 默认返回 WordNet 根到目标的证据路径；未到达或超深度返回 `[]` |
+| `path(uid, anchors=None, max_depth=64)` | 默认返回 WordNet 根到目标的证据路径；未到达或超深度返回 `[]` |
 | `equivalents(uid)` | 当前快照同身份组中的其他来源 UID |
 | `target(dataset, class_id)` | 六数据集类别到节点的可选映射 |
 | `stats()` | 快照版本、计数、裁剪和连接情况 |
@@ -128,7 +147,7 @@ with FineAtlas("/path/to/fineatlas.sqlite", view="all") as tree:
 
 `neighbors(..., structural_only=False)` 可查看辅助和待审记录；历史隔离、环路隔离和裁剪记录仍不会成为有效分类。直接 SQL 用户可读取 `wordnet_nodes`、`wordnet_edges` 或 `active_nodes`、`active_edges` 视图。一个实例用于一个线程/进程，请用上下文管理器或调用 `close()`。
 
-CLI 支持 `stats`、`node`、`exact`、`search`、`neighbors`、`path`、`equivalents` 和 `target`。`--data-dir`、`--view` 写在子命令之前：
+CLI 支持 `stats`、`node`、`connection-status`、`exact`、`search`、`neighbors`、`path`、`equivalents` 和 `target`。`--data-dir`、`--view` 写在子命令之前：
 
 ```bash
 fineatlas --data-dir /path/to/fineatlas.sqlite --view all exact 'food material'
