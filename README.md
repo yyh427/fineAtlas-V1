@@ -2,13 +2,13 @@
 
 FineAtlas 是可在本地使用的细粒度分类图：以 WordNet 的通用概念为入口，向下连接物种、品种、车型、型号、器件类型及具体菜品。
 
-**最新版为公开发行 v1.2.0 / 内部 V35（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** V35 在 V34 单库基础上修复有依据的 WordNet 分支入口，校正车辆目录范围，并撤回与来源层级冲突的名称对齐及非分类记录路径。来源、别名、证据和历史隔离记录继续保留。
+**最新版为公开发行 v1.3.0 / 内部 V36（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** V36 补齐有来源证据的种下分类和专业分支，修正车型车身配置的身份误合并，并明确区分类别与溯源辅助记录。来源、别名、证据和历史隔离记录继续保留。
 
 Python 3.10+，查询仅使用标准库和 SQLite，无需 GPU、模型权重、API key 或数据库服务器。
 
 ## 下载与使用
 
-完整数据库在 [Release v1.2.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.2.0)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
+完整数据库在 [Release v1.3.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.3.0)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
 
 ```bash
 git clone https://github.com/yyh427/fineAtlas-V1.git
@@ -25,51 +25,49 @@ fineatlas --data-dir /path/to/fineatlas-data path 'wikidata:Q321098'
 python3 scripts/check_installation.py --data-dir /path/to/fineatlas-data
 ```
 
-下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.51 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
+下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.64 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
 
-手动安装时，下载所有 `fineatlas-v1-v35-single.sqlite.zst.part-*` 文件及 `SHA256SUMS-V35`：
+手动安装时，下载所有 `fineatlas-v1-v36-single.sqlite.zst.part-*` 文件及 `SHA256SUMS-V36`：
 
 ```bash
-sha256sum -c SHA256SUMS-V35
-cat fineatlas-v1-v35-single.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
+sha256sum -c SHA256SUMS-V36
+cat fineatlas-v1-v36-single.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
 python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
 ```
 
-也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。[V34 单库版](docs/legacy-v34.md) 和原 V33 的 31 文件版本仍可使用，见 [历史版本说明](docs/legacy-v33.md) 和 [v1.0.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.0.0)。
+也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。[V35](docs/legacy-v35.md)、[V34](docs/legacy-v34.md) 单库版和原 V33 的 31 文件版本仍可使用，见 [历史版本说明](docs/legacy-v33.md) 和 [v1.0.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.0.0)。
 
 ## 节点数量与连接情况
 
-| 项目 | V35 |
+| 项目 | V36 |
 |---|---:|
-| 全部来源 UID 节点 | 8,917,050 |
-| 当前保留节点 | 8,916,971 |
-| 从 WordNet 根可达的保留节点 | **8,475,080（95.0%）** |
-| 尚未接通 WordNet 的保留节点 | 441,891 |
-| 全部来源有效 `IS_A` 记录 | 8,562,910 |
-| 别名记录 | 17,105,498 |
+| 全部来源 UID 节点 | 8,917,058 |
+| 当前保留节点 | 8,916,979 |
+| 从 WordNet 根可达的保留节点 | **8,735,597（98.0%）** |
+| 尚未接通 WordNet 的保留节点 | 181,382 |
+| 全部来源有效 `IS_A` 记录 | 8,817,082 |
+| 别名记录 | 17,105,509 |
 | 已裁剪 WordNet 节点 | 79 |
 | 数据库文件 | **1** |
 
 UID 数不是去重后的现实概念数，不同来源可能分别表示同一概念。有效边数包含未接通分支和来源重复证据，也不是默认 WordNet 视图的独立概念边数。完整计数、哈希和裁剪结果见 [SINGLE_DATABASE.json](SINGLE_DATABASE.json)，按来源命名空间的连接情况见 [coverage.csv](docs/coverage.csv)。
 
-**六个数据集共 755 个目标类别全部保留，且 755/755 通过从 WordNet 根到目标的实际路径检查；V33 新增 59 个节点也全部通过。** 这验证类别节点和路径，不等于图像识别准确率，也不代表所有来源断言都经过新一轮语义审查。检查记录见 [VALIDATION_V35.json](VALIDATION_V35.json)。
+**六个数据集共 755 个类别均通过节点身份和 WordNet 根路径检查；每个数据集内部的目标 UID 与身份组均不重复。V33 新增 59 个节点也全部保留并通过路径检查。** 检查覆盖 CUB-200（200）、FGVC Aircraft（100）、Flowers-102（102）、Oxford Pets（37）、Stanford Dogs（120）、Stanford Cars（196）。这验证类别映射和路径，不衡量图像识别准确率，也不替代所有继承断言的逐条语义审查。见 [VALIDATION_V36.json](VALIDATION_V36.json)。
 
 ## 本次接通修复
 
-相比 V34，新接通 **589,672** 个来源 UID，同时撤回 **70,156** 个依赖非分类记录或待审身份对齐的旧可达状态，净增 **519,516** 个。新增 34 个经来源范围核对的分支入口；31,869 条 vPIC 型号分类改用包含拖车的“车辆”范围；224 条与原生层级冲突的名称身份对齐转为待审。全部分类图重新检查，剩余 1 条循环分类记录继续隔离。
+相比 V35，新接通 **260,509 个原有来源 UID**，另补入 8 个有来源证据的车型/年款配置节点；没有原已接通 UID 失去根路径。恢复 254,335 条经过范围核对的分类边，补齐 77 个分支入口。全图环路检查通过，无新增循环；原有 1 条循环分类记录、190 对历史隔离关系和 79 个 WordNet 裁剪节点继续隔离。
 
-剩余 441,891 个来源 UID 的原因如下，不能统一当作“待挂接的类别”：
+车辆修复撤回 488 条把车身配置等同于 EPA 技术记录的身份桥，以及 248 条不成立的变体父边。原有车型的独立分类路径保留。Stanford Cars 的 Virage 敞篷/双门与 Spyker C8 敞篷/双门共 4 个目标改接独立配置 UID；类别编号和标签保持原样，旧映射保存在 `target_revisions`。使用旧缓存时，应重新读取这 4 个映射（类别 10、11、179、180）。
 
-| 原因 | UID 数 |
-|---|---:|
-| 缺少可接受的分类层级证据 | 264,717 |
-| 来源标记的非分类记录或容器（序列、样本等） | 85,098 |
-| 厂商、品牌、属性等辅助记录 | 80,843 |
-| 已有有效来源层级，仍缺有依据的根入口 | 10,876 |
-| 身份对齐待审 | 175 |
-| 历史关系隔离 | 182 |
+剩余 181,382 个来源 UID 分为：
 
-辅助记录与非分类来源记录留在同一数据库供溯源，不直接充当分类节点。详细修复、来源对比、逐节点诊断接口及剩余清单见 [连接诊断说明](docs/connectivity.md)。当前最大分类深度为 48，单库 `path()` 与 CLI 默认深度上限已提高到 64。
+| 处理 | UID 数 | 使用方式 |
+|---|---:|---|
+| 厂商、品牌、属性及明确非分类/旧容器来源记录 | 164,671 | 保留溯源，无需作为分类树节点；`tree_admission=NOT_REQUIRED` |
+| 尚缺入口、分类/身份证据冲突或历史隔离的记录 | 16,711 | 保留待审；`tree_admission=REVIEW` |
+
+仅带来源 `inconsistent` 标志的 1,270 个记录属于待审，不能仅凭此标志断言其无需分类。逐节点原因、可用示例及完整清单见 [连接诊断说明](docs/connectivity.md)。`path()` 与 CLI 的默认分类深度上限为 64。
 
 ## 覆盖的领域
 
@@ -133,7 +131,7 @@ with FineAtlas("/path/to/fineatlas.sqlite", view="all") as tree:
 
 | 方法 | 返回内容 |
 |---|---|
-| `connection_status(uid)` | 单库节点的接通状态与当前未接通原因 |
+| `connection_status(uid)` | 接通状态、原因、记录用途 `record_role` 与分类准入 `tree_admission` |
 | `node(uid)` | 节点、来源、原始元数据、显示状态及 WordNet 可达性；可检查裁剪节点 |
 | `exact(text, limit=20)` | 当前视图内的规范化标签/别名精确匹配；保留歧义 UID |
 | `search(text, limit=20, domain=None)` | 当前视图内的别名全文查询 |

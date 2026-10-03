@@ -1,6 +1,6 @@
 # 单库结构与 WordNet 导航
 
-V35 沿用 V34 对 V33 的 31 个 SQLite 依赖的合并结果，运行时使用 `fineatlas.sqlite`。运行时只有这个文件；`bundle.json` 仅用于历史 V33 版本。数据库按只读快照交付，身份对齐与分类边分开保存。
+V36 沿用 V34 对 V33 的 31 个 SQLite 依赖的合并结果，运行时使用 `fineatlas.sqlite`。运行时只有这个文件；`bundle.json` 仅用于历史 V33 版本。数据库按只读快照交付，身份对齐与分类边分开保存。
 
 | 表或视图 | 用途 |
 |---|---|
@@ -10,8 +10,11 @@ V35 沿用 V34 对 V33 的 31 个 SQLite 依赖的合并结果，运行时使用
 | `bridges` | 跨来源身份对齐；不属于分类边 |
 | `evidence` | 按来源层区分的证据及内容哈希 |
 | `dataset_targets` | 六数据集 755 个类别的节点映射 |
+| `target_revisions` | 来源范围复核后保留的历史类别映射 |
 | `components` | 身份组、WordNet 可达性、层级深度和路径证据边 |
 | `pruning` | 裁剪的 WordNet UID、替换入口及理由 |
+| `classification_repairs` | 分类关系的准入或待审记录及冻结证据哈希 |
+| `node_dispositions` | 未接通记录的用途、分类准入状态与原因 |
 | `source_scope_reviews` | 冻结 OTT 标志、原始来源行及非分类/容器审核状态 |
 | `suppressed_edges` | V33 的历史隔离记录 |
 | `inputs` / `source_tables` | 31 个输入快照的哈希与各源表导入清单 |
@@ -48,4 +51,6 @@ with sqlite3.connect(path.as_uri() + "?mode=ro&immutable=1", uri=True) as db:
 
 使用 `edges` 全表时必须读取 `status`；辅助、待审、历史隔离、环路隔离和裁剪记录均不属于有效分类边。来源记录含原始证据和历史路径元数据，这些路径不构成运行依赖。
 
-V35 的来源范围审核与诊断接口见 [connectivity.md](connectivity.md)。
+V36 的来源范围审核与诊断接口见 [connectivity.md](connectivity.md)。
+
+V36 恢复通过核验的种下分类和分面子类。厂商/品牌/属性以及来源标记的非分类、旧容器记录留在库内；`node_dispositions.tree_admission='NOT_REQUIRED'` 表示其用途无需分类树挂接，`REVIEW` 表示仍待补证。两类都不会进入默认 WordNet 导航。

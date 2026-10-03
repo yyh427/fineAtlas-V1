@@ -9,6 +9,7 @@ epa-variant,5664,5664,0
 faa-aircraft,94043,94043,0
 faa-mfr,68538,0,68538
 foodon,12342,12296,46
+manufacturer-model,4,4,0
 mesh,122,0,122
 mimo-hs,641,641,0
 mimo-keyword,2572,2500,72
@@ -20,9 +21,10 @@ v26-gbif,2,2,0
 v26-nhtsa-model,28,28,0
 v26-wikidata,2,2,0
 v4root,5,4,1
+vehicle-configuration,4,4,0
 vpic-make,12103,0,12103
 vpic-model,31869,31869,0
 wfo,454688,454688,0
-wikidata,3484448,3209143,275305
+wikidata,3484448,3469652,14796
 wikidata-v4,48722,48722,0
 wordnet31,82113,82113,0

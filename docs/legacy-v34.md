@@ -9,4 +9,4 @@ V34 于 2026-10-03 首次将 V33 的 31 个 SQLite 依赖合并为一个 `fineat
 - [冻结数据库清单](https://github.com/yyh427/fineAtlas-V1/blob/v1.1.0/SINGLE_DATABASE.json)
 - [冻结验证结果](https://github.com/yyh427/fineAtlas-V1/blob/v1.1.0/VALIDATION_V34.json)
 
-当前默认版本为 V35 / v1.2.0，修复结果见 [connectivity.md](connectivity.md)。最新版接口仍可读取 V34 单库；V35 的来源标志审核表仅存在于新快照。
+当前默认版本为 V36 / v1.3.0，修复结果见 [connectivity.md](connectivity.md)。最新版接口仍可读取 V34 单库；V35 的来源标志审核表仅存在于新快照。

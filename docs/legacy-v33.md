@@ -1,3 +1,5 @@
+> 本文是历史 V33 使用说明。V36 已修正部分车辆配置身份误合并，当前身份与路径复核结果见 [连接说明](connectivity.md)。
+
 # fineAtlas-V1
 
 FineAtlas 是一套可在本地查询的多来源细粒度分类图，提供从通用概念到物种、品种、车型、型号、器件类型和具体菜品的分类路径。
@@ -138,7 +140,7 @@ with FineAtlas("/path/to/fineAtlas-V1") as graph:
 
 节点主要字段为 `uid`、`label`、`description`、`source`、`rank`、`domain`/`domains`、`data`。邻接结果还包含 `edge`；部分结果有 `edge_evidence`、`equivalent_uids`。边中常见字段为 `child_uid`、`parent_uid`、`relation`、`facet_family`、`typed_refinement_kind`、`navigation_role`、`source`、`provenance`。来源不同，部分可选字段可能为空。一个名称命中多个 UID 时应检查身份和来源，而不是自动选第一项。
 
-默认邻接只返回结构细化；`structural_only=False` 可查看辅助关系，已屏蔽错边仍保持屏蔽。`neighbors` 和 `search` 都受 `limit` 限制，不是完整批量导出。对全量源记录，可直接使用 SQLite 和 [`docs/storage.md`](docs/storage.md)，同时应用屏蔽与身份合同。
+默认邻接只返回结构细化；`structural_only=False` 可查看辅助关系，已屏蔽错边仍保持屏蔽。`neighbors` 和 `search` 都受 `limit` 限制，不是完整批量导出。对全量源记录，可直接使用 SQLite 和 [`docs/storage.md`](storage.md)，同时应用屏蔽与身份合同。
 
 每个实例拥有 SQLite 连接。多线程/多进程服务请每个线程/进程创建自己的实例。查询不修改下载的数据库；运行时描述符放在临时目录，支持移动数据目录和只读挂载。
 

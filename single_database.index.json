@@ -1,10 +1,10 @@
 {
   "schema": "FINEATLAS_SINGLE_DB_INDEX_V1",
   "kind": "fineatlas_single_db",
-  "graph_version": "V35",
+  "graph_version": "V36",
   "database": "fineatlas.sqlite",
   "root_uid": "wordnet31:00001740-n",
   "navigation_view": "wordnet",
-  "sha256": "5f9484388762f5b7422e3b50fdc350668fa1f9dcec7c0abca77e06024102c539",
+  "sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
   "interface": "fineatlas.FineAtlas"
 }

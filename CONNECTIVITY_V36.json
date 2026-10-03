@@ -1,0 +1,72 @@
+{
+  "graph_version": "V36",
+  "unconnected_nodes": 181382,
+  "reasons": {
+    "MISSING_ROOT_CONNECTION": 4717,
+    "CLASSIFICATION_REVIEW": 10467,
+    "INSUFFICIENT_HIERARCHY_EVIDENCE": 28,
+    "IDENTITY_REVIEW": 47,
+    "SOURCE_NON_TAXON_OR_CONTAINER": 83828,
+    "SOURCE_SCOPE_CONFLICT": 1270,
+    "AUXILIARY_RECORD": 80843,
+    "HISTORICAL_QUARANTINE": 182
+  },
+  "record_roles": {
+    "CLASSIFICATION_BRANCH": 4717,
+    "CLASSIFICATION_CANDIDATE": 11966,
+    "UNRESOLVED_SOURCE_RECORD": 28,
+    "SOURCE_RECORD_ONLY": 83828,
+    "METADATA_ONLY": 80843
+  },
+  "pending_review_uids": 16711,
+  "retained_non_classification_uids": 164671,
+  "by_namespace": {
+    "wikidata": {
+      "MISSING_ROOT_CONNECTION": 4268,
+      "CLASSIFICATION_REVIEW": 10459,
+      "INSUFFICIENT_HIERARCHY_EVIDENCE": 22,
+      "IDENTITY_REVIEW": 47
+    },
+    "ott": {
+      "MISSING_ROOT_CONNECTION": 396,
+      "SOURCE_NON_TAXON_OR_CONTAINER": 83828,
+      "SOURCE_SCOPE_CONFLICT": 1270,
+      "CLASSIFICATION_REVIEW": 8
+    },
+    "epa-attribute": {
+      "AUXILIARY_RECORD": 57
+    },
+    "faa-mfr": {
+      "AUXILIARY_RECORD": 68538
+    },
+    "epa-make": {
+      "AUXILIARY_RECORD": 145
+    },
+    "v4root": {
+      "INSUFFICIENT_HIERARCHY_EVIDENCE": 1
+    },
+    "vpic-make": {
+      "AUXILIARY_RECORD": 12103
+    },
+    "foodon": {
+      "MISSING_ROOT_CONNECTION": 45,
+      "HISTORICAL_QUARANTINE": 1
+    },
+    "mimo-keyword": {
+      "MISSING_ROOT_CONNECTION": 8,
+      "HISTORICAL_QUARANTINE": 63,
+      "INSUFFICIENT_HIERARCHY_EVIDENCE": 1
+    },
+    "mesh": {
+      "HISTORICAL_QUARANTINE": 118,
+      "INSUFFICIENT_HIERARCHY_EVIDENCE": 4
+    }
+  },
+  "queue_file": "unconnected_nodes.csv.gz",
+  "meaning": "Metadata and source non-taxa are retained without requiring tree attachment. All unresolved classifications remain REVIEW; no coverage score is manufactured by hiding them.",
+  "queue_asset": {
+    "name": "unconnected_nodes.csv.gz",
+    "bytes": 3649147,
+    "sha256": "9bea905141a565862a3bd8ca12e6919a504ee3b45da55c2106a4226537f6abb0"
+  }
+}

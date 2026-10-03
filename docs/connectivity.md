@@ -1,35 +1,36 @@
-# V35 连接修复与剩余记录
+# V36 连接修复与剩余记录
 
-V35 / v1.2.0 使用一个只读 SQLite 数据库。节点身份来自来源 UID；连接必须是有证据支持的类型包含或独立身份对齐。不能从标签相同、目录位置或知识库候选关系推断 `IS_A`。
+V36 / v1.3.0 使用一个只读 SQLite 数据库，默认以 WordNet 根浏览。来源 UID、定义和证据留存，身份对齐与分类关系分别表达。
 
-## 为什么 V34 中有未接通节点
+## 修复结果
 
-- 一些专业来源的原生分类完整，但它们的上层入口没有连接到合适的 WordNet 词义。
-- 旧名称对齐把同名或科学名称相似的对象合并，可能使原本无环的原生分类产生循环；V34 为避免循环隔离了部分分类边。
-- OTT 导出时遗漏了非分类/容器标志，部分序列和样本记录因而获得不合适的分类路径。
-- FAA/vPIC/EPA 中的厂商、品牌、属性是溯源辅助记录。它们的存在不意味着它们必须成为产品类别。
-- 部分 Wikidata 身份没有可接受的分类父边；MeSH/MIMO 的部分关系已经在历史审查中被拒绝，不能仅为连通而恢复。
+WordNet 可达来源 UID 从 V35 的 8,475,080 增至 **8,735,597**，占 8,916,979 个保留来源 UID 的 **98.0%**。新增接通 260,509 个原有 UID，另新增 8 个车型/配置 UID，没有原已接通 UID 失去根路径。不同来源 UID 可能代表同一现实概念。
 
-## 本次结果
+- 恢复 254,335 条范围核对后的分类边：包括正式种下分类，以及有定义证据的分面子类。另有 28,072 条候选保持待审。
+- 补齐 77 个有来源定义支持的分支入口，涉及动物品种、植物、食物、航空器等。
+- 撤回 488 条粗细范围不一致的车辆身份桥与 248 条不成立的变体父边，保留原有独立车型父路径。
+- 为 Aston Martin Virage Coupe/Volante 和 Spyker C8 Spyder/Laviolette 补入 4 个独立车身型号与 4 个独立年款配置节点。Stanford Cars 类别 10、11、179、180 改用独立配置 UID，标签不变；旧映射留在 `target_revisions`。
+- 190 对历史隔离关系、79 个 WordNet 裁剪节点和原有 1 条循环记录继续屏蔽；全图复核无新增循环。
 
-| 来源命名空间 | V34 可达 UID | V35 可达 UID | V35 保留 UID |
-|---|---:|---:|---:|
-| OTT | 3,968,731 | 4,444,068 | 4,529,570 |
-| vPIC 型号 | 468 | 31,869 | 31,869 |
-| Getty AAT | 2,052 | 3,630 | 3,630 |
-| MIMO Hornbostel–Sachs | 0 | 641 | 641 |
-| MIMO keyword | 1 | 2,500 | 2,572 |
-| Wikidata | 3,201,083 | 3,209,143 | 3,484,448 |
+车辆年款与车身证据保留来源 URL、文档作者和冻结哈希；厂商的商品页面提供型号字段，实例 VIN 不成为分类节点。车型目录与配置类别的范围不同，相关记录不能直接视为 `SAME_CONCEPT`。
 
-新增接通 589,672 个 UID，撤回 70,156 个不可靠旧可达状态，净增接通 519,516 个。总可达数由 7,955,564 提升到 8,475,080，占 8,916,971 个保留来源 UID 的 95.0%。不同来源 UID 不等于不同现实概念。
+六个数据集的 **755/755** 个目标通过根路径检查，且每个数据集内部的目标 UID 和身份组均唯一；59 个 V33 新增节点保留并通过路径检查。全部 5,852,220 个可达身份组的父组、递减深度和有效分类证据通过检查，并抽查 500 条新增接通节点的完整路径。详见 [VALIDATION_V36.json](../VALIDATION_V36.json)。检查不衡量图像识别准确率，也不替代全部继承来源断言的逐条语义审查。
 
-- 34 个来源范围核对后的入口接入：OTT 细胞生物、MIMO 完整乐器类别、Getty 工具/设备/建筑等分支。
-- OTT `life` 混合容器未直接挂到 organism；仅核对后的细胞生物入口接入。85,098 个带 `not_otu`、`was_container`、`inconsistent` 或 `merged` 标志的记录退出有效分类/身份关系。
-- 31,869 条 vPIC 型号边改接 WordNet vehicle。目录包含拖车，来源并不支持把所有型号都认定为 self-propelled motor_vehicle。具体车型的独立身份路径继续保留。
-- 224 条与来源原生分类冲突的名称对齐转为 `REVIEW`；原始记录和冲突来源边 ID 留存。不能由环路判定其中每条对齐都错误，因此需要独立标识符与范围复核。
-- 全图重新收缩身份、检查环路并重建路径证据；1 条仍循环的分类记录保持隔离。190 对历史隔离关系和 79 个 WordNet 裁剪节点继续屏蔽。
+## 先前未接通的示例
 
-所有 755 个六数据集目标和 59 个 V33 新增节点的实际 WordNet 路径通过；全部 5,591,228 个可达身份组的递减深度、父组和有效边证据通过检查，并额外抽查 500 条新增接通节点的完整路径。详见 [VALIDATION_V35.json](../VALIDATION_V35.json)。这些检查不衡量图像识别准确率，也不替代全部继承断言的逐条语义审查。
+以下节点在 V36 均能返回实际 WordNet 根路径：
+
+| UID | 示例 |
+|---|---|
+| `wikidata:Q1002954` | Formula One car |
+| `wikidata:Q1025029` | Cachena 牛品种 |
+| `wikidata:Q1002275` | Bugatti Model 100 飞机 |
+| `wikidata:Q10328349` | square watermelon |
+| `wikidata:Q10561609` | corpse detection dog |
+| `wikidata:Q1057750` | radish |
+| `wikidata:Q248608` | Lycidae 甲虫类群 |
+
+训练或浏览时使用实际返回的路径与证据，不要把同名词、属性、厂商和部件强制变成分类父节点。
 
 ## 检查某个节点
 
@@ -37,23 +38,34 @@ V35 / v1.2.0 使用一个只读 SQLite 数据库。节点身份来自来源 UID�
 from fineatlas import FineAtlas
 
 with FineAtlas("/path/to/fineatlas.sqlite", view="all") as graph:
-    print(graph.connection_status("ott:93302"))          # CONNECTED
-    print(graph.connection_status("ott:4019065"))        # SOURCE_SCOPE_REVIEW
-    print(graph.connection_status("vpic-make:445"))      # AUXILIARY_RECORD
-    print(graph.connection_status("mimo-keyword:2205"))  # MISSING_ROOT_CONNECTION
-    print(graph.path("ott:93302"))
+    print(graph.connection_status("wikidata:Q1002954")) # CONNECTED / ACTIVE
+    print(graph.path("wikidata:Q1002954"))
+    print(graph.connection_status("vpic-make:445"))     # METADATA_ONLY / NOT_REQUIRED
+    print(graph.connection_status("ott:4019065"))       # SOURCE_RECORD_ONLY / NOT_REQUIRED
+    print(graph.connection_status("ott:1083295"))       # SOURCE_SCOPE_CONFLICT / REVIEW
 ```
 
 ```bash
-fineatlas --data-dir /path/to/fineatlas.sqlite connection-status ott:4019065
+fineatlas --data-dir /path/to/fineatlas.sqlite connection-status ott:1083295
 ```
 
-状态还包括 `INSUFFICIENT_HIERARCHY_EVIDENCE`、`IDENTITY_REVIEW`、`HISTORICAL_QUARANTINE` 和 `ARCHIVED`。诊断说明当前快照的证据情况，并不宣称对象永远不能分类。旧 31 文件接口不提供此方法；V34 单库也可使用，来源标志审核信息仅在 V35 中提供。
+`connection_status()` 返回 `status`、`reason`、`record_role`、`tree_admission`、`source_flags`。已接通节点为 `CLASSIFICATION_NODE` / `ACTIVE`；明确辅助记录为 `NOT_REQUIRED`；证据尚未解决为 `REVIEW`。`NOT_REQUIRED` 只说明该记录当前用途不需要分类挂接，不会删除它或其溯源关系。仅有来源冲突标记不足以判定为非分类记录。
 
-当前最大分类深度为 48，单库与 CLI 默认 `max_depth=64`；可按需显式指定。身份桥不增加分类深度。一个节点是否可达由全图证据确定，`path()` 的深度参数只是返回路径的搜索/显示限制。
+默认 `view="wordnet"` 浏览已接通节点；`view="all"` 检查全部保留记录。`path()` 默认分类深度上限 64，可显式增加；身份桥不增加分类深度。旧 31 文件接口不提供此诊断方法，V34/V35 单库兼容接口，但不含 V36 的用途准入字段表。
 
-## 剩余清单
+## 剩余记录
 
-剩余 441,891 个 UID 中，264,717 个缺少有效层级证据，10,876 个已有层级但缺根入口，175 个需身份复核，182 个涉及历史隔离；另有 80,843 个辅助记录与 85,098 个非分类/容器来源记录。
+| 原因 | UID 数 | 分类准入 |
+|---|---:|---|
+| `MISSING_ROOT_CONNECTION`：已有层级，根入口尚缺 | 4,717 | REVIEW |
+| `CLASSIFICATION_REVIEW`：分类证据待审 | 10,467 | REVIEW |
+| `INSUFFICIENT_HIERARCHY_EVIDENCE`：缺层级证据 | 28 | REVIEW |
+| `IDENTITY_REVIEW`：身份待审 | 47 | REVIEW |
+| `SOURCE_SCOPE_CONFLICT`：来源范围冲突 | 1,270 | REVIEW |
+| `HISTORICAL_QUARANTINE`：历史隔离 | 182 | REVIEW |
+| `SOURCE_NON_TAXON_OR_CONTAINER`：明确非分类/容器记录 | 83,828 | NOT_REQUIRED |
+| `AUXILIARY_RECORD`：厂商、品牌、属性 | 80,843 | NOT_REQUIRED |
 
-分类计数见 [CONNECTIVITY_V35.json](../CONNECTIVITY_V35.json)。完整逐节点 CSV（UID、标签、原因、来源标志）作为 [unconnected_nodes.csv.gz](https://github.com/yyh427/fineAtlas-V1/releases/download/v1.2.0/unconnected_nodes.csv.gz) 发布；它是诊断附件，运行接口只需要数据库。后续补证应生成新快照，保留本次待审与隔离记录。
+合计 181,382 个未接通 UID，其中 **16,711 个待审**，**164,671 个仅作来源或辅助记录**。未接通不等于同一类问题，也不能只为连通率恢复被拒绝的分类关系。
+
+计数见 [CONNECTIVITY_V36.json](../CONNECTIVITY_V36.json)。完整 [unconnected_nodes.csv.gz](https://github.com/yyh427/fineAtlas-V1/releases/download/v1.3.0/unconnected_nodes.csv.gz) 包含 UID、标签、原因、来源标志、记录用途和分类准入。它是诊断附件，运行时只需数据库。来源定义与正式种下名称范围的规则分别见 [ICZN Article 5](https://code.iczn.org/chapter-2-the-number-of-words-in-the-scientific-names-of-animals/article-5-principle-of-binominal-nomenclature/) 和 [ICN Article 24](https://www.iapt-taxon.org/nomen/pages/main/art_24.html)；候选知识库父关系自身不构成准入证明。后续补证生成新快照，保留本次待审与隔离记录。

@@ -61,7 +61,12 @@ class SingleAtlas:
         if node['visibility'] != 'ACTIVE':
             return {**result, 'status': 'ARCHIVED', 'reason': node['visibility']}
         if node['wordnet_reachable']:
-            return {**result, 'status': 'CONNECTED', 'reason': 'Validated path to the WordNet root'}
+            return {**result, 'status': 'CONNECTED', 'record_role': 'CLASSIFICATION_NODE',
+                    'tree_admission': 'ACTIVE', 'reason': 'Validated path to the WordNet root'}
+        if self.con.execute("SELECT 1 FROM sqlite_master WHERE name='node_dispositions'").fetchone():
+            row = self.con.execute('SELECT status,record_role,tree_admission,reason,source_flags FROM node_dispositions WHERE uid=?', (uid,)).fetchone()
+            if row:
+                return {**result, **dict(row)}
         if self.con.execute("SELECT 1 FROM sqlite_master WHERE name='source_scope_reviews'").fetchone():
             row = self.con.execute('SELECT flags,verdict FROM source_scope_reviews WHERE uid=?', (uid,)).fetchone()
             if row:
