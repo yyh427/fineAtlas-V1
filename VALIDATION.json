@@ -1,46 +1,97 @@
 {
   "status": "PASS",
   "checks": {
-    "all_new_paths": 59,
-    "exact_lookup_parity": 59,
-    "neighbors_parity": 59,
-    "path_parity": 59,
-    "hidden_quarantined_pairs": 190,
-    "dataset_targets_retained": 755
+    "six_dataset_catalog_retained": 755,
+    "six_dataset_paths_to_wordnet": 755,
+    "source_reviewed_target_revisions": 4,
+    "all_59_v33_new_nodes_and_wordnet_paths": 59,
+    "historical_quarantine_pairs_hidden": 190,
+    "pruned_wordnet_nodes_hidden": 79,
+    "reviewed_branch_root_paths": 77,
+    "sample_newly_reachable_witness_paths": 500,
+    "all_reachable_components_have_valid_decreasing_witness": 5852220,
+    "vehicle_catalog_narrow_motorized_claims_removed": 31869,
+    "search_examples": 5,
+    "previously_unconnected_examples_repaired": 7,
+    "per_dataset_target_identity_uniqueness": 755,
+    "classification_restoration_admission_ledger": "PASS",
+    "manufacturer_configurations_and_native_models_rooted": 8,
+    "unconnected_disposition_NOT_REQUIRED": 164671,
+    "unconnected_disposition_REVIEW": 16711,
+    "source_flagged_records_excluded_from_tree": 85098
   },
-  "snapshot": "V33",
-  "interface_version": "1.0.0",
-  "database_snapshot_checks": {
-    "files": 31,
-    "source_bytes_and_sha256_match": true
-  },
-  "package_build_and_installed_cli": "PASS",
-  "scope": "Read-only graph packaging and query parity; no model or image evaluation.",
-  "download_and_relocation": {
+  "datasets": [
+    {
+      "dataset": "cub200",
+      "labels": 200,
+      "unique_uids": 200,
+      "unique_components": 200,
+      "rooted": 200
+    },
+    {
+      "dataset": "fgvc_aircraft",
+      "labels": 100,
+      "unique_uids": 100,
+      "unique_components": 100,
+      "rooted": 100
+    },
+    {
+      "dataset": "flowers102",
+      "labels": 102,
+      "unique_uids": 102,
+      "unique_components": 102,
+      "rooted": 102
+    },
+    {
+      "dataset": "pets37",
+      "labels": 37,
+      "unique_uids": 37,
+      "unique_components": 37,
+      "rooted": 37
+    },
+    {
+      "dataset": "stanford_cars",
+      "labels": 196,
+      "unique_uids": 196,
+      "unique_components": 196,
+      "rooted": 196
+    },
+    {
+      "dataset": "stanford_dogs",
+      "labels": 120,
+      "unique_uids": 120,
+      "unique_components": 120,
+      "rooted": 120
+    }
+  ],
+  "maximum_classification_depth": 48,
+  "limitations": "Checks establish structural paths and reviewed repair scopes, not image recognition accuracy or semantic certification of every inherited source assertion.",
+  "database_sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
+  "local_non_gpu_suite": "PASS",
+  "sqlite_integrity_check": "PASS",
+  "installed_wheel": {
     "status": "PASS",
-    "assets_downloaded": 2,
-    "databases_extracted_and_sha256_verified": 31,
-    "portable_directory_with_spaces": true
+    "version": "1.3.0",
+    "representative_queries": "PASS",
+    "diagnostic_roles": "PASS",
+    "source_reviewed_car_targets": "PASS"
   },
-  "completed_download_resume": "PASS",
-  "github_assets": {
+  "distribution_check": {
     "status": "PASS",
-    "assets": [
-      {
-        "name": "fineatlas-v1-v33-data.tar.zst.part-000",
-        "size": 1073741824,
-        "digest": "sha256:eb7ff02287fbd2f707b91e4ced4d765a01a5d3bc9d22cf2dc6602208e1da0c40"
-      },
-      {
-        "name": "fineatlas-v1-v33-data.tar.zst.part-001",
-        "size": 755939098,
-        "digest": "sha256:9b41c4e486d42e714d075147f20e634bc69b41a18d491ac4f2a95763b4276ffd"
-      },
-      {
-        "name": "SHA256SUMS",
-        "size": 210,
-        "digest": "sha256:d82ae654b81aea991413677b327b10cda714b82667c1c57653c52899f9d7f04f"
-      }
-    ]
+    "bytes": 28636983296,
+    "sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
+    "mode": "Public installer; cached release parts; complete decompressed file size and SHA-256 verified; output path with spaces"
+  },
+  "public_name": "FineAtlas V1",
+  "public_interface_checks": {
+    "status": "PASS",
+    "interface_version": "1.3.1",
+    "before_after_queries": 19,
+    "target_paths_checked": 755,
+    "per_dataset_identity_uniqueness": "PASS",
+    "cli_commands_checked": 4,
+    "wheel_contains_legacy_modules": false,
+    "download_existing_database_sha256": "PASS",
+    "database_unchanged": true
   }
 }

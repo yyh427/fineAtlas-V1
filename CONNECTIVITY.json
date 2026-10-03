@@ -1,5 +1,4 @@
 {
-  "graph_version": "V36",
   "unconnected_nodes": 181382,
   "reasons": {
     "MISSING_ROOT_CONNECTION": 4717,
@@ -68,5 +67,6 @@
     "name": "unconnected_nodes.csv.gz",
     "bytes": 3649147,
     "sha256": "9bea905141a565862a3bd8ca12e6919a504ee3b45da55c2106a4226537f6abb0"
-  }
+  },
+  "public_name": "FineAtlas V1"
 }

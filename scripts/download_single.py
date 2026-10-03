@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from download_data import digest, download
+from _download import digest, download
 
 ROOT = Path(__file__).resolve().parents[1]
 

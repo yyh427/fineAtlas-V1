@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import sqlite3
-from download_data import digest
+from _download import digest
 
 ROOT = Path(__file__).resolve().parents[1]
 

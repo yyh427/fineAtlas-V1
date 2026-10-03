@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import sqlite3
 
-from ._graph.base import norm, tokens
+from ._text import norm, tokens
 
 
 class SingleAtlas:

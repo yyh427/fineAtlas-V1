@@ -6,9 +6,9 @@ from .api import FineAtlas
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Query the FineAtlas graph (single SQLite or legacy bundle).')
+    parser = argparse.ArgumentParser(description='Query the FineAtlas V1 SQLite database.')
     parser.add_argument('--data-dir', help='SQLite file or downloaded data directory')
-    parser.add_argument('--view', choices=['wordnet','all'], help='Single-database navigation view (default: wordnet)')
+    parser.add_argument('--view', choices=['wordnet','all'], help='Navigation view (default: wordnet)')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('stats')
     p = sub.add_parser('node'); p.add_argument('uid')
@@ -24,8 +24,6 @@ def main() -> None:
         if args.command == 'stats': result = graph.stats()
         elif args.command == 'node': result = graph.node(args.uid)
         elif args.command == 'connection-status':
-            if not hasattr(graph, 'connection_status'):
-                parser.error('connection-status requires a consolidated single database')
             result = graph.connection_status(args.uid)
         elif args.command == 'exact': result = graph.exact(args.text, args.limit)
         elif args.command == 'search': result = graph.search(args.text, args.limit, args.domain)

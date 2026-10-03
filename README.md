@@ -2,7 +2,7 @@
 
 FineAtlas 是可在本地使用的细粒度分类图：以 WordNet 的通用概念为入口，向下连接物种、品种、车型、型号、器件类型及具体菜品。
 
-**当前公开版本为 FineAtlas V1（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** FineAtlas V1 补齐有来源证据的种下分类和专业分支，修正车型车身配置的身份误合并，并明确区分类别与溯源辅助记录。来源、别名、证据和历史隔离记录继续保留。
+**运行时只需要一个 `fineatlas.sqlite`。** 数据库保留来源 UID、别名、定义和分类证据，提供 WordNet 根到细粒度类别的查询路径。
 
 Python 3.10+，查询仅使用标准库和 SQLite，无需 GPU、模型权重、API key 或数据库服务器。
 
@@ -27,15 +27,15 @@ python3 scripts/check_installation.py --data-dir /path/to/fineatlas-data
 
 下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.64 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
 
-手动安装时，从当前发布页下载全部 `*.sqlite.zst.part-*` 分片和 `SHA256SUMS-*` 校验文件，放到同一目录：
+手动安装时，从当前发布页下载全部 `*.sqlite.zst.part-*` 分片和 `SHA256SUMS*` 校验文件，放到同一目录：
 
 ```bash
-sha256sum -c SHA256SUMS-*
+sha256sum -c SHA256SUMS*
 cat *.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
 python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
 ```
 
-也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。旧快照继续保留，见 [历史版本说明](docs/legacy-v35.md)。
+也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。
 
 ## 节点数量与连接情况
 
@@ -52,22 +52,20 @@ python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
 
 UID 数不是去重后的现实概念数，不同来源可能分别表示同一概念。有效边数包含未接通分支和来源重复证据，也不是默认 WordNet 视图的独立概念边数。完整计数、哈希和裁剪结果见 [SINGLE_DATABASE.json](SINGLE_DATABASE.json)，按来源命名空间的连接情况见 [coverage.csv](docs/coverage.csv)。
 
-**六个数据集共 755 个类别均通过节点身份和 WordNet 根路径检查；每个数据集内部的目标 UID 与身份组均不重复。此前新增的 59 个节点也全部保留并通过路径检查。** 检查覆盖 CUB-200（200）、FGVC Aircraft（100）、Flowers-102（102）、Oxford Pets（37）、Stanford Dogs（120）、Stanford Cars（196）。这验证类别映射和路径，不衡量图像识别准确率，也不替代所有继承断言的逐条语义审查。见 [验证报告](VALIDATION_V36.json)。
+**六个数据集共 755 个类别均通过节点身份和 WordNet 根路径检查；每个数据集内部的目标 UID 与身份组均不重复。** 检查覆盖 CUB-200（200）、FGVC Aircraft（100）、Flowers-102（102）、Oxford Pets（37）、Stanford Dogs（120）、Stanford Cars（196）。这验证类别映射和路径，不衡量图像识别准确率，也不替代所有继承断言的逐条语义审查。见 [验证报告](VALIDATION.json)。
 
-## 本次接通修复
+## 节点准入与结构
 
-相比上一快照，新接通 **260,509 个原有来源 UID**，另补入 8 个有来源证据的车型/年款配置节点；没有原已接通 UID 失去根路径。恢复 254,335 条经过范围核对的分类边，补齐 77 个分支入口。全图环路检查通过，无新增循环；原有 1 条循环分类记录、190 对历史隔离关系和 79 个 WordNet 裁剪节点继续隔离。
+有效分类图允许多父节点，是可以按树浏览的无环 DAG。`SAME_CONCEPT` 表示同身份来源记录，单独保存，不增加分类深度；属性、厂商和部件关系不作为 `IS_A` 父子关系。
 
-车辆修复撤回 488 条把车身配置等同于 EPA 技术记录的身份桥，以及 248 条不成立的变体父边。原有车型的独立分类路径保留。Stanford Cars 的 Virage 敞篷/双门与 Spyker C8 敞篷/双门共 4 个目标改接独立配置 UID；类别编号和标签保持原样，旧映射保存在 `target_revisions`。使用旧缓存时，应重新读取这 4 个映射（类别 10、11、179、180）。
-
-剩余 181,382 个来源 UID 分为：
+未进入 WordNet 导航的 181,382 个来源 UID 分为：
 
 | 处理 | UID 数 | 使用方式 |
 |---|---:|---|
-| 厂商、品牌、属性及明确非分类/旧容器来源记录 | 164,671 | 保留溯源，无需作为分类树节点；`tree_admission=NOT_REQUIRED` |
-| 尚缺入口、分类/身份证据冲突或历史隔离的记录 | 16,711 | 保留待审；`tree_admission=REVIEW` |
+| 厂商、品牌、属性及明确非分类/容器来源记录 | 164,671 | 用于溯源；`tree_admission=NOT_REQUIRED` |
+| 分类或身份证据尚未解决的记录 | 16,711 | 保留待审；`tree_admission=REVIEW` |
 
-仅带来源 `inconsistent` 标志的 1,270 个记录属于待审，不能仅凭此标志断言其无需分类。逐节点原因、可用示例及完整清单见 [连接诊断说明](docs/connectivity.md)。`path()` 与 CLI 的默认分类深度上限为 64。
+逐节点状态、示例与完整清单见 [连接诊断说明](docs/connectivity.md)。`path()` 和 CLI 默认分类深度上限为 64。
 
 ## 覆盖的领域
 
@@ -106,7 +104,7 @@ entity → … → motor_vehicle → car
 
 数据库保留 WordNet、Wikidata 和来源原生入口的不同 UID。接口返回的详细路径会显式标注中间的 `SAME_CONCEPT`，它表示身份对齐，不增加分类深度，也不会被当作 `IS_A`。
 
-汽车意义的 `car` 入口是 `wordnet31:02961779-n`。它下方不再要求沿用 WordNet 的全部旧细分：本次裁剪汽车旧细分 32 个、飞机旧细分 47 个，以接入的来源细化分支承担下位分类；仍被数据集目标或跨来源连接使用的 WordNet 节点及必要祖先继续保留。其他同名词义不受名字匹配影响。
+汽车意义的 `car` 入口是 `wordnet31:02961779-n`。它下方不再要求沿用 WordNet 的全部旧细分：默认导航裁剪汽车原细分 32 个、飞机原细分 47 个，以接入的来源细化分支承担下位分类；仍被数据集目标或跨来源连接使用的 WordNet 节点及必要祖先继续保留。其他同名词义不受名字匹配影响。
 
 默认导航只显示 WordNet 可达的有效节点。尚未接通的分支继续保存在同一个数据库，使用 `view="all"` 检查。图允许多父节点，是可按树浏览的 DAG；未强制把每个现实概念压成单父节点。具体存储和裁剪规则见 [single_database.md](docs/single_database.md)。
 
@@ -137,9 +135,9 @@ with FineAtlas("/path/to/fineatlas.sqlite", view="all") as tree:
 | `search(text, limit=20, domain=None)` | 当前视图内的别名全文查询 |
 | `neighbors(uid, direction="children", limit=20)` | 有效父/子节点及边证据；跨来源身份路径会标记 `via_alignment` |
 | `path(uid, anchors=None, max_depth=64)` | 默认返回 WordNet 根到目标的证据路径；未到达或超深度返回 `[]` |
-| `equivalents(uid)` | 当前快照同身份组中的其他来源 UID |
+| `equivalents(uid)` | 同身份组中的其他来源 UID |
 | `target(dataset, class_id)` | 六数据集类别到节点的可选映射 |
-| `stats()` | 快照版本、计数、裁剪和连接情况 |
+| `stats()` | 数据库计数、裁剪和连接情况 |
 
 分类边按 **child → parent** 保存。规范有效关系为 `IS_A`；历史来源关系保存在 `original_relation`。身份桥独立保存为 `SAME_CONCEPT`。`path()` 的深度限制计算分类步数，身份桥不增加分类深度。不要把属性、厂商、部件或同名标签直接作为分类关系。
 
@@ -158,6 +156,6 @@ fineatlas --data-dir /path/to/fineatlas.sqlite target cub200 1
 
 来源包括 WordNet、Wikidata、Open Tree of Life、World Flora Online、AviList、FoodOn、Getty AAT、MIMO、MeSH、FAA、vPIC、EPA 等。原始来源身份、证据及哈希保留在数据库中。来源及许可说明见 [DATA_SOURCES.md](DATA_SOURCES.md)。
 
-接口代码使用 MIT；第三方数据遵循各自来源许可，不因打包而获得统一的新数据许可。数据快照只读交付，请保留发布哈希，后续修改生成新版本。
+接口代码使用 MIT；第三方数据遵循各自来源许可，不因打包而获得统一的新数据许可。数据库通过只读接口查询，下载和安装时校验 SHA-256。
 
 FineAtlas is a local, multi-source fine-grained taxonomy. The latest release uses one SQLite database, with a WordNet-rooted navigation view and retained source fragments for inspection.
