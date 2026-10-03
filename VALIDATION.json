@@ -155,5 +155,20 @@
   "all_domain_entry_paths": 60,
   "limitations": "Path and scope checks do not measure image recognition accuracy or certify every inherited source assertion. 327 native task categories retain unresolved world-type mappings.",
   "bytes": 37492588544,
-  "database_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37"
+  "database_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37",
+  "compressed_stream_check": {
+    "status": "PASS",
+    "complete_decompressed_stream_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37",
+    "bytes": 37492588544
+  },
+  "installed_wheel_checks": {
+    "status": "PASS",
+    "interface_version": "1.4.0",
+    "verified_dataset_paths": 1495,
+    "domain_entry_paths": 60,
+    "native_catalog_paths": "PASS",
+    "instance_type_enumeration": "PASS",
+    "unicode_and_role_filters": "PASS",
+    "cli_commands": 5
+  }
 }
