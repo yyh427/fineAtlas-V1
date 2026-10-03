@@ -1,3 +1,5 @@
+> 本文记录历史 V33 的分层存储。最新版 V34 只需一个数据库，见 [单库结构](single_database.md)。
+
 # Storage and effective graph view
 
 `bundle.json` is the portable dependency manifest. Each `files` entry identifies

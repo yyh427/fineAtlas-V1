@@ -6,8 +6,9 @@ from .api import FineAtlas
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Query the complete FineAtlas-V1 graph (V33 snapshot).')
-    parser.add_argument('--data-dir', help='Directory containing bundle.json and data/')
+    parser = argparse.ArgumentParser(description='Query the FineAtlas graph (single SQLite or legacy bundle).')
+    parser.add_argument('--data-dir', help='SQLite file or downloaded data directory')
+    parser.add_argument('--view', choices=['wordnet','all'], help='Single-database navigation view (default: wordnet)')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('stats')
     p = sub.add_parser('node'); p.add_argument('uid')
@@ -18,7 +19,7 @@ def main() -> None:
     p = sub.add_parser('equivalents'); p.add_argument('uid')
     p = sub.add_parser('target'); p.add_argument('dataset'); p.add_argument('class_id')
     args = parser.parse_args()
-    with FineAtlas(args.data_dir) as graph:
+    with FineAtlas(args.data_dir, view=args.view) as graph:
         if args.command == 'stats': result = graph.stats()
         elif args.command == 'node': result = graph.node(args.uid)
         elif args.command == 'exact': result = graph.exact(args.text, args.limit)

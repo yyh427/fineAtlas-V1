@@ -1,0 +1,132 @@
+{
+  "schema": "FINEATLAS_SINGLE_DB_V1",
+  "graph_version": "V34",
+  "base_graph_version": "V33",
+  "release": "v1.1.0",
+  "root_uid": "wordnet31:00001740-n",
+  "sqlite_files": 1,
+  "input_sqlite_files": 31,
+  "counts": {
+    "nodes": 8917050,
+    "active_nodes": 8916971,
+    "wordnet_nodes": 7955564,
+    "edges": 9263674,
+    "active_edges": 8647831,
+    "aliases": 17105498,
+    "bridges": 4384367,
+    "active_bridges": 4384367,
+    "evidence": 23223,
+    "dataset_targets": 755,
+    "pruning": 79,
+    "unconnected_active_nodes": 961407
+  },
+  "edge_statuses": {
+    "ACTIVE": 8647831,
+    "AUXILIARY": 615325,
+    "PRUNED_WORDNET": 87,
+    "QUARANTINED": 190,
+    "QUARANTINED_CYCLE": 165,
+    "REVIEW": 76
+  },
+  "inherited_quarantine_pairs": 190,
+  "replacement_policy": {
+    "root_uid": "wordnet31:00001740-n",
+    "replacement_boundaries": [
+      {
+        "uid": "wordnet31:02961779-n",
+        "label": "car",
+        "minimum_native_children": 2
+      },
+      {
+        "uid": "wordnet31:02689427-n",
+        "label": "aircraft",
+        "minimum_native_children": 2
+      }
+    ],
+    "protect_dataset_targets": true,
+    "protect_cross_source_endpoints": true,
+    "unproven_label_alignments": "REVIEW",
+    "reviewed_connections": [
+      {
+        "child_uid": "wikidata:Q146",
+        "parent_uid": "wordnet31:02124460-n",
+        "relation": "SAME_CONCEPT",
+        "decision": "PASS",
+        "source_proof": {
+          "kind": "EXPLICIT_WORDNET31_ID_AND_DEFINITIONS",
+          "entity_id": "Q146",
+          "property": "P8814",
+          "value": "02124460-n",
+          "claim_id": "Q146$A5F9FD17-3F1F-4E8D-818A-A6BCDE88C107",
+          "lastrevid": 2544153094,
+          "source_uri": "https://www.wikidata.org/wiki/Q146",
+          "source_payload_sha256": "0c9a9d517ab117dfbe5ccc592213e1a674afdde5710eb3053b7d4306adcb48e0",
+          "retrieved_utc": "2026-10-03T11:15:40.996557+00:00"
+        },
+        "semantic_review": {
+          "verdict": "PASS",
+          "child_definition": "small domesticated carnivorous mammal",
+          "parent_definition": "any domesticated member of the genus Felis",
+          "basis": "The explicit WordNet 3.1 identifier selects domestic_cat, and both endpoint definitions denote domesticated Felis rather than the broader cat family or unrelated cat homonyms."
+        }
+      },
+      {
+        "child_uid": "foodon:FOODON_00001002",
+        "parent_uid": "wordnet31:07581905-n",
+        "relation": "IS_A",
+        "decision": "PASS",
+        "source_proof": {
+          "kind": "FROZEN_OWL_DEFINITION_ENTAILMENT",
+          "source_uri": "http://purl.obolibrary.org/obo/FOODON_00001002",
+          "source_sha256": "b897bf64c1b265c422db9ee01e1235c10c0b809e7f02326ef810a52068347edf",
+          "definition": "Food material for humans and animals which is processed with the intention that it be consumable as a whole or added to other food products.",
+          "retrieved_utc": "2026-10-03T11:15:40.996557+00:00"
+        },
+        "semantic_review": {
+          "verdict": "PASS",
+          "child_definition": "Food material for humans and animals which is processed with the intention that it be consumable as a whole or added to other food products.",
+          "parent_definition": "a substance that can be used or prepared for use as food",
+          "basis": "FoodOn requires food material prepared as consumable food or an ingredient. This entails the WordNet foodstuff condition of a substance used or prepared for use as food. The processing restriction is narrower, so the relation is IS_A and not SAME_CONCEPT."
+        }
+      }
+    ]
+  },
+  "replacement_results": [
+    {
+      "boundary_uid": "wordnet31:02961779-n",
+      "label": "car",
+      "status": "PASS",
+      "native_children": 2841,
+      "wordnet_descendants": 40,
+      "protected_descendants": 8,
+      "pruned_nodes": 32
+    },
+    {
+      "boundary_uid": "wordnet31:02689427-n",
+      "label": "aircraft",
+      "status": "PASS",
+      "native_children": 96990,
+      "wordnet_descendants": 60,
+      "protected_descendants": 13,
+      "pruned_nodes": 47
+    }
+  ],
+  "identity_components": 6028676,
+  "root_component": 13936,
+  "wordnet_reachable_components": 5072414,
+  "cycle_quarantined_records": 165,
+  "cycle_check": "PASS",
+  "integrity_check": "PASS",
+  "bytes": 28397703168,
+  "sha256": "1c6570691e7429a18f952211c3478c6fbfa43d347438bb4826dc4ce2582b0232",
+  "reviewed_new_connections": 2,
+  "hierarchy_priorities": {
+    "default": 50,
+    "sources": {
+      "fineatlas_v3": 0
+    },
+    "relations": {
+      "WORDNET_IS_A": 100
+    }
+  }
+}

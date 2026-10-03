@@ -25,7 +25,16 @@ class FineAtlas:
     Instances own SQLite connections: use one instance per thread/process.
     """
 
-    def __init__(self, data_dir: str | Path | None = None):
+    def __new__(cls, data_dir: str | Path | None = None, *, view: str | None = None):
+        candidate = Path(data_dir or os.environ.get('FINEATLAS_DATA_DIR') or Path.cwd()).resolve()
+        if candidate.is_file() or (candidate / 'fineatlas.sqlite').is_file():
+            from .single import SingleAtlas
+            return SingleAtlas(candidate, view=view or 'wordnet')
+        if view is not None:
+            raise ValueError('view is available for the single-database release')
+        return super().__new__(cls)
+
+    def __init__(self, data_dir: str | Path | None = None, *, view: str | None = None):
         self.data_dir = Path(data_dir or os.environ.get('FINEATLAS_DATA_DIR') or Path.cwd()).resolve()
         manifest_path = self.data_dir / 'bundle.json'
         if not manifest_path.is_file():

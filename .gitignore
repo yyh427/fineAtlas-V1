@@ -8,3 +8,9 @@ __pycache__/
 /dist/
 *.sqlite-wal
 *.sqlite-shm
+
+*.sqlite
+*.sqlite-journal
+*.building.sqlite
+*.zst
+*.part-*
