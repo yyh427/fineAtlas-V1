@@ -1,14 +1,14 @@
-# fineAtlas-V1
+# FineAtlas V1
 
 FineAtlas 是可在本地使用的细粒度分类图：以 WordNet 的通用概念为入口，向下连接物种、品种、车型、型号、器件类型及具体菜品。
 
-**最新版为公开发行 v1.3.0 / 内部 V36（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** V36 补齐有来源证据的种下分类和专业分支，修正车型车身配置的身份误合并，并明确区分类别与溯源辅助记录。来源、别名、证据和历史隔离记录继续保留。
+**当前公开版本为 FineAtlas V1（2026-10-03）：运行时只需要一个 `fineatlas.sqlite`。** FineAtlas V1 补齐有来源证据的种下分类和专业分支，修正车型车身配置的身份误合并，并明确区分类别与溯源辅助记录。来源、别名、证据和历史隔离记录继续保留。
 
 Python 3.10+，查询仅使用标准库和 SQLite，无需 GPU、模型权重、API key 或数据库服务器。
 
 ## 下载与使用
 
-完整数据库在 [Release v1.3.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.3.0)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
+**本项目已公开，任何人都可以通过链接查看仓库、下载数据库。** 完整数据库在 [FineAtlas V1 下载页](https://github.com/yyh427/fineAtlas-V1/releases/latest)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
 
 ```bash
 git clone https://github.com/yyh427/fineAtlas-V1.git
@@ -27,19 +27,19 @@ python3 scripts/check_installation.py --data-dir /path/to/fineatlas-data
 
 下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.64 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
 
-手动安装时，下载所有 `fineatlas-v1-v36-single.sqlite.zst.part-*` 文件及 `SHA256SUMS-V36`：
+手动安装时，从当前发布页下载全部 `*.sqlite.zst.part-*` 分片和 `SHA256SUMS-*` 校验文件，放到同一目录：
 
 ```bash
-sha256sum -c SHA256SUMS-V36
-cat fineatlas-v1-v36-single.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
+sha256sum -c SHA256SUMS-*
+cat *.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
 python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
 ```
 
-也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。[V35](docs/legacy-v35.md)、[V34](docs/legacy-v34.md) 单库版和原 V33 的 31 文件版本仍可使用，见 [历史版本说明](docs/legacy-v33.md) 和 [v1.0.0](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.0.0)。
+也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。旧快照继续保留，见 [历史版本说明](docs/legacy-v35.md)。
 
 ## 节点数量与连接情况
 
-| 项目 | V36 |
+| 项目 | FineAtlas V1 |
 |---|---:|
 | 全部来源 UID 节点 | 8,917,058 |
 | 当前保留节点 | 8,916,979 |
@@ -52,11 +52,11 @@ python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
 
 UID 数不是去重后的现实概念数，不同来源可能分别表示同一概念。有效边数包含未接通分支和来源重复证据，也不是默认 WordNet 视图的独立概念边数。完整计数、哈希和裁剪结果见 [SINGLE_DATABASE.json](SINGLE_DATABASE.json)，按来源命名空间的连接情况见 [coverage.csv](docs/coverage.csv)。
 
-**六个数据集共 755 个类别均通过节点身份和 WordNet 根路径检查；每个数据集内部的目标 UID 与身份组均不重复。V33 新增 59 个节点也全部保留并通过路径检查。** 检查覆盖 CUB-200（200）、FGVC Aircraft（100）、Flowers-102（102）、Oxford Pets（37）、Stanford Dogs（120）、Stanford Cars（196）。这验证类别映射和路径，不衡量图像识别准确率，也不替代所有继承断言的逐条语义审查。见 [VALIDATION_V36.json](VALIDATION_V36.json)。
+**六个数据集共 755 个类别均通过节点身份和 WordNet 根路径检查；每个数据集内部的目标 UID 与身份组均不重复。此前新增的 59 个节点也全部保留并通过路径检查。** 检查覆盖 CUB-200（200）、FGVC Aircraft（100）、Flowers-102（102）、Oxford Pets（37）、Stanford Dogs（120）、Stanford Cars（196）。这验证类别映射和路径，不衡量图像识别准确率，也不替代所有继承断言的逐条语义审查。见 [验证报告](VALIDATION_V36.json)。
 
 ## 本次接通修复
 
-相比 V35，新接通 **260,509 个原有来源 UID**，另补入 8 个有来源证据的车型/年款配置节点；没有原已接通 UID 失去根路径。恢复 254,335 条经过范围核对的分类边，补齐 77 个分支入口。全图环路检查通过，无新增循环；原有 1 条循环分类记录、190 对历史隔离关系和 79 个 WordNet 裁剪节点继续隔离。
+相比上一快照，新接通 **260,509 个原有来源 UID**，另补入 8 个有来源证据的车型/年款配置节点；没有原已接通 UID 失去根路径。恢复 254,335 条经过范围核对的分类边，补齐 77 个分支入口。全图环路检查通过，无新增循环；原有 1 条循环分类记录、190 对历史隔离关系和 79 个 WordNet 裁剪节点继续隔离。
 
 车辆修复撤回 488 条把车身配置等同于 EPA 技术记录的身份桥，以及 248 条不成立的变体父边。原有车型的独立分类路径保留。Stanford Cars 的 Virage 敞篷/双门与 Spyker C8 敞篷/双门共 4 个目标改接独立配置 UID；类别编号和标签保持原样，旧映射保存在 `target_revisions`。使用旧缓存时，应重新读取这 4 个映射（类别 10、11、179、180）。
 

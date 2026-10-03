@@ -1,4 +1,4 @@
-> 本文记录历史 V33 的分层存储。最新版 V36 只需一个数据库，见 [单库结构](single_database.md)。
+> 本文记录历史 V33 的分层存储。最新版 FineAtlas V1 只需一个数据库，见 [单库结构](single_database.md)。
 
 # Storage and effective graph view
 

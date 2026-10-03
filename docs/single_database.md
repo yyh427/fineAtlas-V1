@@ -1,6 +1,6 @@
 # 单库结构与 WordNet 导航
 
-V36 沿用 V34 对 V33 的 31 个 SQLite 依赖的合并结果，运行时使用 `fineatlas.sqlite`。运行时只有这个文件；`bundle.json` 仅用于历史 V33 版本。数据库按只读快照交付，身份对齐与分类边分开保存。
+FineAtlas V1 沿用 V34 对 V33 的 31 个 SQLite 依赖的合并结果，运行时使用 `fineatlas.sqlite`。运行时只有这个文件；`bundle.json` 仅用于历史 V33 版本。数据库按只读快照交付，身份对齐与分类边分开保存。
 
 | 表或视图 | 用途 |
 |---|---|
@@ -51,6 +51,6 @@ with sqlite3.connect(path.as_uri() + "?mode=ro&immutable=1", uri=True) as db:
 
 使用 `edges` 全表时必须读取 `status`；辅助、待审、历史隔离、环路隔离和裁剪记录均不属于有效分类边。来源记录含原始证据和历史路径元数据，这些路径不构成运行依赖。
 
-V36 的来源范围审核与诊断接口见 [connectivity.md](connectivity.md)。
+FineAtlas V1 的来源范围审核与诊断接口见 [connectivity.md](connectivity.md)。
 
-V36 恢复通过核验的种下分类和分面子类。厂商/品牌/属性以及来源标记的非分类、旧容器记录留在库内；`node_dispositions.tree_admission='NOT_REQUIRED'` 表示其用途无需分类树挂接，`REVIEW` 表示仍待补证。两类都不会进入默认 WordNet 导航。
+FineAtlas V1 恢复通过核验的种下分类和分面子类。厂商/品牌/属性以及来源标记的非分类、旧容器记录留在库内；`node_dispositions.tree_admission='NOT_REQUIRED'` 表示其用途无需分类树挂接，`REVIEW` 表示仍待补证。两类都不会进入默认 WordNet 导航。
