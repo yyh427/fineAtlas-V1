@@ -1,0 +1,10 @@
+/data/
+/downloads/
+/.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+/build/
+/dist/
+*.sqlite-wal
+*.sqlite-shm

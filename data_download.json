@@ -1,0 +1,16 @@
+{
+  "release": "v1.0.0",
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.0.0",
+  "assets": [
+    {
+      "name": "fineatlas-v1-v33-data.tar.zst.part-000",
+      "bytes": 1073741824,
+      "sha256": "f545dff23fb987eab27eb20c3ef7a57f29fa096a48255afcf7c0de0928c982d5"
+    },
+    {
+      "name": "fineatlas-v1-v33-data.tar.zst.part-001",
+      "bytes": 757227764,
+      "sha256": "da812270c5f0f65bb8d532a11321ee7c29350e36d60487704175b3303c86ac40"
+    }
+  ]
+}
