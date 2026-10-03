@@ -4,298 +4,486 @@
   "root_uid": "wordnet31:00001740-n",
   "sqlite_files": 1,
   "counts": {
-    "nodes": 8917058,
-    "active_nodes": 8916979,
-    "wordnet_nodes": 8735597,
-    "edges": 9295662,
-    "active_edges": 8817082,
-    "aliases": 17105509,
+    "nodes": 12328610,
+    "active_nodes": 12328531,
+    "wordnet_nodes": 8741157,
+    "edges": 9317653,
+    "active_edges": 8828473,
+    "aliases": 23349238,
     "bridges": 4384367,
-    "active_bridges": 4379256,
-    "evidence": 23339,
-    "dataset_targets": 755,
+    "active_bridges": 4370246,
+    "evidence": 62161,
+    "dataset_targets": 1822,
     "pruning": 79,
-    "unconnected_active_nodes": 181382
+    "typed_relations": 6787359,
+    "connected_entities": 3398389,
+    "unconnected_active_nodes": 188985
   },
+  "identity_components": 9453978,
+  "root_component": 13936,
+  "wordnet_reachable_components": 5866569,
+  "cycle_quarantined_records": 0,
+  "cycle_check": "PASS",
   "edge_statuses": {
-    "ACTIVE": 8817082,
-    "AUXILIARY": 332918,
+    "ACTIVE": 8828473,
+    "AUXILIARY": 341506,
     "PRUNED_WORDNET": 87,
     "QUARANTINED": 190,
-    "QUARANTINED_CYCLE": 1,
-    "REVIEW": 145384
+    "QUARANTINED_CYCLE": 6,
+    "REVIEW": 147391
   },
   "bridge_statuses": {
-    "ACTIVE": 4379256,
-    "REVIEW": 5111
+    "ACTIVE": 4370246,
+    "QUARANTINED": 6,
+    "REVIEW": 14115
   },
-  "identity_components": 6033681,
-  "wordnet_reachable_components": 5852220,
-  "cycle_check": "PASS",
-  "integrity_check": "PASS",
-  "bytes": 28636983296,
-  "sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
+  "typed_statuses": [
+    {
+      "relation": "ATTRIBUTE_KIND_OF",
+      "status": "ACTIVE",
+      "records": 47
+    },
+    {
+      "relation": "DEPICTS_TYPE",
+      "status": "ACTIVE",
+      "records": 592
+    },
+    {
+      "relation": "INSTANCE_OF",
+      "status": "ACTIVE",
+      "records": 3398629
+    },
+    {
+      "relation": "INSTANCE_OF",
+      "status": "REVIEW",
+      "records": 62
+    },
+    {
+      "relation": "LOCATED_IN",
+      "status": "ACTIVE",
+      "records": 3388029
+    }
+  ],
   "coverage_by_namespace": [
     {
       "namespace": "aat",
-      "total": 3630,
-      "wordnet_reachable": 3630,
-      "unconnected": 0
+      "nodes": 3630,
+      "classification_reachable": 3630,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "apple-family",
+      "nodes": 6,
+      "classification_reachable": 6,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "apple-model",
+      "nodes": 257,
+      "classification_reachable": 257,
+      "typed_reachable": 0
     },
     {
       "namespace": "avilist",
-      "total": 33684,
-      "wordnet_reachable": 33684,
-      "unconnected": 0
+      "nodes": 33684,
+      "classification_reachable": 33684,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "caltech101-category",
+      "nodes": 102,
+      "classification_reachable": 0,
+      "typed_reachable": 54
+    },
+    {
+      "namespace": "canon",
+      "nodes": 1449,
+      "classification_reachable": 1449,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "canon-family",
+      "nodes": 19,
+      "classification_reachable": 19,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "dtd-attribute",
+      "nodes": 47,
+      "classification_reachable": 0,
+      "typed_reachable": 47
     },
     {
       "namespace": "epa",
-      "total": 50242,
-      "wordnet_reachable": 50242,
-      "unconnected": 0
+      "nodes": 50242,
+      "classification_reachable": 50242,
+      "typed_reachable": 0
     },
     {
       "namespace": "epa-attribute",
-      "total": 57,
-      "wordnet_reachable": 0,
-      "unconnected": 57
+      "nodes": 57,
+      "classification_reachable": 0,
+      "typed_reachable": 0
     },
     {
       "namespace": "epa-make",
-      "total": 145,
-      "wordnet_reachable": 0,
-      "unconnected": 145
+      "nodes": 145,
+      "classification_reachable": 0,
+      "typed_reachable": 0
     },
     {
       "namespace": "epa-model",
-      "total": 1559,
-      "wordnet_reachable": 1559,
-      "unconnected": 0
+      "nodes": 1559,
+      "classification_reachable": 1559,
+      "typed_reachable": 0
     },
     {
       "namespace": "epa-variant",
-      "total": 5664,
-      "wordnet_reachable": 5664,
-      "unconnected": 0
+      "nodes": 5664,
+      "classification_reachable": 5664,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "eurosat-category",
+      "nodes": 10,
+      "classification_reachable": 0,
+      "typed_reachable": 6
     },
     {
       "namespace": "faa-aircraft",
-      "total": 94043,
-      "wordnet_reachable": 94043,
-      "unconnected": 0
+      "nodes": 94043,
+      "classification_reachable": 94043,
+      "typed_reachable": 0
     },
     {
       "namespace": "faa-mfr",
-      "total": 68538,
-      "wordnet_reachable": 0,
-      "unconnected": 68538
+      "nodes": 68538,
+      "classification_reachable": 0,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "food101-category",
+      "nodes": 101,
+      "classification_reachable": 101,
+      "typed_reachable": 0
     },
     {
       "namespace": "foodon",
-      "total": 12342,
-      "wordnet_reachable": 12296,
-      "unconnected": 46
+      "nodes": 12342,
+      "classification_reachable": 12296,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "geonames",
+      "nodes": 3390047,
+      "classification_reachable": 0,
+      "typed_reachable": 3390047
+    },
+    {
+      "namespace": "geonames-feature",
+      "nodes": 65,
+      "classification_reachable": 65,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "ima-mineral",
+      "nodes": 6239,
+      "classification_reachable": 6143,
+      "typed_reachable": 0
     },
     {
       "namespace": "manufacturer-model",
-      "total": 4,
-      "wordnet_reachable": 4,
-      "unconnected": 0
+      "nodes": 4,
+      "classification_reachable": 4,
+      "typed_reachable": 0
     },
     {
       "namespace": "mesh",
-      "total": 122,
-      "wordnet_reachable": 0,
-      "unconnected": 122
+      "nodes": 122,
+      "classification_reachable": 0,
+      "typed_reachable": 0
     },
     {
       "namespace": "mimo-hs",
-      "total": 641,
-      "wordnet_reachable": 641,
-      "unconnected": 0
+      "nodes": 641,
+      "classification_reachable": 641,
+      "typed_reachable": 0
     },
     {
       "namespace": "mimo-keyword",
-      "total": 2572,
-      "wordnet_reachable": 2500,
-      "unconnected": 72
+      "nodes": 2572,
+      "classification_reachable": 2500,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "nvidia-geforce-card",
+      "nodes": 38,
+      "classification_reachable": 38,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "nvidia-geforce-family",
+      "nodes": 5,
+      "classification_reachable": 5,
+      "typed_reachable": 0
     },
     {
       "namespace": "ott",
-      "total": 4529570,
-      "wordnet_reachable": 4444068,
-      "unconnected": 85502
+      "nodes": 4529570,
+      "classification_reachable": 4444068,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "places365-category",
+      "nodes": 365,
+      "classification_reachable": 0,
+      "typed_reachable": 242
+    },
+    {
+      "namespace": "resisc45-category",
+      "nodes": 45,
+      "classification_reachable": 0,
+      "typed_reachable": 30
+    },
+    {
+      "namespace": "samsung-ssd-line",
+      "nodes": 34,
+      "classification_reachable": 34,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "sun397-category",
+      "nodes": 397,
+      "classification_reachable": 0,
+      "typed_reachable": 260
     },
     {
       "namespace": "v26-ads-dahlia-color",
-      "total": 2,
-      "wordnet_reachable": 2,
-      "unconnected": 0
+      "nodes": 2,
+      "classification_reachable": 2,
+      "typed_reachable": 0
     },
     {
       "namespace": "v26-authority-car-model",
-      "total": 11,
-      "wordnet_reachable": 11,
-      "unconnected": 0
+      "nodes": 11,
+      "classification_reachable": 11,
+      "typed_reachable": 0
     },
     {
       "namespace": "v26-car",
-      "total": 169,
-      "wordnet_reachable": 169,
-      "unconnected": 0
+      "nodes": 169,
+      "classification_reachable": 169,
+      "typed_reachable": 0
     },
     {
       "namespace": "v26-gbif",
-      "total": 2,
-      "wordnet_reachable": 2,
-      "unconnected": 0
+      "nodes": 2,
+      "classification_reachable": 2,
+      "typed_reachable": 0
     },
     {
       "namespace": "v26-nhtsa-model",
-      "total": 28,
-      "wordnet_reachable": 28,
-      "unconnected": 0
+      "nodes": 28,
+      "classification_reachable": 28,
+      "typed_reachable": 0
     },
     {
       "namespace": "v26-wikidata",
-      "total": 2,
-      "wordnet_reachable": 2,
-      "unconnected": 0
+      "nodes": 2,
+      "classification_reachable": 2,
+      "typed_reachable": 0
     },
     {
       "namespace": "v4root",
-      "total": 5,
-      "wordnet_reachable": 4,
-      "unconnected": 1
+      "nodes": 5,
+      "classification_reachable": 4,
+      "typed_reachable": 0
     },
     {
       "namespace": "vehicle-configuration",
-      "total": 4,
-      "wordnet_reachable": 4,
-      "unconnected": 0
+      "nodes": 4,
+      "classification_reachable": 4,
+      "typed_reachable": 0
     },
     {
       "namespace": "vpic-make",
-      "total": 12103,
-      "wordnet_reachable": 0,
-      "unconnected": 12103
+      "nodes": 12103,
+      "classification_reachable": 0,
+      "typed_reachable": 0
     },
     {
       "namespace": "vpic-model",
-      "total": 31869,
-      "wordnet_reachable": 31869,
-      "unconnected": 0
+      "nodes": 31869,
+      "classification_reachable": 31869,
+      "typed_reachable": 0
     },
     {
       "namespace": "wfo",
-      "total": 454688,
-      "wordnet_reachable": 454688,
-      "unconnected": 0
+      "nodes": 454688,
+      "classification_reachable": 454688,
+      "typed_reachable": 0
     },
     {
       "namespace": "wikidata",
-      "total": 3484448,
-      "wordnet_reachable": 3469652,
-      "unconnected": 14796
+      "nodes": 3496764,
+      "classification_reachable": 3475274,
+      "typed_reachable": 24
     },
     {
       "namespace": "wikidata-v4",
-      "total": 48722,
-      "wordnet_reachable": 48722,
-      "unconnected": 0
+      "nodes": 48722,
+      "classification_reachable": 48285,
+      "typed_reachable": 0
+    },
+    {
+      "namespace": "wmo-cloud",
+      "nodes": 10,
+      "classification_reachable": 10,
+      "typed_reachable": 0
     },
     {
       "namespace": "wordnet31",
-      "total": 82113,
-      "wordnet_reachable": 82113,
-      "unconnected": 0
+      "nodes": 82192,
+      "classification_reachable": 74362,
+      "typed_reachable": 7679
     }
   ],
-  "replacement_results": [
+  "datasets": [
     {
-      "boundary_uid": "wordnet31:02961779-n",
-      "label": "car",
-      "status": "PASS",
-      "native_children": 2841,
-      "wordnet_descendants": 40,
-      "protected_descendants": 8,
-      "pruned_nodes": 32
+      "dataset": "caltech101",
+      "labels": 102,
+      "verified": 54,
+      "review": 48,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 54,
+      "unique_verified_uids": 54,
+      "unique_verified_components": 54
     },
     {
-      "boundary_uid": "wordnet31:02689427-n",
-      "label": "aircraft",
-      "status": "PASS",
-      "native_children": 96990,
-      "wordnet_descendants": 60,
-      "protected_descendants": 13,
-      "pruned_nodes": 47
+      "dataset": "cub200",
+      "labels": 200,
+      "verified": 200,
+      "review": 0,
+      "classification_connected": 200,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 200,
+      "unique_verified_components": 200
+    },
+    {
+      "dataset": "dtd",
+      "labels": 47,
+      "verified": 47,
+      "review": 0,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 47,
+      "unique_verified_uids": 47,
+      "unique_verified_components": 47
+    },
+    {
+      "dataset": "eurosat",
+      "labels": 10,
+      "verified": 6,
+      "review": 4,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 6,
+      "unique_verified_uids": 6,
+      "unique_verified_components": 6
+    },
+    {
+      "dataset": "fgvc_aircraft",
+      "labels": 100,
+      "verified": 100,
+      "review": 0,
+      "classification_connected": 100,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 100,
+      "unique_verified_components": 100
+    },
+    {
+      "dataset": "flowers102",
+      "labels": 102,
+      "verified": 102,
+      "review": 0,
+      "classification_connected": 102,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 102,
+      "unique_verified_components": 102
+    },
+    {
+      "dataset": "food101",
+      "labels": 101,
+      "verified": 101,
+      "review": 0,
+      "classification_connected": 101,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 101,
+      "unique_verified_components": 101
+    },
+    {
+      "dataset": "pets37",
+      "labels": 37,
+      "verified": 37,
+      "review": 0,
+      "classification_connected": 37,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 37,
+      "unique_verified_components": 37
+    },
+    {
+      "dataset": "places365",
+      "labels": 365,
+      "verified": 242,
+      "review": 123,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 242,
+      "unique_verified_uids": 242,
+      "unique_verified_components": 242
+    },
+    {
+      "dataset": "resisc45",
+      "labels": 45,
+      "verified": 30,
+      "review": 15,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 30,
+      "unique_verified_uids": 30,
+      "unique_verified_components": 30
+    },
+    {
+      "dataset": "stanford_cars",
+      "labels": 196,
+      "verified": 196,
+      "review": 0,
+      "classification_connected": 196,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 196,
+      "unique_verified_components": 196
+    },
+    {
+      "dataset": "stanford_dogs",
+      "labels": 120,
+      "verified": 120,
+      "review": 0,
+      "classification_connected": 120,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 120,
+      "unique_verified_components": 120
+    },
+    {
+      "dataset": "sun397",
+      "labels": 397,
+      "verified": 260,
+      "review": 137,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 260,
+      "unique_verified_uids": 260,
+      "unique_verified_components": 260
     }
   ],
-  "connectivity_diagnosis": {
-    "graph_version": "V36",
-    "unconnected_nodes": 181382,
-    "reasons": {
-      "MISSING_ROOT_CONNECTION": 4717,
-      "CLASSIFICATION_REVIEW": 10467,
-      "INSUFFICIENT_HIERARCHY_EVIDENCE": 28,
-      "IDENTITY_REVIEW": 47,
-      "SOURCE_NON_TAXON_OR_CONTAINER": 83828,
-      "SOURCE_SCOPE_CONFLICT": 1270,
-      "AUXILIARY_RECORD": 80843,
-      "HISTORICAL_QUARANTINE": 182
-    },
-    "record_roles": {
-      "CLASSIFICATION_BRANCH": 4717,
-      "CLASSIFICATION_CANDIDATE": 11966,
-      "UNRESOLVED_SOURCE_RECORD": 28,
-      "SOURCE_RECORD_ONLY": 83828,
-      "METADATA_ONLY": 80843
-    },
-    "pending_review_uids": 16711,
-    "retained_non_classification_uids": 164671,
-    "by_namespace": {
-      "wikidata": {
-        "MISSING_ROOT_CONNECTION": 4268,
-        "CLASSIFICATION_REVIEW": 10459,
-        "INSUFFICIENT_HIERARCHY_EVIDENCE": 22,
-        "IDENTITY_REVIEW": 47
-      },
-      "ott": {
-        "MISSING_ROOT_CONNECTION": 396,
-        "SOURCE_NON_TAXON_OR_CONTAINER": 83828,
-        "SOURCE_SCOPE_CONFLICT": 1270,
-        "CLASSIFICATION_REVIEW": 8
-      },
-      "epa-attribute": {
-        "AUXILIARY_RECORD": 57
-      },
-      "faa-mfr": {
-        "AUXILIARY_RECORD": 68538
-      },
-      "epa-make": {
-        "AUXILIARY_RECORD": 145
-      },
-      "v4root": {
-        "INSUFFICIENT_HIERARCHY_EVIDENCE": 1
-      },
-      "vpic-make": {
-        "AUXILIARY_RECORD": 12103
-      },
-      "foodon": {
-        "MISSING_ROOT_CONNECTION": 45,
-        "HISTORICAL_QUARANTINE": 1
-      },
-      "mimo-keyword": {
-        "MISSING_ROOT_CONNECTION": 8,
-        "HISTORICAL_QUARANTINE": 63,
-        "INSUFFICIENT_HIERARCHY_EVIDENCE": 1
-      },
-      "mesh": {
-        "HISTORICAL_QUARANTINE": 118,
-        "INSUFFICIENT_HIERARCHY_EVIDENCE": 4
-      }
-    },
-    "queue_file": "unconnected_nodes.csv.gz",
-    "meaning": "Metadata and source non-taxa are retained without requiring tree attachment. All unresolved classifications remain REVIEW; no coverage score is manufactured by hiding them."
-  }
+  "same_name_policy": "Distinct source UIDs; label equality never grants SAME_CONCEPT",
+  "classification_contract": "ACTIVE IS_A and ACTIVE SAME_CONCEPT define the class DAG; INSTANCE_OF, ATTRIBUTE_KIND_OF, DEPICTS_TYPE and LOCATED_IN are separately typed.",
+  "integrity_check": "PASS",
+  "bytes": 37492588544,
+  "database_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37",
+  "sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37"
 }

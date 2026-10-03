@@ -5,8 +5,13 @@ import re
 
 
 def norm(text: str) -> str:
-    return " ".join(re.sub(r"[^a-z0-9]+", " ", text.lower()).split())
+    return " ".join(re.sub(r"[\W_]+", " ", text.lower()).split())
 
 
 def tokens(text: str) -> list[str]:
     return [word for word in norm(text).split() if len(word) > 2]
+
+
+def legacy_norm(text: str) -> str:
+    """Retrieve aliases normalized before Unicode support was added."""
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", text.lower()).split())

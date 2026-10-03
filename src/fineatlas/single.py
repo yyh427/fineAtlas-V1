@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import sqlite3
 
-from ._text import norm, tokens
+from ._text import norm, legacy_norm, tokens
 
 
 class SingleAtlas:
@@ -31,6 +31,7 @@ class SingleAtlas:
             self.con.close()
             raise ValueError('Unsupported single-database schema')
         self.roots = {'entity': self.metadata['root_uid']}
+        self._tables = {r[0] for r in self.con.execute("SELECT name FROM sqlite_master WHERE type IN ('table','view')")}
         self._closed = False
 
     @staticmethod
@@ -45,11 +46,33 @@ class SingleAtlas:
         result['data'] = json.loads(result.get('data') or '{}')
         result['edge'] = edge or {}
         result['aliases'] = ''
+        profile = self.con.execute('SELECT * FROM node_profiles WHERE uid=?', (result['uid'],)).fetchone() if 'node_profiles' in self._tables else None
+        if profile:
+            result['source_domain'] = result['domain']
+            result['domain'] = profile['domain']
+            result['domains'] = json.dumps([profile['domain']])
+            result['node_kind'] = profile['node_kind']
+            result['attributes'] = json.loads(profile['attributes'])
+            result['identity_evidence_id'] = profile['evidence_id']
+        else:
+            rank = (result.get('rank') or '').lower()
+            result['node_kind'] = ('ORGANIZATION' if rank in ('manufacturer', 'make') else
+                                   'ATTRIBUTE' if rank == 'attribute' else
+                                   'MODEL' if rank in ('model', 'product_model', 'aircraft_model', 'vehicle_model') else
+                                   'CONFIGURATION' if rank in ('configuration', 'model_year') else
+                                   'UNKNOWN' if rank in ('type_or_product_model', 'unknown') else 'CLASS')
+            result['attributes'] = {}
+
         return result
 
     def node(self, uid: str) -> dict | None:
-        return self._node(self.con.execute('''SELECT n.*,c.wordnet_reachable,c.depth AS wordnet_depth
+        result = self._node(self.con.execute('''SELECT n.*,c.wordnet_reachable,c.depth AS wordnet_depth
             FROM nodes n JOIN components c ON c.id=n.component_id WHERE n.uid=?''', (uid,)).fetchone())
+        if result and 'entity_connections' in self._tables:
+            typed = self.con.execute('SELECT depth FROM entity_connections WHERE uid=?', (uid,)).fetchone()
+            result['entity_reachable'] = bool(typed)
+            result['typed_depth'] = typed[0] if typed else None
+        return result
 
     def connection_status(self, uid: str) -> dict | None:
         """Explain the structural connection state without inventing a parent."""
@@ -60,7 +83,17 @@ class SingleAtlas:
                   'wordnet_depth': node['wordnet_depth']}
         if node['visibility'] != 'ACTIVE':
             return {**result, 'status': 'ARCHIVED', 'reason': node['visibility']}
+        if node['node_kind'] == 'ORGANIZATION':
+            return {**result, 'status': 'AUXILIARY_RECORD', 'record_role': 'ORGANIZATION',
+                    'tree_admission': 'NOT_REQUIRED', 'reason': 'Source organization record'}
+        if node['node_kind'] in ('INSTANCE', 'ATTRIBUTE', 'DATASET_CATEGORY'):
+            row = self.con.execute('SELECT * FROM entity_connections WHERE uid=?', (uid,)).fetchone() if 'entity_connections' in self._tables else None
+            return {**result, 'status': node['node_kind'] + ('_CONNECTED' if row and row['wordnet_reachable'] else '_REVIEW'),
+                    'record_role': node['node_kind'], 'tree_admission': node['node_kind'] + '_ONLY',
+                    'reason': 'Typed source relation connects a referent, descriptor or task category to its reviewed type; excluded from the class DAG',
+                    'entity_reachable': bool(row and row['wordnet_reachable'])}
         if node['wordnet_reachable']:
+
             return {**result, 'status': 'CONNECTED', 'record_role': 'CLASSIFICATION_NODE',
                     'tree_admission': 'ACTIVE', 'reason': 'Validated path to the WordNet root'}
         if self.con.execute("SELECT 1 FROM sqlite_master WHERE name='node_dispositions'").fetchone():
@@ -91,28 +124,44 @@ class SingleAtlas:
     def _visible_sql(self, alias: str) -> str:
         expression = f"{alias}.visibility='ACTIVE'"
         if self.view == 'wordnet':
-            expression += f' AND {alias}.component_id IN (SELECT id FROM components WHERE wordnet_reachable=1)'
+            connected = f'{alias}.component_id IN (SELECT id FROM components WHERE wordnet_reachable=1)'
+            if 'entity_connections' in self._tables:
+                connected += f' OR {alias}.uid IN (SELECT uid FROM entity_connections WHERE wordnet_reachable=1)'
+            expression += ' AND (' + connected + ')'
+
         return expression
 
-    def exact(self, text: str, limit: int = 20) -> list[dict]:
+    def _kind_sql(self, alias: str) -> str:
+        legacy = f"CASE {alias}.rank WHEN 'manufacturer' THEN 'ORGANIZATION' WHEN 'make' THEN 'ORGANIZATION' WHEN 'attribute' THEN 'ATTRIBUTE' WHEN 'instance' THEN 'INSTANCE' WHEN 'type_or_product_model' THEN 'UNKNOWN' WHEN 'unknown' THEN 'UNKNOWN' WHEN 'model' THEN 'MODEL' WHEN 'product_model' THEN 'MODEL' WHEN 'aircraft_model' THEN 'MODEL' WHEN 'vehicle_model' THEN 'MODEL' WHEN 'model_year' THEN 'CONFIGURATION' WHEN 'configuration' THEN 'CONFIGURATION' ELSE 'CLASS' END"
+        return f'coalesce((SELECT p.node_kind FROM node_profiles p WHERE p.uid={alias}.uid),{legacy})' if 'node_profiles' in self._tables else legacy
+
+    def exact(self, text: str, limit: int = 20, *, node_kind: str | None = None) -> list[dict]:
         self._limit(limit)
+        kind_sql = ' AND ' + self._kind_sql('n') + '=?' if node_kind else ''
+        args = [norm(text), legacy_norm(text), *([node_kind] if node_kind else []), limit]
         rows = self.con.execute(f'''SELECT DISTINCT n.* FROM aliases a JOIN nodes n ON n.uid=a.uid
-            WHERE a.alias=? AND {self._visible_sql('n')}
-            ORDER BY n.layer DESC,n.uid LIMIT ?''', (norm(text), limit))
+            WHERE a.alias IN (?,?) AND {self._visible_sql('n')}{kind_sql}
+            ORDER BY n.layer DESC,n.uid LIMIT ?''', args)
         return [self._node(row) for row in rows]
 
-    def search(self, text: str, limit: int = 20, domain: str | None = None) -> list[dict]:
+    def search(self, text: str, limit: int = 20, domain: str | None = None, *,
+               node_kind: str | None = None) -> list[dict]:
         self._limit(limit)
         query = norm(text)
         terms = tokens(text)[:6] or query.split()[:6]
         if not terms:
             return []
-        found = {row['uid']: row for row in self.exact(text, max(80, limit * 4))}
+        found = {row['uid']: row for row in self.exact(text, max(80, limit * 4), node_kind=node_kind)}
         domain_sql = ''
         domain_args = []
         if domain:
             domain_sql = ' AND (n.domain=? OR EXISTS (SELECT 1 FROM json_each(n.domains) d WHERE d.value=?))'
+            if 'node_profiles' in self._tables:
+                domain_sql = ' AND (n.domain=? OR EXISTS (SELECT 1 FROM node_profiles p WHERE p.uid=n.uid AND p.domain=?))'
             domain_args = [domain, domain]
+        if node_kind:
+            domain_sql += ' AND ' + self._kind_sql('n') + '=?'
+            domain_args.append(node_kind)
         filters = ['a.alias LIKE ? ESCAPE \'\\\'' for _ in terms]
         escaped = [term.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_') for term in terms]
         # FTS accelerates broad searches without requiring third-party packages.
@@ -157,7 +206,7 @@ class SingleAtlas:
         if not own or own['visibility'] != 'ACTIVE':
             return []
         endpoint, target = ('parent_uid', 'child_uid') if direction == 'children' else ('child_uid', 'parent_uid')
-        status = "e.status='ACTIVE'" if structural_only else "e.status IN ('ACTIVE','AUXILIARY','REVIEW')"
+        status = "e.status='ACTIVE' AND e.relation='IS_A'" if structural_only else "e.status IN ('ACTIVE','AUXILIARY','REVIEW')"
         result = {}
         cursor = self.con.execute(f'''SELECT e.* FROM nodes u JOIN edges e ON e.{endpoint}=u.uid
             JOIN nodes t ON t.uid=e.{target} WHERE u.component_id=? AND {status}
@@ -187,7 +236,7 @@ class SingleAtlas:
         previous = {start: None}
         while queue:
             uid = queue.popleft()
-            for raw in self.con.execute('''SELECT * FROM bridges WHERE status='ACTIVE'
+            for raw in self.con.execute('''SELECT * FROM bridges WHERE status='ACTIVE' AND relation='SAME_CONCEPT'
                 AND (left_uid=? OR right_uid=?) ORDER BY confidence DESC,id''', (uid, uid)):
                 other = raw['right_uid'] if raw['left_uid'] == uid else raw['left_uid']
                 if other in previous:
@@ -215,7 +264,21 @@ class SingleAtlas:
         own = self.node(uid)
         if not own or own['visibility'] != 'ACTIVE':
             return []
+        if own['node_kind'] in ('INSTANCE', 'ATTRIBUTE', 'DATASET_CATEGORY') and 'entity_relations' in self._tables:
+            if max_depth < 1:
+                return []
+            typed_relation = {'INSTANCE': 'INSTANCE_OF', 'ATTRIBUTE': 'ATTRIBUTE_KIND_OF', 'DATASET_CATEGORY': 'DEPICTS_TYPE'}[own['node_kind']]
+            rows = self.con.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND relation=? AND status='ACTIVE' ORDER BY id", (uid, typed_relation))
+            for row in rows:
+                parent = row['object_uid']
+                prefix = self.path(parent, anchors=anchors, max_depth=max_depth-1)
+                if prefix or parent in (anchors or [self.metadata['root_uid']]):
+                    edge = dict(row)
+                    edge['data'] = json.loads(edge['data'])
+                    return prefix + [self._step(uid, parent, edge)]
+            return []
         if anchors and anchors != [self.metadata['root_uid']]:
+
             return self._custom_path(uid, anchors, max_depth)
         if not own['wordnet_reachable'] or own['wordnet_depth'] > max_depth:
             return []
@@ -240,13 +303,13 @@ class SingleAtlas:
             if current in goals:
                 return list(reversed(path))
             for (other,) in self.con.execute('''SELECT CASE WHEN left_uid=? THEN right_uid ELSE left_uid END
-                FROM bridges WHERE status='ACTIVE' AND (left_uid=? OR right_uid=?)''', (current, current, current)):
+                FROM bridges WHERE status='ACTIVE' AND relation='SAME_CONCEPT' AND (left_uid=? OR right_uid=?)''', (current, current, current)):
                 if other not in seen:
                     seen.add(other)
                     queue.append((other, path + self._identity_steps(current, other), depth))
             if depth >= max_depth:
                 continue
-            for raw in self.con.execute("SELECT * FROM edges WHERE child_uid=? AND status='ACTIVE'", (current,)):
+            for raw in self.con.execute("SELECT * FROM edges WHERE child_uid=? AND status='ACTIVE' AND relation='IS_A'", (current,)):
                 parent = raw['parent_uid']
                 if parent not in seen:
                     seen.add(parent)
@@ -262,8 +325,78 @@ class SingleAtlas:
             result[name] = json.loads(result[name] or ('[]' if name == 'evidence_ids' else '{}'))
         return result
 
+    def relations(self, uid: str, relation: str | None = None,
+                  direction: str = 'outgoing', limit: int = 20) -> list[dict]:
+        """Accepted instance, location, part and product metadata relations."""
+        self._limit(limit)
+        if direction not in ('outgoing', 'incoming'):
+            raise ValueError('direction must be outgoing or incoming')
+        if 'entity_relations' not in self._tables:
+            return []
+        endpoint = 'subject_uid' if direction == 'outgoing' else 'object_uid'
+        sql = f"SELECT * FROM entity_relations WHERE {endpoint}=? AND status='ACTIVE'"
+        args = [uid]
+        if relation:
+            sql += ' AND relation=?'
+            args.append(relation)
+        args.append(limit)
+        result = []
+        for row in self.con.execute(sql + ' ORDER BY id LIMIT ?', args):
+            item = dict(row)
+            item['data'] = json.loads(item['data'])
+            result.append(item)
+        return result
+
+    def instances(self, type_uid: str, limit: int = 20, recursive: bool = True) -> list[dict]:
+        """Named referents assigned to a class or its accepted subtypes."""
+        self._limit(limit)
+        if 'entity_relations' not in self._tables:
+            return []
+        if not recursive:
+            rows = self.con.execute("SELECT subject_uid FROM entity_relations WHERE object_uid=? AND relation='INSTANCE_OF' AND status='ACTIVE' LIMIT ?", (type_uid, limit))
+            return [self.node(r[0]) for r in rows]
+        rows = self.con.execute("""WITH RECURSIVE scopes(id) AS (
+            SELECT component_id FROM nodes WHERE uid=?
+            UNION
+            SELECT n.component_id FROM scopes s CROSS JOIN nodes p
+            CROSS JOIN edges e CROSS JOIN nodes n
+            WHERE p.component_id=s.id AND e.parent_uid=p.uid
+            AND e.status='ACTIVE' AND e.relation='IS_A'
+            AND n.uid=e.child_uid AND n.visibility='ACTIVE')
+            SELECT DISTINCT r.subject_uid FROM scopes s CROSS JOIN nodes t
+            CROSS JOIN entity_relations r WHERE t.component_id=s.id
+            AND r.object_uid=t.uid AND r.relation='INSTANCE_OF' AND r.status='ACTIVE'
+            LIMIT ?""", (type_uid, limit))
+        return [self.node(r[0]) for r in rows]
+
+    def evidence(self, evidence_id: str) -> list[dict]:
+        """Return all source layers carrying an evidence identifier."""
+        result = []
+        for row in self.con.execute('SELECT * FROM evidence WHERE evidence_id=? ORDER BY layer', (evidence_id,)):
+            item = dict(row)
+            item['payload'] = json.loads(item['payload'] or '{}')
+            result.append(item)
+        return result
+
+    def datasets(self) -> list[dict]:
+        """Catalog coverage, with admitted and unresolved mappings separated."""
+        return [dict(row) for row in self.con.execute("""SELECT dataset,count(*) AS classes,
+            sum(decision_status LIKE 'VERIFIED%') AS verified,
+            sum(decision_status NOT LIKE 'VERIFIED%') AS review
+            FROM dataset_targets GROUP BY dataset ORDER BY dataset""")]
+
+    def domains(self) -> list[dict]:
+        """Reviewed world-type entry points in the published database."""
+        return self.metadata.get('domain_roots', [])
+
     def stats(self) -> dict:
-        return {**self.metadata, 'navigation_view': self.view, 'roots': self.roots}
+        public_keys = {'public_name', 'release', 'schema', 'root_uid', 'sqlite_files',
+            'counts', 'identity_components', 'wordnet_reachable_components',
+            'cycle_check', 'edge_statuses', 'bridge_statuses', 'typed_statuses',
+            'coverage_by_namespace', 'datasets', 'classification_contract',
+            'same_name_policy'}
+        current = {k: v for k, v in self.metadata.items() if k in public_keys}
+        return {**current, 'navigation_view': self.view, 'roots': self.roots}
 
     def close(self) -> None:
         if not self._closed:

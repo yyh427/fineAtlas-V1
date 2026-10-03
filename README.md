@@ -1,112 +1,91 @@
 # FineAtlas V1
 
-FineAtlas 是可在本地使用的细粒度分类图：以 WordNet 的通用概念为入口，向下连接物种、品种、车型、型号、器件类型及具体菜品。
+FineAtlas 是一个可在本地查询的细粒度分类与实体数据库。WordNet 提供上层通用概念，向下连接物种、品种、车型、型号、器件、食品、矿物和自然地物类型；具体山川河流、纹理属性和数据集任务类别分别通过明确的关系连接。
 
-**运行时只需要一个 `fineatlas.sqlite`。** 数据库保留来源 UID、别名、定义和分类证据，提供 WordNet 根到细粒度类别的查询路径。
+**运行时只需要一个 `fineatlas.sqlite`。** 数据包含文本标签、独立 UID、别名、定义、来源证据、型号参数、矿物化学式和地理坐标；**不含图片、图像特征、模型权重或图像训练集**。Python 3.10+，查询只使用标准库与 SQLite，无需 GPU、API key 或数据库服务器。
 
-Python 3.10+，查询仅使用标准库和 SQLite，无需 GPU、模型权重、API key 或数据库服务器。
+## 下载和开始使用
 
-## 下载与使用
-
-**本项目已公开，任何人都可以通过链接查看仓库、下载数据库。** 完整数据库在 [FineAtlas V1 下载页](https://github.com/yyh427/fineAtlas-V1/releases/latest)。Git 仓库仅保存接口、说明和数据清单；源码 ZIP 不包含数据库。
+仓库与数据库公开，可直接分享 [FineAtlas V1](https://github.com/yyh427/fineAtlas-V1) 和 [数据库下载页](https://github.com/yyh427/fineAtlas-V1/releases/latest)。Git 源码 ZIP 包含接口和文档，数据库在 Releases 中。
 
 ```bash
 git clone https://github.com/yyh427/fineAtlas-V1.git
 cd fineAtlas-V1
 python3 -m pip install -e .
-
-# Linux: sudo apt install zstd
-# macOS: brew install zstd
+# Linux: sudo apt install zstd；macOS: brew install zstd
 python3 scripts/download_single.py --output-dir /path/to/fineatlas-data
-
 fineatlas --data-dir /path/to/fineatlas-data stats
-fineatlas --data-dir /path/to/fineatlas-data exact 'laser diode'
-fineatlas --data-dir /path/to/fineatlas-data path 'wikidata:Q321098'
+fineatlas --data-dir /path/to/fineatlas-data domains
+fineatlas --data-dir /path/to/fineatlas-data datasets
 python3 scripts/check_installation.py --data-dir /path/to/fineatlas-data
 ```
 
-下载脚本支持中断后重试，并校验每个分片及最终数据库的 SHA-256。分片只是下载包装，解压后只有 **一个数据库**，约 **28.64 GB**；建议准备 40 GB 可用空间。主要支持 Linux/macOS，Windows 可用 WSL。
+下载脚本支持重试和断点续传，校验全部分片及完整数据库的 SHA-256。分片仅用于下载包装，解压后是一个约 **37.49 GB** 的 SQLite 文件；建议准备 **70 GB** 可用空间。Linux/macOS 可直接使用，Windows 可用 WSL。也可设置 `FINEATLAS_DATA_DIR`。
 
-手动安装时，从当前发布页下载全部 `*.sqlite.zst.part-*` 分片和 `SHA256SUMS*` 校验文件，放到同一目录：
+## 数量和覆盖范围
 
-```bash
-sha256sum -c SHA256SUMS*
-cat *.sqlite.zst.part-* | zstd -dc > fineatlas.sqlite
-python3 scripts/verify_single.py --data-dir /path/to/fineatlas.sqlite
-```
-
-也可设置 `FINEATLAS_DATA_DIR=/path/to/fineatlas.sqlite`。
-
-## 节点数量与连接情况
-
-| 项目 | FineAtlas V1 |
+| 项目 | 数量 |
 |---|---:|
-| 全部来源 UID 节点 | 8,917,058 |
-| 当前保留节点 | 8,916,979 |
-| 从 WordNet 根可达的保留节点 | **8,735,597（98.0%）** |
-| 尚未接通 WordNet 的保留节点 | 181,382 |
-| 全部来源有效 `IS_A` 记录 | 8,817,082 |
-| 别名记录 | 17,105,509 |
-| 已裁剪 WordNet 节点 | 79 |
-| 数据库文件 | **1** |
+| 全部来源 UID | 12,328,610 |
+| 保留为有效来源记录的 UID | 12,328,531 |
+| WordNet 分类路径可达 UID | 8,741,157 |
+| 通过实例、属性或任务类别关系可达 UID | 3,398,389 |
+| 其余保留来源记录 | 188,985 |
+| 有效 `IS_A` 来源记录 | 8,828,473 |
+| 别名记录 | 23,349,238 |
+| 数据集原始类别编号 | 1,822 |
+| 数据库文件 | 1 |
 
-UID 数不是去重后的现实概念数，不同来源可能分别表示同一概念。有效边数包含未接通分支和来源重复证据，也不是默认 WordNet 视图的独立概念边数。完整计数、哈希和裁剪结果见 [SINGLE_DATABASE.json](SINGLE_DATABASE.json)，按来源命名空间的连接情况见 [coverage.csv](docs/coverage.csv)。
+UID 数包含不同来源对同一概念的表示；有效边数包含不同来源证据。它们不是去重后的现实概念数。其余保留来源记录包括厂商元数据、来源容器和待审分类，不保证全部具备分类路径。[完整统计](SINGLE_DATABASE.json)、[按来源覆盖](docs/coverage.csv)、[验证报告](VALIDATION.json)。
 
-**六个数据集共 755 个类别均通过节点身份和 WordNet 根路径检查；每个数据集内部的目标 UID 与身份组均不重复。** 检查覆盖 CUB-200（200）、FGVC Aircraft（100）、Flowers-102（102）、Oxford Pets（37）、Stanford Dogs（120）、Stanford Cars（196）。这验证类别映射和路径，不衡量图像识别准确率，也不替代所有继承断言的逐条语义审查。见 [验证报告](VALIDATION.json)。
+| 领域 | 可用细化内容 |
+|---|---|
+| 动物、鸟类、植物、真菌及微生物 | 多来源分类阶元、物种、亚种、植物栽培品种和犬猫品种 |
+| 自然地理 | 64 个来源自然地物类型、3,389,795 个命名自然地物，另有 252 个国家/地区记录；包括山峰、山脉、河流、湖泊、岛屿、海湾、瀑布、冰川、沙漠和洞穴。地物保留 WGS84 坐标、原生编号和区域信息 |
+| 矿物与天气 | IMA 原生矿物名录 6,239 个，6,143 个具有分类路径、96 个疑问状态保留待审；化学式与原生状态保留。WMO 10 个云属具有分类路径 |
+| 电子产品与器件 | 计算机、手机、平板、穿戴设备、耳机、音箱、显卡、存储、显示器、网络设备、主板/单板电脑及电子元件；原生目录包括 Apple 257 个型号、Canon 915 个相机与 534 个镜头型号、GeForce 38 个显卡产品规格、Samsung 34 个 SSD 产品线 |
+| 汽车与飞行器 | 汽车车型/年款/配置、飞行器家族与型号、多个原生登记目录 |
+| 家具、服饰、工具及乐器 | 功能类型、结构类型与来源原生专业分类 |
+| 食物、建筑、家电及医疗器械 | 菜品、食品加工类型、建筑功能、设备和器械类型；Food-101 原生食品任务类别单独保留 |
+| 场景、遥感、纹理 | 数据集原生类别和已审查的类型/属性连接；场景上下文不强行合并为同一物理概念 |
 
-## 节点准入与结构
+领域存在重叠。厂商目录覆盖所列目录范围，参数或容量变化不自动产生视觉细粒度类别；不代表全世界所有品牌和型号已经穷尽。[领域入口列表](docs/domain_roots.json) 可直接用于浏览。
 
-有效分类图允许多父节点，是可以按树浏览的无环 DAG。`SAME_CONCEPT` 表示同身份来源记录，单独保存，不增加分类深度；属性、厂商和部件关系不作为 `IS_A` 父子关系。
+## 数据集目录
 
-未进入 WordNet 导航的 181,382 个来源 UID 分为：
+| 数据集及查询键 | 原始类别 | 已审查映射且路径可达 | 待审映射 |
+|---|---:|---:|---:|
+| Caltech-101 (`caltech101`) | 102 | 54 | 48 |
+| CUB-200 (`cub200`) | 200 | 200 | 0 |
+| DTD (`dtd`) | 47 | 47 | 0 |
+| EuroSAT (`eurosat`) | 10 | 6 | 4 |
+| FGVC Aircraft (`fgvc_aircraft`) | 100 | 100 | 0 |
+| Flowers-102 (`flowers102`) | 102 | 102 | 0 |
+| Food-101 (`food101`) | 101 | 101 | 0 |
+| Oxford Pets (`pets37`) | 37 | 37 | 0 |
+| Places365 (`places365`) | 365 | 242 | 123 |
+| NWPU-RESISC45 (`resisc45`) | 45 | 30 | 15 |
+| Stanford Cars (`stanford_cars`) | 196 | 196 | 0 |
+| Stanford Dogs (`stanford_dogs`) | 120 | 120 | 0 |
+| SUN397 (`sun397`) | 397 | 260 | 137 |
 
-| 处理 | UID 数 | 使用方式 |
-|---|---:|---|
-| 厂商、品牌、属性及明确非分类/容器来源记录 | 164,671 | 用于溯源；`tree_admission=NOT_REQUIRED` |
-| 分类或身份证据尚未解决的记录 | 16,711 | 保留待审；`tree_admission=REVIEW` |
+13 个目录共 **1,822** 个原始类别编号，全部保留原始标签并在各数据集内部使用独立 UID。其中 **1,495** 个具备已审查的映射和路径，**327** 个原生类别身份已保留、现实类型映射待审。Caltech-101 的目录包括背景类，因此记录为 102 项。
 
-逐节点状态、示例与完整清单见 [连接诊断说明](docs/connectivity.md)。`path()` 和 CLI 默认分类深度上限为 64。
+原六个细粒度数据集共 **755/755** 个目标通过根路径与数据集内部身份组唯一性检查。Food-101 使用原生食品类别 UID，DTD 使用纹理属性 UID；场景/遥感/物体任务标签使用 `DATASET_CATEGORY`，已审查的现实类型通过 `DEPICTS_TYPE` 连接。映射检查不衡量图像识别准确率。
 
-## 覆盖的领域
+`class_id` 是保存的原生编号，各目录不统一使用从 0 或 1 开始的编号；用 `dataset_targets` 或 `target()` 查阅。[详细目录](docs/datasets.csv)，[待审映射清单](docs/dataset_review.csv)。
 
-| 领域 | 已有细化内容 | 当前范围 |
-|---|---|---|
-| 动物、鸟类 | 分类阶元、物种、亚种、犬猫品种 | 大规模细粒度覆盖；不同来源并非全部互相连通 |
-| 植物 | 物种、变种、栽培品种 | 大规模分类与品种层 |
-| 真菌、细菌、古菌 | 来源原生物种分类 | 大规模生命分类分支 |
-| 飞行器 | 飞行器类型、家族、型号 | 型号覆盖较多，部分来源路径较浅 |
-| 汽车与机动车 | 车型、年款、变体 | 多来源身份与型号细化 |
-| 家具 | 桌椅床柜、用途/设计类型 | 已有 Getty/Wikidata 等扩展，尚未覆盖全部商品型号 |
-| 服饰、鞋帽及配件 | 服装、鞋帽和具体类型 | 专业与通用类型分类 |
-| 工具 | 切割、钻孔、木工、机床等类型 | Getty 与 Wikidata 类型细化 |
-| 乐器 | 乐器类型及构造/分类体系 | MIMO 等来源；分类编号不等同于商品型号 |
-| 食物、菜品 | 食品产品、加工状态、组合类、具体菜品 | FoodOn 和 Wikidata 等；食材、菜品、部件分别保留 |
-| 电子与计算相关 | 手机型号、元件、晶体管、二极管、电容、电阻、集成电路等 | 部分分支已有多层路径，PCB 合法父路径仍缺 |
-| 家电 | 冰箱、吸尘器、吊扇、慢炖锅等 | 已接入部分类型，覆盖仍稀疏 |
-| 建筑 | 住宅、宗教、工业、商业及部分交通建筑 | 具体功能类别仍有缺口 |
-| 医疗器械 | 听诊器、除颤器、手术器械等 | 合法类型路径已有，专业覆盖仍较薄 |
-| 其他现实领域 | WordNet 通用概念骨架 | 有类型节点不代表已有现实型号/身份层 |
+## 结构与同名策略
 
-领域之间存在重叠。此表说明图中已经有哪些内容，不代表整个现实世界的覆盖率。
+分类层是允许多父节点的 **无环 DAG**，可以按树浏览。`IS_A` 表示下位类型，`SAME_CONCEPT` 表示经审查的跨来源同身份，不增加分类深度。
 
+- 类别、型号家族和可重复生产的型号进入分类层。
+- 具体山峰、河流和历史实物通过 `INSTANCE_OF` 接到类型；位置用 `LOCATED_IN` 表示。
+- 纹理属性通过 `ATTRIBUTE_KIND_OF` 连接；任务类别通过 `DEPICTS_TYPE` 连接。
+- **同名可以保留，不同意义使用不同 UID。** 名字相同不会自动合并；查询会返回多个候选，需结合 UID、领域、定义和节点种类选取。
+- 待审或隔离记录不进入有效分类路径。未接通记录保留在同一个数据库，可使用 `view="all"` 查看。
 
-## WordNet 在上层，FineAtlas 如何向下补齐
-
-默认入口是 `wordnet31:00001740-n`（entity）。WordNet 提供通用类型骨架；来源原生分类和细粒度身份层通过已有身份对齐或经定义核对的分类连接接入。
-
-例如汽车分支的一条实际路径，在隐藏同概念的来源表示后可读作：
-
-```text
-entity → … → motor_vehicle → car
-                              └─ AM General Hummer H1
-                                   └─ AM General Hummer H1 4-door SUV 2000
-```
-
-数据库保留 WordNet、Wikidata 和来源原生入口的不同 UID。接口返回的详细路径会显式标注中间的 `SAME_CONCEPT`，它表示身份对齐，不增加分类深度，也不会被当作 `IS_A`。
-
-汽车意义的 `car` 入口是 `wordnet31:02961779-n`。它下方不再要求沿用 WordNet 的全部旧细分：默认导航裁剪汽车原细分 32 个、飞机原细分 47 个，以接入的来源细化分支承担下位分类；仍被数据集目标或跨来源连接使用的 WordNet 节点及必要祖先继续保留。其他同名词义不受名字匹配影响。
-
-默认导航只显示 WordNet 可达的有效节点。尚未接通的分支继续保存在同一个数据库，使用 `view="all"` 检查。图允许多父节点，是可按树浏览的 DAG；未强制把每个现实概念压成单父节点。具体存储和裁剪规则见 [single_database.md](docs/single_database.md)。
+WordNet 的 car 与 aircraft 入口保留必要祖先及仍被映射使用的原节点，分别裁剪原细分 32 和 47 个，使用来源细化继续向下。其他同名词义保留独立 UID。
 
 ## Python 接口
 
@@ -114,48 +93,50 @@ entity → … → motor_vehicle → car
 from fineatlas import FineAtlas
 
 with FineAtlas("/path/to/fineatlas.sqlite") as tree:
-    candidates = tree.exact("laser diode")
+    print(tree.domains())
+    print(tree.datasets())
+    candidates = tree.exact("laser diode", node_kind="CLASS")
     uid = candidates[0]["uid"]
     print(tree.node(uid))
-    print(tree.connection_status(uid))
-    print(tree.neighbors(uid, direction="parents"))
     print(tree.path(uid))
-    print(tree.neighbors("wordnet31:02961779-n", direction="children", limit=100))
+    print(tree.neighbors(uid, direction="parents"))
+    print(tree.target("cub200", "1"))
 
-# 检查包括尚未接通的分支在内的全部有效来源分类
+    # 命名地物独立于分类子节点。先查候选，再按来源编号选 UID。
+    for item in tree.exact("Everest", node_kind="INSTANCE"):
+        print(item["uid"], tree.node(item["uid"])["attributes"])
+        print(tree.path(item["uid"]))
+
 with FineAtlas("/path/to/fineatlas.sqlite", view="all") as tree:
-    print(tree.exact("food material"))
+    print(tree.search("airport terminal", node_kind="DATASET_CATEGORY"))
 ```
 
-| 方法 | 返回内容 |
+| 方法 | 用途 |
 |---|---|
-| `connection_status(uid)` | 接通状态、原因、记录用途 `record_role` 与分类准入 `tree_admission` |
-| `node(uid)` | 节点、来源、原始元数据、显示状态及 WordNet 可达性；可检查裁剪节点 |
-| `exact(text, limit=20)` | 当前视图内的规范化标签/别名精确匹配；保留歧义 UID |
-| `search(text, limit=20, domain=None)` | 当前视图内的别名全文查询 |
-| `neighbors(uid, direction="children", limit=20)` | 有效父/子节点及边证据；跨来源身份路径会标记 `via_alignment` |
-| `path(uid, anchors=None, max_depth=64)` | 默认返回 WordNet 根到目标的证据路径；未到达或超深度返回 `[]` |
-| `equivalents(uid)` | 同身份组中的其他来源 UID |
-| `target(dataset, class_id)` | 六数据集类别到节点的可选映射 |
-| `stats()` | 数据库计数、裁剪和连接情况 |
+| `node(uid)` | 身份、定义、来源、`node_kind`、参数及分类/类型连接状态 |
+| `exact(text, limit=20, node_kind=None)` | 标签/别名精确匹配，保留同名歧义 UID |
+| `search(text, limit=20, domain=None, node_kind=None)` | 别名全文查询，可筛选领域/种类 |
+| `neighbors(uid, direction="children", limit=20)` | 分类父子节点；默认仅有效 `IS_A` |
+| `path(uid, anchors=None, max_depth=64)` | 根到目标的有证据路径；实例、属性、任务类别末步带明确关系 |
+| `relations(uid, relation=None, direction="outgoing", limit=20)` | 有效的非分类关系及证据 |
+| `instances(type_uid, limit=20, recursive=True)` | 类型及其子类型下面的具体实例 |
+| `equivalents(uid)` | 同身份组的来源 UID |
+| `connection_status(uid)` | 准入用途和连接状态 |
+| `evidence(evidence_id)` | 对应证据记录及来源信息 |
+| `target(dataset, class_id)` | 原生类别、映射决定与目标 UID |
+| `datasets()` / `domains()` / `stats()` | 数据集覆盖、领域入口和全库统计 |
 
-分类边按 **child → parent** 保存。规范有效关系为 `IS_A`；历史来源关系保存在 `original_relation`。身份桥独立保存为 `SAME_CONCEPT`。`path()` 的深度限制计算分类步数，身份桥不增加分类深度。不要把属性、厂商、部件或同名标签直接作为分类关系。
-
-`neighbors(..., structural_only=False)` 可查看辅助和待审记录；历史隔离、环路隔离和裁剪记录仍不会成为有效分类。直接 SQL 用户可读取 `wordnet_nodes`、`wordnet_edges` 或 `active_nodes`、`active_edges` 视图。一个实例用于一个线程/进程，请用上下文管理器或调用 `close()`。
-
-CLI 支持 `stats`、`node`、`connection-status`、`exact`、`search`、`neighbors`、`path`、`equivalents` 和 `target`。`--data-dir`、`--view` 写在子命令之前：
+`wordnet_reachable` 指分类层路径，`entity_reachable` 指独立的类型连接缓存；具体地点不应加入分类子节点。`path()` 返回按根到目标排列的步骤，每项记录该节点及其父节点，第一步的 `parent_uid` 是根；根本身没有父边。无有效路径或超过深度上限返回 `[]`。
 
 ```bash
-fineatlas --data-dir /path/to/fineatlas.sqlite --view all exact 'food material'
+fineatlas --data-dir /path/to/fineatlas.sqlite exact 'Everest' --node-kind INSTANCE
 fineatlas --data-dir /path/to/fineatlas.sqlite target cub200 1
+fineatlas --data-dir /path/to/fineatlas.sqlite path 'wikidata:Q321098'
+fineatlas --data-dir /path/to/fineatlas.sqlite relations 'geonames:1283416'
 ```
 
-目标目录的标识为 `cub200`、`fgvc_aircraft`、`flowers102`、`pets37`、`stanford_dogs`、`stanford_cars`。映射提供类别身份，不提供识别模型。
+更多存储细节见 [数据库说明](docs/single_database.md)，连接契约见 [连接说明](docs/connectivity.md)。一份接口实例用于一个线程/进程，请使用上下文管理器或 `close()`。
 
-## 来源与许可
+## 数据来源与许可
 
-来源包括 WordNet、Wikidata、Open Tree of Life、World Flora Online、AviList、FoodOn、Getty AAT、MIMO、MeSH、FAA、vPIC、EPA 等。原始来源身份、证据及哈希保留在数据库中。来源及许可说明见 [DATA_SOURCES.md](DATA_SOURCES.md)。
-
-接口代码使用 MIT；第三方数据遵循各自来源许可，不因打包而获得统一的新数据许可。数据库通过只读接口查询，下载和安装时校验 SHA-256。
-
-FineAtlas is a local, multi-source fine-grained taxonomy. The latest release uses one SQLite database, with a WordNet-rooted navigation view and retained source fragments for inspection.
+接口代码使用 MIT。数据遵循各上游来源的许可与归属要求，包括 GeoNames 的 CC BY 4.0 和 IMA 名录的 CC BY-SA 3.0；重分发时保留证据和归属。详见 [DATA_SOURCES.md](DATA_SOURCES.md)。

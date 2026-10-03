@@ -1,97 +1,159 @@
 {
   "status": "PASS",
+  "interface_version": "1.4.0",
   "checks": {
-    "six_dataset_catalog_retained": 755,
-    "six_dataset_paths_to_wordnet": 755,
-    "source_reviewed_target_revisions": 4,
-    "all_59_v33_new_nodes_and_wordnet_paths": 59,
-    "historical_quarantine_pairs_hidden": 190,
-    "pruned_wordnet_nodes_hidden": 79,
-    "reviewed_branch_root_paths": 77,
-    "sample_newly_reachable_witness_paths": 500,
-    "all_reachable_components_have_valid_decreasing_witness": 5852220,
-    "vehicle_catalog_narrow_motorized_claims_removed": 31869,
-    "search_examples": 5,
-    "previously_unconnected_examples_repaired": 7,
-    "per_dataset_target_identity_uniqueness": 755,
-    "classification_restoration_admission_ledger": "PASS",
-    "manufacturer_configurations_and_native_models_rooted": 8,
-    "unconnected_disposition_NOT_REQUIRED": 164671,
-    "unconnected_disposition_REVIEW": 16711,
-    "source_flagged_records_excluded_from_tree": 85098
+    "verified_dataset_paths": 1495,
+    "dataset_native_labels": 1822,
+    "domain_entry_paths": 60,
+    "contradicted_homonym_components_separate": 6,
+    "all_native_task_uids_unique_within_dataset": true,
+    "native_product_and_weather_paths": true,
+    "nvidia_native_specifications": true,
+    "instance_typed_path_and_evidence": true,
+    "class_neighbors_exclude_other_roles": true
   },
+  "public_name": "FineAtlas V1",
+  "sqlite_integrity_check": "PASS",
+  "cycle_check": "PASS",
   "datasets": [
+    {
+      "dataset": "caltech101",
+      "labels": 102,
+      "verified": 54,
+      "review": 48,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 54,
+      "unique_verified_uids": 54,
+      "unique_verified_components": 54
+    },
     {
       "dataset": "cub200",
       "labels": 200,
-      "unique_uids": 200,
-      "unique_components": 200,
-      "rooted": 200
+      "verified": 200,
+      "review": 0,
+      "classification_connected": 200,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 200,
+      "unique_verified_components": 200
+    },
+    {
+      "dataset": "dtd",
+      "labels": 47,
+      "verified": 47,
+      "review": 0,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 47,
+      "unique_verified_uids": 47,
+      "unique_verified_components": 47
+    },
+    {
+      "dataset": "eurosat",
+      "labels": 10,
+      "verified": 6,
+      "review": 4,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 6,
+      "unique_verified_uids": 6,
+      "unique_verified_components": 6
     },
     {
       "dataset": "fgvc_aircraft",
       "labels": 100,
-      "unique_uids": 100,
-      "unique_components": 100,
-      "rooted": 100
+      "verified": 100,
+      "review": 0,
+      "classification_connected": 100,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 100,
+      "unique_verified_components": 100
     },
     {
       "dataset": "flowers102",
       "labels": 102,
-      "unique_uids": 102,
-      "unique_components": 102,
-      "rooted": 102
+      "verified": 102,
+      "review": 0,
+      "classification_connected": 102,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 102,
+      "unique_verified_components": 102
+    },
+    {
+      "dataset": "food101",
+      "labels": 101,
+      "verified": 101,
+      "review": 0,
+      "classification_connected": 101,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 101,
+      "unique_verified_components": 101
     },
     {
       "dataset": "pets37",
       "labels": 37,
-      "unique_uids": 37,
-      "unique_components": 37,
-      "rooted": 37
+      "verified": 37,
+      "review": 0,
+      "classification_connected": 37,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 37,
+      "unique_verified_components": 37
+    },
+    {
+      "dataset": "places365",
+      "labels": 365,
+      "verified": 242,
+      "review": 123,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 242,
+      "unique_verified_uids": 242,
+      "unique_verified_components": 242
+    },
+    {
+      "dataset": "resisc45",
+      "labels": 45,
+      "verified": 30,
+      "review": 15,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 30,
+      "unique_verified_uids": 30,
+      "unique_verified_components": 30
     },
     {
       "dataset": "stanford_cars",
       "labels": 196,
-      "unique_uids": 196,
-      "unique_components": 196,
-      "rooted": 196
+      "verified": 196,
+      "review": 0,
+      "classification_connected": 196,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 196,
+      "unique_verified_components": 196
     },
     {
       "dataset": "stanford_dogs",
       "labels": 120,
-      "unique_uids": 120,
-      "unique_components": 120,
-      "rooted": 120
+      "verified": 120,
+      "review": 0,
+      "classification_connected": 120,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 120,
+      "unique_verified_components": 120
+    },
+    {
+      "dataset": "sun397",
+      "labels": 397,
+      "verified": 260,
+      "review": 137,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 260,
+      "unique_verified_uids": 260,
+      "unique_verified_components": 260
     }
   ],
-  "maximum_classification_depth": 48,
-  "limitations": "Checks establish structural paths and reviewed repair scopes, not image recognition accuracy or semantic certification of every inherited source assertion.",
-  "database_sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
   "local_non_gpu_suite": "PASS",
-  "sqlite_integrity_check": "PASS",
-  "installed_wheel": {
-    "status": "PASS",
-    "version": "1.3.0",
-    "representative_queries": "PASS",
-    "diagnostic_roles": "PASS",
-    "source_reviewed_car_targets": "PASS"
-  },
-  "distribution_check": {
-    "status": "PASS",
-    "bytes": 28636983296,
-    "sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
-    "mode": "Public installer; cached release parts; complete decompressed file size and SHA-256 verified; output path with spaces"
-  },
-  "public_name": "FineAtlas V1",
-  "public_interface_checks": {
-    "status": "PASS",
-    "interface_version": "1.3.1",
-    "before_after_queries": 19,
-    "target_paths_checked": 755,
-    "per_dataset_identity_uniqueness": "PASS",
-    "cli_commands_checked": 4,
-    "wheel_contains_legacy_modules": false,
-    "download_existing_database_sha256": "PASS",
-    "database_unchanged": true
-  }
+  "public_interface_fixture_tests": "PASS",
+  "class_role_boundary_violations": 0,
+  "typed_relations_without_evidence": 0,
+  "classification_witness_violations": 0,
+  "all_domain_entry_paths": 60,
+  "limitations": "Path and scope checks do not measure image recognition accuracy or certify every inherited source assertion. 327 native task categories retain unresolved world-type mappings.",
+  "bytes": 37492588544,
+  "database_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37"
 }

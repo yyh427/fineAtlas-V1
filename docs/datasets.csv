@@ -1,0 +1,14 @@
+dataset,labels,verified,review,classification_connected,attribute_or_instance_connected,unique_verified_uids,unique_verified_components
+caltech101,102,54,48,0,54,54,54
+cub200,200,200,0,200,0,200,200
+dtd,47,47,0,0,47,47,47
+eurosat,10,6,4,0,6,6,6
+fgvc_aircraft,100,100,0,100,0,100,100
+flowers102,102,102,0,102,0,102,102
+food101,101,101,0,101,0,101,101
+pets37,37,37,0,37,0,37,37
+places365,365,242,123,0,242,242,242
+resisc45,45,30,15,0,30,30,30
+stanford_cars,196,196,0,196,0,196,196
+stanford_dogs,120,120,0,120,0,120,120
+sun397,397,260,137,0,260,260,260

@@ -1,72 +1,167 @@
 {
-  "unconnected_nodes": 181382,
-  "reasons": {
-    "MISSING_ROOT_CONNECTION": 4717,
-    "CLASSIFICATION_REVIEW": 10467,
-    "INSUFFICIENT_HIERARCHY_EVIDENCE": 28,
-    "IDENTITY_REVIEW": 47,
-    "SOURCE_NON_TAXON_OR_CONTAINER": 83828,
-    "SOURCE_SCOPE_CONFLICT": 1270,
-    "AUXILIARY_RECORD": 80843,
-    "HISTORICAL_QUARANTINE": 182
-  },
-  "record_roles": {
-    "CLASSIFICATION_BRANCH": 4717,
-    "CLASSIFICATION_CANDIDATE": 11966,
-    "UNRESOLVED_SOURCE_RECORD": 28,
-    "SOURCE_RECORD_ONLY": 83828,
-    "METADATA_ONLY": 80843
-  },
-  "pending_review_uids": 16711,
-  "retained_non_classification_uids": 164671,
-  "by_namespace": {
-    "wikidata": {
-      "MISSING_ROOT_CONNECTION": 4268,
-      "CLASSIFICATION_REVIEW": 10459,
-      "INSUFFICIENT_HIERARCHY_EVIDENCE": 22,
-      "IDENTITY_REVIEW": 47
+  "public_name": "FineAtlas V1",
+  "classification_reachable_uids": 8741157,
+  "typed_reachable_uids": 3398389,
+  "retained_other_active_uids": 188985,
+  "typed_relations": [
+    {
+      "relation": "ATTRIBUTE_KIND_OF",
+      "status": "ACTIVE",
+      "records": 47
     },
-    "ott": {
-      "MISSING_ROOT_CONNECTION": 396,
-      "SOURCE_NON_TAXON_OR_CONTAINER": 83828,
-      "SOURCE_SCOPE_CONFLICT": 1270,
-      "CLASSIFICATION_REVIEW": 8
+    {
+      "relation": "DEPICTS_TYPE",
+      "status": "ACTIVE",
+      "records": 592
     },
-    "epa-attribute": {
-      "AUXILIARY_RECORD": 57
+    {
+      "relation": "INSTANCE_OF",
+      "status": "ACTIVE",
+      "records": 3398629
     },
-    "faa-mfr": {
-      "AUXILIARY_RECORD": 68538
+    {
+      "relation": "INSTANCE_OF",
+      "status": "REVIEW",
+      "records": 62
     },
-    "epa-make": {
-      "AUXILIARY_RECORD": 145
-    },
-    "v4root": {
-      "INSUFFICIENT_HIERARCHY_EVIDENCE": 1
-    },
-    "vpic-make": {
-      "AUXILIARY_RECORD": 12103
-    },
-    "foodon": {
-      "MISSING_ROOT_CONNECTION": 45,
-      "HISTORICAL_QUARANTINE": 1
-    },
-    "mimo-keyword": {
-      "MISSING_ROOT_CONNECTION": 8,
-      "HISTORICAL_QUARANTINE": 63,
-      "INSUFFICIENT_HIERARCHY_EVIDENCE": 1
-    },
-    "mesh": {
-      "HISTORICAL_QUARANTINE": 118,
-      "INSUFFICIENT_HIERARCHY_EVIDENCE": 4
+    {
+      "relation": "LOCATED_IN",
+      "status": "ACTIVE",
+      "records": 3388029
     }
-  },
-  "queue_file": "unconnected_nodes.csv.gz",
-  "meaning": "Metadata and source non-taxa are retained without requiring tree attachment. All unresolved classifications remain REVIEW; no coverage score is manufactured by hiding them.",
-  "queue_asset": {
-    "name": "unconnected_nodes.csv.gz",
-    "bytes": 3649147,
-    "sha256": "9bea905141a565862a3bd8ca12e6919a504ee3b45da55c2106a4226537f6abb0"
-  },
-  "public_name": "FineAtlas V1"
+  ],
+  "datasets": [
+    {
+      "dataset": "caltech101",
+      "labels": 102,
+      "verified": 54,
+      "review": 48,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 54,
+      "unique_verified_uids": 54,
+      "unique_verified_components": 54
+    },
+    {
+      "dataset": "cub200",
+      "labels": 200,
+      "verified": 200,
+      "review": 0,
+      "classification_connected": 200,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 200,
+      "unique_verified_components": 200
+    },
+    {
+      "dataset": "dtd",
+      "labels": 47,
+      "verified": 47,
+      "review": 0,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 47,
+      "unique_verified_uids": 47,
+      "unique_verified_components": 47
+    },
+    {
+      "dataset": "eurosat",
+      "labels": 10,
+      "verified": 6,
+      "review": 4,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 6,
+      "unique_verified_uids": 6,
+      "unique_verified_components": 6
+    },
+    {
+      "dataset": "fgvc_aircraft",
+      "labels": 100,
+      "verified": 100,
+      "review": 0,
+      "classification_connected": 100,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 100,
+      "unique_verified_components": 100
+    },
+    {
+      "dataset": "flowers102",
+      "labels": 102,
+      "verified": 102,
+      "review": 0,
+      "classification_connected": 102,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 102,
+      "unique_verified_components": 102
+    },
+    {
+      "dataset": "food101",
+      "labels": 101,
+      "verified": 101,
+      "review": 0,
+      "classification_connected": 101,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 101,
+      "unique_verified_components": 101
+    },
+    {
+      "dataset": "pets37",
+      "labels": 37,
+      "verified": 37,
+      "review": 0,
+      "classification_connected": 37,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 37,
+      "unique_verified_components": 37
+    },
+    {
+      "dataset": "places365",
+      "labels": 365,
+      "verified": 242,
+      "review": 123,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 242,
+      "unique_verified_uids": 242,
+      "unique_verified_components": 242
+    },
+    {
+      "dataset": "resisc45",
+      "labels": 45,
+      "verified": 30,
+      "review": 15,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 30,
+      "unique_verified_uids": 30,
+      "unique_verified_components": 30
+    },
+    {
+      "dataset": "stanford_cars",
+      "labels": 196,
+      "verified": 196,
+      "review": 0,
+      "classification_connected": 196,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 196,
+      "unique_verified_components": 196
+    },
+    {
+      "dataset": "stanford_dogs",
+      "labels": 120,
+      "verified": 120,
+      "review": 0,
+      "classification_connected": 120,
+      "attribute_or_instance_connected": 0,
+      "unique_verified_uids": 120,
+      "unique_verified_components": 120
+    },
+    {
+      "dataset": "sun397",
+      "labels": 397,
+      "verified": 260,
+      "review": 137,
+      "classification_connected": 0,
+      "attribute_or_instance_connected": 260,
+      "unique_verified_uids": 260,
+      "unique_verified_components": 260
+    }
+  ],
+  "same_name_policy": "Distinct source UIDs; label equality never grants SAME_CONCEPT",
+  "classification_contract": "ACTIVE IS_A and ACTIVE SAME_CONCEPT define the class DAG; INSTANCE_OF, ATTRIBUTE_KIND_OF and LOCATED_IN are separately typed."
 }

@@ -1,51 +1,30 @@
-# 数据库结构与 WordNet 导航
+# 单数据库结构
 
-FineAtlas V1 使用一个 `fineatlas.sqlite`。Python 和 CLI 通过只读 SQLite 连接查询，数据库无需服务器、模型或其他来源数据库。
+所有分类、实例、别名、证据和数据集目录位于同一个 SQLite 文件，运行时不需要外部服务。
 
-| 表或视图 | 用途 |
+| 表/视图 | 内容 |
 |---|---|
-| `nodes` | 来源 UID、标签、定义、原始元数据、显示状态和身份组 |
-| `edges` | 分类及辅助关系、分类轴、来源、证据和状态 |
-| `aliases` / `alias_search` | 名称、别名与全文索引 |
-| `bridges` | `SAME_CONCEPT` 身份对齐 |
-| `evidence` | 分类或身份关系的来源证据及内容哈希 |
-| `dataset_targets` | 六个数据集的 755 个类别到 UID 的映射 |
-| `components` | 身份组、WordNet 可达性、深度和路径证据 |
-| `node_dispositions` | 记录用途、分类准入状态与未接通原因 |
-| `pruning` | 默认导航中裁剪的 WordNet UID 及理由 |
-| `classification_repairs` / `source_scope_reviews` | 关系准入和来源范围核对记录 |
-| `suppressed_edges` / `target_revisions` | 被隔离关系和类别映射的溯源记录 |
-| `inputs` / `source_tables` / `archive_*` | 来源导入清单及辅助溯源数据 |
-| `active_nodes` / `active_edges` | 全部来源的保留节点和有效分类边，含未接通分支 |
-| `wordnet_nodes` / `wordnet_edges` | 从 WordNet 根可达的有效导航视图 |
+| `nodes` | 原生 UID、标签、定义、来源、可见性、身份组 |
+| `aliases` / `alias_search` | Unicode 别名、原生型号编号及全文检索 |
+| `edges` / `active_edges` | 来源关系及有效 `IS_A` 分类记录；方向 child → parent |
+| `bridges` | 经审查的 `SAME_CONCEPT`，独立于分类边 |
+| `components` | 身份组、分类根可达性、递减深度和路径证据 |
+| `node_profiles` | 扩展记录的节点种类、领域、来源及 JSON 参数；旧来源仍使用原生 rank/data |
+| `entity_relations` | `INSTANCE_OF`、`ATTRIBUTE_KIND_OF`、`DEPICTS_TYPE`、`LOCATED_IN` 等明确关系 |
+| `entity_connections` / `connected_entities` | 已连接的实例、属性、任务类别与类型路径证据 |
+| `dataset_targets` | 13 个目录的 1,822 个原生类别和映射状态 |
+| `dataset_catalogs` | 原生标签目录的来源、哈希、类别数和语义范围 |
+| `evidence` | 证据编号、来源链接、原生字段和记录摘要 |
+| `metadata` | 当前统计、领域入口、数据集与验证信息 |
+| `pruning` / `suppressed_edges` | 裁剪与隔离记录，保留原始身份但不激活不合格分类 |
+| `wordnet_nodes` / `wordnet_edges` | 分类根可达的导航投影 |
 
-`nodes.uid` 唯一，不同来源 UID 仍可能表示同一概念。外部引用使用 UID；`component_id` 仅用于库内身份分组。分类边按 **child → parent** 保存。`edges.status='ACTIVE'` 的规范关系为 `IS_A`，原始关系保存在 `original_relation`。
+扩展节点使用 `CLASS`、`MODEL_FAMILY`、`MODEL`、`INSTANCE`、`ATTRIBUTE`、`DATASET_CATEGORY`、`ORGANIZATION` 或 `UNKNOWN`。`node_profiles` 不覆盖全部继承来源；接口按原生 rank 补充显示种类，混合或未确认型号保留 UNKNOWN。
 
-## 分类关系和身份关系
+参数是结构化文本事实，不提供图片。GeoNames 坐标采用 WGS84；海拔、区域字段仅在原生记录存在时保留。国家归属连接按来源字段保存，不保证唯一归属或独立的边界裁定。
 
-图允许多父节点，是可以按树浏览的无环 DAG。`SAME_CONCEPT` 独立保存在 `bridges`，不属于分类关系，也不增加分类深度。详细路径会显式标注身份步骤。
+产品 UID 保留目录意义：Apple 按原生条目与年份区分，复用的硬件编号是别名；Canon 使用博物馆原生目录编号；GeForce 表示显卡产品规格，厂商伙伴板卡身份不自动等同；SSD 容量变体是参数。不同目录的同名型号不按名字自动合并。
 
-属性、厂商和部件关系不作为 `IS_A`。待审、辅助、隔离及裁剪记录不进入默认有效分类路径。直接读取 `edges` 全表时必须检查 `status`。
+类别编号保持目录的原生编号范围。场景任务标签不是物理类型的 `IS_A` 子类；在定义范围一致时，使用 `DEPICTS_TYPE` 指向被描绘类型。REVIEW_NATIVE_CATEGORY 保留任务身份，不能作为已审查现实类型映射使用。
 
-默认使用 `view="wordnet"`。使用 `FineAtlas(path, view="all")` 可以检查尚未接通的来源分支和辅助记录。节点用途与准入状态见 [连接诊断](connectivity.md)。
-
-## WordNet 下位细化
-
-入口为 `wordnet31:00001740-n`（entity）。WordNet 提供通用类型骨架，来源分类补充物种、品种、型号和菜品等细粒度节点。
-
-汽车入口是 `wordnet31:02961779-n`，飞机入口是 `wordnet31:02689427-n`。默认导航分别裁剪 32 和 47 个 WordNet 原细分，由来源原生分类承担下位细化；目标类别、跨来源端点和必要祖先受保护。裁剪记录保存在库内，标记 `PRUNED_WORDNET`。不同词义不会仅因名称相同而合并。
-
-## 直接 SQL
-
-```python
-import sqlite3
-from pathlib import Path
-
-path = Path("fineatlas.sqlite").resolve()
-with sqlite3.connect(path.as_uri() + "?mode=ro&immutable=1", uri=True) as db:
-    print(db.execute("SELECT uid,label FROM wordnet_nodes LIMIT 10").fetchall())
-    print(db.execute("SELECT child_uid,parent_uid FROM wordnet_edges LIMIT 10").fetchall())
-    print(db.execute("SELECT uid,record_role,tree_admission FROM node_dispositions LIMIT 10").fetchall())
-```
-
-来源记录中的原始路径属于溯源元数据，不是运行依赖。一个接口实例用于一个线程或进程，推荐用 `with` 自动关闭连接。
+数据库推荐只读访问。接口使用不可变只读连接，更新数据库后应关闭并重新打开接口实例。下载分片合并解压后只有一个文件，分片不是多个数据库。

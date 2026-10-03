@@ -1,0 +1,362 @@
+[
+  {
+    "domain": "mountains",
+    "uid": "wikidata:Q8502",
+    "label": "mountain",
+    "source_uri": "https://www.wikidata.org/wiki/Q8502"
+  },
+  {
+    "domain": "rivers",
+    "uid": "wikidata:Q4022",
+    "label": "river",
+    "source_uri": "https://www.wikidata.org/wiki/Q4022"
+  },
+  {
+    "domain": "lakes",
+    "uid": "wikidata:Q23397",
+    "label": "lake",
+    "source_uri": "https://www.wikidata.org/wiki/Q23397"
+  },
+  {
+    "domain": "volcanoes",
+    "uid": "wikidata:Q8072",
+    "label": "volcano",
+    "source_uri": "https://www.wikidata.org/wiki/Q8072"
+  },
+  {
+    "domain": "mountain_ranges",
+    "uid": "wikidata:Q46831",
+    "label": "mountain range",
+    "source_uri": "https://www.wikidata.org/wiki/Q46831"
+  },
+  {
+    "domain": "glaciers",
+    "uid": "wikidata:Q35666",
+    "label": "glacier",
+    "source_uri": "https://www.wikidata.org/wiki/Q35666"
+  },
+  {
+    "domain": "clouds",
+    "uid": "wikidata:Q8074",
+    "label": "cloud",
+    "source_uri": "https://www.wikidata.org/wiki/Q8074"
+  },
+  {
+    "domain": "rocks",
+    "uid": "wikidata:Q8063",
+    "label": "rock",
+    "source_uri": "https://www.wikidata.org/wiki/Q8063"
+  },
+  {
+    "domain": "minerals",
+    "uid": "wikidata:Q7946",
+    "label": "mineral",
+    "source_uri": "https://www.wikidata.org/wiki/Q7946"
+  },
+  {
+    "domain": "waterfalls",
+    "uid": "wikidata:Q34038",
+    "label": "waterfall",
+    "source_uri": "https://www.wikidata.org/wiki/Q34038"
+  },
+  {
+    "domain": "islands",
+    "uid": "wikidata:Q23442",
+    "label": "island",
+    "source_uri": "https://www.wikidata.org/wiki/Q23442"
+  },
+  {
+    "domain": "valleys",
+    "uid": "wikidata:Q39816",
+    "label": "valley",
+    "source_uri": "https://www.wikidata.org/wiki/Q39816"
+  },
+  {
+    "domain": "deserts",
+    "uid": "wikidata:Q8514",
+    "label": "desert",
+    "source_uri": "https://www.wikidata.org/wiki/Q8514"
+  },
+  {
+    "domain": "forests",
+    "uid": "wikidata:Q4421",
+    "label": "forest",
+    "source_uri": "https://www.wikidata.org/wiki/Q4421"
+  },
+  {
+    "domain": "beaches",
+    "uid": "wikidata:Q40080",
+    "label": "beach",
+    "source_uri": "https://www.wikidata.org/wiki/Q40080"
+  },
+  {
+    "domain": "electronic_devices",
+    "uid": "wikidata:Q2858615",
+    "label": "electronic device",
+    "source_uri": "https://www.wikidata.org/wiki/Q2858615"
+  },
+  {
+    "domain": "computers",
+    "uid": "wikidata:Q68",
+    "label": "computer",
+    "source_uri": "https://www.wikidata.org/wiki/Q68"
+  },
+  {
+    "domain": "laptops",
+    "uid": "wikidata:Q3962",
+    "label": "laptop",
+    "source_uri": "https://www.wikidata.org/wiki/Q3962"
+  },
+  {
+    "domain": "tablets",
+    "uid": "wikidata:Q155972",
+    "label": "tablet computer",
+    "source_uri": "https://www.wikidata.org/wiki/Q155972"
+  },
+  {
+    "domain": "graphics_cards",
+    "uid": "wikidata:Q4308",
+    "label": "graphics card",
+    "source_uri": "https://www.wikidata.org/wiki/Q4308"
+  },
+  {
+    "domain": "gpus",
+    "uid": "wikidata:Q183484",
+    "label": "graphics processing unit",
+    "source_uri": "https://www.wikidata.org/wiki/Q183484"
+  },
+  {
+    "domain": "microprocessors",
+    "uid": "wikidata:Q5297",
+    "label": "microprocessor",
+    "source_uri": "https://www.wikidata.org/wiki/Q5297"
+  },
+  {
+    "domain": "computer_monitors",
+    "uid": "wikidata:Q5290",
+    "label": "computer monitor",
+    "source_uri": "https://www.wikidata.org/wiki/Q5290"
+  },
+  {
+    "domain": "computer_hardware",
+    "uid": "wikidata:Q3966",
+    "label": "computer hardware",
+    "source_uri": "https://www.wikidata.org/wiki/Q3966"
+  },
+  {
+    "domain": "smartphones",
+    "uid": "wikidata:Q22645",
+    "label": "smartphone",
+    "source_uri": "https://www.wikidata.org/wiki/Q22645"
+  },
+  {
+    "domain": "digital_cameras",
+    "uid": "wikidata:Q62927",
+    "label": "digital camera",
+    "source_uri": "https://www.wikidata.org/wiki/Q62927"
+  },
+  {
+    "domain": "camera_lenses",
+    "uid": "wikidata:Q192234",
+    "label": "camera lens",
+    "source_uri": "https://www.wikidata.org/wiki/Q192234"
+  },
+  {
+    "domain": "smartwatches",
+    "uid": "wikidata:Q5362345",
+    "label": "smartwatch",
+    "source_uri": "https://www.wikidata.org/wiki/Q5362345"
+  },
+  {
+    "domain": "earbuds",
+    "uid": "wikidata:Q50184015",
+    "label": "earbuds",
+    "source_uri": "https://www.wikidata.org/wiki/Q50184015"
+  },
+  {
+    "domain": "solid_state_drives",
+    "uid": "wikidata:Q487343",
+    "label": "solid-state drive",
+    "source_uri": "https://www.wikidata.org/wiki/Q487343"
+  },
+  {
+    "domain": "electronic_components",
+    "uid": "wikidata:Q11653",
+    "label": "electronic component",
+    "source_uri": "https://www.wikidata.org/wiki/Q11653"
+  },
+  {
+    "domain": "integrated_circuits",
+    "uid": "wikidata:Q80831",
+    "label": "integrated circuit",
+    "source_uri": "https://www.wikidata.org/wiki/Q80831"
+  },
+  {
+    "domain": "pcbs",
+    "uid": "wikidata:Q173350",
+    "label": "printed circuit board",
+    "source_uri": "https://www.wikidata.org/wiki/Q173350"
+  },
+  {
+    "domain": "home_appliances",
+    "uid": "wikidata:Q212920",
+    "label": "home appliance",
+    "source_uri": "https://www.wikidata.org/wiki/Q212920"
+  },
+  {
+    "domain": "medical_devices",
+    "uid": "wikidata:Q6554101",
+    "label": "medical device",
+    "source_uri": "https://www.wikidata.org/wiki/Q6554101"
+  },
+  {
+    "domain": "surgical_instruments",
+    "uid": "wikidata:Q1074814",
+    "label": "surgical instrument",
+    "source_uri": "https://www.wikidata.org/wiki/Q1074814"
+  },
+  {
+    "domain": "furniture",
+    "uid": "wikidata:Q14745",
+    "label": "furniture",
+    "source_uri": "https://www.wikidata.org/wiki/Q14745"
+  },
+  {
+    "domain": "tools",
+    "uid": "wikidata:Q39546",
+    "label": "physical tool",
+    "source_uri": "https://www.wikidata.org/wiki/Q39546"
+  },
+  {
+    "domain": "power_tools",
+    "uid": "wikidata:Q1327701",
+    "label": "power tool",
+    "source_uri": "https://www.wikidata.org/wiki/Q1327701"
+  },
+  {
+    "domain": "hand_tools",
+    "uid": "wikidata:Q2578402",
+    "label": "hand tool",
+    "source_uri": "https://www.wikidata.org/wiki/Q2578402"
+  },
+  {
+    "domain": "clothing",
+    "uid": "wikidata:Q11460",
+    "label": "clothing",
+    "source_uri": "https://www.wikidata.org/wiki/Q11460"
+  },
+  {
+    "domain": "musical_instruments",
+    "uid": "wikidata:Q34379",
+    "label": "musical instrument",
+    "source_uri": "https://www.wikidata.org/wiki/Q34379"
+  },
+  {
+    "domain": "buildings",
+    "uid": "wikidata:Q41176",
+    "label": "building",
+    "source_uri": "https://www.wikidata.org/wiki/Q41176"
+  },
+  {
+    "domain": "bridges",
+    "uid": "wikidata:Q12280",
+    "label": "bridge",
+    "source_uri": "https://www.wikidata.org/wiki/Q12280"
+  },
+  {
+    "domain": "ships",
+    "uid": "wikidata:Q11446",
+    "label": "ship",
+    "source_uri": "https://www.wikidata.org/wiki/Q11446"
+  },
+  {
+    "domain": "locomotives",
+    "uid": "wikidata:Q93301",
+    "label": "locomotive",
+    "source_uri": "https://www.wikidata.org/wiki/Q93301"
+  },
+  {
+    "domain": "tractors",
+    "uid": "wikidata:Q39495",
+    "label": "tractor",
+    "source_uri": "https://www.wikidata.org/wiki/Q39495"
+  },
+  {
+    "domain": "food_dishes",
+    "uid": "wikidata:Q746549",
+    "label": "dish",
+    "source_uri": "https://www.wikidata.org/wiki/Q746549"
+  },
+  {
+    "domain": "cameras",
+    "uid": "wikidata:Q15328",
+    "label": "camera",
+    "source_uri": "https://www.wikidata.org/wiki/Q15328"
+  },
+  {
+    "domain": "headphones",
+    "uid": "wikidata:Q186819",
+    "label": "headphone",
+    "source_uri": "https://www.wikidata.org/wiki/Q186819"
+  },
+  {
+    "domain": "network_routers",
+    "uid": "wikidata:Q5318",
+    "label": "router",
+    "source_uri": "https://www.wikidata.org/wiki/Q5318"
+  },
+  {
+    "domain": "desktop_computers",
+    "uid": "wikidata:Q56155",
+    "label": "desktop computer",
+    "source_uri": "https://www.wikidata.org/wiki/Q56155"
+  },
+  {
+    "domain": "television_sets",
+    "uid": "wikidata:Q8075",
+    "label": "television set",
+    "source_uri": "https://www.wikidata.org/wiki/Q8075"
+  },
+  {
+    "domain": "game_consoles",
+    "uid": "wikidata:Q8076",
+    "label": "video game console",
+    "source_uri": "https://www.wikidata.org/wiki/Q8076"
+  },
+  {
+    "domain": "wearable_computers",
+    "uid": "wikidata:Q1334829",
+    "label": "wearable computer",
+    "source_uri": "https://www.wikidata.org/wiki/Q1334829"
+  },
+  {
+    "domain": "network_switches",
+    "uid": "wikidata:Q4503",
+    "label": "network switch",
+    "source_uri": "https://www.wikidata.org/wiki/Q4503"
+  },
+  {
+    "domain": "semiconductor_devices",
+    "uid": "wikidata:Q175805",
+    "label": "semiconductor device",
+    "source_uri": "https://www.wikidata.org/wiki/Q175805"
+  },
+  {
+    "domain": "single_board_computers",
+    "uid": "wikidata:Q944780",
+    "label": "single-board computer",
+    "source_uri": "https://www.wikidata.org/wiki/Q944780"
+  },
+  {
+    "domain": "loudspeakers",
+    "uid": "wikidata:Q570",
+    "label": "loudspeaker",
+    "source_uri": "https://www.wikidata.org/wiki/Q570"
+  },
+  {
+    "domain": "printers",
+    "uid": "wikidata:Q82",
+    "label": "printer",
+    "source_uri": "https://www.wikidata.org/wiki/Q82"
+  }
+]
