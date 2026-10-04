@@ -1,0 +1,151 @@
+{
+  "status": "CONFIRMED_SEMANTIC_ISSUE",
+  "database_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37",
+  "meaning": "A plant genus and a reptile classification with the same name share an active identity component. The plant entry can reach the source-native Aves branch through this component. Distinct UIDs do not guarantee distinct identity groups. DAG and root reachability checks alone do not certify classification meaning.",
+  "issue": {
+    "nodes": [
+      {
+        "uid": "ott:329823",
+        "label": "Sauria",
+        "rank": "order",
+        "component_id": 2669093
+      },
+      {
+        "uid": "wfo:wfo-4000034172",
+        "label": "Sauria",
+        "rank": "genus",
+        "component_id": 2669093
+      },
+      {
+        "uid": "wikidata:Q17487639",
+        "label": "Sauria",
+        "rank": "",
+        "component_id": 2669093
+      }
+    ],
+    "identity_bridges": [
+      {
+        "id": 846991,
+        "left_uid": "ott:329823",
+        "right_uid": "wikidata:Q17487639",
+        "source": "ott",
+        "status": "ACTIVE"
+      },
+      {
+        "id": 4337307,
+        "left_uid": "wfo:wfo-4000034172",
+        "right_uid": "wikidata:Q17487639",
+        "source": "wfo",
+        "status": "ACTIVE"
+      },
+      {
+        "id": 4374164,
+        "left_uid": "wordnet31:01676309-n",
+        "right_uid": "wikidata:Q17487639",
+        "source": "alignment_v5",
+        "status": "REVIEW"
+      }
+    ]
+  },
+  "demonstrating_classification_path": {
+    "start_uid": "wordnet31:00017402-n",
+    "target_uid": "ott:81461",
+    "target_label": "Aves",
+    "target_definition": "",
+    "classification_steps": 13,
+    "edges": [
+      {
+        "edge_id": 9116398,
+        "parent_uid": "v4root:plant",
+        "parent_label": "plant",
+        "child_uid": "wfo:wfo-4100001250",
+        "child_label": "Plantae"
+      },
+      {
+        "edge_id": 8571202,
+        "parent_uid": "wfo:wfo-4100001250",
+        "parent_label": "Plantae",
+        "child_uid": "wfo:wfo-4100003335",
+        "child_label": "Pteridobiotina"
+      },
+      {
+        "edge_id": 8539068,
+        "parent_uid": "wfo:wfo-4100003335",
+        "parent_label": "Pteridobiotina",
+        "child_uid": "wfo:wfo-9949999999",
+        "child_label": "Angiosperms"
+      },
+      {
+        "edge_id": 8539031,
+        "parent_uid": "wfo:wfo-9949999999",
+        "parent_label": "Angiosperms",
+        "child_uid": "wfo:wfo-9000000496",
+        "child_label": "Solanales"
+      },
+      {
+        "edge_id": 2841071,
+        "parent_uid": "wikidata:Q21723",
+        "parent_label": "Solanales",
+        "child_uid": "wikidata:Q26568",
+        "child_label": "Boraginaceae"
+      },
+      {
+        "edge_id": 2893042,
+        "parent_uid": "wikidata:Q26568",
+        "parent_label": "Boraginaceae",
+        "child_uid": "wikidata:Q17487639",
+        "child_label": "Sauria"
+      },
+      {
+        "edge_id": 5343270,
+        "parent_uid": "ott:329823",
+        "parent_label": "Sauria",
+        "child_uid": "ott:4947372",
+        "child_label": "Archelosauria"
+      },
+      {
+        "edge_id": 5343271,
+        "parent_uid": "ott:4947372",
+        "parent_label": "Archelosauria",
+        "child_uid": "ott:335588",
+        "child_label": "Archosauria"
+      },
+      {
+        "edge_id": 5343272,
+        "parent_uid": "ott:335588",
+        "parent_label": "Archosauria",
+        "child_uid": "ott:90215",
+        "child_label": "Dinosauria"
+      },
+      {
+        "edge_id": 1741042,
+        "parent_uid": "wikidata:Q430",
+        "parent_label": "dinosaur",
+        "child_uid": "wikidata:Q186334",
+        "child_label": "Saurischia"
+      },
+      {
+        "edge_id": 3298537,
+        "parent_uid": "wikidata:Q186334",
+        "parent_label": "Saurischia",
+        "child_uid": "wikidata:Q188438",
+        "child_label": "Тheropoda"
+      },
+      {
+        "edge_id": 5343275,
+        "parent_uid": "ott:664350",
+        "parent_label": "Theropoda",
+        "child_uid": "ott:664351",
+        "child_label": "Coelurosauria"
+      },
+      {
+        "edge_id": 5343276,
+        "parent_uid": "ott:664351",
+        "parent_label": "Coelurosauria",
+        "child_uid": "ott:81461",
+        "child_label": "Aves"
+      }
+    ]
+  },
+  "scope": "Read-only audit; released database has not been changed."
+}

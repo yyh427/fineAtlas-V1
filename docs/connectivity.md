@@ -13,3 +13,9 @@ WordNet 的原生实例指针使用 INSTANCE_OF 恢复。命名山峰、河流�
 默认 `neighbors()` 返回分类父子。`instances()` 返回具体实例，`relations()` 返回明确的非分类关系，`path()` 的末步明确标注 INSTANCE_OF、ATTRIBUTE_KIND_OF 或 DEPICTS_TYPE。`view="all"` 允许查看未接通来源，但不把待审边激活。
 
 详见 [VALIDATION.json](../VALIDATION.json)、[CONNECTIVITY.json](../CONNECTIVITY.json) 和 [datasets.csv](datasets.csv)。
+
+## 已确认的跨领域身份问题
+
+同名 Sauria 的植物属记录与爬行动物分类记录仍共享身份组：`wikidata:Q17487639`、`wfo:wfo-4000034172` 和 `ott:329823`。这使植物入口能够进入原生鸟类 Aves 分支。根路径和无环检查仍通过，但该路径的领域语义错误。应复核继承的科学名称身份桥，不能仅凭名称或整体根可达率判断分类质量。[证据](identity_issue.json)。
+
+当前全局根到身份组的最短分类路径最大深度为 **56**。领域内部的深度使用该领域入口，因多父路径而可能与全局最短根深度不同。[领域统计](domain_status.csv) 的后代数量只描述当前有效图；未连接的本域扩展记录在 `profile_tagged_*` 列单独体现。
