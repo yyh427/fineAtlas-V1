@@ -24,6 +24,10 @@ def main():
         assert 'semiconductor diode' in {node['label'] for node in graph.neighbors('wikidata:Q321098','parents')}
         target = graph.target('cub200','1')
         assert target and target['target_uid'] == 'avilist:phoebastria nigripes'
+        assert graph.domain('minerals')['entry_uid']=='fineatlas-domain:minerals'
+        assert graph.domain_children('rivers')
+        assert graph.node('eunis2021:T')['attributes']['native_level']==1
+        assert graph.path('ima-mineral:quartz')
         print(json.dumps({'status':'PASS','graph':graph.stats(),'queries_checked':examples},ensure_ascii=False,indent=2))
 
 

@@ -1,4 +1,4 @@
-dataset,labels,verified,review,classification_connected,attribute_or_instance_connected,unique_verified_uids,unique_verified_components
+dataset,labels,verified,native_only,classification_connected,typed_connected,unique_verified_uids,unique_verified_components
 caltech101,102,54,48,0,54,54,54
 cub200,200,200,0,200,0,200,200
 dtd,47,47,0,0,47,47,47

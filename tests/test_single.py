@@ -66,6 +66,34 @@ class TypedInterfaceTest(unittest.TestCase):
         self.assertEqual(len(self.tree.path('geo:1',max_depth=2)),2)
         self.assertEqual(self.tree.relations('type:river',direction='incoming',relation='INSTANCE_OF')[0]['subject_uid'],'geo:1')
 
+    def test_domain_entry_is_navigation_with_native_uids(self):
+        self.tree.metadata['domain_roots']=[{'domain':'water','uid':'fineatlas-domain:water',
+            'entry_uid':'fineatlas-domain:water','label':'water types','root_uids':['type:root','type:river']}]
+        self.assertEqual(self.tree.domain('fineatlas-domain:water')['domain'],'water')
+        self.assertTrue(self.tree.node('fineatlas-domain:water')['navigation_only'])
+        self.assertEqual([n['uid'] for n in self.tree.domain_roots('water')],['type:root','type:river'])
+        child=self.tree.neighbors('fineatlas-domain:water')[0]
+        self.assertEqual(child['uid'],'type:river')
+        self.assertEqual(child['edge']['parent_uid'],'type:root')
+        self.assertEqual(child['via_domain_roots'],['type:root'])
+        self.assertIsNone(self.tree.domain('missing'))
+        self.assertEqual(self.tree.connection_status('fineatlas-domain:water')['tree_admission'],'NAVIGATION_ONLY')
+
+    def test_source_only_records_are_inspectable_but_not_admitted(self):
+        self.tree.close()
+        c=sqlite3.connect(self.path)
+        c.execute("UPDATE nodes SET visibility='SOURCE_ONLY' WHERE uid='legacy:mixed'")
+        c.execute('CREATE TABLE admission_decisions(uid TEXT PRIMARY KEY,status TEXT,record_role TEXT,tree_admission TEXT,reason TEXT,source_flags TEXT)')
+        c.execute("INSERT INTO admission_decisions VALUES('legacy:mixed','SOURCE_RECORD','UNKNOWN','NOT_ADMITTED','Scope not established','[]')")
+        c.execute("INSERT INTO aliases VALUES('mixed','legacy:mixed')")
+        c.commit();c.close()
+        self.tree=FineAtlas(self.path)
+        self.assertEqual(self.tree.exact('Mixed'),[])
+        with FineAtlas(self.path,view='all') as tree:
+            self.assertEqual(tree.exact('Mixed')[0]['uid'],'legacy:mixed')
+            self.assertEqual(tree.connection_status('legacy:mixed')['tree_admission'],'NOT_ADMITTED')
+            self.assertEqual(tree.path('legacy:mixed'),[])
+
 
 if __name__ == '__main__':
     unittest.main()

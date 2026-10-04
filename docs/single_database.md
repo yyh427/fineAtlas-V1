@@ -15,6 +15,8 @@
 | `dataset_targets` | 13 个目录的 1,822 个原生类别和映射状态 |
 | `dataset_catalogs` | 原生标签目录的来源、哈希、类别数和语义范围 |
 | `evidence` | 证据编号、来源链接、原生字段和记录摘要 |
+| `domain_entries` / `domain_entry_roots` | 每领域一个导航入口及各原生分类根 |
+| `admission_decisions` / `task_mapping_admissions` | 来源记录和任务标签的准入用途 |
 | `metadata` | 当前统计、领域入口、数据集与验证信息 |
 | `pruning` / `suppressed_edges` | 裁剪与隔离记录，保留原始身份但不激活不合格分类 |
 | `wordnet_nodes` / `wordnet_edges` | 分类根可达的导航投影 |
@@ -25,6 +27,6 @@
 
 产品 UID 保留目录意义：Apple 按原生条目与年份区分，复用的硬件编号是别名；Canon 使用博物馆原生目录编号；GeForce 表示显卡产品规格，厂商伙伴板卡身份不自动等同；SSD 容量变体是参数。不同目录的同名型号不按名字自动合并。
 
-类别编号保持目录的原生编号范围。场景任务标签不是物理类型的 `IS_A` 子类；在定义范围一致时，使用 `DEPICTS_TYPE` 指向被描绘类型。REVIEW_NATIVE_CATEGORY 保留任务身份，不能作为已审查现实类型映射使用。
+类别编号保持目录的原生编号范围。场景任务标签不是物理类型的 `IS_A` 子类；在定义范围一致时，使用 `DEPICTS_TYPE` 指向被描绘类型。NATIVE_LABEL_ONLY 保留任务身份，不能作为已审查现实类型映射使用。
 
 数据库推荐只读访问。接口使用不可变只读连接，更新数据库后应关闭并重新打开接口实例。下载分片合并解压后只有一个文件，分片不是多个数据库。

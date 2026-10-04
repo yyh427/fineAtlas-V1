@@ -51,3 +51,15 @@ Apple model-identification support: [iPhone](https://support.apple.com/en-us/108
 ## Native task vocabularies
 
 Dataset label catalogs reference their original publishers and the frozen vocabulary files in `dataset_catalogs`, including [Food-101](https://data.vision.ee.ethz.ch/cvl/datasets_extra/food-101/), [DTD](https://www.robots.ox.ac.uk/~vgg/data/dtd/), [Caltech-101](https://www.vision.caltech.edu/datasets/caltech101/), [SUN397](https://vision.princeton.edu/projects/2010/SUN/), [Places365](https://github.com/CSAILVision/places365), [EuroSAT](https://github.com/phelber/EuroSAT) and [NWPU-RESISC45](https://www.escience.cn/people/JunweiHan/NWPU-RESISC45.html). Some publisher vocabularies are distributed through [TensorFlow Datasets](https://github.com/tensorflow/datasets); the recorded source URL and hash identify the exact imported vocabulary. This database redistributes label metadata and reviewed type mappings, not image datasets. Dataset image licenses and access requirements remain those of their publishers.
+
+## Habitat and physical type classifications
+
+The European Environment Agency is credited for [EUNIS habitat classification](https://www.eea.europa.eu/en/datahub/datahubitem-view/638330ea-90e6-4e41-81ea-e70f25ae7117). The imported 2012 classification has 5,284 records and the 2021 classification has 3,860 records. Version and native code form distinct UIDs; levels and source references are retained. Follow the [EEA reuse policy](https://www.eea.europa.eu/en/legal-notice). These are ecological habitat types, rather than an assertion that every named physical feature has identical habitat scope.
+
+USGS and the US National Park Service are credited for 21 additional physical types: [water glossary](https://water.usgs.gov/water-basics_glossary.html), [lake types](https://www.usgs.gov/special-topics/water-science-school/science/lakes-and-reservoirs), and [NPS mountain classifications](https://home.nps.gov/articles/rockies.htm). Per-record primary URLs and evidence are stored in the database. Images are not redistributed.
+
+The mineral composition hierarchy uses the IMA source formula to express chemical-element content. Its 92 groupings do not infer crystal structure and are not a Dana or Strunz classification. The 96 IMA questionable-status entries remain source records without classification admission.
+
+Imported eunis2012.xls SHA-256: `cde7b23f1b91c0167f3b93c72938acb6cd8a22becd0d785fcbf0d9278a0021f5`.
+
+Imported eunis2021.xlsx SHA-256: `1427d22db8d77d1053ab1683aa60713bdec3d810605dd6b7bc16683b4ca14665`.

@@ -66,6 +66,12 @@ class SingleAtlas:
         return result
 
     def node(self, uid: str) -> dict | None:
+        if uid.startswith('fineatlas-domain:'):
+            entry = self.domain(uid)
+            if entry:
+                return {**entry,'node_kind':'DOMAIN_ENTRY','navigation_only':True,
+                        'visibility':'ACTIVE','data':{},'edge':{}}
+            return None
         result = self._node(self.con.execute('''SELECT n.*,c.wordnet_reachable,c.depth AS wordnet_depth
             FROM nodes n JOIN components c ON c.id=n.component_id WHERE n.uid=?''', (uid,)).fetchone())
         if result and 'entity_connections' in self._tables:
@@ -79,9 +85,16 @@ class SingleAtlas:
         node = self.node(uid)
         if not node:
             return None
+        if node.get('navigation_only'):
+            return {'uid':uid,'status':'NAVIGATION_ENTRY','tree_admission':'NAVIGATION_ONLY',
+                    'root_uids':node.get('root_uids',[])}
         result = {'uid': uid, 'wordnet_reachable': bool(node['wordnet_reachable']),
                   'wordnet_depth': node['wordnet_depth']}
         if node['visibility'] != 'ACTIVE':
+            if node['visibility']=='SOURCE_ONLY' and 'admission_decisions' in self._tables:
+                row=self.con.execute('SELECT * FROM admission_decisions WHERE uid=?',(uid,)).fetchone()
+                if row:
+                    return {**result,**dict(row),'ontology_scope_status':'UNKNOWN'}
             return {**result, 'status': 'ARCHIVED', 'reason': node['visibility']}
         if node['node_kind'] == 'ORGANIZATION':
             return {**result, 'status': 'AUXILIARY_RECORD', 'record_role': 'ORGANIZATION',
@@ -122,11 +135,12 @@ class SingleAtlas:
                           else 'No accepted classification connects this identity component'}
 
     def _visible_sql(self, alias: str) -> str:
-        expression = f"{alias}.visibility='ACTIVE'"
+        expression = (f"{alias}.visibility IN ('ACTIVE','SOURCE_ONLY')" if self.view=='all'
+                      else f"{alias}.visibility='ACTIVE'")
         if self.view == 'wordnet':
-            connected = f'{alias}.component_id IN (SELECT id FROM components WHERE wordnet_reachable=1)'
+            connected = f'EXISTS (SELECT 1 FROM components vc WHERE vc.id={alias}.component_id AND vc.wordnet_reachable=1)'
             if 'entity_connections' in self._tables:
-                connected += f' OR {alias}.uid IN (SELECT uid FROM entity_connections WHERE wordnet_reachable=1)'
+                connected += f' OR EXISTS (SELECT 1 FROM entity_connections vx WHERE vx.uid={alias}.uid AND vx.wordnet_reachable=1)'
             expression += ' AND (' + connected + ')'
 
         return expression
@@ -167,8 +181,8 @@ class SingleAtlas:
         # FTS accelerates broad searches without requiring third-party packages.
         if self.con.execute("SELECT 1 FROM sqlite_master WHERE name='alias_search'").fetchone():
             fts = ' AND '.join('"' + term.replace('"', '""') + '"' for term in terms)
-            sql = f'''SELECT DISTINCT n.* FROM alias_search f JOIN aliases a ON a.rowid=f.rowid
-                JOIN nodes n ON n.uid=a.uid WHERE alias_search MATCH ? AND {self._visible_sql('n')}{domain_sql}
+            sql = f'''SELECT DISTINCT n.* FROM alias_search f CROSS JOIN aliases a ON a.rowid=f.rowid
+                CROSS JOIN nodes n ON n.uid=a.uid WHERE alias_search MATCH ? AND {self._visible_sql('n')}{domain_sql}
                 ORDER BY n.layer DESC,n.uid LIMIT ?'''
             args = [fts, *domain_args, max(80, limit * 4)]
         else:
@@ -202,6 +216,8 @@ class SingleAtlas:
         self._limit(limit)
         if direction not in ('children', 'parents'):
             raise ValueError('direction must be children or parents')
+        if uid.startswith('fineatlas-domain:'):
+            return self.domain_children(uid,limit) if direction=='children' else []
         own = self.con.execute('SELECT component_id,visibility FROM nodes WHERE uid=?', (uid,)).fetchone()
         if not own or own['visibility'] != 'ACTIVE':
             return []
@@ -258,7 +274,7 @@ class SingleAtlas:
         return {'uid': child, 'label': self.node(child)['label'], 'parent_uid': parent,
                 'parent_label': self.node(parent)['label'], 'edge': edge}
 
-    def path(self, uid: str, anchors: list[str] | None = None, max_depth: int = 64) -> list[dict]:
+    def path(self, uid: str, anchors: list[str] | None = None, max_depth: int = 256) -> list[dict]:
         if max_depth < 0:
             raise ValueError('max_depth must be nonnegative')
         own = self.node(uid)
@@ -382,12 +398,54 @@ class SingleAtlas:
         """Catalog coverage, with admitted and unresolved mappings separated."""
         return [dict(row) for row in self.con.execute("""SELECT dataset,count(*) AS classes,
             sum(decision_status LIKE 'VERIFIED%') AS verified,
-            sum(decision_status NOT LIKE 'VERIFIED%') AS review
+            sum(decision_status NOT LIKE 'VERIFIED%' AND decision_status<>'NATIVE_LABEL_ONLY') AS review,
+            sum(decision_status='NATIVE_LABEL_ONLY') AS native_only
             FROM dataset_targets GROUP BY dataset ORDER BY dataset""")]
 
     def domains(self) -> list[dict]:
-        """Reviewed world-type entry points in the published database."""
+        """One navigation entry per domain, retaining independent native roots."""
         return self.metadata.get('domain_roots', [])
+
+    def domain(self, name: str) -> dict | None:
+        """Inspect an entry by domain name or its fineatlas-domain UID."""
+        name = name.removeprefix('fineatlas-domain:')
+        for entry in self.domains():
+            if entry['domain']==name:
+                return dict(entry)
+        return None
+
+    def domain_roots(self, name: str) -> list[dict]:
+        """Return the source classification roots behind one domain entry."""
+        entry=self.domain(name)
+        if not entry:
+            return []
+        roots=entry.get('root_uids') or [entry['uid']]
+        return [node for uid in roots if (node:=self.node(uid))]
+
+    def domain_children(self, name: str, limit: int = 20) -> list[dict]:
+        """Browse native-root children fairly; names never collapse distinct UIDs.
+
+        Returned edges remain actual source IS_A claims. The domain entry is
+        a navigation view and adds no identity or classification edge.
+        """
+        self._limit(limit)
+        entry=self.domain(name)
+        if not entry:
+            return []
+        roots=entry.get('root_uids') or [entry['uid']]
+        branches=[self.neighbors(uid,limit=limit) for uid in roots]
+        result={}
+        for offset in range(max((len(b) for b in branches),default=0)):
+            for root,branch in zip(roots,branches):
+                if offset>=len(branch):
+                    continue
+                item=branch[offset]
+                if item['uid'] in result:
+                    result[item['uid']]['via_domain_roots'].append(root)
+                elif len(result)<limit:
+                    result[item['uid']]={**item,'via_domain_entry':entry.get('entry_uid',entry['uid']),
+                                         'via_domain_roots':[root]}
+        return list(result.values())
 
     def stats(self) -> dict:
         public_keys = {'public_name', 'release', 'schema', 'root_uid', 'sqlite_files',

@@ -1,40 +1,550 @@
 {
   "public_name": "FineAtlas V1",
+  "release": "v1.5.0",
   "schema": "FINEATLAS_SINGLE_DB_V1",
+  "graph_version": "V1",
   "root_uid": "wordnet31:00001740-n",
   "sqlite_files": 1,
   "counts": {
-    "nodes": 12328610,
-    "active_nodes": 12328531,
-    "wordnet_nodes": 8741157,
-    "edges": 9317653,
-    "active_edges": 8828473,
-    "aliases": 23349238,
-    "bridges": 4384367,
-    "active_bridges": 4370246,
-    "evidence": 62161,
+    "nodes": 12356903,
+    "active_nodes": 12096799,
+    "source_only_nodes": 260025,
+    "wordnet_nodes": 8616473,
+    "active_edges": 8691050,
+    "aliases": 23388838,
+    "active_bridges": 34290,
+    "connected_entities": 3399533,
     "dataset_targets": 1822,
-    "pruning": 79,
-    "typed_relations": 6787359,
-    "connected_entities": 3398389,
-    "unconnected_active_nodes": 188985
+    "domain_entries": 92,
+    "mineral_composition_types": 92,
+    "eunis_habitat_types": 9144,
+    "auxiliary_active_records": 80793,
+    "edges": 9374353,
+    "bridges": 4384367,
+    "evidence": 111293,
+    "typed_relations": 6791139,
+    "pruning": 79
   },
-  "identity_components": 9453978,
+  "identity_components": 12322728,
   "root_component": 13936,
-  "wordnet_reachable_components": 5866569,
+  "wordnet_reachable_components": 8582342,
   "cycle_quarantined_records": 0,
   "cycle_check": "PASS",
+  "coverage_by_namespace": [
+    {
+      "namespace": "aat",
+      "source_uids": 3630,
+      "classification_reachable": 3630,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "apple-family",
+      "source_uids": 6,
+      "classification_reachable": 6,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "apple-model",
+      "source_uids": 257,
+      "classification_reachable": 257,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "avilist",
+      "source_uids": 33684,
+      "classification_reachable": 33684,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "caltech101-category",
+      "source_uids": 102,
+      "classification_reachable": 0,
+      "typed_reachable": 54,
+      "source_only": 48
+    },
+    {
+      "namespace": "canon",
+      "source_uids": 1449,
+      "classification_reachable": 1449,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "canon-family",
+      "source_uids": 19,
+      "classification_reachable": 19,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "dtd-attribute",
+      "source_uids": 47,
+      "classification_reachable": 0,
+      "typed_reachable": 47,
+      "source_only": 0
+    },
+    {
+      "namespace": "epa",
+      "source_uids": 50242,
+      "classification_reachable": 50242,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "epa-attribute",
+      "source_uids": 57,
+      "classification_reachable": 0,
+      "typed_reachable": 0,
+      "source_only": 57
+    },
+    {
+      "namespace": "epa-make",
+      "source_uids": 145,
+      "classification_reachable": 0,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "epa-model",
+      "source_uids": 1559,
+      "classification_reachable": 1559,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "epa-variant",
+      "source_uids": 5664,
+      "classification_reachable": 5664,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "eunis2012",
+      "source_uids": 5284,
+      "classification_reachable": 5284,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "eunis2021",
+      "source_uids": 3860,
+      "classification_reachable": 3860,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "eurosat-category",
+      "source_uids": 10,
+      "classification_reachable": 0,
+      "typed_reachable": 6,
+      "source_only": 4
+    },
+    {
+      "namespace": "faa-aircraft",
+      "source_uids": 94043,
+      "classification_reachable": 94043,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "faa-mfr",
+      "source_uids": 68538,
+      "classification_reachable": 0,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "food101-category",
+      "source_uids": 101,
+      "classification_reachable": 101,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "foodon",
+      "source_uids": 12342,
+      "classification_reachable": 12296,
+      "typed_reachable": 0,
+      "source_only": 46
+    },
+    {
+      "namespace": "geonames",
+      "source_uids": 3390047,
+      "classification_reachable": 0,
+      "typed_reachable": 3390047,
+      "source_only": 0
+    },
+    {
+      "namespace": "geonames-feature",
+      "source_uids": 65,
+      "classification_reachable": 65,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "ima-mineral",
+      "source_uids": 6239,
+      "classification_reachable": 6143,
+      "typed_reachable": 0,
+      "source_only": 96
+    },
+    {
+      "namespace": "manufacturer-model",
+      "source_uids": 4,
+      "classification_reachable": 4,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "mesh",
+      "source_uids": 122,
+      "classification_reachable": 0,
+      "typed_reachable": 0,
+      "source_only": 122
+    },
+    {
+      "namespace": "mimo-hs",
+      "source_uids": 641,
+      "classification_reachable": 641,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "mimo-keyword",
+      "source_uids": 2572,
+      "classification_reachable": 2500,
+      "typed_reachable": 0,
+      "source_only": 72
+    },
+    {
+      "namespace": "mineral-composition",
+      "source_uids": 92,
+      "classification_reachable": 92,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "nps-mountain",
+      "source_uids": 3,
+      "classification_reachable": 3,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "nvidia-geforce-card",
+      "source_uids": 38,
+      "classification_reachable": 38,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "nvidia-geforce-family",
+      "source_uids": 5,
+      "classification_reachable": 5,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "ott",
+      "source_uids": 4529570,
+      "classification_reachable": 4444049,
+      "typed_reachable": 0,
+      "source_only": 85521
+    },
+    {
+      "namespace": "places365-category",
+      "source_uids": 365,
+      "classification_reachable": 0,
+      "typed_reachable": 242,
+      "source_only": 123
+    },
+    {
+      "namespace": "resisc45-category",
+      "source_uids": 45,
+      "classification_reachable": 0,
+      "typed_reachable": 30,
+      "source_only": 15
+    },
+    {
+      "namespace": "samsung-ssd-line",
+      "source_uids": 34,
+      "classification_reachable": 34,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "sun397-category",
+      "source_uids": 397,
+      "classification_reachable": 0,
+      "typed_reachable": 260,
+      "source_only": 137
+    },
+    {
+      "namespace": "usgs-water",
+      "source_uids": 18,
+      "classification_reachable": 18,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v26-ads-dahlia-color",
+      "source_uids": 2,
+      "classification_reachable": 2,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v26-authority-car-model",
+      "source_uids": 11,
+      "classification_reachable": 11,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v26-car",
+      "source_uids": 169,
+      "classification_reachable": 169,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v26-gbif",
+      "source_uids": 2,
+      "classification_reachable": 2,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v26-nhtsa-model",
+      "source_uids": 28,
+      "classification_reachable": 28,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v26-wikidata",
+      "source_uids": 2,
+      "classification_reachable": 2,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "v4root",
+      "source_uids": 5,
+      "classification_reachable": 4,
+      "typed_reachable": 0,
+      "source_only": 1
+    },
+    {
+      "namespace": "vehicle-configuration",
+      "source_uids": 4,
+      "classification_reachable": 4,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "vpic-make",
+      "source_uids": 12103,
+      "classification_reachable": 0,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "vpic-model",
+      "source_uids": 31869,
+      "classification_reachable": 31869,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "wfo",
+      "source_uids": 454688,
+      "classification_reachable": 454688,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "wikidata",
+      "source_uids": 3515800,
+      "classification_reachable": 3341352,
+      "typed_reachable": 1168,
+      "source_only": 173274
+    },
+    {
+      "namespace": "wikidata-v4",
+      "source_uids": 48722,
+      "classification_reachable": 48285,
+      "typed_reachable": 0,
+      "source_only": 437
+    },
+    {
+      "namespace": "wmo-cloud",
+      "source_uids": 10,
+      "classification_reachable": 10,
+      "typed_reachable": 0,
+      "source_only": 0
+    },
+    {
+      "namespace": "wordnet31",
+      "source_uids": 82192,
+      "classification_reachable": 74362,
+      "typed_reachable": 7679,
+      "source_only": 72
+    }
+  ],
+  "datasets": [
+    {
+      "dataset": "caltech101",
+      "labels": 102,
+      "verified": 54,
+      "native_only": 48,
+      "classification_connected": 0,
+      "typed_connected": 54,
+      "unique_verified_uids": 54,
+      "unique_verified_components": 54
+    },
+    {
+      "dataset": "cub200",
+      "labels": 200,
+      "verified": 200,
+      "native_only": 0,
+      "classification_connected": 200,
+      "typed_connected": 0,
+      "unique_verified_uids": 200,
+      "unique_verified_components": 200
+    },
+    {
+      "dataset": "dtd",
+      "labels": 47,
+      "verified": 47,
+      "native_only": 0,
+      "classification_connected": 0,
+      "typed_connected": 47,
+      "unique_verified_uids": 47,
+      "unique_verified_components": 47
+    },
+    {
+      "dataset": "eurosat",
+      "labels": 10,
+      "verified": 6,
+      "native_only": 4,
+      "classification_connected": 0,
+      "typed_connected": 6,
+      "unique_verified_uids": 6,
+      "unique_verified_components": 6
+    },
+    {
+      "dataset": "fgvc_aircraft",
+      "labels": 100,
+      "verified": 100,
+      "native_only": 0,
+      "classification_connected": 100,
+      "typed_connected": 0,
+      "unique_verified_uids": 100,
+      "unique_verified_components": 100
+    },
+    {
+      "dataset": "flowers102",
+      "labels": 102,
+      "verified": 102,
+      "native_only": 0,
+      "classification_connected": 102,
+      "typed_connected": 0,
+      "unique_verified_uids": 102,
+      "unique_verified_components": 102
+    },
+    {
+      "dataset": "food101",
+      "labels": 101,
+      "verified": 101,
+      "native_only": 0,
+      "classification_connected": 101,
+      "typed_connected": 0,
+      "unique_verified_uids": 101,
+      "unique_verified_components": 101
+    },
+    {
+      "dataset": "pets37",
+      "labels": 37,
+      "verified": 37,
+      "native_only": 0,
+      "classification_connected": 37,
+      "typed_connected": 0,
+      "unique_verified_uids": 37,
+      "unique_verified_components": 37
+    },
+    {
+      "dataset": "places365",
+      "labels": 365,
+      "verified": 242,
+      "native_only": 123,
+      "classification_connected": 0,
+      "typed_connected": 242,
+      "unique_verified_uids": 242,
+      "unique_verified_components": 242
+    },
+    {
+      "dataset": "resisc45",
+      "labels": 45,
+      "verified": 30,
+      "native_only": 15,
+      "classification_connected": 0,
+      "typed_connected": 30,
+      "unique_verified_uids": 30,
+      "unique_verified_components": 30
+    },
+    {
+      "dataset": "stanford_cars",
+      "labels": 196,
+      "verified": 196,
+      "native_only": 0,
+      "classification_connected": 196,
+      "typed_connected": 0,
+      "unique_verified_uids": 196,
+      "unique_verified_components": 196
+    },
+    {
+      "dataset": "stanford_dogs",
+      "labels": 120,
+      "verified": 120,
+      "native_only": 0,
+      "classification_connected": 120,
+      "typed_connected": 0,
+      "unique_verified_uids": 120,
+      "unique_verified_components": 120
+    },
+    {
+      "dataset": "sun397",
+      "labels": 397,
+      "verified": 260,
+      "native_only": 137,
+      "classification_connected": 0,
+      "typed_connected": 260,
+      "unique_verified_uids": 260,
+      "unique_verified_components": 260
+    }
+  ],
+  "global_classification_max_depth": 86,
+  "same_name_policy": "Native UIDs remain independent; names alone do not establish identity",
+  "classification_contract": "ACTIVE IS_A defines the root-connected class DAG after supported identity contraction; instances, attributes and native task categories use separately typed relations.",
   "edge_statuses": {
-    "ACTIVE": 8828473,
-    "AUXILIARY": 341506,
+    "ACTIVE": 8691050,
+    "AUXILIARY": 347691,
+    "NOT_ADMITTED": 156815,
     "PRUNED_WORDNET": 87,
     "QUARANTINED": 190,
     "QUARANTINED_CYCLE": 6,
-    "REVIEW": 147391
+    "REJECTED": 30918,
+    "REVIEW": 147596
   },
   "bridge_statuses": {
-    "ACTIVE": 4370246,
+    "ACTIVE": 34290,
     "QUARANTINED": 6,
+    "REJECTED": 4335956,
     "REVIEW": 14115
   },
   "typed_statuses": [
@@ -51,7 +561,17 @@
     {
       "relation": "INSTANCE_OF",
       "status": "ACTIVE",
-      "records": 3398629
+      "records": 3399747
+    },
+    {
+      "relation": "INSTANCE_OF",
+      "status": "NOT_ADMITTED",
+      "records": 27
+    },
+    {
+      "relation": "INSTANCE_OF",
+      "status": "REJECTED",
+      "records": 2635
     },
     {
       "relation": "INSTANCE_OF",
@@ -64,426 +584,6 @@
       "records": 3388029
     }
   ],
-  "coverage_by_namespace": [
-    {
-      "namespace": "aat",
-      "nodes": 3630,
-      "classification_reachable": 3630,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "apple-family",
-      "nodes": 6,
-      "classification_reachable": 6,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "apple-model",
-      "nodes": 257,
-      "classification_reachable": 257,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "avilist",
-      "nodes": 33684,
-      "classification_reachable": 33684,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "caltech101-category",
-      "nodes": 102,
-      "classification_reachable": 0,
-      "typed_reachable": 54
-    },
-    {
-      "namespace": "canon",
-      "nodes": 1449,
-      "classification_reachable": 1449,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "canon-family",
-      "nodes": 19,
-      "classification_reachable": 19,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "dtd-attribute",
-      "nodes": 47,
-      "classification_reachable": 0,
-      "typed_reachable": 47
-    },
-    {
-      "namespace": "epa",
-      "nodes": 50242,
-      "classification_reachable": 50242,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "epa-attribute",
-      "nodes": 57,
-      "classification_reachable": 0,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "epa-make",
-      "nodes": 145,
-      "classification_reachable": 0,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "epa-model",
-      "nodes": 1559,
-      "classification_reachable": 1559,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "epa-variant",
-      "nodes": 5664,
-      "classification_reachable": 5664,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "eurosat-category",
-      "nodes": 10,
-      "classification_reachable": 0,
-      "typed_reachable": 6
-    },
-    {
-      "namespace": "faa-aircraft",
-      "nodes": 94043,
-      "classification_reachable": 94043,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "faa-mfr",
-      "nodes": 68538,
-      "classification_reachable": 0,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "food101-category",
-      "nodes": 101,
-      "classification_reachable": 101,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "foodon",
-      "nodes": 12342,
-      "classification_reachable": 12296,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "geonames",
-      "nodes": 3390047,
-      "classification_reachable": 0,
-      "typed_reachable": 3390047
-    },
-    {
-      "namespace": "geonames-feature",
-      "nodes": 65,
-      "classification_reachable": 65,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "ima-mineral",
-      "nodes": 6239,
-      "classification_reachable": 6143,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "manufacturer-model",
-      "nodes": 4,
-      "classification_reachable": 4,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "mesh",
-      "nodes": 122,
-      "classification_reachable": 0,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "mimo-hs",
-      "nodes": 641,
-      "classification_reachable": 641,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "mimo-keyword",
-      "nodes": 2572,
-      "classification_reachable": 2500,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "nvidia-geforce-card",
-      "nodes": 38,
-      "classification_reachable": 38,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "nvidia-geforce-family",
-      "nodes": 5,
-      "classification_reachable": 5,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "ott",
-      "nodes": 4529570,
-      "classification_reachable": 4444068,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "places365-category",
-      "nodes": 365,
-      "classification_reachable": 0,
-      "typed_reachable": 242
-    },
-    {
-      "namespace": "resisc45-category",
-      "nodes": 45,
-      "classification_reachable": 0,
-      "typed_reachable": 30
-    },
-    {
-      "namespace": "samsung-ssd-line",
-      "nodes": 34,
-      "classification_reachable": 34,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "sun397-category",
-      "nodes": 397,
-      "classification_reachable": 0,
-      "typed_reachable": 260
-    },
-    {
-      "namespace": "v26-ads-dahlia-color",
-      "nodes": 2,
-      "classification_reachable": 2,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "v26-authority-car-model",
-      "nodes": 11,
-      "classification_reachable": 11,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "v26-car",
-      "nodes": 169,
-      "classification_reachable": 169,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "v26-gbif",
-      "nodes": 2,
-      "classification_reachable": 2,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "v26-nhtsa-model",
-      "nodes": 28,
-      "classification_reachable": 28,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "v26-wikidata",
-      "nodes": 2,
-      "classification_reachable": 2,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "v4root",
-      "nodes": 5,
-      "classification_reachable": 4,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "vehicle-configuration",
-      "nodes": 4,
-      "classification_reachable": 4,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "vpic-make",
-      "nodes": 12103,
-      "classification_reachable": 0,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "vpic-model",
-      "nodes": 31869,
-      "classification_reachable": 31869,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "wfo",
-      "nodes": 454688,
-      "classification_reachable": 454688,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "wikidata",
-      "nodes": 3496764,
-      "classification_reachable": 3475274,
-      "typed_reachable": 24
-    },
-    {
-      "namespace": "wikidata-v4",
-      "nodes": 48722,
-      "classification_reachable": 48285,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "wmo-cloud",
-      "nodes": 10,
-      "classification_reachable": 10,
-      "typed_reachable": 0
-    },
-    {
-      "namespace": "wordnet31",
-      "nodes": 82192,
-      "classification_reachable": 74362,
-      "typed_reachable": 7679
-    }
-  ],
-  "datasets": [
-    {
-      "dataset": "caltech101",
-      "labels": 102,
-      "verified": 54,
-      "review": 48,
-      "classification_connected": 0,
-      "attribute_or_instance_connected": 54,
-      "unique_verified_uids": 54,
-      "unique_verified_components": 54
-    },
-    {
-      "dataset": "cub200",
-      "labels": 200,
-      "verified": 200,
-      "review": 0,
-      "classification_connected": 200,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 200,
-      "unique_verified_components": 200
-    },
-    {
-      "dataset": "dtd",
-      "labels": 47,
-      "verified": 47,
-      "review": 0,
-      "classification_connected": 0,
-      "attribute_or_instance_connected": 47,
-      "unique_verified_uids": 47,
-      "unique_verified_components": 47
-    },
-    {
-      "dataset": "eurosat",
-      "labels": 10,
-      "verified": 6,
-      "review": 4,
-      "classification_connected": 0,
-      "attribute_or_instance_connected": 6,
-      "unique_verified_uids": 6,
-      "unique_verified_components": 6
-    },
-    {
-      "dataset": "fgvc_aircraft",
-      "labels": 100,
-      "verified": 100,
-      "review": 0,
-      "classification_connected": 100,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 100,
-      "unique_verified_components": 100
-    },
-    {
-      "dataset": "flowers102",
-      "labels": 102,
-      "verified": 102,
-      "review": 0,
-      "classification_connected": 102,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 102,
-      "unique_verified_components": 102
-    },
-    {
-      "dataset": "food101",
-      "labels": 101,
-      "verified": 101,
-      "review": 0,
-      "classification_connected": 101,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 101,
-      "unique_verified_components": 101
-    },
-    {
-      "dataset": "pets37",
-      "labels": 37,
-      "verified": 37,
-      "review": 0,
-      "classification_connected": 37,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 37,
-      "unique_verified_components": 37
-    },
-    {
-      "dataset": "places365",
-      "labels": 365,
-      "verified": 242,
-      "review": 123,
-      "classification_connected": 0,
-      "attribute_or_instance_connected": 242,
-      "unique_verified_uids": 242,
-      "unique_verified_components": 242
-    },
-    {
-      "dataset": "resisc45",
-      "labels": 45,
-      "verified": 30,
-      "review": 15,
-      "classification_connected": 0,
-      "attribute_or_instance_connected": 30,
-      "unique_verified_uids": 30,
-      "unique_verified_components": 30
-    },
-    {
-      "dataset": "stanford_cars",
-      "labels": 196,
-      "verified": 196,
-      "review": 0,
-      "classification_connected": 196,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 196,
-      "unique_verified_components": 196
-    },
-    {
-      "dataset": "stanford_dogs",
-      "labels": 120,
-      "verified": 120,
-      "review": 0,
-      "classification_connected": 120,
-      "attribute_or_instance_connected": 0,
-      "unique_verified_uids": 120,
-      "unique_verified_components": 120
-    },
-    {
-      "dataset": "sun397",
-      "labels": 397,
-      "verified": 260,
-      "review": 137,
-      "classification_connected": 0,
-      "attribute_or_instance_connected": 260,
-      "unique_verified_uids": 260,
-      "unique_verified_components": 260
-    }
-  ],
-  "same_name_policy": "Distinct source UIDs; label equality never grants SAME_CONCEPT",
-  "classification_contract": "ACTIVE IS_A and ACTIVE SAME_CONCEPT define the class DAG; INSTANCE_OF, ATTRIBUTE_KIND_OF, DEPICTS_TYPE and LOCATED_IN are separately typed.",
-  "integrity_check": "PASS",
-  "bytes": 37492588544,
-  "database_sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37",
-  "sha256": "c50990a5c369527b647521986e1e4330b9e781e4553d5df3349d1494de7c9c37"
+  "bytes": 38939451392,
+  "database_sha256": "258431dd7ff01efc694a0eace3f6d9ea4c610f56694b08ca0e4594a44e931724"
 }

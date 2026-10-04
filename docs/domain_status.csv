@@ -1,80 +1,93 @@
-domain,classification_components,descendant_components,classification_source_uids,classification_reachable_uids,classification_reach_percent,max_shortest_levels_below_roots,median_shortest_levels_below_roots,direct_child_components,leaf_components,model_or_configuration_source_uids,typed_instance_assignments,typed_connected_instance_assignments,roots,profile_tagged_class_or_model_uids,profile_tagged_connected_class_or_model_uids,profile_tagged_reach_percent,semantic_caution
-mountains,11,9,11,11,100.0,2,1.0,5,8,0,426206,426206,wordnet31:09382700-n;wikidata:Q8502,8,5,62.5,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-rivers,7,5,7,7,100.0,1,1.0,5,5,0,201,201,wordnet31:09434308-n;wikidata:Q4022,6,6,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-lakes,28,26,28,28,100.0,2,1.0,18,24,0,414027,414027,wordnet31:09351810-n;wikidata:Q23397,8,6,75.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-waterfalls,6,4,6,6,100.0,1,1.0,4,4,0,8053,8053,wordnet31:09498422-n;wikidata:Q34038,2,2,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-volcanoes,9,7,9,9,100.0,1,1.0,7,7,0,820,820,wordnet31:09495727-n;wikidata:Q8072,3,3,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-glaciers,8,6,8,8,100.0,2,1.0,5,5,0,8293,8293,wordnet31:09312237-n;wikidata:Q35666,5,2,40.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-minerals,6511,6509,6511,6511,100.0,4,1.0,6394,6465,0,0,0,wordnet31:14686753-n;wikidata:Q7946,6461,6264,96.951,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-clouds,32,30,32,32,100.0,2,1.0,26,27,0,0,0,wordnet31:09270316-n;wikidata:Q8074,19,15,78.947,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-forests,18,16,18,18,100.0,2,1.0,15,15,0,91949,91949,wordnet31:09306921-n;wikidata:Q4421,14,11,78.571,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-beaches,8,6,8,8,100.0,1,1.0,6,6,0,16173,16173,wordnet31:09240137-n;wikidata:Q40080,5,5,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-deserts,7,5,7,7,100.0,1,1.0,5,5,0,1036,1036,wordnet31:08522594-n;wikidata:Q8514,2,2,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-islands,13,11,13,13,100.0,1,1.0,11,11,0,185121,185121,wordnet31:09339360-n;wikidata:Q23442,8,3,37.5,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-valleys,27,25,27,27,100.0,3,1.0,18,21,0,149526,149526,wordnet31:09491734-n;wikidata:Q39816,13,8,61.538,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-electronic_devices,170,168,170,170,100.0,6,2.0,39,128,43,0,0,wordnet31:03282682-n;wikidata:Q2858615,1157,878,75.886,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-computers,565,563,565,565,100.0,7,2.0,129,532,363,10,10,wordnet31:03086983-n;wikidata:Q68,346,262,75.723,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-smartphones,644,643,644,644,100.0,2,1.0,574,640,537,0,0,wikidata:Q22645,58,58,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-laptops,115,113,115,115,100.0,2,2.0,29,110,93,0,0,wordnet31:03648120-n;wikidata:Q3962,85,85,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-digital_cameras,166,164,166,166,100.0,2,1.0,124,163,146,0,0,wordnet31:03200746-n;wikidata:Q62927,36,36,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-camera_lenses,555,553,555,555,100.0,3,2.0,17,542,536,0,0,wordnet31:02946696-n;wikidata:Q192234,601,550,91.514,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-television_sets,7,5,7,7,100.0,1,1.0,5,6,2,0,0,wordnet31:04413042-n;wikidata:Q8075,7,6,85.714,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-computer_monitors,6,4,6,6,100.0,1,1.0,4,4,1,0,0,wordnet31:03089261-n;wikidata:Q5290,5,3,60.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-network_routers,5,3,5,5,100.0,1,1.0,3,4,0,0,0,wordnet31:04121938-n;wikidata:Q5318,3,3,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-microprocessors,53,51,53,53,100.0,1,1.0,51,52,32,0,0,wordnet31:03765845-n;wikidata:Q5297,8,8,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-integrated_circuits,20,18,20,20,100.0,2,1.0,16,17,4,0,0,wordnet31:03582259-n;wikidata:Q80831,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-semiconductor_diodes,3,2,3,3,100.0,2,1.5,1,1,0,0,0,wordnet31:03207444-n,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-ceramic_capacitors,1,0,1,1,100.0,0,0.0,0,1,0,0,0,wikidata:Q337701,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-furniture,1293,1292,1296,1296,100.0,7,3.0,106,1037,6,2,2,wordnet31:03410635-n;wikidata:Q14745,163,97,59.509,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-clothing,1286,1285,1289,1289,100.0,6,3.0,44,1048,2,0,0,wordnet31:03055525-n;wikidata:Q11460,435,91,20.92,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-hand_tools,203,201,204,204,100.0,5,2.0,58,163,1,0,0,wordnet31:03494245-n;wikidata:Q2578402,1,1,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-power_tools,44,42,46,46,100.0,3,2.0,16,36,0,0,0,wordnet31:04003842-n;wikidata:Q1327701,1,1,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-musical_instruments,3781,3780,3864,3864,100.0,9,3.0,123,3290,80,0,0,wordnet31:03806455-n;wikidata:Q34379,33,15,45.455,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-buildings,466,465,469,469,100.0,5,2.0,93,375,0,35,35,wordnet31:02916498-n;wikidata:Q41176,458,76,16.594,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-bridges,59,57,59,59,100.0,3,1.0,39,49,0,26,26,wordnet31:02901994-n;wikidata:Q12280,39,35,89.744,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-medical_devices,49,48,55,55,100.0,3,2.0,21,39,2,0,0,wikidata:Q6554101,85,41,48.235,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-surgical_instruments,31,29,32,32,100.0,2,1.0,23,25,0,0,0,wordnet31:04371632-n;wikidata:Q1074814,1,1,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-sports_equipment,100,99,100,100,100.0,5,2.0,20,75,0,0,0,wordnet31:04292284-n,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-ships,239,237,239,239,100.0,4,1.0,120,206,76,12,12,wordnet31:04201332-n;wikidata:Q11446,233,89,38.197,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-locomotives,224,222,224,224,100.0,2,1.0,215,216,65,0,0,wordnet31:03690149-n;wikidata:Q93301,298,195,65.436,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-tractors,125,123,125,125,100.0,2,1.0,122,122,22,0,0,wordnet31:04472736-n;wikidata:Q39495,13,13,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-food_products,12308,12307,12309,12309,100.0,12,6.0,17,9162,0,0,0,foodon:FOODON_00001002,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-dishes,845,844,846,846,100.0,4,2.0,314,752,0,0,0,wordnet31:07572999-n,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-electronic_equipment,884,883,886,886,100.0,6,5.0,25,849,667,0,0,wordnet31:03283159-n,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-source_electronic_devices,96,95,96,96,100.0,3,2.0,18,78,41,0,0,wikidata:Q2858615,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-electronic_components,90,89,96,96,100.0,4,3.0,9,71,6,0,0,wikidata:Q11653,340,109,32.059,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-source_semiconductor_devices,33,32,33,33,100.0,3,2.0,8,25,2,0,0,wikidata:Q175805,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-source_integrated_circuits,19,18,19,19,100.0,2,1.0,16,16,4,0,0,wikidata:Q80831,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-source_semiconductor_diodes,7,6,7,7,100.0,2,1.0,5,5,0,0,0,wikidata:Q1929430,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-home_appliances,69,68,78,78,100.0,4,2.0,17,52,2,0,0,wordnet31:03533443-n;wikidata:Q212920,62,32,51.613,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-camera_bodies,207,205,207,207,100.0,4,3.0,27,193,146,0,0,wordnet31:02946154-n;aat:300022636,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-headphones,18,16,18,18,100.0,2,2.0,4,14,11,0,0,wordnet31:03266479-n;wikidata:Q186819,13,13,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-rocks,144,142,144,144,100.0,4,2.0,65,121,0,0,0,wordnet31:14720954-n;wikidata:Q8063,152,66,43.421,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-mountain_ranges,1,0,1,1,100.0,0,0.0,0,1,0,0,0,wikidata:Q46831,2,1,50.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-tablets,119,118,119,119,100.0,2,1.0,73,117,97,0,0,wikidata:Q155972,49,49,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-graphics_cards,46,45,46,46,100.0,2,2.0,7,40,38,0,0,wikidata:Q4308,48,45,93.75,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-gpus,6,5,6,6,100.0,1,1.0,5,5,4,0,0,wikidata:Q183484,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-computer_hardware,3,2,3,3,100.0,2,1.5,1,1,0,0,0,wikidata:Q3966,42,7,16.667,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-smartwatches,87,86,87,87,100.0,2,2.0,21,85,82,0,0,wikidata:Q5362345,68,68,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-earbuds,1,0,1,1,100.0,0,0.0,0,1,0,0,0,wikidata:Q50184015,1,1,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-solid_state_drives,35,34,35,35,100.0,1,1.0,34,34,0,0,0,wikidata:Q487343,35,35,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-pcbs,60,59,60,60,100.0,4,4.0,3,50,41,0,0,wikidata:Q173350,4,4,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-tools,1,0,1,1,100.0,0,0.0,0,1,0,0,0,wikidata:Q39546,7939,3926,49.452,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-food_dishes,845,844,846,846,100.0,4,2.0,314,752,0,0,0,wikidata:Q746549,926,340,36.717,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-cameras,1360,1359,1360,1360,100.0,3,2.0,280,1342,1270,0,0,wikidata:Q15328,1410,1330,94.326,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-desktop_computers,2,1,2,2,100.0,1,1.0,1,1,1,0,0,wikidata:Q56155,14,11,78.571,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-game_consoles,43,42,43,43,100.0,2,1.0,40,40,33,0,0,wikidata:Q8076,48,42,87.5,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-wearable_computers,1,0,1,1,100.0,0,0.0,0,1,0,0,0,wikidata:Q1334829,2,2,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-network_switches,2,1,2,2,100.0,1,1.0,1,1,1,0,0,wikidata:Q4503,3,2,66.667,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-semiconductor_devices,33,32,33,33,100.0,3,2.0,8,25,2,0,0,wikidata:Q175805,166,97,58.434,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-single_board_computers,11,10,11,11,100.0,2,1.0,9,9,6,0,0,wikidata:Q944780,2,2,100.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-loudspeakers,11,10,11,11,100.0,2,1.0,9,9,1,0,0,wikidata:Q570,3,2,66.667,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-printers,14,13,14,14,100.0,1,1.0,13,13,6,0,0,wikidata:Q82,20,15,75.0,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-animals,4079410,4079408,5802518,5802518,100.0,58,18.0,1232,3753033,0,19,19,wordnet31:00015568-n;ott:691846,0,0,,"Known plant/reptile Sauria identity collision affects lineage interpretation; counts are graph statistics, not certified biological class totals."
-birds,85680,85678,119298,119298,100.0,9,6.0,744,73349,0,0,0,wordnet31:01505702-n;ott:81461,0,0,,"Known plant/reptile Sauria identity collision affects lineage interpretation; counts are graph statistics, not certified biological class totals."
-plants,3956732,3956730,6357468,6357468,100.0,49,15.0,2993,3644159,5,1,1,wordnet31:00017402-n;wfo:wfo-4100001250,0,0,,"Known plant/reptile Sauria identity collision affects lineage interpretation; counts are graph statistics, not certified biological class totals."
-fungi,443523,443521,472140,472140,100.0,18,12.0,12557,427375,0,0,0,wordnet31:13013628-n;ott:352914,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-bacteria,480239,480237,482848,482848,100.0,9,6.0,44181,469941,0,0,0,wordnet31:01351171-n;ott:844192,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-archaea,10432,10431,10449,10449,100.0,7,5.0,1034,9902,0,0,0,ott:996421,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-cars,69461,69460,74267,74267,100.0,4,2.0,2866,63080,53075,0,0,wordnet31:02961779-n,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
-aircraft,111738,111737,119829,119829,100.0,8,1.0,97496,108634,94847,0,0,wordnet31:02689427-n,0,0,,Unadmitted candidates excluded from descendant counts; no world-completeness or complete inherited semantic certification claim.
+domain,entry_uid,native_roots,classification_components,classification_source_uids,classification_reach_percent,max_shortest_levels_below_roots,direct_child_components,model_or_configuration_source_uids,typed_instance_assignments
+mountains,fineatlas-domain:mountains,2,15,15,100.0,2,8,0,426206
+rivers,fineatlas-domain:rivers,4,71,71,100.0,3,29,0,1004645
+lakes,fineatlas-domain:lakes,3,124,124,100.0,5,29,0,414028
+waterfalls,fineatlas-domain:waterfalls,2,6,6,100.0,1,4,0,8053
+volcanoes,fineatlas-domain:volcanoes,2,9,9,100.0,1,7,0,820
+glaciers,fineatlas-domain:glaciers,2,9,9,100.0,2,6,0,8293
+minerals,fineatlas-domain:minerals,2,7471,7471,100.0,4,1121,0,0
+clouds,fineatlas-domain:clouds,2,32,32,100.0,2,26,0,0
+forests,fineatlas-domain:forests,4,2870,2870,100.0,7,24,0,91949
+beaches,fineatlas-domain:beaches,2,10,10,100.0,1,8,0,16173
+deserts,fineatlas-domain:deserts,2,7,7,100.0,1,5,0,1036
+islands,fineatlas-domain:islands,2,13,13,100.0,1,11,0,185120
+valleys,fineatlas-domain:valleys,2,29,29,100.0,3,18,0,149526
+electronic_devices,fineatlas-domain:electronic_devices,2,235,235,100.0,6,39,50,0
+computers,fineatlas-domain:computers,2,609,609,100.0,7,129,459,5
+smartphones,fineatlas-domain:smartphones,1,820,820,100.0,2,750,588,0
+laptops,fineatlas-domain:laptops,2,122,122,100.0,2,36,110,0
+digital_cameras,fineatlas-domain:digital_cameras,2,170,170,100.0,2,124,155,0
+camera_lenses,fineatlas-domain:camera_lenses,2,555,555,100.0,3,17,545,0
+television_sets,fineatlas-domain:television_sets,2,7,7,100.0,1,5,2,0
+computer_monitors,fineatlas-domain:computer_monitors,2,6,6,100.0,1,4,3,0
+network_routers,fineatlas-domain:network_routers,2,5,5,100.0,1,3,1,0
+microprocessors,fineatlas-domain:microprocessors,2,73,73,100.0,1,71,42,0
+integrated_circuits,fineatlas-domain:integrated_circuits,2,20,20,100.0,2,16,6,0
+semiconductor_diodes,fineatlas-domain:semiconductor_diodes,1,3,3,100.0,2,1,0,0
+ceramic_capacitors,fineatlas-domain:ceramic_capacitors,1,1,1,100.0,0,0,0,0
+furniture,fineatlas-domain:furniture,2,1320,1323,100.0,7,113,7,3
+clothing,fineatlas-domain:clothing,2,1581,1584,100.0,6,48,12,0
+hand_tools,fineatlas-domain:hand_tools,2,204,205,100.0,5,58,1,0
+power_tools,fineatlas-domain:power_tools,2,45,47,100.0,3,16,0,0
+musical_instruments,fineatlas-domain:musical_instruments,2,3880,3963,100.0,9,123,95,0
+buildings,fineatlas-domain:buildings,2,524,527,100.0,5,93,0,39
+bridges,fineatlas-domain:bridges,2,59,59,100.0,3,39,0,26
+medical_devices,fineatlas-domain:medical_devices,1,78,84,100.0,3,50,2,0
+surgical_instruments,fineatlas-domain:surgical_instruments,2,31,32,100.0,2,23,0,0
+sports_equipment,fineatlas-domain:sports_equipment,1,100,100,100.0,5,20,0,0
+ships,fineatlas-domain:ships,2,935,935,100.0,4,686,92,647
+locomotives,fineatlas-domain:locomotives,2,317,317,100.0,2,305,89,0
+tractors,fineatlas-domain:tractors,2,126,126,100.0,2,122,27,0
+food_products,fineatlas-domain:food_products,1,12308,12309,100.0,12,17,0,0
+dishes,fineatlas-domain:dishes,1,897,898,100.0,5,314,0,0
+electronic_equipment,fineatlas-domain:electronic_equipment,1,1102,1104,100.0,6,25,724,0
+source_electronic_devices,fineatlas-domain:source_electronic_devices,1,157,157,100.0,3,18,46,0
+electronic_components,fineatlas-domain:electronic_components,1,100,106,100.0,4,17,8,0
+source_semiconductor_devices,fineatlas-domain:source_semiconductor_devices,1,33,33,100.0,3,8,2,0
+source_integrated_circuits,fineatlas-domain:source_integrated_circuits,1,19,19,100.0,2,16,6,0
+source_semiconductor_diodes,fineatlas-domain:source_semiconductor_diodes,1,7,7,100.0,2,5,0,0
+home_appliances,fineatlas-domain:home_appliances,2,74,83,100.0,4,17,2,0
+camera_bodies,fineatlas-domain:camera_bodies,2,211,211,100.0,4,27,155,0
+headphones,fineatlas-domain:headphones,2,21,21,100.0,3,4,14,0
+rocks,fineatlas-domain:rocks,2,144,144,100.0,4,65,0,0
+mountain_ranges,fineatlas-domain:mountain_ranges,1,1,1,100.0,0,0,0,0
+tablets,fineatlas-domain:tablets,1,137,137,100.0,2,91,112,0
+graphics_cards,fineatlas-domain:graphics_cards,1,47,47,100.0,2,8,45,0
+gpus,fineatlas-domain:gpus,1,6,6,100.0,1,5,4,0
+computer_hardware,fineatlas-domain:computer_hardware,1,3,3,100.0,2,1,1,0
+smartwatches,fineatlas-domain:smartwatches,1,87,87,100.0,2,21,84,0
+earbuds,fineatlas-domain:earbuds,1,2,2,100.0,1,1,1,0
+solid_state_drives,fineatlas-domain:solid_state_drives,1,35,35,100.0,1,34,34,0
+pcbs,fineatlas-domain:pcbs,1,62,62,100.0,4,4,51,0
+tools,fineatlas-domain:tools,2,864,868,100.0,7,74,3,0
+food_dishes,fineatlas-domain:food_dishes,1,897,898,100.0,5,314,0,0
+cameras,fineatlas-domain:cameras,1,1360,1360,100.0,3,280,1317,0
+desktop_computers,fineatlas-domain:desktop_computers,1,2,2,100.0,1,1,1,0
+game_consoles,fineatlas-domain:game_consoles,1,104,104,100.0,2,101,36,0
+wearable_computers,fineatlas-domain:wearable_computers,1,1,1,100.0,0,0,0,0
+network_switches,fineatlas-domain:network_switches,1,3,3,100.0,1,2,1,0
+semiconductor_devices,fineatlas-domain:semiconductor_devices,1,33,33,100.0,3,8,2,0
+single_board_computers,fineatlas-domain:single_board_computers,1,11,11,100.0,2,9,7,0
+loudspeakers,fineatlas-domain:loudspeakers,1,11,11,100.0,2,9,1,0
+printers,fineatlas-domain:printers,1,14,14,100.0,1,13,8,0
+animals,fineatlas-domain:animals,2,5090918,5091045,100.0,80,1245,0,19
+birds,fineatlas-domain:birds,2,29352,29352,100.0,9,1362,0,0
+plants,fineatlas-domain:plants,2,1557177,1578163,100.0,22,4043,6,0
+fungi,fineatlas-domain:fungi,2,398857,398857,100.0,16,12557,0,0
+bacteria,fineatlas-domain:bacteria,2,477895,477895,100.0,9,44093,0,0
+archaea,fineatlas-domain:archaea,1,10411,10411,100.0,7,1017,0,0
+cars,fineatlas-domain:cars,1,69470,74276,100.0,4,2866,53128,0
+aircraft,fineatlas-domain:aircraft,1,112494,120585,100.0,8,97896,94903,2
+habitats,fineatlas-domain:habitats,1,9148,9148,100.0,8,18,0,0
+marine_habitats,fineatlas-domain:marine_habitats,1,1099,1099,100.0,6,8,0,0
+coastal_habitats,fineatlas-domain:coastal_habitats,2,366,366,100.0,5,6,0,0
+freshwater_habitats,fineatlas-domain:freshwater_habitats,1,236,236,100.0,6,3,0,0
+wetlands,fineatlas-domain:wetlands,3,758,758,100.0,6,24,0,78714
+grasslands,fineatlas-domain:grasslands,2,1553,1553,100.0,7,14,0,0
+scrub_and_tundra,fineatlas-domain:scrub_and_tundra,2,1607,1607,100.0,6,20,0,0
+forest_habitats,fineatlas-domain:forest_habitats,2,2852,2852,100.0,7,9,0,0
+sparse_vegetation_habitats,fineatlas-domain:sparse_vegetation_habitats,2,564,564,100.0,6,13,0,0
+agricultural_habitats,fineatlas-domain:agricultural_habitats,1,26,26,100.0,3,2,0,0
+artificial_habitats,fineatlas-domain:artificial_habitats,1,70,70,100.0,4,6,0,0
+habitat_complexes,fineatlas-domain:habitat_complexes,1,31,31,100.0,1,30,0,0
+aquifers,fineatlas-domain:aquifers,1,14,14,100.0,1,13,0,0
