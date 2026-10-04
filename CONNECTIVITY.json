@@ -1,10 +1,9 @@
 {
-  "classification_uids": 8616473,
-  "classification_reach_percent": 100.0,
-  "typed_uids": 3399533,
-  "source_only_records": 260025,
-  "auxiliary_records": 80793,
-  "domain_entries": 92,
-  "classification_and_typed_relations_are_separate": true,
-  "source_scope_status": "UNKNOWN unless independently established"
+  "classification_uids": 8582381,
+  "strict_root_reachable_uids": 5207672,
+  "strict_classification_reach_percent": 60.67863917950042,
+  "typed_entities_strict_connected": 3402114,
+  "source_only_records": 254331,
+  "scientific_navigation": "Measured separately by 274; TAXONOMIC_PARENT is not IS_A",
+  "classification_and_typed_relations_are_separate": true
 }

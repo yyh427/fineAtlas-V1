@@ -30,3 +30,7 @@
 类别编号保持目录的原生编号范围。场景任务标签不是物理类型的 `IS_A` 子类；在定义范围一致时，使用 `DEPICTS_TYPE` 指向被描绘类型。NATIVE_LABEL_ONLY 保留任务身份，不能作为已审查现实类型映射使用。
 
 数据库推荐只读访问。接口使用不可变只读连接，更新数据库后应关闭并重新打开接口实例。下载分片合并解压后只有一个文件，分片不是多个数据库。
+
+## 关系视图
+
+`active_edges` 仅包含严格有效的 `IS_A`。`scientific_navigation_edges` 另包含 `TYPED_ACTIVE TAXONOMIC_PARENT`；`source_membership_edges` 只包含 `REUSABLE_TYPE_MEMBERSHIP`。`components` 中的可达性和路径证据以严格视图计算。接口通过 `relation_view="taxonomy"` 保留原生分类导航，通过 `relation_view="membership"` 单独查看来源成员关系。`BIOLOGICAL_VARIANT` 标记原生无阶元的菌株等记录，`native_rank` 保留原始阶元；该角色不进入严格分类 DAG。发布号为 v1.6.0，冻结数据库中的构建标记为 v1.6.0-local，下载哈希标识相同文件。

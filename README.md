@@ -27,7 +27,7 @@ python3 scripts/check_installation.py --data-dir /path/to/fineatlas-data
 
 | 项目 | 数量 |
 |---|---:|
-| 全部来源 UID | 12,356,903 |
+| 全部来源 UID | 12,361,588 |
 | 分类路径可达 UID | 8,616,473 |
 | 实例、属性和任务类别连接 UID | 3,399,533 |
 | 仅保留来源记录的 UID | 260,025 |
@@ -82,6 +82,16 @@ with FineAtlas("/path/to/fineatlas.sqlite") as tree:
 with FineAtlas("/path/to/fineatlas.sqlite", view="all") as tree:
     print(tree.exact("quartz"))
 ```
+
+新版增加 `relation_view`，旧调用默认使用 `"strict"`，只遍历有效 `IS_A`。浏览生物原生分类时使用 `"taxonomy"`，保留 `TAXONOMIC_PARENT`，它不等同于严格分类边；`"membership"` 单独查看来源类型成员关系。`neighbors()`、`domain_children()`、`path()` 按所选关系视图查询，返回边保留实际关系类型。严格视图下未接入根的节点可能没有路径；原生分类路径与严格分类路径应分别使用。原生变体的 `node_kind="BIOLOGICAL_VARIANT"` 和 `native_rank` 应保留，不作为物种、产品型号或命名实例。
+
+```python
+with FineAtlas("/path/to/fineatlas.sqlite", relation_view="taxonomy") as tree:
+    print(tree.domain_children("birds"))
+    print(tree.instances("geonames-feature:T.MTS", limit=20, recursive=False))
+```
+
+CLI 可增加 `--relation-view taxonomy`（放在子命令前）。更新已有安装时先运行 `git pull` 和 `python3 -m pip install -e .`，再将新版数据库下载到新的目录；下载器会拒绝覆盖哈希不同的已有数据库。
 
 | 方法 | 用途 |
 |---|---|

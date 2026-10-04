@@ -6,8 +6,8 @@
     "entry_uid": "fineatlas-domain:mountains",
     "label": "mountains",
     "root_uids": [
-      "wordnet31:09382700-n",
-      "wikidata:Q8502"
+      "wikidata:Q8502",
+      "wordnet31:09382700-n"
     ],
     "uid": "fineatlas-domain:mountains"
   },
@@ -18,10 +18,10 @@
     "entry_uid": "fineatlas-domain:rivers",
     "label": "rivers and streams",
     "root_uids": [
-      "wordnet31:09434308-n",
+      "eunis2012:C2",
       "wikidata:Q4022",
-      "wordnet31:09471510-n",
-      "eunis2012:C2"
+      "wordnet31:09434308-n",
+      "wordnet31:09471510-n"
     ],
     "uid": "fineatlas-domain:rivers"
   },
@@ -32,9 +32,9 @@
     "entry_uid": "fineatlas-domain:lakes",
     "label": "lakes and standing-water habitats",
     "root_uids": [
-      "wordnet31:09351810-n",
+      "eunis2012:C1",
       "wikidata:Q23397",
-      "eunis2012:C1"
+      "wordnet31:09351810-n"
     ],
     "uid": "fineatlas-domain:lakes"
   },
@@ -45,8 +45,8 @@
     "entry_uid": "fineatlas-domain:waterfalls",
     "label": "waterfalls",
     "root_uids": [
-      "wordnet31:09498422-n",
-      "wikidata:Q34038"
+      "wikidata:Q34038",
+      "wordnet31:09498422-n"
     ],
     "uid": "fineatlas-domain:waterfalls"
   },
@@ -57,8 +57,8 @@
     "entry_uid": "fineatlas-domain:volcanoes",
     "label": "volcanoes",
     "root_uids": [
-      "wordnet31:09495727-n",
-      "wikidata:Q8072"
+      "wikidata:Q8072",
+      "wordnet31:09495727-n"
     ],
     "uid": "fineatlas-domain:volcanoes"
   },
@@ -69,8 +69,8 @@
     "entry_uid": "fineatlas-domain:glaciers",
     "label": "glaciers",
     "root_uids": [
-      "wordnet31:09312237-n",
-      "wikidata:Q35666"
+      "wikidata:Q35666",
+      "wordnet31:09312237-n"
     ],
     "uid": "fineatlas-domain:glaciers"
   },
@@ -81,8 +81,8 @@
     "entry_uid": "fineatlas-domain:minerals",
     "label": "minerals",
     "root_uids": [
-      "wordnet31:14686753-n",
-      "wikidata:Q7946"
+      "wikidata:Q7946",
+      "wordnet31:14686753-n"
     ],
     "uid": "fineatlas-domain:minerals"
   },
@@ -93,8 +93,8 @@
     "entry_uid": "fineatlas-domain:clouds",
     "label": "clouds",
     "root_uids": [
-      "wordnet31:09270316-n",
-      "wikidata:Q8074"
+      "wikidata:Q8074",
+      "wordnet31:09270316-n"
     ],
     "uid": "fineatlas-domain:clouds"
   },
@@ -105,10 +105,10 @@
     "entry_uid": "fineatlas-domain:forests",
     "label": "forests",
     "root_uids": [
-      "wordnet31:09306921-n",
-      "wikidata:Q4421",
       "eunis2012:G",
-      "eunis2021:T"
+      "eunis2021:T",
+      "wikidata:Q4421",
+      "wordnet31:09306921-n"
     ],
     "uid": "fineatlas-domain:forests"
   },
@@ -119,8 +119,8 @@
     "entry_uid": "fineatlas-domain:beaches",
     "label": "beaches",
     "root_uids": [
-      "wordnet31:09240137-n",
-      "wikidata:Q40080"
+      "wikidata:Q40080",
+      "wordnet31:09240137-n"
     ],
     "uid": "fineatlas-domain:beaches"
   },
@@ -131,8 +131,8 @@
     "entry_uid": "fineatlas-domain:deserts",
     "label": "deserts",
     "root_uids": [
-      "wordnet31:08522594-n",
-      "wikidata:Q8514"
+      "wikidata:Q8514",
+      "wordnet31:08522594-n"
     ],
     "uid": "fineatlas-domain:deserts"
   },
@@ -143,8 +143,8 @@
     "entry_uid": "fineatlas-domain:islands",
     "label": "islands",
     "root_uids": [
-      "wordnet31:09339360-n",
-      "wikidata:Q23442"
+      "wikidata:Q23442",
+      "wordnet31:09339360-n"
     ],
     "uid": "fineatlas-domain:islands"
   },
@@ -155,8 +155,8 @@
     "entry_uid": "fineatlas-domain:valleys",
     "label": "valleys",
     "root_uids": [
-      "wordnet31:09491734-n",
-      "wikidata:Q39816"
+      "wikidata:Q39816",
+      "wordnet31:09491734-n"
     ],
     "uid": "fineatlas-domain:valleys"
   },
@@ -167,8 +167,8 @@
     "entry_uid": "fineatlas-domain:electronic_devices",
     "label": "electronic devices",
     "root_uids": [
-      "wordnet31:03282682-n",
-      "wikidata:Q2858615"
+      "wikidata:Q2858615",
+      "wordnet31:03282682-n"
     ],
     "uid": "fineatlas-domain:electronic_devices"
   },
@@ -179,8 +179,8 @@
     "entry_uid": "fineatlas-domain:computers",
     "label": "computers",
     "root_uids": [
-      "wordnet31:03086983-n",
-      "wikidata:Q68"
+      "wikidata:Q68",
+      "wordnet31:03086983-n"
     ],
     "uid": "fineatlas-domain:computers"
   },
@@ -202,8 +202,8 @@
     "entry_uid": "fineatlas-domain:laptops",
     "label": "laptops",
     "root_uids": [
-      "wordnet31:03648120-n",
-      "wikidata:Q3962"
+      "wikidata:Q3962",
+      "wordnet31:03648120-n"
     ],
     "uid": "fineatlas-domain:laptops"
   },
@@ -214,8 +214,8 @@
     "entry_uid": "fineatlas-domain:digital_cameras",
     "label": "digital cameras",
     "root_uids": [
-      "wordnet31:03200746-n",
-      "wikidata:Q62927"
+      "wikidata:Q62927",
+      "wordnet31:03200746-n"
     ],
     "uid": "fineatlas-domain:digital_cameras"
   },
@@ -226,8 +226,8 @@
     "entry_uid": "fineatlas-domain:camera_lenses",
     "label": "camera lenses",
     "root_uids": [
-      "wordnet31:02946696-n",
-      "wikidata:Q192234"
+      "wikidata:Q192234",
+      "wordnet31:02946696-n"
     ],
     "uid": "fineatlas-domain:camera_lenses"
   },
@@ -238,8 +238,8 @@
     "entry_uid": "fineatlas-domain:television_sets",
     "label": "television sets",
     "root_uids": [
-      "wordnet31:04413042-n",
-      "wikidata:Q8075"
+      "wikidata:Q8075",
+      "wordnet31:04413042-n"
     ],
     "uid": "fineatlas-domain:television_sets"
   },
@@ -250,8 +250,8 @@
     "entry_uid": "fineatlas-domain:computer_monitors",
     "label": "computer monitors",
     "root_uids": [
-      "wordnet31:03089261-n",
-      "wikidata:Q5290"
+      "wikidata:Q5290",
+      "wordnet31:03089261-n"
     ],
     "uid": "fineatlas-domain:computer_monitors"
   },
@@ -262,8 +262,8 @@
     "entry_uid": "fineatlas-domain:network_routers",
     "label": "network routers",
     "root_uids": [
-      "wordnet31:04121938-n",
-      "wikidata:Q5318"
+      "wikidata:Q5318",
+      "wordnet31:04121938-n"
     ],
     "uid": "fineatlas-domain:network_routers"
   },
@@ -274,8 +274,8 @@
     "entry_uid": "fineatlas-domain:microprocessors",
     "label": "microprocessors",
     "root_uids": [
-      "wordnet31:03765845-n",
-      "wikidata:Q5297"
+      "wikidata:Q5297",
+      "wordnet31:03765845-n"
     ],
     "uid": "fineatlas-domain:microprocessors"
   },
@@ -286,8 +286,8 @@
     "entry_uid": "fineatlas-domain:integrated_circuits",
     "label": "integrated circuits",
     "root_uids": [
-      "wordnet31:03582259-n",
-      "wikidata:Q80831"
+      "wikidata:Q80831",
+      "wordnet31:03582259-n"
     ],
     "uid": "fineatlas-domain:integrated_circuits"
   },
@@ -298,6 +298,7 @@
     "entry_uid": "fineatlas-domain:semiconductor_diodes",
     "label": "semiconductor diodes",
     "root_uids": [
+      "wikidata:Q1929430",
       "wordnet31:03207444-n"
     ],
     "uid": "fineatlas-domain:semiconductor_diodes"
@@ -320,8 +321,8 @@
     "entry_uid": "fineatlas-domain:furniture",
     "label": "furniture",
     "root_uids": [
-      "wordnet31:03410635-n",
-      "wikidata:Q14745"
+      "wikidata:Q14745",
+      "wordnet31:03410635-n"
     ],
     "uid": "fineatlas-domain:furniture"
   },
@@ -332,8 +333,8 @@
     "entry_uid": "fineatlas-domain:clothing",
     "label": "clothing",
     "root_uids": [
-      "wordnet31:03055525-n",
-      "wikidata:Q11460"
+      "wikidata:Q11460",
+      "wordnet31:03055525-n"
     ],
     "uid": "fineatlas-domain:clothing"
   },
@@ -344,8 +345,8 @@
     "entry_uid": "fineatlas-domain:hand_tools",
     "label": "hand tools",
     "root_uids": [
-      "wordnet31:03494245-n",
-      "wikidata:Q2578402"
+      "wikidata:Q2578402",
+      "wordnet31:03494245-n"
     ],
     "uid": "fineatlas-domain:hand_tools"
   },
@@ -356,8 +357,8 @@
     "entry_uid": "fineatlas-domain:power_tools",
     "label": "power tools",
     "root_uids": [
-      "wordnet31:04003842-n",
-      "wikidata:Q1327701"
+      "wikidata:Q1327701",
+      "wordnet31:04003842-n"
     ],
     "uid": "fineatlas-domain:power_tools"
   },
@@ -368,8 +369,8 @@
     "entry_uid": "fineatlas-domain:musical_instruments",
     "label": "musical instruments",
     "root_uids": [
-      "wordnet31:03806455-n",
-      "wikidata:Q34379"
+      "wikidata:Q34379",
+      "wordnet31:03806455-n"
     ],
     "uid": "fineatlas-domain:musical_instruments"
   },
@@ -380,8 +381,8 @@
     "entry_uid": "fineatlas-domain:buildings",
     "label": "buildings",
     "root_uids": [
-      "wordnet31:02916498-n",
-      "wikidata:Q41176"
+      "wikidata:Q41176",
+      "wordnet31:02916498-n"
     ],
     "uid": "fineatlas-domain:buildings"
   },
@@ -392,8 +393,8 @@
     "entry_uid": "fineatlas-domain:bridges",
     "label": "bridges",
     "root_uids": [
-      "wordnet31:02901994-n",
-      "wikidata:Q12280"
+      "wikidata:Q12280",
+      "wordnet31:02901994-n"
     ],
     "uid": "fineatlas-domain:bridges"
   },
@@ -415,8 +416,8 @@
     "entry_uid": "fineatlas-domain:surgical_instruments",
     "label": "surgical instruments",
     "root_uids": [
-      "wordnet31:04371632-n",
-      "wikidata:Q1074814"
+      "wikidata:Q1074814",
+      "wordnet31:04371632-n"
     ],
     "uid": "fineatlas-domain:surgical_instruments"
   },
@@ -438,8 +439,8 @@
     "entry_uid": "fineatlas-domain:ships",
     "label": "ships",
     "root_uids": [
-      "wordnet31:04201332-n",
-      "wikidata:Q11446"
+      "wikidata:Q11446",
+      "wordnet31:04201332-n"
     ],
     "uid": "fineatlas-domain:ships"
   },
@@ -450,8 +451,8 @@
     "entry_uid": "fineatlas-domain:locomotives",
     "label": "locomotives",
     "root_uids": [
-      "wordnet31:03690149-n",
-      "wikidata:Q93301"
+      "wikidata:Q93301",
+      "wordnet31:03690149-n"
     ],
     "uid": "fineatlas-domain:locomotives"
   },
@@ -462,8 +463,8 @@
     "entry_uid": "fineatlas-domain:tractors",
     "label": "tractors",
     "root_uids": [
-      "wordnet31:04472736-n",
-      "wikidata:Q39495"
+      "wikidata:Q39495",
+      "wordnet31:04472736-n"
     ],
     "uid": "fineatlas-domain:tractors"
   },
@@ -562,8 +563,8 @@
     "entry_uid": "fineatlas-domain:home_appliances",
     "label": "home appliances",
     "root_uids": [
-      "wordnet31:03533443-n",
-      "wikidata:Q212920"
+      "wikidata:Q212920",
+      "wordnet31:03533443-n"
     ],
     "uid": "fineatlas-domain:home_appliances"
   },
@@ -574,8 +575,8 @@
     "entry_uid": "fineatlas-domain:camera_bodies",
     "label": "camera bodies",
     "root_uids": [
-      "wordnet31:02946154-n",
-      "aat:300022636"
+      "aat:300022636",
+      "wordnet31:02946154-n"
     ],
     "uid": "fineatlas-domain:camera_bodies"
   },
@@ -586,8 +587,8 @@
     "entry_uid": "fineatlas-domain:headphones",
     "label": "headphones",
     "root_uids": [
-      "wordnet31:03266479-n",
-      "wikidata:Q186819"
+      "wikidata:Q186819",
+      "wordnet31:03266479-n"
     ],
     "uid": "fineatlas-domain:headphones"
   },
@@ -598,8 +599,8 @@
     "entry_uid": "fineatlas-domain:rocks",
     "label": "rocks",
     "root_uids": [
-      "wordnet31:14720954-n",
-      "wikidata:Q8063"
+      "wikidata:Q8063",
+      "wordnet31:14720954-n"
     ],
     "uid": "fineatlas-domain:rocks"
   },
@@ -608,8 +609,9 @@
     "description": "One domain entry collects independently identified, root-connected source scopes.",
     "domain": "mountain_ranges",
     "entry_uid": "fineatlas-domain:mountain_ranges",
-    "label": "mountain ranges",
+    "label": "mountain ranges and mountain groups",
     "root_uids": [
+      "geonames-feature:T.MTS",
       "wikidata:Q46831"
     ],
     "uid": "fineatlas-domain:mountain_ranges"
@@ -654,7 +656,11 @@
     "entry_uid": "fineatlas-domain:computer_hardware",
     "label": "computer hardware",
     "root_uids": [
-      "wikidata:Q3966"
+      "wikidata:Q183484",
+      "wikidata:Q3966",
+      "wikidata:Q487343",
+      "wikidata:Q5290",
+      "wikidata:Q5297"
     ],
     "uid": "fineatlas-domain:computer_hardware"
   },
@@ -674,8 +680,10 @@
     "description": "One domain entry collects independently identified, root-connected source scopes.",
     "domain": "earbuds",
     "entry_uid": "fineatlas-domain:earbuds",
-    "label": "earbuds",
+    "label": "earbuds and in-ear headphones",
     "root_uids": [
+      "apple-model:c0f86089ceef6af4bd3e",
+      "samsung-family:galaxy-buds",
       "wikidata:Q50184015"
     ],
     "uid": "fineatlas-domain:earbuds"
@@ -831,8 +839,8 @@
     "entry_uid": "fineatlas-domain:animals",
     "label": "animals",
     "root_uids": [
-      "wordnet31:00015568-n",
-      "ott:691846"
+      "ott:691846",
+      "wordnet31:00015568-n"
     ],
     "uid": "fineatlas-domain:animals"
   },
@@ -843,8 +851,8 @@
     "entry_uid": "fineatlas-domain:birds",
     "label": "birds",
     "root_uids": [
-      "wordnet31:01505702-n",
-      "ott:81461"
+      "ott:81461",
+      "wordnet31:01505702-n"
     ],
     "uid": "fineatlas-domain:birds"
   },
@@ -855,8 +863,8 @@
     "entry_uid": "fineatlas-domain:plants",
     "label": "plants",
     "root_uids": [
-      "wordnet31:00017402-n",
-      "wfo:wfo-4100001250"
+      "wfo:wfo-4100001250",
+      "wordnet31:00017402-n"
     ],
     "uid": "fineatlas-domain:plants"
   },
@@ -867,8 +875,8 @@
     "entry_uid": "fineatlas-domain:fungi",
     "label": "fungi",
     "root_uids": [
-      "wordnet31:13013628-n",
-      "ott:352914"
+      "ott:352914",
+      "wordnet31:13013628-n"
     ],
     "uid": "fineatlas-domain:fungi"
   },
@@ -879,8 +887,8 @@
     "entry_uid": "fineatlas-domain:bacteria",
     "label": "bacteria",
     "root_uids": [
-      "wordnet31:01351171-n",
-      "ott:844192"
+      "ott:844192",
+      "wordnet31:01351171-n"
     ],
     "uid": "fineatlas-domain:bacteria"
   },
@@ -969,9 +977,9 @@
     "entry_uid": "fineatlas-domain:wetlands",
     "label": "wetlands and wetland habitats",
     "root_uids": [
-      "wordnet31:09501020-n",
       "eunis2012:D",
-      "eunis2021:Q"
+      "eunis2021:Q",
+      "wordnet31:09501020-n"
     ],
     "uid": "fineatlas-domain:wetlands"
   },

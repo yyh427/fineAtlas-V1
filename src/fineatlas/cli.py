@@ -9,6 +9,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description='Query the FineAtlas V1 SQLite database.')
     parser.add_argument('--data-dir', help='SQLite file or downloaded data directory')
     parser.add_argument('--view', choices=['wordnet','all'], help='Navigation view (default: wordnet)')
+    parser.add_argument('--relation-view', choices=['strict', 'taxonomy', 'membership'], default='strict', help='Relation navigation: strict IS_A, native taxonomy, or source membership')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('stats')
     sub.add_parser('datasets')
@@ -26,7 +27,7 @@ def main() -> None:
     p = sub.add_parser('equivalents'); p.add_argument('uid')
     p = sub.add_parser('target'); p.add_argument('dataset'); p.add_argument('class_id')
     args = parser.parse_args()
-    with FineAtlas(args.data_dir, view=args.view) as graph:
+    with FineAtlas(args.data_dir, view=args.view, relation_view=args.relation_view) as graph:
         if args.command == 'stats': result = graph.stats()
         elif args.command == 'domains': result = graph.domains()
         elif args.command == 'domain': result = graph.domain(args.name)

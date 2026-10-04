@@ -16,9 +16,12 @@ class SingleAtlas:
     the target catalog retain archived UIDs regardless of navigation view.
     """
 
-    def __init__(self, path: str | Path, view: str = 'wordnet'):
+    def __init__(self, path: str | Path, view: str = 'wordnet', relation_view: str = 'strict'):
         if view not in ('wordnet', 'all'):
             raise ValueError('view must be wordnet or all')
+        if relation_view not in ('strict', 'taxonomy', 'membership'):
+            raise ValueError('relation_view must be strict, taxonomy or membership')
+        self.relation_view = relation_view
         path = Path(path).resolve()
         self.path_file = path / 'fineatlas.sqlite' if path.is_dir() else path
         if not self.path_file.is_file():
@@ -63,6 +66,8 @@ class SingleAtlas:
                                    'UNKNOWN' if rank in ('type_or_product_model', 'unknown') else 'CLASS')
             result['attributes'] = {}
 
+        result['source_rank'] = result.get('rank')
+        result['native_rank'] = result['attributes'].get('native_rank', result.get('rank'))
         return result
 
     def node(self, uid: str) -> dict | None:
@@ -99,6 +104,10 @@ class SingleAtlas:
         if node['node_kind'] == 'ORGANIZATION':
             return {**result, 'status': 'AUXILIARY_RECORD', 'record_role': 'ORGANIZATION',
                     'tree_admission': 'NOT_REQUIRED', 'reason': 'Source organization record'}
+        if node['node_kind'] == 'BIOLOGICAL_VARIANT':
+            return {**result, 'status': 'NATIVE_TAXONOMIC_RECORD',
+                    'record_role': 'BIOLOGICAL_VARIANT', 'tree_admission': 'TAXONOMY_ONLY',
+                    'reason': 'Native variant navigation retains TAXONOMIC_PARENT; excluded from strict IS_A'}
         if node['node_kind'] in ('INSTANCE', 'ATTRIBUTE', 'DATASET_CATEGORY'):
             row = self.con.execute('SELECT * FROM entity_connections WHERE uid=?', (uid,)).fetchone() if 'entity_connections' in self._tables else None
             return {**result, 'status': node['node_kind'] + ('_CONNECTED' if row and row['wordnet_reachable'] else '_REVIEW'),
@@ -137,7 +146,7 @@ class SingleAtlas:
     def _visible_sql(self, alias: str) -> str:
         expression = (f"{alias}.visibility IN ('ACTIVE','SOURCE_ONLY')" if self.view=='all'
                       else f"{alias}.visibility='ACTIVE'")
-        if self.view == 'wordnet':
+        if self.view == 'wordnet' and self.relation_view == 'strict':
             connected = f'EXISTS (SELECT 1 FROM components vc WHERE vc.id={alias}.component_id AND vc.wordnet_reachable=1)'
             if 'entity_connections' in self._tables:
                 connected += f' OR EXISTS (SELECT 1 FROM entity_connections vx WHERE vx.uid={alias}.uid AND vx.wordnet_reachable=1)'
@@ -211,6 +220,14 @@ class SingleAtlas:
         edge['data'] = json.loads(edge.get('data') or '{}')
         return edge
 
+    def _relation_sql(self, alias: str = 'e') -> str:
+        strict = f"{alias}.status='ACTIVE' AND {alias}.relation='IS_A'"
+        if self.relation_view == 'taxonomy':
+            return f"(({strict}) OR ({alias}.status='TYPED_ACTIVE' AND {alias}.relation='TAXONOMIC_PARENT'))"
+        if self.relation_view == 'membership':
+            return f"{alias}.status='TYPED_ACTIVE' AND {alias}.relation='REUSABLE_TYPE_MEMBERSHIP'"
+        return strict
+
     def neighbors(self, uid: str, direction: str = 'children', limit: int = 20,
                   structural_only: bool = True) -> list[dict]:
         self._limit(limit)
@@ -222,7 +239,7 @@ class SingleAtlas:
         if not own or own['visibility'] != 'ACTIVE':
             return []
         endpoint, target = ('parent_uid', 'child_uid') if direction == 'children' else ('child_uid', 'parent_uid')
-        status = "e.status='ACTIVE' AND e.relation='IS_A'" if structural_only else "e.status IN ('ACTIVE','AUXILIARY','REVIEW')"
+        status = self._relation_sql() if structural_only else "e.status IN ('ACTIVE','TYPED_ACTIVE','AUXILIARY','REVIEW')"
         result = {}
         cursor = self.con.execute(f'''SELECT e.* FROM nodes u JOIN edges e ON e.{endpoint}=u.uid
             JOIN nodes t ON t.uid=e.{target} WHERE u.component_id=? AND {status}
@@ -293,6 +310,8 @@ class SingleAtlas:
                     edge['data'] = json.loads(edge['data'])
                     return prefix + [self._step(uid, parent, edge)]
             return []
+        if self.relation_view != 'strict':
+            return self._custom_path(uid, anchors or [self.metadata['root_uid']], max_depth)
         if anchors and anchors != [self.metadata['root_uid']]:
 
             return self._custom_path(uid, anchors, max_depth)
@@ -325,7 +344,7 @@ class SingleAtlas:
                     queue.append((other, path + self._identity_steps(current, other), depth))
             if depth >= max_depth:
                 continue
-            for raw in self.con.execute("SELECT * FROM edges WHERE child_uid=? AND status='ACTIVE' AND relation='IS_A'", (current,)):
+            for raw in self.con.execute(f"SELECT e.* FROM edges e WHERE e.child_uid=? AND {self._relation_sql()}", (current,)):
                 parent = raw['parent_uid']
                 if parent not in seen:
                     seen.add(parent)
@@ -369,20 +388,25 @@ class SingleAtlas:
         if 'entity_relations' not in self._tables:
             return []
         if not recursive:
-            rows = self.con.execute("SELECT subject_uid FROM entity_relations WHERE object_uid=? AND relation='INSTANCE_OF' AND status='ACTIVE' LIMIT ?", (type_uid, limit))
+            rows = self.con.execute(f"""SELECT DISTINCT r.subject_uid FROM nodes t
+                JOIN entity_relations r ON r.object_uid=t.uid JOIN nodes n ON n.uid=r.subject_uid
+                WHERE t.component_id=(SELECT component_id FROM nodes WHERE uid=?)
+                AND r.relation='INSTANCE_OF' AND r.status='ACTIVE'
+                AND n.visibility='ACTIVE' AND {self._kind_sql('n')}='INSTANCE' LIMIT ?""", (type_uid, limit))
             return [self.node(r[0]) for r in rows]
-        rows = self.con.execute("""WITH RECURSIVE scopes(id) AS (
+        rows = self.con.execute(f"""WITH RECURSIVE scopes(id) AS (
             SELECT component_id FROM nodes WHERE uid=?
             UNION
             SELECT n.component_id FROM scopes s CROSS JOIN nodes p
             CROSS JOIN edges e CROSS JOIN nodes n
             WHERE p.component_id=s.id AND e.parent_uid=p.uid
-            AND e.status='ACTIVE' AND e.relation='IS_A'
+            AND {self._relation_sql()}
             AND n.uid=e.child_uid AND n.visibility='ACTIVE')
             SELECT DISTINCT r.subject_uid FROM scopes s CROSS JOIN nodes t
-            CROSS JOIN entity_relations r WHERE t.component_id=s.id
+            CROSS JOIN entity_relations r CROSS JOIN nodes n WHERE t.component_id=s.id
             AND r.object_uid=t.uid AND r.relation='INSTANCE_OF' AND r.status='ACTIVE'
-            LIMIT ?""", (type_uid, limit))
+            AND n.uid=r.subject_uid AND n.visibility='ACTIVE'
+            AND {self._kind_sql('n')}='INSTANCE' LIMIT ?""", (type_uid, limit))
         return [self.node(r[0]) for r in rows]
 
     def evidence(self, evidence_id: str) -> list[dict]:
@@ -454,7 +478,7 @@ class SingleAtlas:
             'coverage_by_namespace', 'datasets', 'classification_contract',
             'same_name_policy'}
         current = {k: v for k, v in self.metadata.items() if k in public_keys}
-        return {**current, 'navigation_view': self.view, 'roots': self.roots}
+        return {**current, 'navigation_view': self.view, 'relation_view': self.relation_view, 'roots': self.roots}
 
     def close(self) -> None:
         if not self._closed:

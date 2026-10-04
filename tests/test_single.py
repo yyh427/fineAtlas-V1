@@ -95,5 +95,44 @@ class TypedInterfaceTest(unittest.TestCase):
             self.assertEqual(tree.path('legacy:mixed'),[])
 
 
+    def test_relation_views_preserve_types_and_review_boundaries(self):
+        self.tree.close()
+        c = sqlite3.connect(self.path)
+        c.execute("INSERT INTO edges VALUES(2,'legacy:mixed','type:river','TAXONOMIC_PARENT','TYPED_ACTIVE','native',1,'[\"proof:1\"]','{}')")
+        c.execute("INSERT INTO edges VALUES(3,'attr:1','legacy:mixed','TAXONOMIC_PARENT','REVIEW','native',1,'[]','{}')")
+        c.execute("INSERT INTO edges VALUES(4,'cat:1','type:river','REUSABLE_TYPE_MEMBERSHIP','TYPED_ACTIVE','native',1,'[\"proof:1\"]','{}')")
+        c.execute("INSERT INTO aliases VALUES('mixed','legacy:mixed')")
+        c.execute("INSERT INTO node_profiles VALUES('legacy:mixed','BIOLOGICAL_VARIANT','fixture','https://example.org','proof:1','{\"native_rank\":\"no rank\"}')")
+        c.commit(); c.close()
+        self.tree = FineAtlas(self.path)
+        self.assertEqual(self.tree.neighbors('type:river'), [])
+        self.assertEqual(self.tree.path('legacy:mixed'), [])
+        with FineAtlas(self.path, relation_view='taxonomy') as tree:
+            child = tree.neighbors('type:river')[0]
+            self.assertEqual(child['edge']['relation'], 'TAXONOMIC_PARENT')
+            self.assertEqual(child['native_rank'], 'no rank')
+            self.assertEqual(child['node_kind'], 'BIOLOGICAL_VARIANT')
+            self.assertEqual(tree.connection_status(child['uid'])['tree_admission'], 'TAXONOMY_ONLY')
+            self.assertEqual(tree.neighbors(child['uid']), [])
+            self.assertEqual([x['edge']['relation'] for x in tree.path(child['uid'])], ['IS_A', 'TAXONOMIC_PARENT'])
+            self.assertEqual(tree.path(child['uid'], max_depth=1), [])
+            self.assertEqual(tree.exact('Mixed')[0]['uid'], child['uid'])
+        with FineAtlas(self.path, relation_view='membership') as tree:
+            self.assertEqual(tree.neighbors('type:river')[0]['edge']['relation'], 'REUSABLE_TYPE_MEMBERSHIP')
+            self.assertEqual(tree.path('legacy:mixed'), [])
+        with self.assertRaises(ValueError):
+            FineAtlas(self.path, relation_view='unknown')
+
+    def test_direct_instances_use_identity_and_instance_role(self):
+        self.tree.close()
+        c = sqlite3.connect(self.path)
+        c.execute("UPDATE nodes SET component_id=1 WHERE uid='legacy:mixed'")
+        c.execute("INSERT INTO entity_relations VALUES(4,'type:root','type:river','INSTANCE_OF','ACTIVE','fixture','proof:1','{}')")
+        c.commit(); c.close()
+        self.tree = FineAtlas(self.path)
+        self.assertEqual([n['uid'] for n in self.tree.instances('legacy:mixed', recursive=False)], ['geo:1'])
+        self.assertEqual([n['uid'] for n in self.tree.instances('type:river')], ['geo:1'])
+
+
 if __name__ == '__main__':
     unittest.main()

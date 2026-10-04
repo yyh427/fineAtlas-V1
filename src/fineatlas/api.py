@@ -15,6 +15,6 @@ class FineAtlas(SingleAtlas):
     """
 
     def __init__(self, data_dir: str | Path | None = None, *,
-                 view: str | None = None):
+                 view: str | None = None, relation_view: str = 'strict'):
         path = data_dir or os.environ.get('FINEATLAS_DATA_DIR') or Path.cwd()
-        super().__init__(path, view=view or 'wordnet')
+        super().__init__(path, view=view or 'wordnet', relation_view=relation_view)

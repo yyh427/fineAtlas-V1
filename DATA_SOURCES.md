@@ -63,3 +63,29 @@ The mineral composition hierarchy uses the IMA source formula to express chemica
 Imported eunis2012.xls SHA-256: `cde7b23f1b91c0167f3b93c72938acb6cd8a22becd0d785fcbf0d9278a0021f5`.
 
 Imported eunis2021.xlsx SHA-256: `1427d22db8d77d1053ab1683aa60713bdec3d810605dd6b7bc16683b4ca14665`.
+
+## Additional primary catalog attribution
+
+Vishay diode and multilayer ceramic capacitor catalogs: [vishay-diodes](https://www.vishay.com/en/diodes/), [vishay-ceramic-smd](https://www.vishay.com/en/capacitors/ceramic/surface-mount/).
+
+Intel processor specifications: [intel-core-ark](https://www.intel.com/content/www/us/en/ark/products/series/122139/intel-core-processors.html), [intel-ultra-ark](https://www.intel.com/content/www/us/en/ark/products/series/236800/intel-core-ultra-processors.html).
+
+NVIDIA CUDA GPU tables: [nvidia-gpus](https://developer.nvidia.com/cuda-gpus), [nvidia-legacy-gpus](https://developer.nvidia.com/cuda-legacy-gpus).
+
+TP-Link network devices: [tplink-routers](https://www.tp-link.com/us/home-networking/wifi-router/), [tplink-switches](https://www.tp-link.com/us/business-networking/omada-switch-unmanaged/).
+
+Dell displays and desktop computers: [dell-monitors](https://www.dell.com/en-us/shop/monitors/ar/8605), [dell-desktops](https://www.dell.com/en-us/shop/desktop-computers/scr/desktops).
+
+Samsung TVs, SSDs and earbuds: [samsung-tv](https://www.samsung.com/us/televisions-home-theater/tvs/all-tvs/), [samsung-ssd](https://semiconductor.samsung.com/consumer-storage/internal-ssd/), [samsung-earbuds-alt](https://www.samsung.com/us/audio-sound/galaxy-buds/).
+
+Epson printer catalog: [epson-printers](https://epson.com/For-Home/Printers/c/h1).
+
+NSIDC glacier types: [nsidc-glacier-science](https://nsidc.org/learn/parts-cryosphere/glaciers/science-glaciers).
+
+USGS volcano, desert and aquifer types: [usgs-volcanoes](https://pubs.usgs.gov/gip/volc/types.html), [usgs-deserts](https://pubs.usgs.gov/gip/deserts/types/), [usgs-aquifers](https://www.usgs.gov/special-topics/water-science-school/science/aquifers-and-groundwater).
+
+NPS waterfall types: [nps-waterfalls](https://www.nps.gov/iafl/learn/kidsyouth/upload/IAFL-Jr-Ranger-11-2022-compressed-508.pdf).
+
+NOAA CMECS coastal classification: [noaa-cmecs](https://repository.library.noaa.gov/view/noaa/41982/noaa_41982_DS1.pdf).
+
+Native identifiers, factual model designations, relation types, source URLs and evidence remain attached to the imported records. Manufacturer names and trademarks remain their owners’ property. Catalog facts do not grant rights to photographs or complete source publications.
