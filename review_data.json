@@ -1,0 +1,35 @@
+{
+  "public_name": "FineAtlas V1",
+  "release": "v1.7.1-review",
+  "graph_version": "V1",
+  "candidate": true,
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.7.1-review",
+  "database": {
+    "name": "fineatlas.sqlite",
+    "bytes": 52888711168,
+    "sha256": "52ed3777de469925513ed5ab609704f1369c250e7fd2076cfccdb950c6aa82e1"
+  },
+  "assets": [
+    {
+      "name": "fineatlas-v1.7.1-review.sqlite.zst.part-000",
+      "bytes": 1073741824,
+      "sha256": "2324d5bdc2e574fac32aab7feb97d0098399c2220897875f0631908bc948a033"
+    },
+    {
+      "name": "fineatlas-v1.7.1-review.sqlite.zst.part-001",
+      "bytes": 1073741824,
+      "sha256": "4f794a58a1b96e9dc355e95acb2f304f3c9474f3351e85baee6faaa64c57349b"
+    },
+    {
+      "name": "fineatlas-v1.7.1-review.sqlite.zst.part-002",
+      "bytes": 1073741824,
+      "sha256": "d5211db2c1eeee360554e5a88c38ca2192953bac8608455af53beb0dd23306dc"
+    },
+    {
+      "name": "fineatlas-v1.7.1-review.sqlite.zst.part-003",
+      "bytes": 1071647993,
+      "sha256": "7a8183383f872e57841b384071a1ef9a1327b37b881f4bf0a0bc9c6221fbb417"
+    }
+  ],
+  "database_build_version": "v1.7.1-review"
+}

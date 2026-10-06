@@ -1,0 +1,53 @@
+{
+  "release": "v1.7.1-review",
+  "database_sha256": "52ed3777de469925513ed5ab609704f1369c250e7fd2076cfccdb950c6aa82e1",
+  "engineering_checks": {
+    "source_false_active_ISA": 0,
+    "baseline_nodes_deleted": 0,
+    "baseline_raw_nodes_changed": 0,
+    "baseline_edges_deleted": 0,
+    "original_edge_declarations_changed": 0,
+    "strict_child_uid_role": 0,
+    "strict_parent_uid_role": 0,
+    "unknown_active_instances": 0,
+    "current_normalization_role_disagreement": 0,
+    "domain_member_role_disagreement": 0,
+    "view_witness_class_endpoint_admission": 0,
+    "view_witness_typed_endpoint_admission": 0,
+    "new_ISA_without_provenance": 0,
+    "typed_relations_entering_strict_class_view": 0,
+    "entry_root_inventory_mismatch": 0,
+    "missing_identity_bridge_endpoints": 0,
+    "rejected_native_endpoint_edges_still_active": 0
+  },
+  "all_component_cycle_checks": {
+    "strict": 0,
+    "taxonomy": 0,
+    "membership": 0
+  },
+  "protected_catalog_regressions": {
+    "EUNIS": {
+      "baseline_uids": 9144,
+      "changed_or_deleted": 0
+    },
+    "IMA": {
+      "baseline_uids": 6239,
+      "changed_or_deleted": 0
+    }
+  },
+  "tests_passed": 33,
+  "public_interface_audit": {
+    "observed_task_records": 1822,
+    "observed_legacy_portals": 93,
+    "six_dataset_labels": 755,
+    "view_task_checks": 5466,
+    "view_portal_checks": 279,
+    "public_path_samples": 1706,
+    "member_search_checks": 1281,
+    "errors": [],
+    "seconds": 37.72063371632248,
+    "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
+  },
+  "independent_rebuild_logical_checks": 90,
+  "scope": "Whole-table engineering/source-preservation contracts and source-grounded semantic samples; no certification of every scientific claim or recognition-accuracy claim."
+}

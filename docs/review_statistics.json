@@ -1,0 +1,93 @@
+{
+  "release": "v1.7.1-review",
+  "database_sha256": "52ed3777de469925513ed5ab609704f1369c250e7fd2076cfccdb950c6aa82e1",
+  "source_uid_count": 12653743,
+  "visibility": {
+    "ACTIVE": 12399658,
+    "PRUNED_WORDNET": 79,
+    "SOURCE_ONLY": 254006
+  },
+  "active_roles": {
+    "ATTRIBUTE": 49,
+    "BIOLOGICAL_VARIANT": 41883,
+    "CLASS": 8409468,
+    "CONFIGURATION": 319290,
+    "DATASET_CATEGORY": 594,
+    "INSTANCE": 3401544,
+    "MODEL": 144299,
+    "MODEL_FAMILY": 1729,
+    "ORGANIZATION": 80793,
+    "UNKNOWN": 9
+  },
+  "canonical_portals": 91,
+  "compatible_portals": 93,
+  "views": {
+    "strict": {
+      "class_root_groups": 5159278,
+      "class_root_source_uids": 5173925,
+      "class_groups_total": 8631753,
+      "arcs": 5435107,
+      "provenance_rows": 5438532,
+      "cycle_arcs": 0,
+      "weak_components": 3208668,
+      "unrooted_weak_components": 3208667,
+      "unrooted_frontier_groups": 3208790,
+      "max_root_shortest_depth": 40,
+      "typed_terminal_root_uids": 3528140
+    },
+    "taxonomy": {
+      "class_root_groups": 8521014,
+      "class_root_source_uids": 8496534,
+      "class_groups_total": 8882229,
+      "arcs": 8552461,
+      "provenance_rows": 8780389,
+      "cycle_arcs": 0,
+      "weak_components": 352369,
+      "unrooted_weak_components": 352368,
+      "unrooted_frontier_groups": 352452,
+      "max_root_shortest_depth": 86,
+      "typed_terminal_root_uids": 3730575
+    },
+    "membership": {
+      "class_root_groups": 1,
+      "class_root_source_uids": 1,
+      "class_groups_total": 8632347,
+      "arcs": 13766,
+      "provenance_rows": 13766,
+      "cycle_arcs": 0,
+      "weak_components": 8618641,
+      "unrooted_weak_components": 8618640,
+      "unrooted_frontier_groups": 8618673,
+      "max_root_shortest_depth": 0,
+      "typed_terminal_root_uids": 0
+    }
+  },
+  "focused_task_counts": {
+    "strict": {
+      "labels": 755,
+      "root_path": 568,
+      "hierarchy_usable": 568,
+      "strict_classification_usable": 365
+    },
+    "taxonomy": {
+      "labels": 755,
+      "root_path": 755,
+      "hierarchy_usable": 755,
+      "strict_classification_usable": 0
+    },
+    "membership": {
+      "labels": 755,
+      "root_path": 0,
+      "hierarchy_usable": 0,
+      "strict_classification_usable": 0
+    }
+  },
+  "metric_definitions": {
+    "source_uid_count": "Independent source representations, including classes, designs, configurations and instances; not unique real-world classes.",
+    "class_groups_total": "Identity groups with roles admitted to each view, including conceptual model/configuration groups.",
+    "class_root_source_uids": "Source UIDs in CLASS/MODEL/MODEL_FAMILY/CONFIGURATION roles with a pure selected-view classification root path.",
+    "typed_terminal_root_uids": "Role-compatible explicit terminal connections; not strict IS_A count.",
+    "depth": "Maximum shortest rooted classification distance; identity links cost zero.",
+    "domain_scope": "Native-root descendant membership can include a legitimate unrooted global branch. Domain counts overlap."
+  }
+}

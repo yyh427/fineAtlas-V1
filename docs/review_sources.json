@@ -1,0 +1,192 @@
+[
+  {
+    "source": "EPA native base-model scope recovery",
+    "source_uri": "https://www.fueleconomy.gov/ws/rest/vehicle/32171",
+    "license": "US federal public-domain source data",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 123,
+      "new_source_uids": 0,
+      "parent_assertions": 123
+    }
+  },
+  {
+    "source": "EPA normalized native fields",
+    "source_uri": "https://www.fueleconomy.gov/ws/rest/vehicle/23178",
+    "license": "US federal public-domain data",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 105023,
+      "new_source_uids": 0,
+      "parent_assertions": 105023
+    }
+  },
+  {
+    "source": "GBIF native rank transition",
+    "source_uri": "https://api.gbif.org/v1/species/2434544",
+    "license": "GBIF backbone facts; source attribution retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 2,
+      "new_source_uids": 0,
+      "parent_assertions": 2
+    }
+  },
+  {
+    "source": "Garmin manufacturer catalogue",
+    "source_uri": "https://www.garmin.com.sg/products/wearables/cirqa-band-l-black/",
+    "license": "Publisher copyright retained; factual identifiers only; Publisher copyright retained; factual product identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 60,
+      "new_source_uids": 60,
+      "parent_assertions": 60
+    }
+  },
+  {
+    "source": "Google Fitbit manufacturer announcement",
+    "source_uri": "https://blog.google/products-and-platforms/devices/fitbit/fitness-tracker-charge-6/",
+    "license": "Publisher copyright retained; factual identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 1,
+      "new_source_uids": 1,
+      "parent_assertions": 1
+    }
+  },
+  {
+    "source": "Independent native product-family definition",
+    "source_uri": "https://www.wikidata.org/wiki/Q1000739",
+    "license": "CC0 Wikidata facts; independent Wikipedia factual statement attribution retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 8461,
+      "new_source_uids": 0,
+      "parent_assertions": 8461
+    }
+  },
+  {
+    "source": "Murata C02E-16 catalogue",
+    "source_uri": "https://dsvr.org/kompo/datasheets/GRM155F51A334ZE01D.pdf",
+    "license": "Publisher copyright retained; factual identifiers only; original document not redistributed",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 3885,
+      "new_source_uids": 3885,
+      "parent_assertions": 3885
+    }
+  },
+  {
+    "source": "Native task category and RHS botanical scope",
+    "source_uri": "https://www.rhs.org.uk/plants/alstroemeria",
+    "license": "Publisher copyright retained; factual names and scope only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 2,
+      "new_source_uids": 2,
+      "parent_assertions": 2
+    }
+  },
+  {
+    "source": "Publisher-scoped aircraft design declarations",
+    "source_uri": "https://www.aircraft.airbus.com/en/customer-care/fleet-wide-care/airport-operations-and-aircraft-characteristics/aircraft-characteristics",
+    "license": "Publisher copyright retained; factual design identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 22,
+      "new_source_uids": 0,
+      "parent_assertions": 22
+    }
+  },
+  {
+    "source": "RHS cultivar profile",
+    "source_uri": "https://www.rhs.org.uk/plants/96238/dahlia-bishop-of-llandaff-p/details",
+    "license": "Publisher copyright retained; factual botanical identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 2,
+      "new_source_uids": 0,
+      "parent_assertions": 2
+    }
+  },
+  {
+    "source": "Reviewed primary manufacturer/government model scope",
+    "source_uri": "https://www.amgeneral.com/hummer-breakoff/",
+    "license": "Publisher copyright retained; factual source identifiers and membership only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 10,
+      "new_source_uids": 0,
+      "parent_assertions": 10
+    }
+  },
+  {
+    "source": "Vertebrate Breed Ontology",
+    "source_uri": "http://purl.obolibrary.org/obo/NCBITaxon_1",
+    "license": "CC-BY-4.0",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 40223,
+      "new_source_uids": 20112,
+      "parent_assertions": 21372
+    }
+  },
+  {
+    "source": "Wikidata",
+    "source_uri": "https://www.wikidata.org",
+    "license": "CC0",
+    "input_sha256": "9ed0687cb7e0a713744ce7fe8c1b34892ef95a4ea49d7bf58f61d94d024d6aab",
+    "coverage": {
+      "fetched_batches": 1001,
+      "matched_entities": 50034,
+      "name_assertions": 69892
+    }
+  },
+  {
+    "source": "Wikidata native dump metadata",
+    "source_uri": "https://www.wikidata.org/wiki/Wikidata:Database_download",
+    "license": "CC0",
+    "input_sha256": "9eee3ca3c4cb4daf2657c2cdae22d0361603c33c5c1d55f14cda53d3169e26ef",
+    "coverage": {
+      "CONFLICT_REVIEW": 489,
+      "SOURCE_DECLARED": 3317930,
+      "description_uids": 3059532,
+      "records": 3364343,
+      "recovered_label_uids": 6,
+      "role": "metadata and taxon-rank annotations only; no ISA claims"
+    }
+  },
+  {
+    "source": "openFDA GUDID manufacturer-reported model",
+    "source_uri": "https://api.fda.gov/device/udi.json?search=public_device_record_key:7d5fb7d4-0566-43b0-a29e-45a90dd4a410",
+    "license": "CC0; no GMDN fields used or retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 705,
+      "new_source_uids": 705,
+      "parent_assertions": 833
+    }
+  },
+  {
+    "source": "openFDA GUDID sized catalog configuration",
+    "source_uri": "https://api.fda.gov/device/udi.json?search=public_device_record_key:74c79867-c20b-48c5-adf4-1f136168ea92",
+    "license": "CC0; no GMDN fields used or retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 260296,
+      "new_source_uids": 260296,
+      "parent_assertions": 399715
+    }
+  },
+  {
+    "source": "openFDA device classification",
+    "source_uri": "https://api.fda.gov/device/classification.json?search=product_code:BRT",
+    "license": "CC0",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 7094,
+      "new_source_uids": 7094,
+      "parent_assertions": 8964
+    }
+  }
+]

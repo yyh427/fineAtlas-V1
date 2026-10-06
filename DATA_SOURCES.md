@@ -89,3 +89,13 @@ NPS waterfall types: [nps-waterfalls](https://www.nps.gov/iafl/learn/kidsyouth/u
 NOAA CMECS coastal classification: [noaa-cmecs](https://repository.library.noaa.gov/view/noaa/41982/noaa_41982_DS1.pdf).
 
 Native identifiers, factual model designations, relation types, source URLs and evidence remain attached to the imported records. Manufacturer names and trademarks remain their owners’ property. Catalog facts do not grant rights to photographs or complete source publications.
+
+## Review candidate catalog scope
+
+The v1.7.1-review candidate additionally retains 3,885 factual series/part records from Murata's C02E-16 multilayer ceramic capacitor catalogue: 12 series and 3,873 orderable part configurations. The [catalogue copy](https://dsvr.org/kompo/datasheets/GRM155F51A334ZE01D.pdf) is referenced with its retained source hash and publisher attribution; the original publication and product images are not distributed as release assets.
+
+[Garmin's product catalogue](https://www.garmin.com.sg/products/wearables/) contributes 60 model/configuration facts; the [Fitbit Charge 6 announcement](https://blog.google/products-and-platforms/devices/fitbit/fitness-tracker-charge-6/) contributes one product design. Counts include SKU variants and do not mean 61 distinct model families or complete brand coverage. Publisher copyright, trademarks and source URLs remain attached to the factual identifiers.
+
+[openFDA device classification](https://open.fda.gov/apis/device/classification/) supplies 7,094 regulatory type records, including 935 independently grounded physical type records. [openFDA UDI](https://open.fda.gov/apis/device/udi/) contributes 705 explicit manufacturer model identifiers and 260,296 sized catalog configurations from the frozen 52-partition input. The [openFDA license](https://open.fda.gov/license/) is CC0. GMDN fields are excluded from the derived records. Ambiguous version/model values remain outside model admission. Device identifiers describe catalog/packaging definitions, not serialized physical instances; regulatory assignment is preserved as `REGULATED_AS`.
+
+The [Vertebrate Breed Ontology](https://github.com/monarch-initiative/vertebrate-breed-ontology) contributes 40,223 native ontology facts, including its classification framework, under CC BY 4.0. This count is not a count of dog breeds. Native identifiers and source-declared navigation remain distinct from strict inclusion and task-label identity.

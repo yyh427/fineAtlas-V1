@@ -18,6 +18,10 @@
 | `domain_entries` / `domain_entry_roots` | 每领域一个导航入口及各原生分类根 |
 | `admission_decisions` / `task_mapping_admissions` | 来源记录和任务标签的准入用途 |
 | `metadata` | 当前统计、领域入口、数据集与验证信息 |
+| `normalization_roles` / `usability_changes` | 原始角色、规范决定、保留的先前角色与变更证据 |
+| `node_names` / `node_definitions` / `node_taxon_ranks` | 有来源和语言的名称、独立定义及原生分类阶元 |
+| `domain_registry` / `domain_aliases` / `domain_members` | 规范入口、兼容别名和逐视图成员范围 |
+| `view_roots` / `view_paths` / `view_terminal_connections` | 严格或原生分类路径、混合路径和类型连接的分别索引 |
 | `pruning` / `suppressed_edges` | 裁剪与隔离记录，保留原始身份但不激活不合格分类 |
 | `wordnet_nodes` / `wordnet_edges` | 分类根可达的导航投影 |
 
@@ -33,4 +37,6 @@
 
 ## 关系视图
 
-`active_edges` 仅包含严格有效的 `IS_A`。`scientific_navigation_edges` 另包含 `TYPED_ACTIVE TAXONOMIC_PARENT`；`source_membership_edges` 只包含 `REUSABLE_TYPE_MEMBERSHIP`。`components` 中的可达性和路径证据以严格视图计算。接口通过 `relation_view="taxonomy"` 保留原生分类导航，通过 `relation_view="membership"` 单独查看来源成员关系。`BIOLOGICAL_VARIANT` 标记原生无阶元的菌株等记录，`native_rank` 保留原始阶元；该角色不进入严格分类 DAG。发布号为 v1.6.0，冻结数据库中的构建标记为 v1.6.0-local，下载哈希标识相同文件。
+`active_edges` 仅包含严格有效的 `IS_A`。接口的 `taxonomy` 视图另包含已准入的 `TAXONOMIC_PARENT` 和 `NATIVE_CLASSIFICATION_PARENT`；`membership` 只包含 `REUSABLE_TYPE_MEMBERSHIP`。`components` 中的可达性和路径证据以严格视图计算，候选库的逐视图索引分别保存在 `view_*` 表中。`BIOLOGICAL_VARIANT` 标记原生无阶元的菌株等记录，`native_rank` 保留原始阶元；该角色不进入严格分类 DAG。
+
+本分支使用 v1.7.1-review 候选库，文件与哈希见 [review_data.json](../review_data.json)。`single_download.json` 保留正式版 v1.6.0 下载配置；候选库使用独立清单和新目录安装。精确统计见 [review_statistics.json](review_statistics.json)，查询与训练要求见 [public_api.md](public_api.md)。

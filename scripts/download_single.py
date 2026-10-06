@@ -73,8 +73,10 @@ def install(root: Path, metadata: dict) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path, default=ROOT)
+    parser.add_argument('--manifest', type=Path, default=ROOT / 'single_download.json',
+                        help='Release manifest, or review_data.json for a separate candidate installation')
     args = parser.parse_args()
-    install(args.output_dir, json.loads((ROOT / 'single_download.json').read_text()))
+    install(args.output_dir, json.loads(args.manifest.read_text()))
 
 
 if __name__ == '__main__':
