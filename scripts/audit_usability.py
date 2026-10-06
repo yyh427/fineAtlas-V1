@@ -78,7 +78,15 @@ def main():
     started = time.perf_counter()
     for view in ("strict", "taxonomy", "membership"):
         with FineAtlas(a.database, relation_view=view) as tree:
-            dump(out / (view + "_statistics.json"), tree.stats())
+            statistics = tree.stats()
+            if "statistics_scope" in statistics:
+                counts = statistics["counts"]
+                assert counts["nodes"] == tree.con.execute("SELECT count(*) FROM nodes").fetchone()[0]
+                for field, visibility in (("active_nodes", "ACTIVE"), ("source_only_nodes", "SOURCE_ONLY")):
+                    assert counts[field] == tree.con.execute("SELECT count(*) FROM nodes WHERE visibility=?", (visibility,)).fetchone()[0]
+                assert sum(statistics["role_counts"].values()) == counts["active_nodes"]
+                assert counts["classification_root_groups_in_view"] == tree.con.execute("SELECT count(*) FROM view_roots WHERE view=?", (view,)).fetchone()[0]
+            dump(out / (view + "_statistics.json"), statistics)
             targets = list(
                 tree.con.execute(
                     "SELECT dataset,class_id FROM dataset_targets ORDER BY dataset,length(class_id),class_id"

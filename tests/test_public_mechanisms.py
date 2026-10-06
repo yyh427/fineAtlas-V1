@@ -18,6 +18,31 @@ class PublicMechanismsTest(unittest.TestCase):
         c.close()
         self.tree = FineAtlas(self.path)
 
+    def test_stats_uses_current_census_and_declares_aggregate_root(self):
+        def change(c):
+            c.execute("CREATE TABLE domain_entries(uid TEXT)")
+            c.execute("INSERT INTO domain_entries VALUES('portal:1')")
+        self.mutate(change)
+        self.tree.metadata.update({
+            "counts": {"nodes": 1}, "edge_statuses": {"ACTIVE": 999},
+            "nodes": 7, "active_nodes": 6, "source_only_nodes": 1,
+            "strict_classification_edges": 3, "aliases": 8, "canonical_domains": 1,
+            "usability_role_counts": {"CLASS": 3, "MODEL_FAMILY": 1, "INSTANCE": 2},
+            "usability_view_statistics": {
+                "strict": {"class_root_source_uids": 2, "class_root_groups": 2,
+                           "typed_terminal_root_uids": 1},
+                "taxonomy": {"class_root_source_uids": 4, "class_root_groups": 3,
+                             "typed_terminal_root_uids": 2}}})
+        self.tree.relation_view = "taxonomy"
+        stats = self.tree.stats()
+        self.assertEqual(stats["counts"]["nodes"], 7)
+        self.assertEqual(stats["counts"]["retained_classification_uids"], 4)
+        self.assertEqual(stats["counts"]["classification_root_source_uids_in_view"], 4)
+        self.assertEqual(stats["counts"]["strict_root_reachable_classification_uids"], 2)
+        self.assertNotIn("edge_statuses", stats)
+        self.tree.root_uid = "type:river"
+        self.assertEqual(self.tree.stats()["statistics_root_uid"], "type:root")
+
     @staticmethod
     def add(c, uid, label, comp, parents=(), rank="class", kind=None):
         c.execute(

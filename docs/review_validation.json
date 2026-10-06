@@ -35,7 +35,7 @@
       "changed_or_deleted": 0
     }
   },
-  "tests_passed": 33,
+  "tests_passed": 34,
   "public_interface_audit": {
     "observed_task_records": 1822,
     "observed_legacy_portals": 93,
@@ -45,7 +45,7 @@
     "public_path_samples": 1706,
     "member_search_checks": 1281,
     "errors": [],
-    "seconds": 37.72063371632248,
+    "seconds": 39.50560249434784,
     "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
   },
   "independent_rebuild_logical_checks": 90,

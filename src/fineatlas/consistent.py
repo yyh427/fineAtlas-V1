@@ -271,8 +271,36 @@ class ConsistentAtlas(SingleAtlas):
         return result
 
     def stats(self):
+        result = super().stats()
+        views = self.metadata.get("usability_view_statistics", {})
+        if views:
+            # The immutable baseline metadata is retained for provenance. Its
+            # aggregate snapshots do not describe the migrated database.
+            for key in ("counts", "edge_statuses", "bridge_statuses",
+                        "typed_statuses", "coverage_by_namespace", "datasets",
+                        "wordnet_reachable_components"):
+                result.pop(key, None)
+            selected = views[self.relation_view]
+            roles = self.metadata.get("usability_role_counts", {})
+            result["counts"] = {
+                "nodes": self.metadata["nodes"],
+                "active_nodes": self.metadata["active_nodes"],
+                "source_only_nodes": self.metadata["source_only_nodes"],
+                "active_edges": self.metadata["strict_classification_edges"],
+                "aliases": self.metadata["aliases"],
+                "retained_classification_uids": sum(roles.get(r, 0) for r in CLASS_ROLES),
+                "strict_root_reachable_classification_uids": views["strict"]["class_root_source_uids"],
+                "classification_root_groups_in_view": selected["class_root_groups"],
+                "classification_root_source_uids_in_view": selected["class_root_source_uids"],
+                "typed_terminal_root_uids_in_view": selected["typed_terminal_root_uids"],
+                "canonical_domains": self.metadata["canonical_domains"],
+                "domain_entries": self.con.execute("SELECT count(*) FROM domain_entries").fetchone()[0],
+                "dataset_targets": self.con.execute("SELECT count(*) FROM dataset_targets").fetchone()[0],
+            }
+            result["statistics_root_uid"] = self.metadata["root_uid"]
+            result["statistics_scope"] = "Whole database; rooted view counts use statistics_root_uid"
         return {
-            **super().stats(),
+            **result,
             "database_revision": self._revision,
             "relation_view": self.relation_view,
             "root_uid": self.root_uid,
