@@ -8,6 +8,8 @@ Strict classification uses ACTIVE IS_A only. Taxonomy additionally permits admit
 
 CLASS is a reusable category. MODEL is a named product design. MODEL_FAMILY is a named series/family; CONFIGURATION is an orderable part, SKU, sized variant or year configuration. INSTANCE is a concrete named/serialized object. Biological variants and task categories have distinct roles. None of these roles are automatically interchangeable.
 
+Professional middle classes carry `attributes.classification_axis` and `attributes.hierarchy_definition`. Structure, propulsion, operating principle and ecological axes may coexist in a DAG; only source-supported subsumption creates IS_A. A whole family is narrowed only when the evidence covers that family. Variant fields apply to CONFIGURATION, and native regulatory classes use taxonomy navigation. Ordinary CLASS-only layer counts are published separately in `review_hierarchy.csv`; conceptual graph totals can also include reusable design/configuration roles and should not be interpreted as ordinary class counts.
+
 Native source UID, label, rank, role, domain and raw payload are retained. Display names prefer the requested language, then English, multilingual scientific names and undetermined language. Missing reliable names fall back to the UID and set `label_fallback`. `normalized_rank` uses explicit native grades and unambiguous accepted identity peers; conflicting grades remain CONFLICT_REVIEW. A source-declared grade is metadata, not independent scientific certification.
 
 ## Queries
@@ -17,7 +19,7 @@ Native source UID, label, rank, role, domain and raw payload are retained. Displ
 - `search(query, limit=20, domain=None, node_kind=None)` and `exact(label, ...)` return all matching independent source identities within the bound. `PRODUCT_DESIGN` includes MODEL and MODEL_FAMILY; `SERIES` maps to MODEL_FAMILY. Equal labels do not cause identity merging.
 - `browse_domain(name, limit=20)` returns separate roots, children and a page of instances. `domain_children(name, limit=20)` returns classification children, not a counterfeit instance list.
 - `search_page(query, limit=20, cursor=None, domain=None, node_kind=None)`, `domain_page(name, limit=20, cursor=None, node_kind=None)`, `domain_instances(name, limit=20, cursor=None)`, `instances_page(type_uid, limit=20, cursor=None, recursive=True)` return `{items, next_cursor, has_more, ...}`. Sorting is stable by source UID. Cursors bind the revision, SDK contract, visibility, view, root and selector. Follow `next_cursor` until null; do not switch conditions mid-pagination.
-- `neighbors(uid, direction="children", limit=20)` and `instances(uid_or_domain, limit=20, recursive=True)` keep compatible legacy list behaviour. ResultList exposes `truncated` and `has_more`; the CLI warns on stderr.
+- `neighbors(uid, direction="children", limit=20, structural_only=True)` and `instances(uid_or_domain, limit=20, recursive=True)` keep compatible legacy list behaviour. Structural child browsing selects the chosen classification view; use domain pages to enumerate MODEL or CONFIGURATION terminals and inspect their typed paths. ResultList exposes `truncated` and `has_more`; the CLI warns on stderr.
 
 Canonical scope selectors compute descendants under the declared relations and typed roles. An object may appear in multiple legitimate scopes. `source:<tag>` filters original domain tags instead. An unknown scope raises ValueError; it never falls back to global search.
 

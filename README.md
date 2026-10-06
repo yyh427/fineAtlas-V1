@@ -13,7 +13,7 @@ python3 scripts/download_single.py --output-dir /path/to/fineatlas-data
 fineatlas --data-dir /path/to/fineatlas-data stats
 ```
 
-本分支的接口版本为 `1.7.1rc1`，对应候选数据库 `v1.7.1-review`。新库的独立下载清单及 SHA-256 见 [review_data.json](review_data.json)；原有正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
+本分支的接口版本为 `1.8.0rc1`，对应候选数据库 `v1.8.0-hierarchy-review`。新库的独立下载清单及 SHA-256 见 [review_data.json](review_data.json)；原有正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
 
 ```bash
 python3 scripts/download_single.py --manifest review_data.json \
@@ -37,6 +37,8 @@ python3 scripts/download_single.py --manifest review_data.json \
 | `membership` | `REUSABLE_TYPE_MEMBERSHIP` | 独立来源成员关系，通常应使用原生根进行局部查询 |
 
 `INSTANCE_OF`、`DESIGN_TYPE_OF`、`CONFIGURATION_OF`、`ATTRIBUTE_KIND_OF`、`DEPICTS_TYPE` 等类型连接分别保留，路径中的边不会改写为 `IS_A`。原生/混合路径存在，不代表严格分类路径存在。
+
+中间层按来源支持的结构、工作原理或生态类型逐渐细分。航空器使用 FAA 结构与动力字段；电子产品使用有定义的专业类型；地物保留原生环境分类。家族、型号和配置通过明确的类型关系接入这些类别。不同维度允许多父连接，不将品牌、年份、材料或监管分组统一串成子类链。各领域的普通 `CLASS` 层分布及范围见 [层次统计](docs/review_hierarchy.csv)；新增类别的定义、父节点及来源见 [专业类别清单](docs/review_middle_classes.csv)。
 
 不同领域或来源可以同名，UID 保持独立。身份组只使用有依据的来源对应。身份映射、节点角色、视图准入、根可达性和任务准入分别返回；`VERIFIED` 身份不直接表示可用于完整层次训练。
 
@@ -73,6 +75,8 @@ with FineAtlas('/path/to/fineatlas.sqlite', relation_view='taxonomy', language='
     tree.export_domain('fitness_trackers', '/path/to/trackers.jsonl')
 ```
 
+浏览专业类别可使用 `neighbors(uid, direction='children')`，再按 `node_kind == 'CLASS'` 选择普通类别。型号和配置使用 `domain_page(..., node_kind='MODEL')`、`domain_page(..., node_kind='CONFIGURATION')` 查询，并通过 `path_result()` 查看其真实类型连接。新增专业类别的 `attributes.classification_axis` 和 `attributes.hierarchy_definition` 给出分类维度与定义；FDA、EPA 等监管节点应在 `taxonomy` 视图使用。
+
 `node_kind="PRODUCT_DESIGN"` 查询型号及型号家族，`MODEL` 仅查询具体型号，`SERIES` 是 `MODEL_FAMILY` 的查询别名。`native_rank` 和 `source_role` 保留来源声明，`normalized_rank` 和 `normalized_role` 用于规范查询，冲突保持可见。
 
 `search_page()`、`domain_page()`、`domain_instances()`、`instances_page()` 提供按 UID 排序的稳定分页。游标绑定数据库版本、视图、根和查询条件；跨条件使用会报错。旧列表接口保留，截断通过 `.truncated`/`.has_more` 明确标记。
@@ -96,5 +100,7 @@ python3 scripts/audit_usability.py --database /path/to/new/fineatlas.sqlite \
 ```
 
 重建验证基线哈希、保留原始来源字段，并为各视图重新建立版本绑定的查询索引。新来源通过统一事实格式和来源适配器接入。数据库、来源与代码的授权范围见 [DATA_SOURCES.md](DATA_SOURCES.md)。结构和接口检查通过不等于每条科学事实均已认证，也不证明识别准确率提高。
+
+候选发布附件提供 `frozen-inputs.tar.zst`、逐文件哈希及来源清单。解压后将其中的 `corrected-frozen-inputs` 目录传给 `--inputs`。重建需要正式版 v1.6 基线及本分支代码；专业层次由 `hierarchy_refinements`、`hierarchy_extensions`、`hierarchy_contract_repairs` 及规范端点合同阶段在图索引构建前重放。
 
 Candidate task availability is listed per label and view in [review_task_labels.csv](docs/review_task_labels.csv). The 755 focused labels have individual typed path witnesses in [review_label_paths.jsonl](docs/review_label_paths.jsonl); unreachable results and their selected view are explicit.

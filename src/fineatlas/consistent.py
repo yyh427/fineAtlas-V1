@@ -99,7 +99,7 @@ class ConsistentAtlas(SingleAtlas):
             ).fetchone()
         )
         if not has_profile:
-            result["node_kind"] = role_for_rank(result.get("rank"))
+            result["node_kind"] = role_for_rank(result.get("rank"), result.get('source'))
         result["source_role"] = (
             result["attributes"].get(
                 "source_role",
@@ -430,7 +430,7 @@ class ConsistentAtlas(SingleAtlas):
     def _basic(self, uid):
         if uid not in self._node_cache:
             row = self.con.execute(
-                "SELECT uid,label,rank,visibility,component_id FROM nodes WHERE uid=?",
+                "SELECT uid,label,rank,source,visibility,component_id FROM nodes WHERE uid=?",
                 (uid,),
             ).fetchone()
             if row:
@@ -444,7 +444,7 @@ class ConsistentAtlas(SingleAtlas):
                     else None
                 )
                 value["node_kind"] = (
-                    profile[0] if profile else role_for_rank(value["rank"])
+                    profile[0] if profile else role_for_rank(value["rank"],value.get('source'))
                 )
                 value["allowed_views"] = (
                     json.loads(profile[1]).get("allowed_views") if profile else None
@@ -1043,7 +1043,7 @@ class ConsistentAtlas(SingleAtlas):
 
     def _page_context(self, method, args):
         return {
-            "api_contract": "1.7.1rc1",
+            "api_contract": "1.8.0rc1",
             "revision": self._revision,
             "view": self.relation_view,
             "visibility": self.view,

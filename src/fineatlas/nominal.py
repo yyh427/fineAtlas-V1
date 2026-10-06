@@ -6,6 +6,11 @@ from ._text import norm
 
 DEFINITION_SQL = "coalesce(nullif(n.description,''),json_extract(n.data,'$.wikidata_description'),json_extract(n.data,'$.evidence_record.wikidata_description'),json_extract(n.data,'$.description'),'')"
 
+def object_kind_head(head):
+    """Keep the noun phrase, excluding location, history and quantity clauses."""
+    return re.split(r"\s+(?:in|near|located|situated|containing|originating|found|available|classified|capable)\b",
+                    head,maxsplit=1,flags=re.I)[0].strip(' ,')
+
 
 class WordNetKinds:
     def __init__(self, connection, *, include_native=False):
@@ -21,6 +26,10 @@ class WordNetKinds:
         }
 
     def candidates(self, term):
+        # Years, quantities and catalogue numbers cannot supply a lexical
+        # object-kind head, even when an old product alias matches the number.
+        if not re.search(r"[A-Za-z]", term):
+            return set()
         candidates = {norm(term)}
         for value in list(candidates):
             if value.endswith("s") and not value.endswith(("ss", "series", "species")):
@@ -50,13 +59,24 @@ class WordNetKinds:
         if uid.startswith("wordnet31:"):
             return True
         row = self.c.execute(
-            "SELECT " + DEFINITION_SQL + " FROM nodes n WHERE uid=?", (uid,)
+            "SELECT " + DEFINITION_SQL + ",n.label,n.description FROM nodes n WHERE uid=?", (uid,)
         ).fetchone()
-        if not row or re.search(
-            r"\b(?:family|series|model|manufacturer|company|organization|organisation)\b",
+        # A short Wikidata description or historical CLASS rank is not an
+        # independent reusable-type definition for a native lexical alias.
+        if not row or not row[2] or re.search(
+            r"^(?:an? )?(?:family|series|model|manufacturer|company|organization|organisation)\b|\b(?:is|was|are|were) (?:an? |the )?(?:[^.;]{0,35} )?(?:family|series|model|manufacturer|company|organization|organisation|line|range)\b",
             row[0],
             re.I,
         ):
+            return False
+        if (re.search(r'\b(?:lead|flag|sister)[ -]?ship\b',row[0],re.I)
+                and not re.match(r'\s*an?\s',row[0],re.I)):
+            return False
+        # A historical CLASS/rank declaration is not independent type proof.
+        # Proper commercial design names with explicit manufacturing or release
+        # statements must not become parents for a generic alias such as PC.
+        if (re.search(r'\b(?:manufactured|developed|produced|released|introduced)\b',row[0],re.I)
+                and re.match(r'[A-Z][a-z]{2,}\b[^.]{0,70}\d',row[1])):
             return False
         if self.c.execute(
             "SELECT 1 FROM sqlite_master WHERE name='node_profiles'"
@@ -83,6 +103,10 @@ class WordNetKinds:
         )[0]
 
     def resolve_head(self, head, scope=None):
+        # Location and quantity clauses describe the subject, not its kind.
+        # A large aquifer "in Kenya containing ... water" cannot acquire the
+        # artifact sense of "water" as its parent.
+        head = object_kind_head(head)
         words = norm(head).split()
         for size in range(min(4, len(words)), 0, -1):
             candidates = self.candidates(" ".join(words[-size:]))

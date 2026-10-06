@@ -88,7 +88,7 @@ def main():
     )
     check(
         "new_ISA_without_provenance",
-        "SELECT count(*) FROM edges WHERE layer='v1.7-generality-review' AND status='ACTIVE' AND relation='IS_A' AND (provenance='{}' OR classification_basis='' OR coalesce(json_extract(data,'$.eligible_for_final_dag'),0)<>1)",
+        "SELECT count(*) FROM edges WHERE layer IN ('v1.7-generality-review','v1.8-hierarchy-review') AND status='ACTIVE' AND relation='IS_A' AND (provenance='{}' OR classification_basis='' OR coalesce(json_extract(data,'$.eligible_for_final_dag'),0)<>1)",
     )
     check(
         "typed_relations_entering_strict_class_view",

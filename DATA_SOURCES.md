@@ -5,6 +5,12 @@ relationship contracts and provenance. It is not released under a new blanket
 license that supersedes the upstream sources. The MIT license in `LICENSE`
 applies to the interface code only.
 
+The v1.8.0-hierarchy-review candidate adds source-backed professional middle
+classes and typed connections while retaining prior independent source records.
+The frozen input archive contains factual/derived records, attribution and
+checksums; downloaded manufacturer pages and images are not release assets.
+Wikipedia-derived definitions retain CC BY-SA 4.0 attribution and article URLs.
+
 | Source | Upstream information |
 |---|---|
 | WordNet 3.1 | https://wordnet.princeton.edu/license-and-commercial-use |
@@ -97,5 +103,42 @@ The v1.7.1-review candidate additionally retains 3,885 factual series/part recor
 [Garmin's product catalogue](https://www.garmin.com.sg/products/wearables/) contributes 60 model/configuration facts; the [Fitbit Charge 6 announcement](https://blog.google/products-and-platforms/devices/fitbit/fitness-tracker-charge-6/) contributes one product design. Counts include SKU variants and do not mean 61 distinct model families or complete brand coverage. Publisher copyright, trademarks and source URLs remain attached to the factual identifiers.
 
 [openFDA device classification](https://open.fda.gov/apis/device/classification/) supplies 7,094 regulatory type records, including 935 independently grounded physical type records. [openFDA UDI](https://open.fda.gov/apis/device/udi/) contributes 705 explicit manufacturer model identifiers and 260,296 sized catalog configurations from the frozen 52-partition input. The [openFDA license](https://open.fda.gov/license/) is CC0. GMDN fields are excluded from the derived records. Ambiguous version/model values remain outside model admission. Device identifiers describe catalog/packaging definitions, not serialized physical instances; regulatory assignment is preserved as `REGULATED_AS`.
+
+## Professional middle classifications
+
+[FAA aircraft reference documentation](https://registry.faa.gov/database/ardata.pdf)
+defines native aircraft, engine and engine-count codes. The candidate classifies
+94,043 retained model reference records using those fields. Structure and
+propulsion are independent dimensions; hybrid/other codes do not imply a
+conventional airframe, intended use or a serialized aircraft identity.
+
+[Environment Ontology](https://github.com/EnvironmentOntology/envo) contributes
+173 native environmental-feature classes under CC0 1.0. Retained native `is_a`
+relations support their hierarchy; part-of relations and logical restrictions
+are not converted to subclass claims. Existing biological and EUNIS versions
+retain their own native classifications.
+
+Professional hardware definitions reference [Microsoft form factors](https://learn.microsoft.com/en-us/windows-hardware/design/form-factors/form-factors),
+[Intel graphics types](https://www.intel.com/content/www/us/en/support/articles/000057824/graphics.html),
+[EIZO LCD technologies](https://www.eizo.com/library/management/cms/02.html/),
+[TP-Link switch categories](https://www.tp-link.com/us/document/12901/),
+[Samsung SSD types](https://semiconductor.samsung.com/news-events/tech-blog/your-guide-to-samsungs-wide-ranging-ssd-selection/),
+[John Deere tractor forms](https://www.deere.com.au/en/tractors/) and
+[Nintendo Switch operating forms](https://www.nintendo.com/en-ca/gaming-systems/switch/system/).
+Each derived class records its definition, axis and primary reference; only
+explicit native fields or retained definitions connect individual designs.
+
+[Apple AirPods Pro specifications](https://www.apple.com/airpods-pro/specs/) and
+[NVIDIA RTX 3090/3090 Ti specifications](https://www.nvidia.com/en-in/geforce/graphics-cards/30-series/rtx-3090-3090ti/)
+support exact product-type connections, rather than propagation to every
+product in a brand or family. Publisher copyright and trademarks remain with
+their owners.
+
+EPA fuel and hybrid fields classify individual configurations. Four retained
+EPA car-line groups use the [historical native classification rule](https://www.govinfo.gov/content/pkg/CFR-2014-title40-vol30/pdf/CFR-2014-title40-vol30-sec600-315-08.pdf)
+as regulatory navigation; car-line majority rules are not physical claims
+about every configuration's body or seat count. [USGS aquifer definitions](https://pubs.usgs.gov/ha/ha730/ch_h/H-text2.html)
+support unconsolidated/alluvial types; named, located aquifers retain INSTANCE
+roles. Per-record source URLs, native-row hashes and scope evidence are retained.
 
 The [Vertebrate Breed Ontology](https://github.com/monarch-initiative/vertebrate-breed-ontology) contributes 40,223 native ontology facts, including its classification framework, under CC BY 4.0. This count is not a count of dog breeds. Native identifiers and source-declared navigation remain distinct from strict inclusion and task-label identity.

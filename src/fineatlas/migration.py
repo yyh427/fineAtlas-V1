@@ -48,7 +48,7 @@ class Migration:
         self.out.mkdir(parents=True, exist_ok=True)
         self.c = sqlite3.connect(self.db)
         self.c.row_factory = sqlite3.Row
-        self.c.execute("PRAGMA cache_size=-1048576")
+        self.c.execute("PRAGMA cache_size=-4194304")
         self.c.execute("PRAGMA temp_store=MEMORY")
         self.c.execute("PRAGMA journal_mode=DELETE")
         self.c.execute(
@@ -1461,8 +1461,8 @@ class Migration:
                     f"""INSERT INTO domain_members SELECT dc.domain_id,dc.view,n.uid,{roles},dc.depth
                    FROM domain_components dc CROSS JOIN nodes n LEFT JOIN node_profiles p ON p.uid=n.uid
                    WHERE dc.domain_id=? AND dc.view=? AND n.component_id=dc.component_id AND n.visibility='ACTIVE'
-                   AND {roles} IN ({markers}) AND NOT EXISTS(SELECT 1 FROM node_profiles bp WHERE bp.uid=n.uid
-                   AND json_type(bp.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(bp.attributes,'$.allowed_views') av WHERE av.value=?))""",
+                   AND {roles} IN ({markers}) AND (json_type(p.attributes,'$.allowed_views') IS NOT 'array'
+                   OR EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') av WHERE av.value=?))""",
                     (entry["domain_id"], view, *admitted_roles, view),
                 )
                 c.commit()
@@ -1501,7 +1501,7 @@ class Migration:
             hashlib.sha256(
                 dump(
                     {
-                        "version": "v1.7.1-review",
+                        "version": "v1.8.0-hierarchy-review" if (self.inputs/"hierarchy_facts.jsonl").exists() else "v1.7.1-review",
                         "baseline": json.loads(
                             (self.inputs / "baseline.json").read_text()
                         ),
@@ -1515,6 +1515,8 @@ class Migration:
                             for f in (
                                 Path(__file__),
                                 Path(__file__).with_name("semantics.py"),
+                                Path(__file__).with_name("hierarchy.py"),
+                                Path(__file__).with_name("nominal.py"),
                             )
                         ],
                     }
@@ -1522,8 +1524,9 @@ class Migration:
             ).hexdigest(),
         )
         self.meta("baseline_release", "v1.6.0")
-        self.meta("release", "v1.7.1-review")
-        self.meta("review_version", "v1.7.1-review")
+        version='v1.8.0-hierarchy-review' if (self.inputs/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review'
+        self.meta("release", version)
+        self.meta("review_version", version)
         self.meta("usability_indexes_ready", True)
         self.meta("usability_role_counts", dict(role_counts))
         self.meta("nodes", c.execute("SELECT count(*) FROM nodes").fetchone()[0])
@@ -1562,6 +1565,22 @@ class Migration:
         c.execute("ANALYZE")
         c.commit()
         return summaries
+
+    def hierarchy_refinements(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self)
+
+    def hierarchy_extensions(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self, "hierarchy_extensions.jsonl")
+
+    def hierarchy_endpoint_contracts(self):
+        from .hierarchy import reconcile_instance_endpoints
+        return reconcile_instance_endpoints(self)
+
+    def hierarchy_contract_repairs(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,"hierarchy_contract_repairs.jsonl")
 
     def role_reconciliation(self):
         """Replay independently checked nominal roles across the entire source scope.
@@ -1664,10 +1683,10 @@ class Migration:
           WHERE EXISTS(SELECT 1 FROM node_profiles p WHERE p.uid=domain_members.uid AND p.node_kind<>domain_members.role)''').rowcount
         counts = dict(self.c.execute('SELECT '+role_expression('n','p')+",count(*) FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.visibility='ACTIVE' GROUP BY 1"))
         self.meta('usability_role_counts',counts)
-        self.meta('database_revision',hashlib.sha256(dump({'version':'v1.7.1-review',
+        self.meta('database_revision',hashlib.sha256(dump({'version':json.loads(self.c.execute("SELECT value FROM metadata WHERE key='release'").fetchone()[0]) if (self.inputs/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review',
             'baseline':json.loads((self.inputs/'baseline.json').read_text()),
             'inputs':[(str(f.relative_to(self.inputs)),digest_file(f)) for f in sorted(self.inputs.rglob('*')) if f.is_file()],
-            'build_code':[(f.name,digest_file(f)) for f in (Path(__file__),Path(__file__).with_name('semantics.py'))]}).encode()).hexdigest())
+            'build_code':[(f.name,digest_file(f)) for f in (Path(__file__),Path(__file__).with_name('semantics.py'),Path(__file__).with_name('hierarchy.py'),Path(__file__).with_name('nominal.py'))]}).encode()).hexdigest())
         self.c.commit()
         return {'refreshed_current_normalization_decisions':len(rows),'refreshed_domain_role_rows':changed_members}
 
@@ -1684,6 +1703,8 @@ class Migration:
                                 Path(__file__),
                                 Path(__file__).with_name("semantics.py"),
                                 Path(__file__).with_name("role_contracts.py"),
+                                Path(__file__).with_name("hierarchy.py"),
+                                Path(__file__).with_name("nominal.py"),
                             )
                         ],
                         "inputs": [
@@ -1719,7 +1740,7 @@ class Migration:
             print("COMPLETE", stage, flush=True)
         if self.c.execute(
             "SELECT 1 FROM usability_stages WHERE stage='graphs'"
-        ).fetchone() and (not mutated or "graphs" in stages or ('sync_role_contracts' in stages and set(stages).issubset({'adjudicate_design_grain','sync_role_contracts'}))):
+        ).fetchone() and (not mutated or "graphs" in stages or ('sync_role_contracts' in stages and set(stages).issubset({'adjudicate_design_grain','sync_role_contracts'})) or ('hierarchy_endpoint_contracts' in stages and 'sync_role_contracts' in stages and set(stages).issubset({'hierarchy_endpoint_contracts','sync_role_contracts'}))):
             self.meta("usability_indexes_ready", True)
             self.c.commit()
         self.c.close()

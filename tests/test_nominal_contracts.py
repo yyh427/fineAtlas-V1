@@ -43,8 +43,17 @@ class NominalContractsTest(unittest.TestCase):
             ],
         )
         k = WordNetKinds(c, include_native=True)
+        # An old named-design alias may be a model year. It cannot be an
+        # object-kind parent for a sentence ending in that same year.
+        c.execute("INSERT INTO aliases VALUES('2010','native:smart')")
+        self.assertFalse(k.candidates('2010'))
         self.assertEqual(k.unique_artifact("smartwatch"), "native:smart")
         self.assertEqual(k.resolve_head("small GPS smartwatch"), "native:smart")
+        c.execute("INSERT INTO nodes VALUES('wordnet31:water','water supply','class','A water supply facility','{}','ACTIVE',6)")
+        c.execute("INSERT INTO aliases VALUES('water','wordnet31:water')")
+        c.execute("INSERT INTO edges VALUES('wordnet31:water','wordnet31:artifact','ACTIVE','IS_A')")
+        self.assertIsNone(k.resolve_head('large aquifer in Kenya containing saline water'))
+        self.assertEqual(k.resolve_head('small GPS smartwatch containing a water sensor'),'native:smart')
         c.execute(
             "INSERT INTO nodes VALUES('native:other','Smartwatch','class','Independent physical type','{}','ACTIVE',5)"
         )

@@ -26,8 +26,10 @@ def edge_predicate(view: str, alias: str = "e") -> str:
     return strict
 
 
-def role_for_rank(rank: str | None) -> str:
+def role_for_rank(rank: str | None, source: str | None = None) -> str:
     rank = (rank or "").casefold()
+    if rank == 'series' and (source or '').casefold() == 'wfo':
+        return 'CLASS'
     groups = {
         "ORGANIZATION": {"manufacturer", "make"},
         "INSTANCE": {"instance"},
@@ -56,7 +58,7 @@ def role_expression(node="n", profile="p"):
         "BIOLOGICAL_VARIANT": ("biological_variant",),
     }
     sql = (
-        "CASE lower(coalesce("
+        "CASE WHEN lower(coalesce(" + node + ".source,''))='wfo' AND lower(coalesce("+node+".rank,''))='series' THEN 'CLASS' ELSE CASE lower(coalesce("
         + node
         + ".rank,'')) "
         + " ".join(
@@ -64,7 +66,7 @@ def role_expression(node="n", profile="p"):
             for role, ranks in cases.items()
             for rank in ranks
         )
-        + " ELSE 'CLASS' END"
+        + " ELSE 'CLASS' END END"
     )
     return "coalesce(" + profile + ".node_kind," + sql + ")" if profile else sql
 
