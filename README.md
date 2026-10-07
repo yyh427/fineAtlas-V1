@@ -13,7 +13,7 @@ python3 scripts/download_single.py --output-dir /path/to/fineatlas-data
 fineatlas --data-dir /path/to/fineatlas-data stats
 ```
 
-本分支的接口版本为 `1.8.1rc1`，对应候选数据库 `v1.8.1-hierarchy-review`。新库的独立下载清单及 SHA-256 见 [review_data.json](review_data.json)；原有正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
+本分支的接口版本为 `1.9.0rc1`。新增来源关系浏览功能的构建、接口和限制见 [本轮浏览优化](docs/night_browsing.md)。当前 [review_data.json](review_data.json) 仍指向已发布的 `v1.8.1-hierarchy-review` 候选；本轮新候选的交付与验证状态以本轮结果报告为准。正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
 
 ```bash
 python3 scripts/download_single.py --manifest review_data.json \

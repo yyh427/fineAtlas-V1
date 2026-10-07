@@ -1,0 +1,42 @@
+{
+  "status": "BUILD_AND_FULL_CORPUS_VALIDATION_IN_PROGRESS",
+  "sdk_version": "1.9.0rc1",
+  "candidate_release": "v1.9.0-night-review",
+  "baseline_release": "v1.8.1-hierarchy-review",
+  "baseline_database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
+  "unit_tests": {
+    "passed": 83,
+    "seconds": 42.517
+  },
+  "baseline_public": {
+    "observed_task_records": 1822,
+    "observed_legacy_portals": 93,
+    "six_dataset_labels": 755,
+    "view_task_checks": 5466,
+    "view_portal_checks": 279,
+    "public_path_samples": 1856,
+    "member_search_checks": 1346,
+    "errors": [],
+    "seconds": 39.695263353176415,
+    "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
+  },
+  "fixed_nonfocus_samples": {
+    "count": 897,
+    "file": "night_fixed_nonfocus_samples.json",
+    "sha256": "cc3feebf93e2ad478af22efc58747c22a02c514b570eed745f6b3a87d30ea154"
+  },
+  "source_graph_changes": false,
+  "new_semantic_nodes": 0,
+  "claimed_new_label_coverage": 0,
+  "images_or_visual_models_run": false,
+  "crj700_exact_identity": "UNCONFIRMED",
+  "production_replacement_ready": false,
+  "remaining_validation": [
+    "Frozen candidate build",
+    "Full source and descendant identity preservation",
+    "755 label regression",
+    "All actual entry and fixed sample regression",
+    "Stable pages, groups, examples, performance",
+    "Protected file hashes and independent reproduction"
+  ]
+}

@@ -34,7 +34,7 @@ tables = [
     )
 ]
 for table in tables:
-    if table == "usability_stages":
+    if table in ("usability_stages", "browse_build_stages"):
         continue
     columns = list(c.execute('PRAGMA table_info("' + table + '")'))
     names = [x[1] for x in columns]

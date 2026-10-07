@@ -6,9 +6,10 @@ import os
 from pathlib import Path
 
 from .consistent import ConsistentAtlas
+from .browsing import BrowsingAtlas
 
 
-class FineAtlas(ConsistentAtlas):
+class FineAtlas(BrowsingAtlas, ConsistentAtlas):
     """Open a SQLite file or a directory containing ``fineatlas.sqlite``.
 
     The default location is FINEATLAS_DATA_DIR, then the working directory.

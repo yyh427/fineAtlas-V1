@@ -76,6 +76,32 @@ def main() -> None:
     p = sub.add_parser("browse-domain")
     p.add_argument("name")
     p.add_argument("--limit", type=int, default=20)
+    p = sub.add_parser("browse-summary")
+    p.add_argument("parent")
+    for command in ("browse-page", "browse-groups"):
+        p=sub.add_parser(command)
+        p.add_argument("parent")
+        p.add_argument("--limit",type=int,default=20)
+        p.add_argument("--node-kind",default="CLASS" if command=="browse-page" else "MODEL")
+        p.add_argument("--relation")
+        p.add_argument("--cursor")
+        p.add_argument("--include-coarse",action="store_true")
+        if command=="browse-page":
+            p.add_argument("--filter",action="append",default=[],metavar="FIELD=VALUE")
+            p.add_argument("--domain")
+        else:p.add_argument("--group-by",default="manufacturer")
+    p=sub.add_parser("browse-path")
+    p.add_argument("uid")
+    p.add_argument("--anchor",action="append")
+    p.add_argument("--max-depth",type=int,default=256)
+    p=sub.add_parser("locate")
+    p.add_argument("text")
+    p.add_argument("--domain",required=True)
+    p.add_argument("--limit",type=int,default=20)
+    p=sub.add_parser("source-members-page")
+    p.add_argument("uid")
+    p.add_argument("--limit",type=int,default=20)
+    p.add_argument("--cursor")
     for command, positional in [
         ("domain-page", "name"),
         ("instances-page", "uid"),
@@ -188,6 +214,29 @@ def main() -> None:
             result = graph.target(args.dataset, args.class_id)
         elif args.command == "browse-domain":
             result = graph.browse_domain(args.name, args.limit)
+        elif args.command == "browse-summary":
+            result=graph.browse_summary(args.parent)
+        elif args.command == "browse-page":
+            filters={}
+            for selector in args.filter:
+                if '=' not in selector:parser.error('--filter must be FIELD=VALUE')
+                field,value=selector.split('=',1)
+                if field in filters:parser.error('Duplicate filter field: '+field)
+                filters[field]=value
+            result=graph.browse_children_page(args.parent,args.limit,
+                node_kind=None if args.node_kind=='ALL' else args.node_kind,
+                relation=args.relation,cursor=args.cursor,filters=filters,
+                domain=args.domain,include_coarse=args.include_coarse)
+        elif args.command == "browse-groups":
+            result=graph.browse_groups(args.parent,args.group_by,args.limit,
+                node_kind=None if args.node_kind=='ALL' else args.node_kind,
+                relation=args.relation,cursor=args.cursor,include_coarse=args.include_coarse)
+        elif args.command == "browse-path":
+            result=graph.browse_path_result(args.uid,args.anchor,args.max_depth)
+        elif args.command == "locate":
+            result=graph.locate(args.text,args.domain,args.limit)
+        elif args.command == "source-members-page":
+            result=graph.source_members_page(args.uid,args.limit,cursor=args.cursor)
         elif args.command == "domain-page":
             result = graph.domain_page(
                 args.name, args.limit, cursor=args.cursor, node_kind=args.node_kind
