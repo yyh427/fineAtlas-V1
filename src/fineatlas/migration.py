@@ -1582,6 +1582,10 @@ class Migration:
         from .hierarchy import apply_refinements
         return apply_refinements(self,"hierarchy_contract_repairs.jsonl")
 
+    def hierarchy_role_repairs(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self, 'hierarchy_role_repairs.jsonl')
+
     def role_reconciliation(self):
         """Replay independently checked nominal roles across the entire source scope.
 

@@ -68,6 +68,10 @@ class HierarchyContractsTest(unittest.TestCase):
         self.assertTrue(k.generic_type('printer'))
 
     def test_refinements_preserve_exact_terminal_scope(self):
+        validate_link_roles('NATIVE_DESIGN_PARENT','MODEL','MODEL_FAMILY')
+        validate_link_roles('NATIVE_DESIGN_PARENT','MODEL_FAMILY','MODEL')
+        for a,b in [('CLASS','MODEL'),('INSTANCE','MODEL'),('MODEL','CLASS')]:
+            with self.assertRaises(ValueError):validate_link_roles('NATIVE_DESIGN_PARENT',a,b)
         for rel,a,b in [('IS_A','CLASS','CLASS'),('DESIGN_TYPE_OF','MODEL','CLASS'),('DESIGN_TYPE_OF','MODEL_FAMILY','CLASS'),('CONFIGURATION_TYPE_OF','CONFIGURATION','CLASS'),('CONFIGURATION_OF','CONFIGURATION','MODEL'),('INSTANCE_OF','INSTANCE','MODEL')]:
             validate_link_roles(rel,a,b)
         for rel,a,b in [('IS_A','MODEL','CLASS'),('IS_A','INSTANCE','CLASS'),('DESIGN_TYPE_OF','CLASS','MODEL'),('CONFIGURATION_TYPE_OF','MODEL_FAMILY','CLASS'),('PART_OF','CLASS','CLASS')]:

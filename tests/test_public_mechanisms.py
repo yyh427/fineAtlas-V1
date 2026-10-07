@@ -18,6 +18,20 @@ class PublicMechanismsTest(unittest.TestCase):
         c.close()
         self.tree = FineAtlas(self.path)
 
+    def test_native_design_chain_keeps_explicit_grains_in_public_path(self):
+        def change(c):
+            for uid, kind, comp in [('family', 'MODEL_FAMILY', 6), ('variant', 'MODEL', 7), ('sku', 'CONFIGURATION', 8)]:
+                self.add(c, uid, uid, comp, kind=kind)
+            for rid, child, parent, rel, depth in [(4, 'family', 'type:river', 'DESIGN_TYPE_OF', 2), (5, 'variant', 'family', 'NATIVE_DESIGN_PARENT', 3), (6, 'sku', 'variant', 'CONFIGURATION_OF', 4)]:
+                c.execute('INSERT INTO entity_relations VALUES(?,?,?,?,?,?,?,?)', (rid, child, parent, rel, 'ACTIVE', 'fixture', 'proof:1', '{}'))
+                c.execute('INSERT INTO entity_connections VALUES(?,?,?,?,?)', (child, 1, parent, rid, depth))
+        self.mutate(change)
+        path = self.tree.path_result('sku')
+        self.assertEqual(path['status'], 'CONNECTED')
+        self.assertEqual([step['edge']['relation'] for step in path['path']], ['IS_A', 'DESIGN_TYPE_OF', 'NATIVE_DESIGN_PARENT', 'CONFIGURATION_OF'])
+        self.assertEqual(self.tree.neighbors('type:river'), [])
+        self.assertTrue(self.tree.connection_status('sku')['root_reachable'])
+
     def test_stats_uses_current_census_and_declares_aggregate_root(self):
         def change(c):
             c.execute("CREATE TABLE domain_entries(uid TEXT)")

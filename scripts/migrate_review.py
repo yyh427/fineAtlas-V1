@@ -31,6 +31,7 @@ p.add_argument(
         "hierarchy_extensions",
         "hierarchy_endpoint_contracts",
         "hierarchy_contract_repairs",
+        "hierarchy_role_repairs",
         "graphs",
     ],
     default=[
@@ -48,6 +49,7 @@ p.add_argument(
         "hierarchy_extensions",
         "hierarchy_endpoint_contracts",
         "hierarchy_contract_repairs",
+        "hierarchy_role_repairs",
         "sync_role_contracts",
         "graphs",
     ],
