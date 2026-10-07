@@ -101,6 +101,6 @@ python3 scripts/audit_usability.py --database /path/to/new/fineatlas.sqlite \
 
 重建验证基线哈希、保留原始来源字段，并为各视图重新建立版本绑定的查询索引。新来源通过统一事实格式和来源适配器接入。数据库、来源与代码的授权范围见 [DATA_SOURCES.md](DATA_SOURCES.md)。结构和接口检查通过不等于每条科学事实均已认证，也不证明识别准确率提高。
 
-候选发布附件提供 `frozen-inputs.tar.zst`、逐文件哈希及来源清单。解压后将其中的 `role-corrected-frozen-inputs` 目录传给 `--inputs`。重建需要正式版 v1.6 基线及本分支代码；专业层次由 `hierarchy_refinements`、`hierarchy_extensions`、`hierarchy_contract_repairs`、`hierarchy_role_repairs` 及规范端点合同阶段在图索引构建前重放。
+候选发布附件提供 `frozen-inputs.tar.zst`、逐文件哈希及来源清单。解压后将其中的 `role-corrected-frozen-inputs` 目录传给 `--inputs`。重建需要正式版 v1.6 基线及本分支代码；专业层次由 `hierarchy_refinements`、`hierarchy_extensions`、`hierarchy_contract_repairs`、`hierarchy_role_repairs`、`hierarchy_semantic_repairs` 及规范端点合同阶段在图索引构建前重放。
 
 Candidate task availability is listed per label and view in [review_task_labels.csv](docs/review_task_labels.csv). The 755 focused labels have individual typed path witnesses in [review_label_paths.jsonl](docs/review_label_paths.jsonl); unreachable results and their selected view are explicit.

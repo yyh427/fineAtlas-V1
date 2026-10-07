@@ -197,6 +197,6 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     for source,rows in sorted(by_source.items()):
         licenses=sorted({r['proof'].get('license','Original source terms and attribution retained') for r in rows})
         c.execute('INSERT OR REPLACE INTO source_catalogs VALUES (?,?,?,?,?)',('Hierarchy refinement: '+source,rows[0]['uri'],'; '.join(licenses),hashlib.sha256(path.read_bytes()).hexdigest(),json.dumps({'operations':len(rows),'classes':sum(r['op']=='class' for r in rows),'source_statement_retained':True},sort_keys=True)))
-    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair'}[input_name]
+    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair'}[input_name]
     m.meta('release',VERSION);m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
     return dict(counts)
