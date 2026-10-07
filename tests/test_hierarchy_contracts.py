@@ -1,10 +1,26 @@
 """Professional hierarchy guards cover source rank and terminal granularity."""
-import sqlite3,unittest
-from fineatlas.hierarchy import validate_link_roles,reconcile_instance_endpoints
+import hashlib,json,sqlite3,unittest
+from fineatlas.hierarchy import validate_link_roles,reconcile_instance_endpoints,withdraw_frozen_link,validate_condition_shortcut
 from fineatlas.nominal import WordNetKinds
 from fineatlas.semantics import edge_predicate,role_expression,role_for_rank
 
 class HierarchyContractsTest(unittest.TestCase):
+    def test_condition_shortcut_requires_the_full_surviving_ancestor_chain(self):
+        c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row
+        c.executescript('''CREATE TABLE nodes(uid TEXT,label TEXT,data TEXT,rank TEXT,source TEXT,visibility TEXT,component_id INTEGER);
+          CREATE TABLE node_profiles(uid TEXT,node_kind TEXT);
+          CREATE TABLE edges(child_uid TEXT,parent_uid TEXT,relation TEXT,status TEXT);''')
+        for u,label,comp in [('narrow','aircraft with 2 piston-propeller engines',1),('broad','aircraft with piston-propeller engines',2),('root','aircraft',3)]:
+            c.execute('INSERT INTO nodes VALUES(?,?,?,?,?,?,?)',(u,label,'{}','class','wikidata','ACTIVE',comp));c.execute("INSERT INTO node_profiles VALUES(?,'CLASS')",(u,))
+        c.executemany("INSERT INTO edges VALUES(?,?,'IS_A','ACTIVE')",[('narrow','broad'),('broad','root')])
+        class Migration:
+            def __init__(self):self.c=c
+        digest=hashlib.sha256(b'{}').hexdigest();r={'uid':'narrow','parent':'root','relation':'IS_A','proof':{'replacement_parent':'broad','native_record_sha256':digest,'native_parent_sha256':digest}}
+        validate_condition_shortcut(Migration(),r)
+        c.execute("UPDATE edges SET status='HIERARCHY_SUPERSEDED' WHERE child_uid='broad'")
+        with self.assertRaises(ValueError):validate_condition_shortcut(Migration(),r)
+        c.execute("UPDATE edges SET status='ACTIVE'");c.execute("UPDATE nodes SET label='aircraft with 3 engines' WHERE uid='broad'")
+        with self.assertRaises(ValueError):validate_condition_shortcut(Migration(),r)
     def test_later_instance_decision_excludes_earlier_isa_without_changing_cached_views(self):
         c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row
         c.executescript('''CREATE TABLE edges(id INTEGER PRIMARY KEY,child_uid TEXT,parent_uid TEXT,status TEXT,relation TEXT,data TEXT,source TEXT,reason TEXT);
@@ -31,6 +47,28 @@ class HierarchyContractsTest(unittest.TestCase):
         c.execute("UPDATE edges SET status='ACTIVE' WHERE id=1");c.execute('INSERT INTO view_roots VALUES(1)')
         with self.assertRaises(ValueError):reconcile_instance_endpoints(m)
 
+    def test_completion_withdrawal_requires_exact_claim_and_grain_conflict(self):
+        c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row
+        c.executescript("""CREATE TABLE nodes(uid TEXT,rank TEXT,source TEXT,visibility TEXT,component_id INTEGER);
+          CREATE TABLE node_profiles(uid TEXT,node_kind TEXT);
+          CREATE TABLE hierarchy_decisions(id TEXT,payload TEXT);
+          CREATE TABLE edges(id INTEGER,child_uid TEXT,parent_uid TEXT,relation TEXT,source TEXT,layer TEXT,status TEXT,data TEXT,reason TEXT);
+          INSERT INTO nodes VALUES('design','','native','ACTIVE',1),('kind','','native','ACTIVE',2);
+          INSERT INTO node_profiles VALUES('design','MODEL'),('kind','CLASS');
+          INSERT INTO edges VALUES(1,'design','kind','IS_A','original source','v1.8-hierarchy-review','ACTIVE','{}','');""")
+        claim={'op':'link','uid':'design','parent':'kind','relation':'IS_A','source':'original source'}
+        c.execute('INSERT INTO hierarchy_decisions VALUES (?,?)',('exact-decision',json.dumps(claim)))
+        class Migration:
+            def __init__(self):self.c=c;self.changes=[]
+            def change(self,*args):self.changes.append(args)
+        m=Migration();r={'uid':'design','parent':'kind','relation':'IS_A','proof':{'original_frozen_decision_id':'exact-decision','original_frozen_source':'original source','basis':'independent design evidence'}}
+        self.assertEqual(withdraw_frozen_link(m,r,'new-proof'),1)
+        self.assertEqual(c.execute('SELECT child_uid,parent_uid,status FROM edges').fetchone()[:],('design','kind','HIERARCHY_SUPERSEDED'))
+        self.assertEqual(len(m.changes),1)
+        with self.assertRaises(ValueError):withdraw_frozen_link(m,{**r,'parent':'different-kind'},'new-proof')
+        c.execute("UPDATE node_profiles SET node_kind='CLASS' WHERE uid='design'")
+        with self.assertRaises(ValueError):withdraw_frozen_link(m,r,'new-proof')
+
     def test_native_car_line_classification_does_not_certify_physical_subtype(self):
         c=sqlite3.connect(':memory:')
         c.executescript("CREATE TABLE edges(status TEXT,relation TEXT); INSERT INTO edges VALUES('TYPED_ACTIVE','NATIVE_CLASSIFICATION_PARENT');")
@@ -38,6 +76,31 @@ class HierarchyContractsTest(unittest.TestCase):
         self.assertEqual(c.execute('SELECT count(*) FROM edges e WHERE '+edge_predicate('taxonomy')).fetchone()[0],1)
         validate_link_roles('REGULATED_AS','CONFIGURATION','CLASS')
         with self.assertRaises(ValueError):validate_link_roles('REGULATED_AS','CLASS','CLASS')
+
+    def test_completion_replaces_purpose_noun_only_with_surviving_subject_genus(self):
+        c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row
+        c.executescript('''CREATE TABLE nodes(uid TEXT,label TEXT,description TEXT,data TEXT,rank TEXT,source TEXT,visibility TEXT,component_id INTEGER);
+          CREATE TABLE node_profiles(uid TEXT,node_kind TEXT);
+          CREATE TABLE aliases(alias TEXT,uid TEXT);
+          CREATE TABLE hierarchy_decisions(id TEXT,payload TEXT);
+          CREATE TABLE edges(id INTEGER,child_uid TEXT,parent_uid TEXT,relation TEXT,status TEXT,source TEXT,layer TEXT,data TEXT,reason TEXT);''')
+        for u,label,comp in [('gear','Firing gear',1),('wordnet31:device','device',2),('wordnet31:plane','aircraft',3),('wordnet31:artifact','artifact',4)]:
+            c.execute('INSERT INTO nodes VALUES(?,?,?,?,?,?,?,?)',(u,label,'A physical artifact','{}','class','wordnet31','ACTIVE',comp))
+            c.execute('INSERT INTO node_profiles VALUES (?,?)',(u,'CLASS'))
+            c.execute('INSERT INTO aliases VALUES (?,?)',(label.lower(),u))
+        c.executemany('INSERT INTO edges VALUES(?,?,?,?,?,?,?,?,?)',[(1,'gear','wordnet31:plane','IS_A','ACTIVE','prior','v1.8-hierarchy-review','{}',''),(2,'gear','wordnet31:device','IS_A','ACTIVE','new','v1.8-hierarchy-review','{}',''),(3,'wordnet31:device','wordnet31:artifact','IS_A','ACTIVE','native','','{}','')])
+        claim={'op':'link','uid':'gear','parent':'wordnet31:plane','relation':'IS_A','source':'prior'}
+        c.execute('INSERT INTO hierarchy_decisions VALUES (?,?)',('old',json.dumps(claim)))
+        class Migration:
+            def __init__(self):self.c=c
+            def change(self,*args):pass
+        proof={'basis':'VERIFIED_SUBJECT_GENUS_SUPERSEDES_PRIOR_FROZEN_LINK','original_frozen_decision_id':'old','original_frozen_source':'prior','replacement_parent':'wordnet31:device','source_statement':'Firing gear is a device enabling an aircraft to fire its armament.','subject_kind_head':'device','native_record_sha256':hashlib.sha256(b'{}').hexdigest()}
+        record={'uid':'gear','parent':'wordnet31:plane','relation':'IS_A','proof':proof}
+        m=Migration();self.assertEqual(withdraw_frozen_link(m,record,'proof'),1)
+        c.execute("UPDATE edges SET status='ACTIVE' WHERE id=1")
+        with self.assertRaises(ValueError):withdraw_frozen_link(m,{**record,'proof':{**proof,'subject_kind_head':'aircraft'}},'proof')
+        c.execute("UPDATE edges SET status='HIERARCHY_SUPERSEDED' WHERE id=2")
+        with self.assertRaises(ValueError):withdraw_frozen_link(m,record,'proof')
 
     def test_source_rank_is_not_product_grain(self):
         self.assertEqual(role_for_rank('series','wfo'),'CLASS')

@@ -1,6 +1,6 @@
 {
-  "release": "v1.8.0-hierarchy-review",
-  "database_sha256": "3062c9c4ab77160ca702c57e6eb04d616cad6b6814173c973c0c7d87d7b860c1",
+  "release": "v1.8.1-hierarchy-review",
+  "database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
   "engineering_checks": {
     "source_false_active_ISA": 0,
     "baseline_nodes_deleted": 0,
@@ -35,27 +35,24 @@
       "changed_or_deleted": 0
     }
   },
-  "tests_passed": 47,
-  "independent_database_sha256": "c91834d535d7cd57bff00ad95e8953eb1cb4a43e311bc7842de0034d16a877be",
+  "tests_passed": 70,
+  "independent_database_sha256": "d6689bb722f7380ac5e2ada7246ce589028bfd44a3f5913b0354377a4645a6c2",
   "public_interface_audit": {
     "observed_task_records": 1822,
     "observed_legacy_portals": 93,
     "six_dataset_labels": 755,
     "view_task_checks": 5466,
     "view_portal_checks": 279,
-    "public_path_samples": 1762,
-    "member_search_checks": 1296,
+    "public_path_samples": 1856,
+    "member_search_checks": 1346,
     "errors": [],
-    "seconds": 41.684085813350976,
+    "seconds": 41.61721920501441,
     "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
   },
   "independent_rebuild_logical_checks": 91,
   "scope": "Whole-table engineering/source-preservation contracts and source-grounded semantic samples; no certification of every scientific claim or recognition-accuracy claim.",
   "professional_hierarchy_checks": {
-    "engineering_role_source_uids": 4225,
-    "professional_root_shortcuts": 3,
-    "late_named_design_leaf_repairs": 3,
-    "new_source_uid_classes": 588,
+    "new_source_uid_classes": 826,
     "new_classes_by_domain": {
       "aircraft": 44,
       "medical_devices": 288,
@@ -101,19 +98,24 @@
       "surgical_instruments": 4,
       "habitat_complexes": 2,
       "deserts": 1,
-      "graphics_cards": 2
+      "graphics_cards": 2,
+      "musical_instruments": 238
     },
     "faa": 94043,
-    "identity_splits": 1
+    "engineering_role_source_uids": 25475,
+    "source_review_uids": 275,
+    "native_type_restorations": 64,
+    "frozen_records": 391790,
+    "native_source_classification_groups": 238
   },
   "all_domain_layer_census": {
     "canonical_domains": 91,
     "domain_views_checked": 273,
-    "unique_new_CLASS_UIDs": 588,
+    "unique_new_CLASS_UIDs": 826,
     "native_regulatory_CLASS_UIDs": 4,
-    "before_strict_depth_at_most_one_domains": 24,
-    "after_strict_depth_at_most_one_domains": 2,
-    "before_CLASS_path_role_gap_UIDs_sum_overlapping_domains": 4477,
+    "before_strict_depth_at_most_one_domains": 2,
+    "after_strict_depth_at_most_one_domains": 9,
+    "before_CLASS_path_role_gap_UIDs_sum_overlapping_domains": 0,
     "after_CLASS_path_role_gap_UIDs_sum_overlapping_domains": 0,
     "scope_boundary": "Domain scopes overlap; source UIDs are not unique real objects; shortest layer differences do not prove incorrect edges. Source-grounded layer census is not certification of every scientific fact.",
     "legitimate_short_CLASS_domains": [
@@ -121,6 +123,41 @@
         "domain": "desktop_computers",
         "layers": "1,1",
         "boundary": "本次覆盖支持台式机→一体式台式机这一层专业细分；未用尺寸、品牌或年份制造额外层次。型号/配置另列。"
+      },
+      {
+        "domain": "fitness_trackers",
+        "layers": "1,3",
+        "boundary": "用准确产品/配置字段连接已有通用类型；不从某一 SKU 推断整系列，不将品牌家族作为类别根。"
+      },
+      {
+        "domain": "gpus",
+        "layers": "1,4",
+        "boundary": "处理器芯片与完整显卡分开；集成/独立、GPGPU 能力分别建轴，不推断所有游戏显卡均有相同能力。"
+      },
+      {
+        "domain": "graphics_cards",
+        "layers": "1,2",
+        "boundary": "处理器芯片与完整显卡分开；集成/独立、GPGPU 能力分别建轴，不推断所有游戏显卡均有相同能力。"
+      },
+      {
+        "domain": "microprocessors",
+        "layers": "2,10",
+        "boundary": "沿用有证据的原生/专业类别；结构、功能、材料、平台等不同轴可并存；只有全范围证据才细分家族，无证据的末端保留较宽接入。"
+      },
+      {
+        "domain": "single_board_computers",
+        "layers": "1,3",
+        "boundary": "沿用有证据的原生/专业类别；结构、功能、材料、平台等不同轴可并存；只有全范围证据才细分家族，无证据的末端保留较宽接入。"
+      },
+      {
+        "domain": "smartphones",
+        "layers": "1,5",
+        "boundary": "沿用有证据的原生/专业类别；结构、功能、材料、平台等不同轴可并存；只有全范围证据才细分家族，无证据的末端保留较宽接入。"
+      },
+      {
+        "domain": "tablets",
+        "layers": "1,4",
+        "boundary": "沿用有证据的原生/专业类别；结构、功能、材料、平台等不同轴可并存；只有全范围证据才细分家族，无证据的末端保留较宽接入。"
       },
       {
         "domain": "waterfalls",

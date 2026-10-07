@@ -39,4 +39,4 @@
 
 `active_edges` 仅包含严格有效的 `IS_A`。接口的 `taxonomy` 视图另包含已准入的 `TAXONOMIC_PARENT` 和 `NATIVE_CLASSIFICATION_PARENT`；`membership` 只包含 `REUSABLE_TYPE_MEMBERSHIP`。`components` 中的可达性和路径证据以严格视图计算，候选库的逐视图索引分别保存在 `view_*` 表中。`BIOLOGICAL_VARIANT` 标记原生无阶元的菌株等记录，`native_rank` 保留原始阶元；该角色不进入严格分类 DAG。
 
-本分支使用 v1.7.1-review 候选库，文件与哈希见 [review_data.json](../review_data.json)。`single_download.json` 保留正式版 v1.6.0 下载配置；候选库使用独立清单和新目录安装。精确统计见 [review_statistics.json](review_statistics.json)，查询与训练要求见 [public_api.md](public_api.md)。
+本分支使用 v1.8.1-hierarchy-review 候选库，文件与哈希见 [review_data.json](../review_data.json)。`single_download.json` 保留正式版 v1.6.0 下载配置；候选库使用独立清单和新目录安装。精确统计见 [review_statistics.json](review_statistics.json)，查询与训练要求见 [public_api.md](public_api.md)。

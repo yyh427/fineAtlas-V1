@@ -1,5 +1,6 @@
 """Role reconciliation retains declarations and changes only evidenced admission."""
 import json
+import hashlib
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -9,6 +10,29 @@ from fineatlas.migration import Migration
 
 
 class MigrationRolesTest(unittest.TestCase):
+    def test_final_admission_cohort_replays_role_evidence_and_keeps_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            m=Migration.__new__(Migration);m.inputs=Path(directory)
+            m.c=sqlite3.connect(':memory:');m.c.row_factory=sqlite3.Row
+            m.c.executescript("""CREATE TABLE nodes(uid TEXT PRIMARY KEY,data TEXT);
+              CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT);
+              CREATE TABLE edges(child_uid TEXT,parent_uid TEXT,relation TEXT,source TEXT,layer TEXT);
+              CREATE TABLE source_catalogs(source TEXT PRIMARY KEY,uri TEXT,license TEXT,sha256 TEXT,coverage TEXT);
+              INSERT INTO nodes VALUES('design','{"node_kind":"CLASS"}');
+              INSERT INTO node_profiles VALUES('design','CLASS');""")
+            original=m.c.execute('SELECT data FROM nodes').fetchone()[0]
+            record={'op':'role','uid':'design','role':'MODEL','source':'independent design evidence','uri':'https://example.org/design','proof':{'basis':'NAMED_FACTORY_DESIGN_WITH_RETAINED_SOURCE','native_record_sha256':hashlib.sha256(original.encode()).hexdigest(),'license':'Source attribution retained'}}
+            cohort=m.inputs/'hierarchy_admission_reviews.jsonl';cohort.write_text(json.dumps(record)+'\n')
+            (m.inputs/'review_release.json').write_text(json.dumps({'version':'v1.8.1-hierarchy-review'}))
+            metadata={};m.meta=lambda k,v:metadata.update({k:v});m.evidence=lambda *args:'independent-proof';m.change=lambda *args:None
+            m.role=lambda uid,role,*args:m.c.execute('UPDATE node_profiles SET node_kind=? WHERE uid=?',(role,uid))
+            m.hierarchy_admission_reviews()
+            self.assertEqual(m.c.execute('SELECT node_kind FROM node_profiles').fetchone()[0],'MODEL')
+            self.assertEqual(m.c.execute('SELECT data FROM nodes').fetchone()[0],original)
+            self.assertEqual(m.c.execute('SELECT count(*) FROM hierarchy_decisions').fetchone()[0],1)
+            self.assertEqual(metadata['hierarchy_admission_review_revision'],hashlib.sha256(cohort.read_bytes()).hexdigest())
+            self.assertEqual(metadata['release'],'v1.8.1-hierarchy-review')
+
     def test_current_normalization_keeps_original_snapshot_and_latest_decision(self):
         m = Migration.__new__(Migration)
         m.c = sqlite3.connect(':memory:'); m.c.row_factory = sqlite3.Row

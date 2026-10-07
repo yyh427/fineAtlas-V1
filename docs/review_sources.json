@@ -99,6 +99,28 @@
     }
   },
   {
+    "source": "Hierarchy refinement: Engineering shape completion contract",
+    "source_uri": "https://en.wikipedia.org/wiki/SM_U-137",
+    "license": "Prior frozen evidence, declarations and source attribution retained",
+    "input_sha256": "16aa59ae59470e031128b6d34c6a5ae4e7cd1fc6eac2c5810c9a45fb65796c41",
+    "coverage": {
+      "classes": 0,
+      "operations": 136,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Engineering subject genus completion contract",
+    "source_uri": "https://vocab.getty.edu/aat/300007513",
+    "license": "Native source attribution retained; Wikidata CC0 factual metadata; retained independent encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+    "coverage": {
+      "classes": 0,
+      "operations": 12,
+      "source_statement_retained": true
+    }
+  },
+  {
     "source": "Hierarchy refinement: Environment Ontology native is_a",
     "source_uri": "http://purl.obolibrary.org/obo/ENVO_00000406",
     "license": "ENVO CC0 1.0",
@@ -128,6 +150,28 @@
     "coverage": {
       "classes": 288,
       "operations": 2151,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Full engineering subject and grain evidence",
+    "source_uri": "https://www.wikidata.org/wiki/Q13586515",
+    "license": "Native source attribution retained; Wikidata CC0 factual metadata; retained independent encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "16aa59ae59470e031128b6d34c6a5ae4e7cd1fc6eac2c5810c9a45fb65796c41",
+    "coverage": {
+      "classes": 0,
+      "operations": 349,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent generic kind completion contract",
+    "source_uri": "https://www.wikidata.org/wiki/Q188886",
+    "license": "Retained independent encyclopedia definition CC BY-SA 4.0; native source attribution preserved",
+    "input_sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+    "coverage": {
+      "classes": 0,
+      "operations": 1,
       "source_statement_retained": true
     }
   },
@@ -198,6 +242,17 @@
     }
   },
   {
+    "source": "Hierarchy refinement: MIMO observed native structural classification",
+    "source_uri": "http://www.mimo-db.eu/InstrumentsKeywords/6621",
+    "license": "Original MIMO source terms and attribution retained; derived classification facts; full upstream XML is not redistributed",
+    "input_sha256": "0d7cbb1cd0d7533a662d9bf9a4125114d46094bf52333334da1667f48bc80c8d",
+    "coverage": {
+      "classes": 238,
+      "operations": 3471,
+      "source_statement_retained": true
+    }
+  },
+  {
     "source": "Hierarchy refinement: Murata chip monolithic ceramic capacitor catalogue",
     "source_uri": "https://www.murata.com/products/capacitor/ceramiccapacitor/overview/lineup",
     "license": "Original source attribution and terms retained; derived factual classification",
@@ -216,6 +271,17 @@
     "coverage": {
       "classes": 1,
       "operations": 3,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Native aircraft condition hierarchy shortcut contract",
+    "source_uri": "https://www.wikidata.org/wiki/Q126003943",
+    "license": "Native source attribution retained; Wikidata CC0 factual metadata; retained independent encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+    "coverage": {
+      "classes": 0,
+      "operations": 14,
       "source_statement_retained": true
     }
   },
@@ -260,6 +326,17 @@
     "coverage": {
       "classes": 1,
       "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Princeton WordNet native transport hypernyms",
+    "source_uri": "https://wordnet.princeton.edu/",
+    "license": "Princeton WordNet license; attribution retained",
+    "input_sha256": "c8b4194512828d3351423c0080b78fc03c88458f4731c3747b1c140237e4268b",
+    "coverage": {
+      "classes": 0,
+      "operations": 64,
       "source_statement_retained": true
     }
   },

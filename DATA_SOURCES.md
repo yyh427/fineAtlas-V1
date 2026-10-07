@@ -5,7 +5,7 @@ relationship contracts and provenance. It is not released under a new blanket
 license that supersedes the upstream sources. The MIT license in `LICENSE`
 applies to the interface code only.
 
-The v1.8.0-hierarchy-review candidate adds source-backed professional middle
+The v1.8.1-hierarchy-review candidate adds source-backed professional middle
 classes and typed connections while retaining prior independent source records.
 The frozen input archive contains factual/derived records, attribution and
 checksums; downloaded manufacturer pages and images are not release assets.
@@ -142,3 +142,17 @@ support unconsolidated/alluvial types; named, located aquifers retain INSTANCE
 roles. Per-record source URLs, native-row hashes and scope evidence are retained.
 
 The [Vertebrate Breed Ontology](https://github.com/monarch-initiative/vertebrate-breed-ontology) contributes 40,223 native ontology facts, including its classification framework, under CC BY 4.0. This count is not a count of dog breeds. Native identifiers and source-declared navigation remain distinct from strict inclusion and task-label identity.
+
+## Native type and engineering grain refinements
+
+Restored WordNet 3.1 noun types retain their native UID, gloss and hypernyms. The publisher copyright notice and disclaimer are included in [WORDNET_LICENSE.txt](docs/WORDNET_LICENSE.txt), extracted from the official WordNet 3.1 dictionary header. Wikidata entity snapshots retain their native IDs, factual declarations, retrieval source and checksums under CC0; manufacturing and design context are stored separately from source role assertions. An explicit instance declaration is not replaced by a historical model rank alone.
+
+MIMO keyword-to-Hornbostel/Sachs mappings organise observed source terms for native taxonomy browsing. These variant-dependent classification crosswalks do not merge identities or assert universal physical subtype inclusion. Only observed groups, factual mappings, source URIs and checksums are redistributed in the frozen refinements; complete upstream XML files are not release assets.
+
+Retained Wikipedia introductory definitions are attributed by article title,
+page ID and source URL in each frozen snapshot under CC BY-SA 4.0. Redirected
+articles are recorded separately and do not establish subject identity. Native
+source labels and aliases verify the subject of a definition without merging
+independent source records. Exact engine and propeller classification conditions
+retain their units and counts; only explicit inclusion between existing source
+types supplies a narrower parent.

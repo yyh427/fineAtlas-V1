@@ -66,6 +66,15 @@ def reconcile_instance_endpoints(m):
 VERSION = 'v1.8.0-hierarchy-review'
 LAYER = 'v1.8-hierarchy-review'
 
+def review_version(inputs):
+    path = Path(inputs)/'review_release.json'
+    if path.exists():
+        value = json.loads(path.read_text())['version']
+        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review'}:
+            raise ValueError('Unsupported hierarchy candidate version')
+        return value
+    return VERSION if (Path(inputs)/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review'
+
 def validate_identity_role_only(c, records):
     """Prove an isolated source alias can adopt its native design identity.
 
@@ -98,6 +107,82 @@ def apply_identity_role_repairs(m):
     result=apply_refinements(m,path.name)
     return {**result,**proof}
 
+def validate_condition_shortcut(m,r):
+    from .engineering_roles import aircraft_engine_conditions
+    c=m.c;proof=r['proof'];replacement=proof.get('replacement_parent')
+    if r['relation']!='IS_A' or not replacement:raise ValueError('Condition shortcut needs a class replacement')
+    def n(u):return c.execute('SELECT n.label,n.data,n.component_id,n.visibility,'+role_expression('n','p')+' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?',(u,)).fetchone()
+    child,parent,old=n(r['uid']),n(replacement),n(r['parent'])
+    if not all(x and x['visibility']=='ACTIVE' and x['role']=='CLASS' for x in (child,parent,old)):raise ValueError('Condition shortcut endpoints must be active classes')
+    a,b=aircraft_engine_conditions(child['label']),aircraft_engine_conditions(parent['label'])
+    if not a or not b or a[0]!=b[0] or not a[1]>b[1]:raise ValueError('Native conditions do not strictly entail the replacement')
+    if hashlib.sha256(child['data'].encode()).hexdigest()!=proof.get('native_record_sha256') or hashlib.sha256(parent['data'].encode()).hexdigest()!=proof.get('native_parent_sha256'):raise ValueError('Native condition source checksum differs')
+    if not c.execute("SELECT 1 FROM edges WHERE child_uid=? AND parent_uid=? AND relation='IS_A' AND status='ACTIVE'",(r['uid'],replacement)).fetchone():raise ValueError('Condition replacement lacks a surviving inclusion')
+    witness=c.execute("""WITH RECURSIVE up(component_id) AS (
+      VALUES (?) UNION SELECT pn.component_id FROM up
+      JOIN nodes cn ON cn.component_id=up.component_id AND cn.visibility='ACTIVE'
+      JOIN edges e ON e.child_uid=cn.uid AND e.status='ACTIVE' AND e.relation='IS_A'
+      JOIN nodes pn ON pn.uid=e.parent_uid AND pn.visibility='ACTIVE'
+      LEFT JOIN node_profiles cp ON cp.uid=cn.uid LEFT JOIN node_profiles pp ON pp.uid=pn.uid
+      WHERE coalesce(cp.node_kind,'CLASS')='CLASS' AND coalesce(pp.node_kind,'CLASS')='CLASS')
+      SELECT 1 FROM up WHERE component_id=? LIMIT 1""",(parent['component_id'],old['component_id'])).fetchone()
+    if not witness:raise ValueError('Withdrawing a condition shortcut would lose its ancestor witness')
+
+
+def withdraw_frozen_link(m,r,eid):
+    """Supersede only an exact stored claim with a later grain conflict."""
+    c=m.c;uid=r['uid']
+    prior=c.execute('SELECT payload FROM hierarchy_decisions WHERE id=?',(r['proof']['original_frozen_decision_id'],)).fetchone()
+    if not prior:raise ValueError('Missing exact prior frozen link decision')
+    claim=json.loads(prior[0]);parent=r['parent'];rel=r['relation']
+    if (claim.get('op'),claim.get('uid'),claim.get('parent'),claim.get('relation'),claim.get('source'))!=('link',uid,parent,rel,r['proof']['original_frozen_source']):
+        raise ValueError('Prior frozen link differs from completion withdrawal')
+    endpoints=[c.execute('SELECT n.visibility,'+role_expression('n','p')+' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?',(u,)).fetchone() for u in (uid,parent)]
+    roles=LINK_ROLES.get(rel)
+    if roles and all(e and e['visibility']=='ACTIVE' and e['role'] in permitted for e,permitted in zip(endpoints,roles)):
+        if r['proof'].get('basis')=='STRICT_NATIVE_CONDITIONS_WITH_SURVIVING_ANCESTOR_REPLACE_SHORTCUT':
+            validate_condition_shortcut(m,r)
+        else:
+            # A retained source definition can also disprove an earlier lexical
+            # parent whose noun came from the purpose of the whole subject.
+            proof=r['proof'];replacement=proof.get('replacement_parent')
+            if rel!='IS_A' or proof.get('basis')!='VERIFIED_SUBJECT_GENUS_SUPERSEDES_PRIOR_FROZEN_LINK' or not replacement:
+                raise ValueError('Completion withdrawal has no endpoint-grain conflict')
+            from .engineering_roles import definition_head
+            from .nominal import WordNetKinds
+            native=c.execute('SELECT label,data,component_id FROM nodes WHERE uid=?',(uid,)).fetchone()
+            head=definition_head(proof.get('source_statement',''),native['label'],subject_aliases=proof.get('native_subject_aliases',()))
+            if not head or head!=proof.get('subject_kind_head') or hashlib.sha256(native['data'].encode()).hexdigest()!=proof.get('native_record_sha256'):
+                raise ValueError('Replacement lacks an independently verified whole-subject genus')
+            target=c.execute('SELECT n.component_id,n.visibility,'+role_expression('n','p')+' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?',(replacement,)).fetchone()
+            old_comp=c.execute('SELECT component_id FROM nodes WHERE uid=?',(parent,)).fetchone()[0]
+            if not target or target['visibility']!='ACTIVE' or target['role']!='CLASS' or target['component_id']==old_comp:
+                raise ValueError('Replacement genus is missing or unchanged')
+            k=WordNetKinds(c,include_native=True);words=head.split();candidates=set()
+            for size in range(min(7,len(words)),0,-1):
+                candidates=k.contextual_candidates(' '.join(words[-size:]),proof.get('source_statement',''))
+                if candidates:break
+            comps={c.execute('SELECT component_id FROM nodes WHERE uid=?',(v,)).fetchone()[0] for v in candidates}
+            if target['component_id'] not in comps or old_comp in comps:
+                raise ValueError('The lexical genus does not independently distinguish the replacement')
+            same_identity=native['component_id']==target['component_id']
+            if not same_identity and not c.execute("SELECT 1 FROM edges WHERE child_uid=? AND parent_uid=? AND relation='IS_A' AND status='ACTIVE'",(uid,replacement)).fetchone():
+                raise ValueError('Replacement needs a surviving independently evidenced class link')
+    if rel=='IS_A':
+        rows=c.execute('SELECT * FROM edges WHERE child_uid=? AND parent_uid=? AND relation=? AND source=? AND layer=?',(uid,parent,rel,claim['source'],LAYER)).fetchall()
+        for e in rows:
+            data=json.loads(e['data'] or '{}');data.update(eligible_for_final_dag=False,hierarchy_disposition=r['proof'],hierarchy_evidence_id=eid)
+            c.execute("UPDATE edges SET status='HIERARCHY_SUPERSEDED',data=?,reason=? WHERE id=?",(json.dumps(data,sort_keys=True),r['proof']['basis'],e['id']))
+            m.change('hierarchy','edge',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof'])
+    else:
+        rows=c.execute('SELECT * FROM entity_relations WHERE subject_uid=? AND object_uid=? AND relation=? AND source=?',(uid,parent,rel,claim['source'])).fetchall()
+        for e in rows:
+            c.execute("UPDATE entity_relations SET status='HIERARCHY_SUPERSEDED' WHERE id=?",(e['id'],));m.change('hierarchy','typed',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof'])
+    if not rows and c.execute('SELECT component_id FROM nodes WHERE uid=?',(uid,)).fetchone()[0]!=c.execute('SELECT component_id FROM nodes WHERE uid=?',(parent,)).fetchone()[0]:
+        raise ValueError('Prior frozen link has no stored assertion or identity witness')
+    return len(rows)
+
+
 def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     m=migration;c=m.c;path=m.inputs/input_name
     if any((m.inputs/name).exists() for name in ['hierarchy_facts.incomplete','hierarchy_work.incomplete']):
@@ -124,12 +209,21 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             raise ValueError('A professional class needs a definition, source basis and parents')
         counts['new_classes']+=m.add_node(r['uid'],r['label'],'CLASS',r['domain'],r['source'],r['uri'],proof,r['definition'])
         attrs=json.loads(c.execute('SELECT attributes FROM node_profiles WHERE uid=?',(r['uid'],)).fetchone()[0])
-        attrs.update(classification_axis=r.get('axis','physical_structure'),semantic_grain='native_regulatory_type' if r.get('axis')=='native_regulatory_classification' else 'professional_type',hierarchy_definition=r['definition'])
+        attrs.update(classification_axis=r.get('axis','physical_structure'),semantic_grain=r.get('semantic_grain','native_regulatory_type' if r.get('axis')=='native_regulatory_classification' else 'professional_type'),hierarchy_definition=r['definition'])
         c.execute('UPDATE node_profiles SET attributes=? WHERE uid=?',(json.dumps(attrs,sort_keys=True),r['uid']))
         for name in r.get('aliases',[]):m.alias(r['uid'],name,r['source'])
     # Canonical roles must settle before any parent inclusion is evaluated.
     for r in records:
         if r['op']=='role':m.role(r['uid'],r['role'],r['proof'],r['source'],r['uri'])
+        elif r['op']=='activate_native_type':
+            n=c.execute('SELECT * FROM nodes WHERE uid=?',(r['uid'],)).fetchone()
+            if not n or not r['uid'].startswith('wordnet31:') or n['visibility'] not in {'PRUNED_WORDNET','ACTIVE'}:
+                raise ValueError('Native type restoration requires a retained WordNet record')
+            if hashlib.sha256(n['data'].encode()).hexdigest()!=r['proof'].get('native_record_sha256') or n['description']!=r['definition'] or not r.get('parents'):
+                raise ValueError('Native type source definition or checksum differs')
+            m.role(r['uid'],'CLASS',{**r['proof'],'allowed_views':['strict','taxonomy','membership']},r['source'],r['uri'])
+            c.execute("UPDATE nodes SET visibility='ACTIVE' WHERE uid=?",(r['uid'],))
+            m.change('hierarchy','source_visibility',r['uid'],{'visibility':n['visibility']},{'visibility':'ACTIVE'},r['proof'])
     def endpoint_role(uid):
         row=c.execute('SELECT '+role_expression('n','p')+" role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=? AND n.visibility='ACTIVE'",(uid,)).fetchone()
         if not row:raise ValueError('Missing active refinement endpoint: '+uid)
@@ -159,8 +253,19 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
         op=r['op'];uid=r.get('uid','');eid=source_evidence(r)
         if op=='class':
             for parent in r['parents']:add_class_edge(uid,parent,r,r.get('parent_relation','IS_A'))
+        elif op=='activate_native_type':
+            for parent in r['parents']:add_class_edge(uid,parent,r)
+            counts['restored_native_types']+=1
         elif op=='role':
             counts['role_decisions']+=1
+        elif op=='source_review':
+            n=c.execute('SELECT visibility FROM nodes WHERE uid=?',(uid,)).fetchone()
+            if not n:raise ValueError('Missing source-review record')
+            if not r['proof'].get('review_reason'):raise ValueError('Missing unresolved-grain review reason')
+            m.role(uid,'UNKNOWN',{**r['proof'],'allowed_views':[]},r['source'],r['uri'])
+            c.execute("UPDATE nodes SET visibility='SOURCE_ONLY' WHERE uid=?",(uid,))
+            m.change('hierarchy','source_visibility',uid,dict(n),{'visibility':'SOURCE_ONLY'},r['proof'])
+            counts['source_records_retained_for_review']+=1
         elif op=='link':
             parent=r['parent'];rel=r['relation']
             if rel=='IS_A':add_class_edge(uid,parent,r)
@@ -178,6 +283,8 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             e=c.execute('SELECT * FROM entity_relations WHERE id=?',(r['relation_id'],)).fetchone()
             if not e or e['subject_uid']!=uid:raise ValueError('Typed withdrawal differs')
             c.execute("UPDATE entity_relations SET status='HIERARCHY_SUPERSEDED' WHERE id=?",(e['id'],));m.change('hierarchy','typed',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof'])
+        elif op=='withdraw_frozen_link':
+            counts['superseded_prior_frozen_links']+=withdraw_frozen_link(m,r,eid)
         elif op=='restore_edge':
             e=c.execute('SELECT * FROM edges WHERE id=?',(r['edge_id'],)).fetchone()
             if not e or (e['child_uid'],e['parent_uid'])!=(uid,r['parent']):raise ValueError('Restoration endpoints differ from frozen source')
@@ -229,6 +336,6 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     for source,rows in sorted(by_source.items()):
         licenses=sorted({r['proof'].get('license','Original source terms and attribution retained') for r in rows})
         c.execute('INSERT OR REPLACE INTO source_catalogs VALUES (?,?,?,?,?)',('Hierarchy refinement: '+source,rows[0]['uri'],'; '.join(licenses),hashlib.sha256(path.read_bytes()).hexdigest(),json.dumps({'operations':len(rows),'classes':sum(r['op']=='class' for r in rows),'source_statement_retained':True},sort_keys=True)))
-    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair'}[input_name]
-    m.meta('release',VERSION);m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
+    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair','hierarchy_type_repairs.jsonl':'hierarchy_type_repair','hierarchy_shape_repairs.jsonl':'hierarchy_shape_repair','hierarchy_structure_repairs.jsonl':'hierarchy_structure_repair','hierarchy_shape_completion.jsonl':'hierarchy_shape_completion','hierarchy_subject_repairs.jsonl':'hierarchy_subject_repair','hierarchy_admission_reviews.jsonl':'hierarchy_admission_review'}[input_name]
+    m.meta('release',review_version(m.inputs));m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
     return dict(counts)

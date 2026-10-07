@@ -359,105 +359,105 @@ eurosat,7,Residential,eurosat-category:7,strict,VERIFIED_DEPICTED_TYPE,False,Tru
 eurosat,8,River,eurosat-category:8,strict,VERIFIED_DEPICTED_TYPE,False,True,SOURCE_TYPED_MAPPING,CONNECTED,6,True,False,True,False,False,False,False,False,False
 eurosat,9,SeaLake,eurosat-category:9,strict,NATIVE_LABEL_ONLY,False,False,NATIVE_LABEL_ONLY,NOT_ADMITTED,,True,False,False,False,False,False,False,False,False
 fgvc_aircraft,1,707-320,wikidata-v4:Q18379942,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,2,727-200,faa-aircraft:138407E,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,3,737-200,faa-aircraft:1384451,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,4,737-300,faa-aircraft:138447P,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,5,737-400,faa-aircraft:138449A,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,6,737-500,faa-aircraft:138449E,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,7,737-600,faa-aircraft:1384411,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,8,737-700,faa-aircraft:1384413,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,9,737-800,faa-aircraft:1384414,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,10,737-900,wikidata-v4:Q15623378,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,11,747-100,faa-aircraft:1384825,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,12,747-200,faa-aircraft:1384847,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,13,747-300,wikidata-v4:Q9384415,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,14,747-400,faa-aircraft:13848AT,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,15,757-200,wikidata-v4:Q90133051,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,16,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,16,757-300,faa-aircraft:1384924,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,17,767-200,wikidata-v4:Q15623987,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,18,767-300,faa-aircraft:1385204,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,19,767-400,wikidata-v4:Q15624006,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,2,727-200,faa-aircraft:138407E,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,3,737-200,faa-aircraft:1384451,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,4,737-300,faa-aircraft:138447P,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,5,737-400,faa-aircraft:138449A,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,6,737-500,faa-aircraft:138449E,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,7,737-600,faa-aircraft:1384411,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,8,737-700,faa-aircraft:1384413,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,9,737-800,faa-aircraft:1384414,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,10,737-900,wikidata-v4:Q15623378,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,11,747-100,faa-aircraft:1384825,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,12,747-200,faa-aircraft:1384847,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,13,747-300,wikidata-v4:Q9384415,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,14,747-400,faa-aircraft:13848AT,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,15,757-200,wikidata-v4:Q90133051,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,16,757-300,faa-aircraft:1384924,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,17,767-200,wikidata-v4:Q15623987,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,18,767-300,faa-aircraft:1385204,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,19,767-400,wikidata-v4:Q15624006,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,20,777-200,faa-aircraft:1385218,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,21,777-300,faa-aircraft:138525A,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,22,A300B4,wikidata-v4:Q15634338,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,23,A310,faa-aircraft:3930338,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,24,A318,faa-aircraft:3940022,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,25,A319,faa-aircraft:3930307,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,26,A320,wikidata:Q18784360,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,27,A321,wikidata-v4:Q3278675,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
+fgvc_aircraft,22,A300B4,wikidata-v4:Q15634338,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,23,A310,faa-aircraft:3930338,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,24,A318,faa-aircraft:3940022,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,25,A319,faa-aircraft:3930307,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,26,A320,wikidata:Q18784360,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,27,A321,wikidata-v4:Q3278675,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
 fgvc_aircraft,28,A330-200,wikidata-v4:Q68189256,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,29,A330-300,faa-aircraft:3940099,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,29,A330-300,faa-aircraft:3940099,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,30,A340-200,wikidata-v4:Q14849020,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,31,A340-300,faa-aircraft:3930379,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,32,A340-500,wikidata-v4:Q3274060,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,33,A340-600,faa-aircraft:3940137,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,34,A380,wikidata-v4:Q5830,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,35,ATR-42,wikidata-v4:Q218637,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,36,ATR-72,wikidata-v4:Q219764,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,37,An-12,wikidata-v4:Q271559,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,38,BAE 146-200,wikidata-v4:Q14905849,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,39,BAE 146-300,faa-aircraft:7650449,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,40,BAE-125,wikidata-v4:Q1591686,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,41,Beechcraft 1900,faa-aircraft:1154160,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,42,Boeing 717,wikidata-v4:Q6401,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,43,C-130,wikidata-v4:Q182027,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,44,C-47,wikidata-v4:Q714326,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,45,CRJ-200,wikidata-v4:Q891786,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,46,CRJ-700,wikidata-v4:Q137829174,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,47,CRJ-900,wikidata-v4:Q4572676,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,48,Cessna 172,faa-aircraft:2072402,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,49,Cessna 208,faa-aircraft:2073702,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,50,Cessna 525,faa-aircraft:2076601,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,51,Cessna 560,faa-aircraft:2076750,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,52,Challenger 600,wikidata-v4:Q699843,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,53,DC-10,wikidata-v4:Q208075,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
+fgvc_aircraft,34,A380,wikidata-v4:Q5830,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,35,ATR-42,wikidata-v4:Q218637,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,36,ATR-72,wikidata-v4:Q219764,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,37,An-12,wikidata-v4:Q271559,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,38,BAE 146-200,wikidata-v4:Q14905849,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,39,BAE 146-300,faa-aircraft:7650449,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,40,BAE-125,wikidata-v4:Q1591686,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,41,Beechcraft 1900,faa-aircraft:1154160,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,42,Boeing 717,wikidata-v4:Q6401,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,43,C-130,wikidata-v4:Q182027,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,44,C-47,wikidata-v4:Q714326,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,45,CRJ-200,wikidata-v4:Q891786,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,46,CRJ-700,wikidata-v4:Q137829174,strict,VERIFIED,True,True,EXACT_IDENTITY,NOT_ADMITTED,,True,False,False,False,False,False,False,False,False
+fgvc_aircraft,47,CRJ-900,wikidata-v4:Q4572676,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,48,Cessna 172,faa-aircraft:2072402,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,49,Cessna 208,faa-aircraft:2073702,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,50,Cessna 525,faa-aircraft:2076601,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,51,Cessna 560,faa-aircraft:2076750,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,52,Challenger 600,wikidata-v4:Q699843,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,53,DC-10,wikidata-v4:Q208075,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
 fgvc_aircraft,54,DC-3,wikidata-v4:Q190211,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,55,DC-6,faa-aircraft:3021702,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,56,DC-8,faa-aircraft:3021901,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,57,DC-9-30,faa-aircraft:3022060,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,58,DH-82,wikidata-v4:Q654062,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,59,DHC-1,wikidata-v4:Q900857,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,60,DHC-6,wikidata-v4:Q683041,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,61,DHC-8-100,wikidata-v4:Q15624289,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,62,DHC-8-300,wikidata-v4:Q15624359,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,63,DR-400,wikidata-v4:Q1759739,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,64,Dornier 328,wikidata-v4:Q937949,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,65,E-170,wikidata:Q18572652,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,66,E-190,wikidata-v4:Q2549320,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
+fgvc_aircraft,55,DC-6,faa-aircraft:3021702,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,56,DC-8,faa-aircraft:3021901,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,57,DC-9-30,faa-aircraft:3022060,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,58,DH-82,wikidata-v4:Q654062,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,59,DHC-1,wikidata-v4:Q900857,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,60,DHC-6,wikidata-v4:Q683041,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,61,DHC-8-100,wikidata-v4:Q15624289,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,62,DHC-8-300,wikidata-v4:Q15624359,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,63,DR-400,wikidata-v4:Q1759739,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,64,Dornier 328,wikidata-v4:Q937949,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,65,E-170,wikidata:Q18572652,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,66,E-190,wikidata-v4:Q2549320,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,67,E-195,v26-wikidata:Q377173,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,68,EMB-120,wikidata-v4:Q1163407,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,69,ERJ 135,wikidata-v4:Q1638968,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,16,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,70,ERJ 145,wikidata:Q913114,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,71,Embraer Legacy 600,wikidata-v4:Q1335176,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,72,Eurofighter Typhoon,wikidata-v4:Q151384,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,73,F-16A/B,wikidata-v4:Q17372377,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,74,F/A-18,wikidata-v4:Q46397,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,75,Falcon 2000,wikidata-v4:Q26790,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,76,Falcon 900,wikidata-v4:Q1141409,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,77,Fokker 100,wikidata-v4:Q257298,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
+fgvc_aircraft,68,EMB-120,wikidata-v4:Q1163407,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,69,ERJ 135,wikidata-v4:Q1638968,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,70,ERJ 145,wikidata:Q913114,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
+fgvc_aircraft,71,Embraer Legacy 600,wikidata-v4:Q1335176,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,72,Eurofighter Typhoon,wikidata-v4:Q151384,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,73,F-16A/B,wikidata-v4:Q17372377,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,74,F/A-18,wikidata-v4:Q46397,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,75,Falcon 2000,wikidata-v4:Q26790,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,76,Falcon 900,wikidata-v4:Q1141409,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,77,Fokker 100,wikidata-v4:Q257298,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,78,Fokker 50,v26-wikidata:Q751141,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,79,Fokker 70,wikidata-v4:Q723397,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,80,Global Express,wikidata-v4:Q373171,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,81,Gulfstream IV,wikidata-v4:Q861792,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,82,Gulfstream V,wikidata-v4:Q386403,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,83,Hawk T1,wikidata-v4:Q17487799,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,84,Il-76,wikidata-v4:Q142549,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,85,L-1011,wikidata-v4:Q852,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
-fgvc_aircraft,86,MD-11,faa-aircraft:3023602,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,87,MD-80,faa-aircraft:3023680,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,88,MD-87,wikidata-v4:Q15635741,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,89,MD-90,faa-aircraft:302369B,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,90,Metroliner,wikidata-v4:Q5430063,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,91,Model B200,wikidata-v4:Q15618498,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,92,PA-28,faa-aircraft:7102801,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,93,SR-20,wikidata-v4:Q1093144,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,94,Saab 2000,faa-aircraft:7860202,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,True,True,False,False
-fgvc_aircraft,95,Saab 340,wikidata-v4:Q277491,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,96,Spitfire,wikidata-v4:Q29190,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,97,Tornado,wikidata-v4:Q152200,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,98,Tu-134,wikidata-v4:Q159067,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,99,Tu-154,wikidata-v4:Q172957,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,False,False,False,False,False
-fgvc_aircraft,100,Yak-42,wikidata-v4:Q505649,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,True,False,False,True,False,False
+fgvc_aircraft,79,Fokker 70,wikidata-v4:Q723397,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,80,Global Express,wikidata-v4:Q373171,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,81,Gulfstream IV,wikidata-v4:Q861792,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,82,Gulfstream V,wikidata-v4:Q386403,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,83,Hawk T1,wikidata-v4:Q17487799,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,84,Il-76,wikidata-v4:Q142549,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,85,L-1011,wikidata-v4:Q852,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,86,MD-11,faa-aircraft:3023602,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,87,MD-80,faa-aircraft:3023680,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,88,MD-87,wikidata-v4:Q15635741,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,89,MD-90,faa-aircraft:302369B,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,90,Metroliner,wikidata-v4:Q5430063,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,91,Model B200,wikidata-v4:Q15618498,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,92,PA-28,faa-aircraft:7102801,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,93,SR-20,wikidata-v4:Q1093144,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,94,Saab 2000,faa-aircraft:7860202,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,95,Saab 340,wikidata-v4:Q277491,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,96,Spitfire,wikidata-v4:Q29190,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,97,Tornado,wikidata-v4:Q152200,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,98,Tu-134,wikidata-v4:Q159067,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,99,Tu-154,wikidata-v4:Q172957,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,100,Yak-42,wikidata-v4:Q505649,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
 flowers102,1,pink primrose,wfo:wfo-0000389747,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,True,True,False,False,False,False
 flowers102,2,hard-leaved pocket orchid,wfo:wfo-0000264118,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,True,True,False,False,False,False
 flowers102,3,canterbury bells,wordnet31:12058160-n,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,False,False,False
@@ -1117,8 +1117,8 @@ stanford_cars,6,Acura Integra Type R 2001,v26-car:fcb8ab77e9d9e3a78b2282b7dc18cb
 stanford_cars,7,Acura ZDX Hatchback 2012,v26-car:7169c5459767781fe16b200d312cfeaf,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
 stanford_cars,8,Aston Martin V8 Vantage Convertible 2012,v26-car:0458a07d5ad05c0f6fbca341fcc7c6ca,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
 stanford_cars,9,Aston Martin V8 Vantage Coupe 2012,v26-car:de50a3ec4af2c4886a6870a625c1fc9f,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
-stanford_cars,10,Aston Martin Virage Convertible 2012,vehicle-configuration:2c84c8d0b2817e5f636938fd4bf7c3f6,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,False,True,False
-stanford_cars,11,Aston Martin Virage Coupe 2012,vehicle-configuration:820278f969fce647260e365ad02fab76,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,False,True,False
+stanford_cars,10,Aston Martin Virage Convertible 2012,vehicle-configuration:2c84c8d0b2817e5f636938fd4bf7c3f6,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,False,True,False
+stanford_cars,11,Aston Martin Virage Coupe 2012,vehicle-configuration:820278f969fce647260e365ad02fab76,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,False,True,False
 stanford_cars,12,Audi RS 4 Convertible 2008,v26-car:78107acfa137a9c677b88fa4dbb1e4cc,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,9,True,True,True,False,False,False,False,True,False
 stanford_cars,13,Audi A5 Coupe 2012,v26-car:99541d47ecfd76665ed2c081b133bb48,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
 stanford_cars,14,Audi TTS Coupe 2012,v26-car:172307e18a60e4148ed1251ddfe41c36,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
@@ -1286,8 +1286,8 @@ stanford_cars,175,Rolls-Royce Phantom Drophead Coupe Convertible 2012,v26-car:2e
 stanford_cars,176,Rolls-Royce Ghost Sedan 2012,epa:32100,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,9,True,True,True,False,False,False,False,True,False
 stanford_cars,177,Rolls-Royce Phantom Sedan 2012,epa:31413,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,9,True,True,True,False,False,False,False,True,False
 stanford_cars,178,Scion xD Hatchback 2012,v26-car:36156529e0cf423c34b687ad08d8b15c,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
-stanford_cars,179,Spyker C8 Convertible 2009,vehicle-configuration:6e4a7d438b1894977e353fa9b8d23dc5,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,False,True,False
-stanford_cars,180,Spyker C8 Coupe 2009,vehicle-configuration:6bde90924ea65b056a3caec28897591a,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,True,False,False,False,True,False
+stanford_cars,179,Spyker C8 Convertible 2009,vehicle-configuration:6e4a7d438b1894977e353fa9b8d23dc5,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,False,True,False
+stanford_cars,180,Spyker C8 Coupe 2009,vehicle-configuration:6bde90924ea65b056a3caec28897591a,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,False,True,False
 stanford_cars,181,Suzuki Aerio Sedan 2007,v26-car:5f68ce1fe49e8b68c6df2ca83373e718,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
 stanford_cars,182,Suzuki Kizashi Sedan 2012,v26-car:e9fed259f908bb1e814e60d2db7dbe07,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,True,False
 stanford_cars,183,Suzuki SX4 Hatchback 2012,v26-car:84f6c8aa869b442dcc1c5630ec20d0e6,strict,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,9,True,True,True,False,False,False,False,True,False
@@ -2181,105 +2181,105 @@ eurosat,7,Residential,eurosat-category:7,taxonomy,VERIFIED_DEPICTED_TYPE,False,T
 eurosat,8,River,eurosat-category:8,taxonomy,VERIFIED_DEPICTED_TYPE,False,True,SOURCE_TYPED_MAPPING,CONNECTED,6,True,False,True,False,False,False,False,False,False
 eurosat,9,SeaLake,eurosat-category:9,taxonomy,NATIVE_LABEL_ONLY,False,False,NATIVE_LABEL_ONLY,NOT_ADMITTED,,True,False,False,False,False,False,False,False,False
 fgvc_aircraft,1,707-320,wikidata-v4:Q18379942,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,2,727-200,faa-aircraft:138407E,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,3,737-200,faa-aircraft:1384451,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,4,737-300,faa-aircraft:138447P,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,5,737-400,faa-aircraft:138449A,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,6,737-500,faa-aircraft:138449E,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,7,737-600,faa-aircraft:1384411,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,8,737-700,faa-aircraft:1384413,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,2,727-200,faa-aircraft:138407E,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,3,737-200,faa-aircraft:1384451,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,4,737-300,faa-aircraft:138447P,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,5,737-400,faa-aircraft:138449A,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,6,737-500,faa-aircraft:138449E,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,7,737-600,faa-aircraft:1384411,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,8,737-700,faa-aircraft:1384413,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,9,737-800,faa-aircraft:1384414,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,10,737-900,wikidata-v4:Q15623378,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,11,747-100,faa-aircraft:1384825,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,12,747-200,faa-aircraft:1384847,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,13,747-300,wikidata-v4:Q9384415,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,14,747-400,faa-aircraft:13848AT,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,15,757-200,wikidata-v4:Q90133051,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,16,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,16,757-300,faa-aircraft:1384924,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,17,767-200,wikidata-v4:Q15623987,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,18,767-300,faa-aircraft:1385204,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,19,767-400,wikidata-v4:Q15624006,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,10,737-900,wikidata-v4:Q15623378,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,11,747-100,faa-aircraft:1384825,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,12,747-200,faa-aircraft:1384847,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,13,747-300,wikidata-v4:Q9384415,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,14,747-400,faa-aircraft:13848AT,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,15,757-200,wikidata-v4:Q90133051,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,16,757-300,faa-aircraft:1384924,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,17,767-200,wikidata-v4:Q15623987,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,18,767-300,faa-aircraft:1385204,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,19,767-400,wikidata-v4:Q15624006,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,20,777-200,faa-aircraft:1385218,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,21,777-300,faa-aircraft:138525A,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,22,A300B4,wikidata-v4:Q15634338,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,22,A300B4,wikidata-v4:Q15634338,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
 fgvc_aircraft,23,A310,faa-aircraft:3930338,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,24,A318,faa-aircraft:3940022,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,25,A319,faa-aircraft:3930307,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,26,A320,wikidata:Q18784360,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,27,A321,wikidata-v4:Q3278675,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,24,A318,faa-aircraft:3940022,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,25,A319,faa-aircraft:3930307,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,26,A320,wikidata:Q18784360,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,27,A321,wikidata-v4:Q3278675,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
 fgvc_aircraft,28,A330-200,wikidata-v4:Q68189256,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,29,A330-300,faa-aircraft:3940099,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,29,A330-300,faa-aircraft:3940099,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,30,A340-200,wikidata-v4:Q14849020,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,31,A340-300,faa-aircraft:3930379,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,32,A340-500,wikidata-v4:Q3274060,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,33,A340-600,faa-aircraft:3940137,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,34,A380,wikidata-v4:Q5830,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,35,ATR-42,wikidata-v4:Q218637,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,36,ATR-72,wikidata-v4:Q219764,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,34,A380,wikidata-v4:Q5830,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,35,ATR-42,wikidata-v4:Q218637,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,36,ATR-72,wikidata-v4:Q219764,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
 fgvc_aircraft,37,An-12,wikidata-v4:Q271559,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,38,BAE 146-200,wikidata-v4:Q14905849,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,39,BAE 146-300,faa-aircraft:7650449,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,40,BAE-125,wikidata-v4:Q1591686,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,41,Beechcraft 1900,faa-aircraft:1154160,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,42,Boeing 717,wikidata-v4:Q6401,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,43,C-130,wikidata-v4:Q182027,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,44,C-47,wikidata-v4:Q714326,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,45,CRJ-200,wikidata-v4:Q891786,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,46,CRJ-700,wikidata-v4:Q137829174,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,47,CRJ-900,wikidata-v4:Q4572676,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,48,Cessna 172,faa-aircraft:2072402,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,49,Cessna 208,faa-aircraft:2073702,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,50,Cessna 525,faa-aircraft:2076601,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,51,Cessna 560,faa-aircraft:2076750,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,38,BAE 146-200,wikidata-v4:Q14905849,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,39,BAE 146-300,faa-aircraft:7650449,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,40,BAE-125,wikidata-v4:Q1591686,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,41,Beechcraft 1900,faa-aircraft:1154160,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,42,Boeing 717,wikidata-v4:Q6401,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,43,C-130,wikidata-v4:Q182027,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,44,C-47,wikidata-v4:Q714326,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,45,CRJ-200,wikidata-v4:Q891786,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,46,CRJ-700,wikidata-v4:Q137829174,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,NOT_ADMITTED,,True,False,False,False,False,False,False,False,False
+fgvc_aircraft,47,CRJ-900,wikidata-v4:Q4572676,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,48,Cessna 172,faa-aircraft:2072402,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,49,Cessna 208,faa-aircraft:2073702,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,50,Cessna 525,faa-aircraft:2076601,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,51,Cessna 560,faa-aircraft:2076750,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,52,Challenger 600,wikidata-v4:Q699843,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,53,DC-10,wikidata-v4:Q208075,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,53,DC-10,wikidata-v4:Q208075,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
 fgvc_aircraft,54,DC-3,wikidata-v4:Q190211,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,55,DC-6,faa-aircraft:3021702,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,56,DC-8,faa-aircraft:3021901,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,57,DC-9-30,faa-aircraft:3022060,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,58,DH-82,wikidata-v4:Q654062,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,59,DHC-1,wikidata-v4:Q900857,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,60,DHC-6,wikidata-v4:Q683041,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,61,DHC-8-100,wikidata-v4:Q15624289,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,62,DHC-8-300,wikidata-v4:Q15624359,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,63,DR-400,wikidata-v4:Q1759739,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,64,Dornier 328,wikidata-v4:Q937949,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,65,E-170,wikidata:Q18572652,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,66,E-190,wikidata-v4:Q2549320,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,55,DC-6,faa-aircraft:3021702,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,56,DC-8,faa-aircraft:3021901,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,57,DC-9-30,faa-aircraft:3022060,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,58,DH-82,wikidata-v4:Q654062,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,59,DHC-1,wikidata-v4:Q900857,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,60,DHC-6,wikidata-v4:Q683041,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,61,DHC-8-100,wikidata-v4:Q15624289,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,62,DHC-8-300,wikidata-v4:Q15624359,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,63,DR-400,wikidata-v4:Q1759739,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,64,Dornier 328,wikidata-v4:Q937949,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,65,E-170,wikidata:Q18572652,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,66,E-190,wikidata-v4:Q2549320,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,67,E-195,v26-wikidata:Q377173,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,68,EMB-120,wikidata-v4:Q1163407,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,69,ERJ 135,wikidata-v4:Q1638968,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,16,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,70,ERJ 145,wikidata:Q913114,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,71,Embraer Legacy 600,wikidata-v4:Q1335176,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,72,Eurofighter Typhoon,wikidata-v4:Q151384,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,73,F-16A/B,wikidata-v4:Q17372377,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,74,F/A-18,wikidata-v4:Q46397,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,75,Falcon 2000,wikidata-v4:Q26790,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,76,Falcon 900,wikidata-v4:Q1141409,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,77,Fokker 100,wikidata-v4:Q257298,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,68,EMB-120,wikidata-v4:Q1163407,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,69,ERJ 135,wikidata-v4:Q1638968,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,70,ERJ 145,wikidata:Q913114,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,71,Embraer Legacy 600,wikidata-v4:Q1335176,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,72,Eurofighter Typhoon,wikidata-v4:Q151384,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,73,F-16A/B,wikidata-v4:Q17372377,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,74,F/A-18,wikidata-v4:Q46397,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,75,Falcon 2000,wikidata-v4:Q26790,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,76,Falcon 900,wikidata-v4:Q1141409,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,77,Fokker 100,wikidata-v4:Q257298,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,78,Fokker 50,v26-wikidata:Q751141,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,79,Fokker 70,wikidata-v4:Q723397,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,80,Global Express,wikidata-v4:Q373171,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,81,Gulfstream IV,wikidata-v4:Q861792,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,82,Gulfstream V,wikidata-v4:Q386403,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,83,Hawk T1,wikidata-v4:Q17487799,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,84,Il-76,wikidata-v4:Q142549,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,85,L-1011,wikidata-v4:Q852,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,86,MD-11,faa-aircraft:3023602,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,87,MD-80,faa-aircraft:3023680,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,88,MD-87,wikidata-v4:Q15635741,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,True,False,False
-fgvc_aircraft,89,MD-90,faa-aircraft:302369B,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,90,Metroliner,wikidata-v4:Q5430063,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,91,Model B200,wikidata-v4:Q15618498,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,79,Fokker 70,wikidata-v4:Q723397,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,80,Global Express,wikidata-v4:Q373171,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,81,Gulfstream IV,wikidata-v4:Q861792,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,82,Gulfstream V,wikidata-v4:Q386403,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,83,Hawk T1,wikidata-v4:Q17487799,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,84,Il-76,wikidata-v4:Q142549,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,85,L-1011,wikidata-v4:Q852,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,86,MD-11,faa-aircraft:3023602,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,87,MD-80,faa-aircraft:3023680,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,88,MD-87,wikidata-v4:Q15635741,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,89,MD-90,faa-aircraft:302369B,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,90,Metroliner,wikidata-v4:Q5430063,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,91,Model B200,wikidata-v4:Q15618498,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,92,PA-28,faa-aircraft:7102801,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,93,SR-20,wikidata-v4:Q1093144,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
+fgvc_aircraft,93,SR-20,wikidata-v4:Q1093144,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
 fgvc_aircraft,94,Saab 2000,faa-aircraft:7860202,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
-fgvc_aircraft,95,Saab 340,wikidata-v4:Q277491,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,96,Spitfire,wikidata-v4:Q29190,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,97,Tornado,wikidata-v4:Q152200,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,98,Tu-134,wikidata-v4:Q159067,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,15,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,99,Tu-154,wikidata-v4:Q172957,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,False,False,False
-fgvc_aircraft,100,Yak-42,wikidata-v4:Q505649,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,95,Saab 340,wikidata-v4:Q277491,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,96,Spitfire,wikidata-v4:Q29190,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,97,Tornado,wikidata-v4:Q152200,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,12,True,True,True,False,False,False,True,False,False
+fgvc_aircraft,98,Tu-134,wikidata-v4:Q159067,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,99,Tu-154,wikidata-v4:Q172957,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,False,True,True,False,False
+fgvc_aircraft,100,Yak-42,wikidata-v4:Q505649,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,11,True,True,True,False,False,True,True,False,False
 flowers102,1,pink primrose,wfo:wfo-0000389747,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,13,True,True,True,False,True,False,False,False,False
 flowers102,2,hard-leaved pocket orchid,wfo:wfo-0000264118,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,14,True,True,True,False,True,False,False,False,False
 flowers102,3,canterbury bells,wordnet31:12058160-n,taxonomy,VERIFIED,True,True,EXACT_IDENTITY,CONNECTED,10,True,True,True,False,False,False,False,False,False
@@ -4047,7 +4047,7 @@ fgvc_aircraft,42,Boeing 717,wikidata-v4:Q6401,membership,VERIFIED,True,True,EXAC
 fgvc_aircraft,43,C-130,wikidata-v4:Q182027,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False
 fgvc_aircraft,44,C-47,wikidata-v4:Q714326,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False
 fgvc_aircraft,45,CRJ-200,wikidata-v4:Q891786,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False
-fgvc_aircraft,46,CRJ-700,wikidata-v4:Q137829174,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False
+fgvc_aircraft,46,CRJ-700,wikidata-v4:Q137829174,membership,VERIFIED,True,True,EXACT_IDENTITY,NOT_ADMITTED,,True,False,False,False,False,False,False,False,False
 fgvc_aircraft,47,CRJ-900,wikidata-v4:Q4572676,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False
 fgvc_aircraft,48,Cessna 172,faa-aircraft:2072402,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False
 fgvc_aircraft,49,Cessna 208,faa-aircraft:2073702,membership,VERIFIED,True,True,EXACT_IDENTITY,UNREACHABLE,,True,True,False,False,False,False,False,False,False

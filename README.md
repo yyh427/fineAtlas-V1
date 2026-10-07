@@ -13,7 +13,7 @@ python3 scripts/download_single.py --output-dir /path/to/fineatlas-data
 fineatlas --data-dir /path/to/fineatlas-data stats
 ```
 
-本分支的接口版本为 `1.8.0rc1`，对应候选数据库 `v1.8.0-hierarchy-review`。新库的独立下载清单及 SHA-256 见 [review_data.json](review_data.json)；原有正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
+本分支的接口版本为 `1.8.1rc1`，对应候选数据库 `v1.8.1-hierarchy-review`。新库的独立下载清单及 SHA-256 见 [review_data.json](review_data.json)；原有正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
 
 ```bash
 python3 scripts/download_single.py --manifest review_data.json \
@@ -38,7 +38,7 @@ python3 scripts/download_single.py --manifest review_data.json \
 
 `INSTANCE_OF`、`DESIGN_TYPE_OF`、`CONFIGURATION_OF`、`ATTRIBUTE_KIND_OF`、`DEPICTS_TYPE` 等类型连接分别保留，路径中的边不会改写为 `IS_A`。`NATIVE_DESIGN_PARENT` 保留来源中的型号/系列父关系，端点只能是型号或型号家族。原生/混合路径存在，不代表严格分类路径存在。
 
-中间层按来源支持的结构、工作原理或生态类型逐渐细分。航空器使用 FAA 结构与动力字段；电子产品使用有定义的专业类型；地物保留原生环境分类。家族、型号和配置通过明确的类型关系接入这些类别。不同维度允许多父连接，不将品牌、年份、材料或监管分组统一串成子类链。各领域的普通 `CLASS` 层分布及范围见 [层次统计](docs/review_hierarchy.csv)；新增类别的定义、父节点及来源见 [专业类别清单](docs/review_middle_classes.csv)。
+中间层按来源支持的结构、工作原理或生态类型逐渐细分。航空器使用 FAA 结构与动力字段；电子产品使用有定义的专业类型；地物保留原生环境分类。家族、型号和配置通过明确的类型关系接入这些类别。不同维度允许多父连接，不将品牌、年份、材料或监管分组统一串成子类链。 名称型工程设计按来源区分具体型号、家族和实例；原生类型的定义与父类关系保留。乐器词表的结构分类分组只进入 `taxonomy`，原生交叉映射不作为身份合并或普遍 `IS_A`。各领域的普通 `CLASS` 层分布及范围见 [层次统计](docs/review_hierarchy.csv)；新增类别的定义、父节点及来源见 [专业类别清单](docs/review_middle_classes.csv)。
 
 不同领域或来源可以同名，UID 保持独立。身份组只使用有依据的来源对应。身份映射、节点角色、视图准入、根可达性和任务准入分别返回；`VERIFIED` 身份不直接表示可用于完整层次训练。
 
@@ -101,6 +101,6 @@ python3 scripts/audit_usability.py --database /path/to/new/fineatlas.sqlite \
 
 重建验证基线哈希、保留原始来源字段，并为各视图重新建立版本绑定的查询索引。新来源通过统一事实格式和来源适配器接入。数据库、来源与代码的授权范围见 [DATA_SOURCES.md](DATA_SOURCES.md)。结构和接口检查通过不等于每条科学事实均已认证，也不证明识别准确率提高。
 
-候选发布附件提供 `frozen-inputs.tar.zst`、逐文件哈希及来源清单。解压后将其中的 `role-corrected-frozen-inputs` 目录传给 `--inputs`。重建需要正式版 v1.6 基线及本分支代码；专业层次由 `hierarchy_refinements`、`hierarchy_extensions`、`hierarchy_contract_repairs`、`hierarchy_role_repairs`、`hierarchy_semantic_repairs`、`hierarchy_identity_role_repairs` 及规范端点合同阶段在图索引构建前重放。
+候选发布附件提供 `frozen-inputs.tar.zst`、逐文件哈希及来源清单。解压后将其中的 `inputs-delivery-final5` 目录传给 `--inputs`。重建需要正式版 v1.6 基线及本分支代码；专业层次由 `hierarchy_refinements`、`hierarchy_extensions`、`hierarchy_contract_repairs`、`hierarchy_role_repairs`、`hierarchy_semantic_repairs`、`hierarchy_identity_role_repairs`、`hierarchy_type_repairs`、`hierarchy_shape_repairs`、`hierarchy_structure_repairs`、`hierarchy_shape_completion`、`hierarchy_subject_repairs`、`hierarchy_admission_reviews` 及规范端点合同阶段在图索引构建前重放。
 
-Candidate task availability is listed per label and view in [review_task_labels.csv](docs/review_task_labels.csv). The 755 focused labels have individual typed path witnesses in [review_label_paths.jsonl](docs/review_label_paths.jsonl); unreachable results and their selected view are explicit.
+Candidate task availability is listed per label and view in [review_task_labels.csv](docs/review_task_labels.csv). The 755 focused labels have individual typed path witnesses in [review_label_paths.jsonl.gz](docs/review_label_paths.jsonl.gz); unreachable results and their selected view are explicit. Read the compressed JSON Lines file with `gzip.open(path, "rt")`.

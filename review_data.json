@@ -1,40 +1,40 @@
 {
   "public_name": "FineAtlas V1",
-  "release": "v1.8.0-hierarchy-review",
+  "release": "v1.8.1-hierarchy-review",
   "graph_version": "V1",
   "candidate": true,
-  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.8.0-hierarchy-review",
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.8.1-hierarchy-review",
   "database": {
     "name": "fineatlas.sqlite",
-    "bytes": 53913841664,
-    "sha256": "3062c9c4ab77160ca702c57e6eb04d616cad6b6814173c973c0c7d87d7b860c1"
+    "bytes": 54641315840,
+    "sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929"
   },
   "assets": [
     {
-      "name": "fineatlas-v1.8.0-hierarchy-review.sqlite.zst.part-000",
+      "name": "fineatlas-v1.8.1-hierarchy-review.sqlite.zst.part-000",
       "bytes": 1073741824,
-      "sha256": "cb3850455833e6a217dcb1a37c076969a99fd2b19a526c4005bb11e13c7b4ba9"
+      "sha256": "4aaf84c5aa795511a7f280507f6cdbbe948346d3b2640ae550418a19eb018721"
     },
     {
-      "name": "fineatlas-v1.8.0-hierarchy-review.sqlite.zst.part-001",
+      "name": "fineatlas-v1.8.1-hierarchy-review.sqlite.zst.part-001",
       "bytes": 1073741824,
-      "sha256": "8d2a8653f867f680897d5e8fcf4e48751a56aacd0307d81a834cd59419da5d45"
+      "sha256": "edb0ecb94c91f75f35d28987cb942e016a7784ad761fd512edc8d3fe6da76d33"
     },
     {
-      "name": "fineatlas-v1.8.0-hierarchy-review.sqlite.zst.part-002",
+      "name": "fineatlas-v1.8.1-hierarchy-review.sqlite.zst.part-002",
       "bytes": 1073741824,
-      "sha256": "28c9beb94c8b6d6e1a851badebcf356fadac506d4f14aa83252871ca1dc4820f"
+      "sha256": "238a27f5a71018860beba4b6c945cdb4baf533e6bd9b2fec39212bc544d99b0a"
     },
     {
-      "name": "fineatlas-v1.8.0-hierarchy-review.sqlite.zst.part-003",
+      "name": "fineatlas-v1.8.1-hierarchy-review.sqlite.zst.part-003",
       "bytes": 1073741824,
-      "sha256": "75f15cd93b9ac03da7b3be1a87719492233071de903108c7f890447e93aefc75"
+      "sha256": "402da0450e2dae270c4219e6ca0088b0976e45bff0f863121b1d53b265f6af17"
     },
     {
-      "name": "fineatlas-v1.8.0-hierarchy-review.sqlite.zst.part-004",
-      "bytes": 103611635,
-      "sha256": "87fb1293dc22cab20232e777f6aafc681b2b56bb69533d11f2f0b308a0e216a4"
+      "name": "fineatlas-v1.8.1-hierarchy-review.sqlite.zst.part-004",
+      "bytes": 183346867,
+      "sha256": "fe2ac7afeca6c9cd3d155ccd405f03b6831320593c3ee01feea0a26d7e5d8b14"
     }
   ],
-  "database_build_version": "v1.8.0-hierarchy-review"
+  "database_build_version": "v1.8.1-hierarchy-review"
 }

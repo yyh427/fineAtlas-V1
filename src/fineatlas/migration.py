@@ -15,6 +15,7 @@ import sqlite3
 import time
 
 from ._text import norm
+from .hierarchy import review_version
 from .role_contracts import allows_model_extraction, nominal_role_decision, design_grain_for_claims
 from .semantics import (
     CLASS_ROLES,
@@ -1501,7 +1502,7 @@ class Migration:
             hashlib.sha256(
                 dump(
                     {
-                        "version": "v1.8.0-hierarchy-review" if (self.inputs/"hierarchy_facts.jsonl").exists() else "v1.7.1-review",
+                        "version": review_version(self.inputs),
                         "baseline": json.loads(
                             (self.inputs / "baseline.json").read_text()
                         ),
@@ -1524,7 +1525,7 @@ class Migration:
             ).hexdigest(),
         )
         self.meta("baseline_release", "v1.6.0")
-        version='v1.8.0-hierarchy-review' if (self.inputs/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review'
+        version=review_version(self.inputs)
         self.meta("release", version)
         self.meta("review_version", version)
         self.meta("usability_indexes_ready", True)
@@ -1593,6 +1594,30 @@ class Migration:
     def hierarchy_identity_role_repairs(self):
         from .hierarchy import apply_identity_role_repairs
         return apply_identity_role_repairs(self)
+
+    def hierarchy_shape_repairs(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,'hierarchy_shape_repairs.jsonl')
+
+    def hierarchy_type_repairs(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,'hierarchy_type_repairs.jsonl')
+
+    def hierarchy_structure_repairs(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,'hierarchy_structure_repairs.jsonl')
+
+    def hierarchy_shape_completion(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,'hierarchy_shape_completion.jsonl')
+
+    def hierarchy_subject_repairs(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,'hierarchy_subject_repairs.jsonl')
+
+    def hierarchy_admission_reviews(self):
+        from .hierarchy import apply_refinements
+        return apply_refinements(self,'hierarchy_admission_reviews.jsonl')
 
     def role_reconciliation(self):
         """Replay independently checked nominal roles across the entire source scope.

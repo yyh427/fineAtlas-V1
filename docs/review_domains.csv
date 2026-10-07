@@ -1,188 +1,188 @@
 domain,view,conceptual_identity_groups,conceptual_source_uids,maximum_shortest_local_depth,local_classification_leaf_groups,global_classification_root_groups,instances,attributes,dataset_categories,coverage_boundary
 agricultural_habitats,strict,26,26,3,18,26,0,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-aircraft,strict,110353,118045,10,108047,14199,5,0,3,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-animals,strict,2865131,2865559,33,2630599,2865131,19,0,22,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
+aircraft,strict,110158,117792,8,109578,1291,7,0,3,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+animals,strict,2865132,2865561,33,2630599,2865132,19,0,22,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 aquifers,strict,9,9,2,7,9,8,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 archaea,strict,9883,9883,7,9535,9883,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 artificial_habitats,strict,70,70,4,48,70,0,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 bacteria,strict,441205,441205,8,435975,441205,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 beaches,strict,23,23,2,19,23,16173,0,3,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 birds,strict,33347,33403,9,27364,33347,0,0,5,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
-bridges,strict,64,64,3,51,64,26,0,7,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-buildings,strict,637,641,5,529,635,45,0,86,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-camera_bodies,strict,291,291,4,270,205,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-camera_lenses,strict,589,589,2,572,588,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-cameras,strict,1445,1445,3,1422,1022,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-cars,strict,60717,65254,4,60609,4899,1,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-ceramic_capacitors,strict,3921,3921,4,3919,36,0,0,0,12 Murata series and 3873 orderable configurations plus prior records; not all manufacturers or current stock.
-clothing,strict,1615,1618,6,1356,1615,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+bridges,strict,63,63,3,49,62,26,0,7,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+buildings,strict,630,635,5,502,623,45,0,86,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+camera_bodies,strict,718,718,4,698,69,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+camera_lenses,strict,46,46,2,39,20,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+cameras,strict,763,763,3,752,38,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+cars,strict,60665,65152,4,60600,362,1,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+ceramic_capacitors,strict,3916,3916,4,3914,3,0,0,0,12 Murata series and 3873 orderable configurations plus prior records; not all manufacturers or current stock.
+clothing,strict,1565,1568,7,1255,1495,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 clouds,strict,74,74,3,62,74,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 coastal_habitats,strict,366,366,5,281,366,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computer_hardware,strict,1643,1643,3,1613,1598,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computer_monitors,strict,24,24,3,20,20,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computers,strict,916,916,6,842,800,5,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computer_hardware,strict,636,636,4,609,39,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computer_monitors,strict,138,138,4,132,17,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computers,strict,913,913,5,854,138,5,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 deserts,strict,15,15,2,12,15,1036,0,5,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-desktop_computers,strict,36,36,2,33,32,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-digital_cameras,strict,225,225,2,221,140,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+desktop_computers,strict,27,27,2,26,2,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+digital_cameras,strict,315,315,2,310,17,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 dishes,strict,925,926,5,822,925,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-earbuds,strict,12,12,3,6,4,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_components,strict,6942,6948,7,6911,3057,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_devices,strict,482,482,7,413,334,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_equipment,strict,1316,1318,6,1253,1286,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-fitness_trackers,strict,17,17,3,15,6,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+earbuds,strict,12,12,3,7,3,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_components,strict,6953,6960,7,6923,134,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_devices,strict,7331,7331,7,7261,357,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_equipment,strict,2805,2807,7,2746,225,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+fitness_trackers,strict,17,17,2,15,4,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
 food_products,strict,12337,12338,12,9182,12337,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 forest_habitats,strict,2852,2852,7,2157,2852,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 forests,strict,2871,2871,7,2173,2871,91949,0,7,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 freshwater_habitats,strict,306,306,6,235,306,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 fungi,strict,396269,396270,15,383799,396269,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
-furniture,strict,1397,1400,7,1126,1351,3,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-game_consoles,strict,116,116,3,110,74,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+furniture,strict,1404,1408,6,1106,1338,3,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+game_consoles,strict,114,114,3,112,8,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 glaciers,strict,29,29,2,24,29,8293,0,1,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-gpus,strict,431,431,3,428,431,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-graphics_cards,strict,50,50,2,43,49,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+gpus,strict,400,400,2,398,5,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+graphics_cards,strict,50,50,2,48,3,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 grasslands,strict,1553,1553,7,1198,1553,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 habitat_complexes,strict,33,33,2,30,33,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 habitats,strict,9220,9220,8,7053,9220,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-hand_tools,strict,258,259,5,204,224,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-headphones,strict,31,31,3,20,23,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-home_appliances,strict,107,116,5,76,107,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-integrated_circuits,strict,38,38,2,32,38,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+hand_tools,strict,283,284,5,204,249,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+headphones,strict,31,31,3,23,9,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+home_appliances,strict,108,117,6,74,106,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+integrated_circuits,strict,39,39,2,35,25,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 islands,strict,30,30,2,25,30,185121,0,2,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 lakes,strict,461,461,5,419,461,414246,0,7,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-laptops,strict,123,123,2,117,123,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-locomotives,strict,510,511,3,495,324,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-loudspeakers,strict,12,12,2,9,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+laptops,strict,125,125,2,122,5,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+locomotives,strict,504,506,3,497,64,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+loudspeakers,strict,12,12,2,9,11,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 marine_habitats,strict,1099,1099,6,834,1099,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-medical_devices,strict,59876,59882,10,59569,1309,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
-microprocessors,strict,1135,1135,2,1130,1129,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+medical_devices,strict,59876,59882,9,59569,1308,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
+microprocessors,strict,74,74,2,72,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 minerals,strict,7476,7476,4,7338,7476,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 mountain_ranges,strict,4,4,2,2,4,29654,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 mountains,strict,33,33,2,26,33,426206,0,3,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-musical_instruments,strict,4204,4287,9,3676,4188,0,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-network_routers,strict,33,33,3,30,33,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-network_switches,strict,26,26,2,23,25,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-pcbs,strict,73,73,4,62,71,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+musical_instruments,strict,2822,2905,9,2269,2703,0,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+network_routers,strict,33,33,3,29,8,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+network_switches,strict,26,26,2,24,6,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+pcbs,strict,73,73,4,68,19,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 plants,strict,464122,464487,13,422985,464122,2,2,5,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
-power_tools,strict,54,56,3,42,54,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-printers,strict,52,52,3,45,47,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+power_tools,strict,57,59,4,40,57,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+printers,strict,52,52,3,46,14,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 rivers,strict,73,73,3,60,73,1004645,0,4,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 rocks,strict,201,201,4,175,201,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 scrub_and_tundra,strict,1607,1607,6,1252,1607,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-semiconductor_devices,strict,2936,2936,4,2920,2936,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-semiconductor_diodes,strict,2906,2906,3,2895,2906,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-ships,strict,1372,1372,4,1305,1356,2666,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-single_board_computers,strict,13,13,2,10,13,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-smartphones,strict,820,820,2,816,816,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-smartwatches,strict,160,160,3,137,110,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
-solid_state_drives,strict,67,67,3,51,32,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_electronic_devices,strict,240,240,4,215,183,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_integrated_circuits,strict,37,37,2,32,37,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_semiconductor_diodes,strict,2896,2896,3,2887,2896,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+semiconductor_devices,strict,2935,2935,3,2921,49,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+semiconductor_diodes,strict,2905,2905,2,2897,25,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+ships,strict,1198,1198,5,1133,300,2821,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+single_board_computers,strict,12,12,2,10,4,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+smartphones,strict,820,820,2,819,6,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+smartwatches,strict,160,160,3,138,5,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+solid_state_drives,strict,59,59,3,43,7,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_electronic_devices,strict,242,242,4,220,94,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_integrated_circuits,strict,31,31,2,28,24,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_semiconductor_diodes,strict,2896,2896,2,2890,16,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 sparse_vegetation_habitats,strict,564,564,6,420,564,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-sports_equipment,strict,128,129,5,99,115,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-surgical_instruments,strict,6096,6097,3,6073,76,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
-tablets,strict,144,144,2,141,100,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-television_sets,strict,37,37,3,32,34,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-tools,strict,1125,1129,7,911,925,0,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-tractors,strict,64,64,2,60,63,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+sports_equipment,strict,129,131,5,99,113,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+surgical_instruments,strict,6095,6096,4,6073,75,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
+tablets,strict,147,147,2,146,5,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+television_sets,strict,37,37,3,32,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tools,strict,1164,1175,7,915,929,0,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tractors,strict,51,51,2,47,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 valleys,strict,48,48,3,35,48,149526,0,4,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 volcanoes,strict,23,23,2,20,23,820,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 waterfalls,strict,14,14,1,12,14,8053,0,4,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-wearable_computers,strict,162,162,5,137,112,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+wearable_computers,strict,162,162,4,138,7,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
 wetlands,strict,758,758,6,592,758,78714,0,5,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 agricultural_habitats,taxonomy,26,26,3,18,26,0,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-aircraft,taxonomy,110353,118045,10,108047,14199,5,0,3,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-animals,taxonomy,5110105,5110220,80,4638535,5110105,19,0,22,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
+aircraft,taxonomy,110158,117792,8,109578,1291,7,0,3,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+animals,taxonomy,5110106,5110222,80,4638535,5110106,19,0,22,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 aquifers,taxonomy,9,9,2,7,9,8,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 archaea,taxonomy,10114,9883,7,9594,10114,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 artificial_habitats,taxonomy,70,70,4,48,70,0,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 bacteria,taxonomy,475980,441205,9,465945,475980,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 beaches,taxonomy,23,23,2,19,23,16173,0,3,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 birds,taxonomy,33374,33407,9,27385,33374,0,0,5,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
-bridges,taxonomy,64,64,3,51,64,26,0,7,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-buildings,taxonomy,637,641,5,529,635,45,0,86,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-camera_bodies,taxonomy,291,291,4,270,205,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-camera_lenses,taxonomy,589,589,2,572,588,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-cameras,taxonomy,1445,1445,3,1422,1022,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-cars,taxonomy,60721,65258,4,60613,4903,1,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-ceramic_capacitors,taxonomy,3921,3921,4,3919,36,0,0,0,12 Murata series and 3873 orderable configurations plus prior records; not all manufacturers or current stock.
-clothing,taxonomy,1615,1618,6,1356,1615,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+bridges,taxonomy,63,63,3,49,62,26,0,7,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+buildings,taxonomy,630,635,5,502,623,45,0,86,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+camera_bodies,taxonomy,718,718,4,698,69,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+camera_lenses,taxonomy,46,46,2,39,20,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+cameras,taxonomy,763,763,3,752,38,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+cars,taxonomy,60669,65156,4,60604,366,1,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+ceramic_capacitors,taxonomy,3916,3916,4,3914,3,0,0,0,12 Murata series and 3873 orderable configurations plus prior records; not all manufacturers or current stock.
+clothing,taxonomy,1571,1574,7,1261,1501,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 clouds,taxonomy,74,74,3,62,74,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 coastal_habitats,taxonomy,366,366,5,281,366,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computer_hardware,taxonomy,1643,1643,3,1613,1598,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computer_monitors,taxonomy,24,24,3,20,20,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computers,taxonomy,916,916,6,842,800,5,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computer_hardware,taxonomy,636,636,4,609,39,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computer_monitors,taxonomy,138,138,4,132,17,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computers,taxonomy,919,919,5,860,141,5,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 deserts,taxonomy,15,15,2,12,15,1036,0,5,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-desktop_computers,taxonomy,36,36,2,33,32,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-digital_cameras,taxonomy,225,225,2,221,140,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+desktop_computers,taxonomy,27,27,2,26,2,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+digital_cameras,taxonomy,315,315,2,310,17,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 dishes,taxonomy,925,926,5,822,925,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-earbuds,taxonomy,12,12,3,6,4,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_components,taxonomy,6942,6948,7,6911,3057,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_devices,taxonomy,482,482,7,413,334,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_equipment,taxonomy,1316,1318,6,1253,1286,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-fitness_trackers,taxonomy,17,17,3,15,6,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+earbuds,taxonomy,12,12,3,7,3,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_components,taxonomy,6960,6967,7,6930,141,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_devices,taxonomy,7362,7362,7,7291,367,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_equipment,taxonomy,2805,2807,7,2746,225,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+fitness_trackers,taxonomy,17,17,2,15,4,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
 food_products,taxonomy,12337,12338,12,9182,12337,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 forest_habitats,taxonomy,2852,2852,7,2157,2852,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 forests,taxonomy,2871,2871,7,2173,2871,91949,0,7,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 freshwater_habitats,taxonomy,306,306,6,235,306,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 fungi,taxonomy,398405,396270,16,385258,398405,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
-furniture,taxonomy,1397,1400,7,1126,1351,3,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-game_consoles,taxonomy,116,116,3,110,74,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+furniture,taxonomy,1405,1409,6,1106,1339,3,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+game_consoles,taxonomy,114,114,3,112,8,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 glaciers,taxonomy,29,29,2,24,29,8293,0,1,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-gpus,taxonomy,431,431,3,428,431,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-graphics_cards,taxonomy,50,50,2,43,49,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+gpus,taxonomy,400,400,2,398,5,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+graphics_cards,taxonomy,50,50,2,48,3,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 grasslands,taxonomy,1553,1553,7,1198,1553,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 habitat_complexes,taxonomy,33,33,2,30,33,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 habitats,taxonomy,9220,9220,8,7053,9220,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-hand_tools,taxonomy,258,259,5,204,224,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-headphones,taxonomy,31,31,3,20,23,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-home_appliances,taxonomy,107,116,5,76,107,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-integrated_circuits,taxonomy,38,38,2,32,38,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+hand_tools,taxonomy,283,284,5,204,249,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+headphones,taxonomy,31,31,3,23,9,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+home_appliances,taxonomy,108,117,6,74,106,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+integrated_circuits,taxonomy,39,39,2,35,25,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 islands,taxonomy,30,30,2,25,30,185121,0,2,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 lakes,taxonomy,461,461,5,419,461,414246,0,7,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-laptops,taxonomy,123,123,2,117,123,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-locomotives,taxonomy,510,511,3,495,324,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-loudspeakers,taxonomy,12,12,2,9,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+laptops,taxonomy,125,125,2,122,5,0,0,1,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+locomotives,taxonomy,504,506,3,497,64,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+loudspeakers,taxonomy,12,12,2,9,11,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 marine_habitats,taxonomy,1099,1099,6,834,1099,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-medical_devices,taxonomy,268470,268476,9,268163,7468,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
-microprocessors,taxonomy,1135,1135,2,1130,1129,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+medical_devices,taxonomy,268470,268476,7,268163,7467,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
+microprocessors,taxonomy,74,74,2,72,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 minerals,taxonomy,7476,7476,4,7338,7476,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 mountain_ranges,taxonomy,4,4,2,2,4,29654,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 mountains,taxonomy,33,33,2,26,33,426206,0,3,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-musical_instruments,taxonomy,4204,4287,9,3676,4188,0,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-network_routers,taxonomy,33,33,3,30,33,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-network_switches,taxonomy,26,26,2,23,25,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-pcbs,taxonomy,73,73,4,62,71,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+musical_instruments,taxonomy,3060,3143,9,2392,2941,0,0,6,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+network_routers,taxonomy,33,33,3,29,8,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+network_switches,taxonomy,26,26,2,24,6,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+pcbs,taxonomy,73,73,4,68,19,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 plants,taxonomy,1535851,1536286,22,1400210,1535851,2,2,5,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
-power_tools,taxonomy,54,56,3,42,54,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-printers,taxonomy,52,52,3,45,47,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+power_tools,taxonomy,57,59,4,40,57,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+printers,taxonomy,52,52,3,46,14,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 rivers,taxonomy,73,73,3,60,73,1004645,0,4,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 rocks,taxonomy,201,201,4,175,201,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 scrub_and_tundra,taxonomy,1607,1607,6,1252,1607,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-semiconductor_devices,taxonomy,2936,2936,4,2920,2936,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-semiconductor_diodes,taxonomy,2906,2906,3,2895,2906,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-ships,taxonomy,1372,1372,4,1305,1356,2666,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-single_board_computers,taxonomy,13,13,2,10,13,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-smartphones,taxonomy,820,820,2,816,816,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-smartwatches,taxonomy,160,160,3,137,110,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
-solid_state_drives,taxonomy,67,67,3,51,32,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_electronic_devices,taxonomy,240,240,4,215,183,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_integrated_circuits,taxonomy,37,37,2,32,37,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_semiconductor_diodes,taxonomy,2896,2896,3,2887,2896,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+semiconductor_devices,taxonomy,2935,2935,3,2921,49,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+semiconductor_diodes,taxonomy,2906,2906,2,2898,26,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+ships,taxonomy,1200,1200,5,1134,302,2821,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+single_board_computers,taxonomy,12,12,2,10,4,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+smartphones,taxonomy,820,820,2,819,6,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+smartwatches,taxonomy,160,160,3,138,5,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+solid_state_drives,taxonomy,59,59,3,43,7,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_electronic_devices,taxonomy,242,242,4,220,94,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_integrated_circuits,taxonomy,31,31,2,28,24,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_semiconductor_diodes,taxonomy,2896,2896,2,2890,16,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 sparse_vegetation_habitats,taxonomy,564,564,6,420,564,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-sports_equipment,taxonomy,128,129,5,99,115,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-surgical_instruments,taxonomy,6096,6097,3,6073,76,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
-tablets,taxonomy,144,144,2,141,100,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-television_sets,taxonomy,37,37,3,32,34,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-tools,taxonomy,1125,1129,7,911,925,0,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-tractors,taxonomy,64,64,2,60,63,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+sports_equipment,taxonomy,130,132,5,99,114,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+surgical_instruments,taxonomy,6101,6102,4,6078,81,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
+tablets,taxonomy,147,147,2,146,5,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+television_sets,taxonomy,37,37,3,32,12,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tools,taxonomy,1174,1185,7,925,938,0,0,2,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tractors,taxonomy,52,52,2,47,13,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 valleys,taxonomy,48,48,3,35,48,149526,0,4,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 volcanoes,taxonomy,23,23,2,20,23,820,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 waterfalls,taxonomy,14,14,1,12,14,8053,0,4,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-wearable_computers,taxonomy,162,162,5,137,112,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+wearable_computers,taxonomy,162,162,4,138,7,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
 wetlands,taxonomy,758,758,6,592,758,78714,0,5,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 agricultural_habitats,membership,1,1,0,1,0,0,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-aircraft,membership,2845,3948,5,2843,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+aircraft,membership,3977,5325,5,3973,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 animals,membership,2,4,0,2,0,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 aquifers,membership,1,1,0,1,0,7,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 archaea,membership,1,1,0,1,0,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
@@ -192,81 +192,81 @@ beaches,membership,5,2,1,5,0,0,0,0,Named features remain instances; native type 
 birds,membership,2,3,0,2,0,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 bridges,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 buildings,membership,3,4,1,3,0,7,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-camera_bodies,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-camera_lenses,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-cameras,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-cars,membership,5928,7098,3,5925,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+camera_bodies,membership,4,4,1,4,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+camera_lenses,membership,3,3,1,3,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+cameras,membership,61,61,2,61,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+cars,membership,58006,60997,3,58000,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 ceramic_capacitors,membership,1,1,0,1,0,0,0,0,12 Murata series and 3873 orderable configurations plus prior records; not all manufacturers or current stock.
 clothing,membership,1,3,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 clouds,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 coastal_habitats,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computer_hardware,membership,10,10,1,10,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computer_monitors,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-computers,membership,155,155,1,155,0,5,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computer_hardware,membership,60,60,1,60,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computer_monitors,membership,13,13,1,13,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+computers,membership,138,138,1,138,0,5,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 deserts,membership,7,2,1,7,0,34,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-desktop_computers,membership,2,2,1,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-digital_cameras,membership,3,3,1,3,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+desktop_computers,membership,22,22,2,22,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+digital_cameras,membership,179,179,2,179,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 dishes,membership,1,2,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 earbuds,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-electronic_components,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+electronic_components,membership,4,5,1,4,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 electronic_devices,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 electronic_equipment,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-fitness_trackers,membership,4,4,2,4,0,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+fitness_trackers,membership,5,5,2,5,0,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
 food_products,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 forest_habitats,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 forests,membership,9,4,1,9,0,3,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 freshwater_habitats,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 fungi,membership,2,3,0,2,0,0,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 furniture,membership,3,5,1,3,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-game_consoles,membership,30,30,1,30,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+game_consoles,membership,34,34,1,34,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 glaciers,membership,3,2,1,3,0,0,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 gpus,membership,6,6,1,6,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-graphics_cards,membership,5,5,1,5,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+graphics_cards,membership,48,48,2,48,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 grasslands,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 habitat_complexes,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 habitats,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 hand_tools,membership,2,3,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-headphones,membership,3,2,1,3,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+headphones,membership,15,14,2,15,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 home_appliances,membership,1,2,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-integrated_circuits,membership,10,10,1,10,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+integrated_circuits,membership,12,12,1,12,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 islands,membership,2,2,0,2,0,145,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 lakes,membership,3,3,0,3,0,261,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-laptops,membership,3,2,1,3,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-locomotives,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-loudspeakers,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+laptops,membership,121,120,2,121,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+locomotives,membership,78,78,1,78,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+loudspeakers,membership,2,2,1,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 marine_habitats,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-medical_devices,membership,1709,1709,1,1709,0,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
-microprocessors,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+medical_devices,membership,1710,1710,1,1710,0,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
+microprocessors,membership,58,58,1,58,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 minerals,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 mountain_ranges,membership,2,2,0,2,0,29654,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 mountains,membership,5,2,1,5,0,1,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
-musical_instruments,membership,3,5,1,3,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-network_routers,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-network_switches,membership,2,2,1,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+musical_instruments,membership,6,8,1,6,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+network_routers,membership,27,27,1,27,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+network_switches,membership,19,19,1,19,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 pcbs,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 plants,membership,2,5,0,2,0,1,0,0,Frozen native taxonomies; rank conflicts and biological variants remain separate from strict inclusion.
 power_tools,membership,2,3,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-printers,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+printers,membership,25,25,1,25,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 rivers,membership,8,4,1,8,0,201,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 rocks,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 scrub_and_tundra,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 semiconductor_devices,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 semiconductor_diodes,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-ships,membership,3,2,1,3,0,1445,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-single_board_computers,membership,7,7,1,7,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-smartphones,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-smartwatches,membership,71,71,2,71,0,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
-solid_state_drives,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+ships,membership,31,30,1,31,0,1538,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+single_board_computers,membership,8,8,1,8,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+smartphones,membership,795,795,2,795,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+smartwatches,membership,92,92,2,92,0,0,0,0,Frozen Apple/Garmin/Fitbit model and SKU scope; not every brand or a visual-separability claim.
+solid_state_drives,membership,18,18,1,18,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 source_electronic_devices,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-source_integrated_circuits,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+source_integrated_circuits,membership,4,4,1,4,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 source_semiconductor_diodes,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 sparse_vegetation_habitats,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 sports_equipment,membership,1,1,0,1,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 surgical_instruments,membership,2,2,0,2,0,0,0,0,Regulatory navigation differs from physical subtype identity. Ambiguous version/model and GMDN fields are outside model admission.
-tablets,membership,46,46,1,46,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-television_sets,membership,5,5,1,5,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-tools,membership,2,2,0,2,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
-tractors,membership,70,70,1,69,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tablets,membership,114,114,2,114,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+television_sets,membership,8,8,1,8,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tools,membership,4,4,1,4,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
+tractors,membership,106,106,1,105,0,0,0,0,"Frozen source type/design/catalog scope; families, specific models and configurations are distinct; all brands/parts are not implied."
 valleys,membership,4,2,1,4,0,5,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 volcanoes,membership,2,2,0,2,0,27,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.
 waterfalls,membership,6,2,1,6,0,14,0,0,Named features remain instances; native type vocabularies and gazetteer coverage are not exhaustive.

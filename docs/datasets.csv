@@ -11,9 +11,9 @@ dtd,membership,47,0,0,0,0,47,47,0,0,0,0,0,0,0
 eurosat,strict,10,0,0,6,6,10,0,6,0,0,0,0,0,0
 eurosat,taxonomy,10,0,0,6,6,10,0,6,0,0,0,0,0,0
 eurosat,membership,10,0,0,0,0,10,0,0,0,0,0,0,0,0
-fgvc_aircraft,strict,100,68,68,64,100,100,100,100,68,0,41,61,0,0
-fgvc_aircraft,taxonomy,100,68,68,64,100,100,100,100,0,0,41,61,0,0
-fgvc_aircraft,membership,100,68,0,0,0,100,100,0,0,0,0,0,0,0
+fgvc_aircraft,strict,100,1,1,98,99,100,99,99,1,0,65,98,0,0
+fgvc_aircraft,taxonomy,100,1,1,98,99,100,99,99,0,0,65,98,0,0
+fgvc_aircraft,membership,100,1,0,0,0,100,99,0,0,0,0,0,0,0
 flowers102,strict,102,96,96,4,100,102,100,100,96,64,0,0,0,0
 flowers102,taxonomy,102,96,98,4,102,102,100,102,0,65,0,0,0,0
 flowers102,membership,102,96,0,0,0,102,100,0,0,0,0,0,0,0
@@ -29,9 +29,9 @@ places365,membership,365,0,0,0,0,365,0,0,0,0,0,0,0,0
 resisc45,strict,45,0,0,30,30,45,0,30,0,0,0,0,0,0
 resisc45,taxonomy,45,0,0,30,30,45,0,30,0,0,0,0,0,0
 resisc45,membership,45,0,0,0,0,45,0,0,0,0,0,0,0,0
-stanford_cars,strict,196,4,4,196,196,196,196,196,4,0,0,0,196,0
-stanford_cars,taxonomy,196,4,4,196,196,196,196,196,0,0,0,0,196,0
-stanford_cars,membership,196,4,0,0,0,196,196,0,0,0,0,0,0,0
+stanford_cars,strict,196,0,0,196,196,196,196,196,0,0,0,0,196,0
+stanford_cars,taxonomy,196,0,0,196,196,196,196,196,0,0,0,0,196,0
+stanford_cars,membership,196,0,0,0,0,196,196,0,0,0,0,0,0,0
 stanford_dogs,strict,120,119,119,0,119,120,120,119,119,1,0,0,0,0
 stanford_dogs,taxonomy,120,119,120,0,120,120,120,120,0,2,0,0,0,0
 stanford_dogs,membership,120,119,0,0,0,120,120,0,0,0,0,0,0,0
