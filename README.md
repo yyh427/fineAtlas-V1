@@ -13,11 +13,21 @@ python3 scripts/download_single.py --output-dir /path/to/fineatlas-data
 fineatlas --data-dir /path/to/fineatlas-data stats
 ```
 
-本分支的接口版本为 `1.9.0rc1`。新增来源关系浏览功能的构建、接口和限制见 [本轮浏览优化](docs/night_browsing.md)。当前 [review_data.json](review_data.json) 仍指向已发布的 `v1.8.1-hierarchy-review` 候选；本轮新候选的交付与验证状态以本轮结果报告为准。正式版下载清单保持独立。下载、解压和重建请为新库选择新的目录。
+本分支的接口版本为 `1.9.0rc1`，对应 `v1.9.0-night-review` 候选。完整单文件候选的清单及校验值见 [review_data.json](review_data.json)，可复用旧冻结库的只读索引见 [night_browse_data.json](night_browse_data.json)。[本轮结果](docs/night_results.md) 区分实际层次改善、目录浏览改善和剩余语义限制；构建、接口及恢复方式见 [浏览说明](docs/night_browsing.md)。正式版清单保持独立，下载请使用新的目录。
 
 ```bash
 python3 scripts/download_single.py --manifest review_data.json \
   --output-dir /path/to/fineatlas-review
+```
+
+已有 `v1.8.1-hierarchy-review` 时，也可以只下载约 1 GB 的索引压缩包。旧库的独立清单见 [night_baseline_data.json](docs/night_baseline_data.json)。两份文件都只读打开，来源修订必须匹配。
+
+```bash
+python3 scripts/download_single.py --manifest night_browse_data.json \
+  --output-dir /path/to/fineatlas-night-index
+fineatlas --data-dir /path/to/v1.8.1/fineatlas.sqlite \
+  --browse-index /path/to/fineatlas-night-index/fineatlas-browse.sqlite \
+  browse-summary aircraft
 ```
 
 ## 数据范围
