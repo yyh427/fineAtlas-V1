@@ -1043,7 +1043,7 @@ class ConsistentAtlas(SingleAtlas):
 
     def _page_context(self, method, args):
         return {
-            "api_contract": "1.8.1rc1",
+            "api_contract": "1.9.0rc1",
             "revision": self._revision,
             "view": self.relation_view,
             "visibility": self.view,

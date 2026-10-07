@@ -1,0 +1,244 @@
+{
+  "status": "COMPLETE_LOCAL_AND_GITHUB_CANDIDATE_DELIVERY",
+  "sdk_version": "1.9.0rc1",
+  "candidate_release": "https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.9.0-night-review",
+  "baseline_release": "v1.8.1-hierarchy-review",
+  "baseline_database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
+  "unit_tests": {
+    "passed": 84,
+    "seconds": 49.17
+  },
+  "baseline_public": {
+    "observed_task_records": 1822,
+    "observed_legacy_portals": 93,
+    "six_dataset_labels": 755,
+    "view_task_checks": 5466,
+    "view_portal_checks": 279,
+    "public_path_samples": 1856,
+    "member_search_checks": 1346,
+    "errors": [],
+    "seconds": 39.695263353176415,
+    "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
+  },
+  "fixed_nonfocus_samples": {
+    "count": 2230,
+    "file": "night_fixed_nonfocus_samples.json",
+    "sha256": "38efdd044b0f34da4d6260a4e672f1c80c880ba1e83c42260fa5a806fd849416",
+    "sources": 79,
+    "previous_seed_samples": 897
+  },
+  "source_graph_changes": false,
+  "new_semantic_nodes": 0,
+  "claimed_new_label_coverage": 0,
+  "images_or_visual_models_run": false,
+  "crj700_exact_identity": "UNCONFIRMED",
+  "production_replacement_ready": false,
+  "remaining_validation": [],
+  "independent_derived_reproduction": {
+    "all_pass": true,
+    "logical_checks": 9,
+    "runtime_stage_logs_excluded": true
+  },
+  "candidate_kind": "immutable baseline plus revision-bound browse index",
+  "candidate_index": {
+    "name": "fineatlas-browse.sqlite",
+    "bytes": 8604495872,
+    "sha256": "0ecd456a40fee1549fff221c657aaf4df6fd46cc9a9483406b9fd15382315cb3",
+    "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a"
+  },
+  "public_regression": {
+    "observed_task_records": 1822,
+    "observed_legacy_portals": 93,
+    "six_dataset_labels": 755,
+    "view_task_checks": 5466,
+    "view_portal_checks": 279,
+    "public_path_samples": 1856,
+    "member_search_checks": 1346,
+    "errors": [],
+    "seconds": 42.052604832686484,
+    "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
+  },
+  "browse_regression": {
+    "all_pass": true,
+    "portal_role_view_checks": 1395,
+    "fixed_nonfocus_samples": 2230,
+    "all_stored_alias_view_checks": 1764,
+    "focus_label_view_browse_checks": 2265,
+    "focus_display_changes": 94,
+    "focus_payload_changes": 929,
+    "fixed_shortest_paths_and_states_unchanged": true,
+    "fixed_display_changes": 253,
+    "fixed_payload_changes": 384,
+    "complete_branch_page_checks": 16,
+    "transport_examples": {
+      "aircraft": 5,
+      "cars": 5
+    },
+    "performance_workloads_match": true,
+    "seconds": 296.5777096822858,
+    "images_or_visual_models_run": false
+  },
+  "source_witnesses": {
+    "all_pass": true,
+    "verified_source_preferences": 107753,
+    "affected_view_parent_pairs": 3070,
+    "maximum_surviving_witness_edges": 6,
+    "source_revision": "fd5dfb79f85e91050980fc245f2221af293bc19d05049d1e1bce3cbec52e37ca",
+    "index_identity_and_source_mismatches": 0,
+    "all_hidden_display_connections_have_surviving_native_routes": true,
+    "full_candidate_core_record_comparison_still_required": true,
+    "seconds": 24.202347794547677
+  },
+  "source_record_contracts": {
+    "all_pass": true,
+    "checks": {
+      "edge_invalid_records": 0,
+      "entity_invalid_records": 0,
+      "strict_edge_missing_source_arcs": 0,
+      "strict_entity_missing_source_arcs": 0,
+      "taxonomy_edge_missing_source_arcs": 0,
+      "taxonomy_entity_missing_source_arcs": 0,
+      "membership_edge_missing_source_arcs": 0,
+      "membership_entity_missing_source_arcs": 0
+    },
+    "all_indexed_relations": 25529063,
+    "source_record_endpoint_relation_role_and_view_checks": "All indexed records; original evidence IDs retained",
+    "new_semantic_relations": 0,
+    "new_semantic_nodes": 0,
+    "seconds": 109.49456677306443
+  },
+  "real_cli_calls": 14,
+  "single_file_candidate_status": "All local source/public/integrity/compression checks and remote hashes PASS",
+  "sqlite_integrity": {
+    "pass": true,
+    "artifact": "browse-staging-final.sqlite",
+    "integrity_check": "ok",
+    "seconds": 98.91116419807076
+  },
+  "protected_files": {
+    "checked": 11,
+    "unchanged": 11
+  },
+  "data_preservation": {
+    "candidate_kind": "immutable source database plus independently built readonly browse index",
+    "baseline_source_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
+    "core_source_records": "Exactly the same original immutable file; no copy, replacement or source mutation is performed by the overlay constructor",
+    "original_label_records": 755,
+    "view_label_checks": 2265,
+    "all_original_native_core_tables_and_identity_partition_retained": true,
+    "all_active_source_uid_component_and_source_fields_match": true,
+    "active_source_uids": 12400273,
+    "all_admitted_original_source_arcs_present": true,
+    "all_indexed_arcs_have_legal_original_source_records": true,
+    "source_arc_contracts": {
+      "edge_invalid_records": 0,
+      "entity_invalid_records": 0,
+      "strict_edge_missing_source_arcs": 0,
+      "strict_entity_missing_source_arcs": 0,
+      "taxonomy_edge_missing_source_arcs": 0,
+      "taxonomy_entity_missing_source_arcs": 0,
+      "membership_edge_missing_source_arcs": 0,
+      "membership_entity_missing_source_arcs": 0
+    },
+    "all_default_omitted_display_arcs_replaced_by_surviving_original_paths": true,
+    "preferred_arcs_three_views": 107753,
+    "affected_view_parent_pairs": 3070,
+    "complete_descendant_identity_sets_preserved_for_all_affected_parents": true,
+    "set_preservation_proof": "The source graph and identity partition are the unchanged immutable baseline. Every admitted original source arc is present in the index; every indexed arc has a legal original record. Every default-hidden arc expands into a surviving endpoint-identical original path, with no preference dependency cycle. Thus full and preferred transitive descendant identity sets coincide for every affected parent. Largest branches additionally have complete enumerated direct identity sets and stable page digests.",
+    "single_file_core_comparison": "Pending until the separate single-file application commits; this proof refers specifically to the complete readonly overlay candidate"
+  },
+  "all_indexed_view_cycles": {
+    "strict": {
+      "unique_arcs": 9051663,
+      "incident_identity_vertices": 9031343,
+      "processed_vertices": 9031343,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 16.072171616367996,
+      "default_preferred_graph_acyclic": true
+    },
+    "taxonomy": {
+      "unique_arcs": 12493606,
+      "incident_identity_vertices": 12252904,
+      "processed_vertices": 12252904,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 21.461016062647104,
+      "default_preferred_graph_acyclic": true
+    },
+    "membership": {
+      "unique_arcs": 3758462,
+      "incident_identity_vertices": 3662164,
+      "processed_vertices": 3662164,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 7.850262181833386,
+      "default_preferred_graph_acyclic": true
+    }
+  },
+  "single_file_source_preservation": {
+    "all_pass": true,
+    "exact_core_tables": 90,
+    "every_affected_parent_descendant_identity_set_preserved": true
+  },
+  "single_file_public_regression": {
+    "observed_task_records": 1822,
+    "observed_legacy_portals": 93,
+    "six_dataset_labels": 755,
+    "view_task_checks": 5466,
+    "view_portal_checks": 279,
+    "public_path_samples": 1856,
+    "member_search_checks": 1346,
+    "errors": [],
+    "seconds": 72.90160119719803,
+    "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
+  },
+  "single_file_browse_regression": {
+    "all_pass": true,
+    "portal_role_view_checks": 1395,
+    "fixed_nonfocus_samples": 2230,
+    "all_stored_alias_view_checks": 1764,
+    "focus_label_view_browse_checks": 2265,
+    "focus_display_changes": 94,
+    "focus_payload_changes": 929,
+    "fixed_shortest_paths_and_states_unchanged": true,
+    "fixed_display_changes": 253,
+    "fixed_payload_changes": 384,
+    "complete_branch_page_checks": 16,
+    "transport_examples": {
+      "aircraft": 5,
+      "cars": 5
+    },
+    "performance_workloads_match": true,
+    "seconds": 295.6603482151404,
+    "images_or_visual_models_run": false
+  },
+  "single_file_sqlite_integrity": {
+    "pass": true,
+    "file": "fineatlas-night.sqlite",
+    "integrity_check": "ok",
+    "seconds": 411.3235557656735
+  },
+  "single_file_artifact": {
+    "name": "fineatlas.sqlite",
+    "bytes": 63136358400,
+    "sha256": "36fda1fc8bd9fe0ebbb0e6320797eb7293e6d8c4cc8f83b01f25f14c4b664cff"
+  },
+  "single_file_cli_calls": 14,
+  "remote_assets": {
+    "all_pass": true,
+    "assets_and_manifests": 9
+  },
+  "actual_public_download_smoke": {
+    "all_pass": true,
+    "actual_public_release_download": true,
+    "compressed_asset_sha256": "87a85785533a72dc6334cdc9cfd287c55469922ce13ea856e6a7fa217b6d2679",
+    "decompressed_index_sha256": "0ecd456a40fee1549fff221c657aaf4df6fd46cc9a9483406b9fd15382315cb3",
+    "downloaded_index_opened_through_public_api": true,
+    "aircraft_model_items": 20,
+    "car_year_groups": 5,
+    "scoped_search_status": "MATCHES",
+    "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a"
+  },
+  "production_replacement_limit": "Large source branches still lack some trustworthy intermediate semantic types; CRJ-700 precise external identity remains unconfirmed. Verified candidates are available for review/use; no production promotion performed."
+}

@@ -52,6 +52,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--database", required=True)
     p.add_argument("--output", required=True)
+    p.add_argument('--browse-index')
     p.add_argument(
         "--baseline-targets", help="Optional baseline audit dataset_views.json"
     )
@@ -77,7 +78,7 @@ def main():
     errors = []
     started = time.perf_counter()
     for view in ("strict", "taxonomy", "membership"):
-        with FineAtlas(a.database, relation_view=view) as tree:
+        with FineAtlas(a.database, relation_view=view,browse_index=a.browse_index) as tree:
             statistics = tree.stats()
             if "statistics_scope" in statistics:
                 counts = statistics["counts"]

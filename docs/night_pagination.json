@@ -1,0 +1,370 @@
+[
+  {
+    "parent_uid": "hierarchy-type:aircraft-4-engine-1",
+    "parent_label": "reciprocating-engine single-engine fixed-wing aircraft",
+    "role": "MODEL",
+    "relation": "DESIGN_TYPE_OF",
+    "include_coarse": true,
+    "identities": 61283,
+    "pages": 62,
+    "identity_set_sha256": "3d8a9c45e6282a816c309bd50fb060a949542cef6ba5ad848a0f13be28d1a25d",
+    "complete_set_equal": true,
+    "seconds": 13.389794768765569
+  },
+  {
+    "parent_uid": "hierarchy-type:aircraft-4-engine-1",
+    "parent_label": "reciprocating-engine single-engine fixed-wing aircraft",
+    "role": "MODEL",
+    "relation": "DESIGN_TYPE_OF",
+    "include_coarse": false,
+    "identities": 61282,
+    "pages": 62,
+    "identity_set_sha256": "aaafe88aff3f558601b49e53dd89a62e9fc2caceb3dcf68f827cf2766161512d",
+    "complete_set_equal": true,
+    "seconds": 13.549702381715178,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.00519546028226614,
+      "repeat_median_seconds": 0.004187100566923618,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "wordnet31:04531608-n",
+    "parent_label": "vehicle",
+    "role": "MODEL",
+    "relation": "IS_A",
+    "include_coarse": true,
+    "identities": 31425,
+    "pages": 32,
+    "identity_set_sha256": "d98519d19f5c6391e8b5e72735b59f5ec3769a572d7126aeb21d46b9370bd905",
+    "complete_set_equal": true,
+    "seconds": 6.482502172701061
+  },
+  {
+    "parent_uid": "wordnet31:04531608-n",
+    "parent_label": "vehicle",
+    "role": "MODEL",
+    "relation": "IS_A",
+    "include_coarse": false,
+    "identities": 31419,
+    "pages": 32,
+    "identity_set_sha256": "3b2dd687f99e61306784c4350f989dce1ed5bc6b6a5fd656f7e44ed7fb436f93",
+    "complete_set_equal": true,
+    "seconds": 6.509884278289974,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.005090629681944847,
+      "repeat_median_seconds": 0.004044052213430405,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "hierarchy-type:car-gasoline",
+    "parent_label": "gasoline-powered car",
+    "role": "CONFIGURATION",
+    "relation": "CONFIGURATION_TYPE_OF",
+    "include_coarse": true,
+    "identities": 23553,
+    "pages": 24,
+    "identity_set_sha256": "b02db31ed7144fe622a2d116187b22d58d02345f8625b99dcc71d7b600c7d578",
+    "complete_set_equal": true,
+    "seconds": 5.738258422352374
+  },
+  {
+    "parent_uid": "hierarchy-type:car-gasoline",
+    "parent_label": "gasoline-powered car",
+    "role": "CONFIGURATION",
+    "relation": "CONFIGURATION_TYPE_OF",
+    "include_coarse": false,
+    "identities": 23553,
+    "pages": 24,
+    "identity_set_sha256": "b02db31ed7144fe622a2d116187b22d58d02345f8625b99dcc71d7b600c7d578",
+    "complete_set_equal": true,
+    "seconds": 5.8328211065381765,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.005720842629671097,
+      "repeat_median_seconds": 0.004661706276237965,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "fda-device-type:JWH",
+    "parent_label": "Prosthesis, Knee, Patellofemorotibial, Semi-Constrained, Cemented, Polymer/Metal/Polymer",
+    "role": "CONFIGURATION",
+    "relation": "REGULATED_AS",
+    "include_coarse": true,
+    "identities": 6819,
+    "pages": 7,
+    "identity_set_sha256": "2bb52ee888e9388eb28b4d04058fc570b9e85019ac6568206622894922896da2",
+    "complete_set_equal": true,
+    "seconds": 1.9810180021449924
+  },
+  {
+    "parent_uid": "fda-device-type:JWH",
+    "parent_label": "Prosthesis, Knee, Patellofemorotibial, Semi-Constrained, Cemented, Polymer/Metal/Polymer",
+    "role": "CONFIGURATION",
+    "relation": "REGULATED_AS",
+    "include_coarse": false,
+    "identities": 6819,
+    "pages": 7,
+    "identity_set_sha256": "2bb52ee888e9388eb28b4d04058fc570b9e85019ac6568206622894922896da2",
+    "complete_set_equal": true,
+    "seconds": 1.9954858841374516,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.006084345281124115,
+      "repeat_median_seconds": 0.004952454939484596,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "hierarchy-type:aircraft-6-engine-1",
+    "parent_label": "reciprocating-engine rotorcraft",
+    "role": "MODEL",
+    "relation": "DESIGN_TYPE_OF",
+    "include_coarse": true,
+    "identities": 6673,
+    "pages": 7,
+    "identity_set_sha256": "0333ddfe8a3eb4e98e64bf99b578313c69c9a7fbf294b58a25b1290db3e7f0ed",
+    "complete_set_equal": true,
+    "seconds": 1.4772535571828485
+  },
+  {
+    "parent_uid": "hierarchy-type:aircraft-6-engine-1",
+    "parent_label": "reciprocating-engine rotorcraft",
+    "role": "MODEL",
+    "relation": "DESIGN_TYPE_OF",
+    "include_coarse": false,
+    "identities": 6672,
+    "pages": 7,
+    "identity_set_sha256": "cc94dcb886533296fda712fa0eae2e325a21c0877063986b3ae39fa8cd6cfcbd",
+    "complete_set_equal": true,
+    "seconds": 1.4908260377123952,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.00529574416577816,
+      "repeat_median_seconds": 0.004195702262222767,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "fda-device-type:LPH",
+    "parent_label": "Prosthesis, Hip, Semi-Constrained, Metal/Polymer, Porous Uncemented",
+    "role": "CONFIGURATION",
+    "relation": "REGULATED_AS",
+    "include_coarse": true,
+    "identities": 5719,
+    "pages": 6,
+    "identity_set_sha256": "803cfadfa9aacd0ad099f47f4d0d19310c864aa07d558ca2cca0f513be83865e",
+    "complete_set_equal": true,
+    "seconds": 1.6601534485816956
+  },
+  {
+    "parent_uid": "fda-device-type:LPH",
+    "parent_label": "Prosthesis, Hip, Semi-Constrained, Metal/Polymer, Porous Uncemented",
+    "role": "CONFIGURATION",
+    "relation": "REGULATED_AS",
+    "include_coarse": false,
+    "identities": 5719,
+    "pages": 6,
+    "identity_set_sha256": "803cfadfa9aacd0ad099f47f4d0d19310c864aa07d558ca2cca0f513be83865e",
+    "complete_set_equal": true,
+    "seconds": 1.6567353969439864,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.0058866627514362335,
+      "repeat_median_seconds": 0.004862425848841667,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "hierarchy-type:aircraft-4-engine-8",
+    "parent_label": "four-cycle-engine single-engine fixed-wing aircraft",
+    "role": "MODEL",
+    "relation": "DESIGN_TYPE_OF",
+    "include_coarse": true,
+    "identities": 5628,
+    "pages": 6,
+    "identity_set_sha256": "3c09513a0af45beb25f929f061e6351f30f937f547952e4d116feabe7aa46326",
+    "complete_set_equal": true,
+    "seconds": 1.245897138491273
+  },
+  {
+    "parent_uid": "hierarchy-type:aircraft-4-engine-8",
+    "parent_label": "four-cycle-engine single-engine fixed-wing aircraft",
+    "role": "MODEL",
+    "relation": "DESIGN_TYPE_OF",
+    "include_coarse": false,
+    "identities": 5628,
+    "pages": 6,
+    "identity_set_sha256": "3c09513a0af45beb25f929f061e6351f30f937f547952e4d116feabe7aa46326",
+    "complete_set_equal": true,
+    "seconds": 1.2591586336493492,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.005574356764554977,
+      "repeat_median_seconds": 0.0041547734290361404,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  },
+  {
+    "parent_uid": "fda-device-type:JDI",
+    "parent_label": "Prosthesis, Hip, Semi-Constrained, Metal/Polymer, Cemented",
+    "role": "CONFIGURATION",
+    "relation": "REGULATED_AS",
+    "include_coarse": true,
+    "identities": 5172,
+    "pages": 6,
+    "identity_set_sha256": "561e611b6e8b2d53e37e57289322d4c049664b6a96c699e91796c1ea0f0cf467",
+    "complete_set_equal": true,
+    "seconds": 1.5025085378438234
+  },
+  {
+    "parent_uid": "fda-device-type:JDI",
+    "parent_label": "Prosthesis, Hip, Semi-Constrained, Metal/Polymer, Cemented",
+    "role": "CONFIGURATION",
+    "relation": "REGULATED_AS",
+    "include_coarse": false,
+    "identities": 5172,
+    "pages": 6,
+    "identity_set_sha256": "561e611b6e8b2d53e37e57289322d4c049664b6a96c699e91796c1ea0f0cf467",
+    "complete_set_equal": true,
+    "seconds": 1.5038784788921475,
+    "query_plan": [
+      [
+        8,
+        0,
+        61,
+        "SEARCH b USING COVERING INDEX browse_links_role (view=? AND parent_component=? AND role=? AND child_component>?)"
+      ],
+      [
+        56,
+        0,
+        0,
+        "USE TEMP B-TREE FOR group_concat(DISTINCT)"
+      ]
+    ],
+    "group_count_index_used": true,
+    "bounded_browse_performance": {
+      "returned": 20,
+      "first_query_seconds": 0.005803273990750313,
+      "repeat_median_seconds": 0.004905896261334419,
+      "os_cache": "shared, not flushed",
+      "sdk_connection": "already open"
+    }
+  }
+]

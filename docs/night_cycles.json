@@ -1,0 +1,29 @@
+{
+  "strict": {
+    "unique_arcs": 9051663,
+    "incident_identity_vertices": 9031343,
+    "processed_vertices": 9031343,
+    "cyclic_or_cycle_dependent_vertices": 0,
+    "acyclic": true,
+    "seconds": 16.072171616367996,
+    "default_preferred_graph_acyclic": true
+  },
+  "taxonomy": {
+    "unique_arcs": 12493606,
+    "incident_identity_vertices": 12252904,
+    "processed_vertices": 12252904,
+    "cyclic_or_cycle_dependent_vertices": 0,
+    "acyclic": true,
+    "seconds": 21.461016062647104,
+    "default_preferred_graph_acyclic": true
+  },
+  "membership": {
+    "unique_arcs": 3758462,
+    "incident_identity_vertices": 3662164,
+    "processed_vertices": 3662164,
+    "cyclic_or_cycle_dependent_vertices": 0,
+    "acyclic": true,
+    "seconds": 7.850262181833386,
+    "default_preferred_graph_acyclic": true
+  }
+}

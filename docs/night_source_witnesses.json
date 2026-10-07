@@ -1,0 +1,11 @@
+{
+  "all_pass": true,
+  "verified_source_preferences": 107753,
+  "affected_view_parent_pairs": 3070,
+  "maximum_surviving_witness_edges": 6,
+  "source_revision": "fd5dfb79f85e91050980fc245f2221af293bc19d05049d1e1bce3cbec52e37ca",
+  "index_identity_and_source_mismatches": 0,
+  "all_hidden_display_connections_have_surviving_native_routes": true,
+  "full_candidate_core_record_comparison_still_required": true,
+  "seconds": 24.202347794547677
+}

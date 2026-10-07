@@ -50,3 +50,9 @@ Existing positional constructors, default strict relation view, UID identifiers 
 Index readiness is transactional: incomplete migrations refuse queries. A database revision fingerprints all frozen inputs and graph-building code; stable cursors cannot be reused with a different revision. Per-stage source manifests and checks support resuming an unchanged migration. Changed inputs should be rebuilt from a fresh baseline, not repeatedly applied to an already changed publication.
 
 `stats()` reports the current database census and separate rooted counts for the selected relation view. `statistics_root_uid` identifies the root used by precomputed aggregate statistics; changing the query root does not recompute whole-database aggregates. Source UIDs, identity groups and typed-terminal counts have separate fields.
+# 本轮直接关系浏览
+
+`1.9.0rc1` 增加 `browse_summary`、`browse_children_page`、`browse_groups`、
+`browse_location`、`locate`、`source_members_page` 和 `browse_path_result`。
+默认展开直接普通类型，型号、系列、配置和实例分别查询。目录分组明确不属于 `IS_A`。
+完整签名示例、游标合同、来源依据、构建及剩余限制见 [浏览优化说明](night_browsing.md)。

@@ -22,6 +22,7 @@ c.execute(
     "ATTACH DATABASE ? AS other",
     (Path(a.reproduction).resolve().as_uri() + "?mode=ro&immutable=1",),
 )
+c.execute("PRAGMA other.cache_size=-1048576")
 out = Path(a.output)
 out.parent.mkdir(parents=True, exist_ok=True)
 results = {}
@@ -34,7 +35,7 @@ tables = [
     )
 ]
 for table in tables:
-    if table == "usability_stages":
+    if table in ("usability_stages", "browse_build_stages"):
         continue
     columns = list(c.execute('PRAGMA table_info("' + table + '")'))
     names = [x[1] for x in columns]

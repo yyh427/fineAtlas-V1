@@ -14,7 +14,7 @@ class TypedInterfaceTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.path = Path(self.temp.name) / 'fineatlas.sqlite'
         c = sqlite3.connect(self.path)
-        c.executescript('''
+        c.executescript('''BEGIN;
         CREATE TABLE metadata(key TEXT PRIMARY KEY,value TEXT);
         CREATE TABLE nodes(uid TEXT PRIMARY KEY,label TEXT,domain TEXT,domains TEXT,source TEXT,rank TEXT,description TEXT,data TEXT,layer TEXT,visibility TEXT,component_id INTEGER);
         CREATE TABLE components(id INTEGER PRIMARY KEY,wordnet_reachable INTEGER,depth INTEGER,parent_component_id INTEGER,witness_edge_id INTEGER);

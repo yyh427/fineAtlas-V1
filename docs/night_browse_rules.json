@@ -1,0 +1,60 @@
+{
+  "rule_version": "1.9.0rc1",
+  "source_graph_changes": false,
+  "rules": [
+    {
+      "id": "DIRECT_LINK_ROLE_VIEW",
+      "scope": "All admitted source hierarchy and typed links across all actual domains",
+      "conditions": "ACTIVE endpoints, source role contract, selected relation view and allowed_views",
+      "operation": "Index direct connections by identity group, role and original relation; no recursive expansion by default",
+      "source_fields": [
+        "edges",
+        "entity_relations",
+        "nodes.component_id",
+        "node_profiles"
+      ],
+      "rollback": "Use original API or discard derived indexes; original source tables unchanged",
+      "exceptions": "Missing/ambiguous source fields are not inferred; source role and view restrictions retained",
+      "evidence": "Original source edge/record ID and native field payload; no name-prefix inference",
+      "affected_nodes": "All records satisfying conditions, independently of benchmark membership; observed counts in build and validation reports"
+    },
+    {
+      "id": "NATIVE_CATALOGUE_FACETS",
+      "scope": "All source records carrying declared fields; not restricted to benchmark targets",
+      "conditions": "Literal FAA MFR/MODEL/type fields; literal EPA make/model/baseModel/year/VClass; literal manufacturer/series/catalogue metadata; retained instance country/admin fields",
+      "operation": "Expose clearly marked catalogue/property groups, exact filters and stable pages",
+      "exceptions": "Missing values remain accessible in unfiltered pages; no label-prefix inference; conflicting source values remain separate",
+      "rollback": "Use original candidate; source tables untouched",
+      "evidence": "Original source edge/record ID and native field payload; no name-prefix inference",
+      "affected_nodes": "All records satisfying conditions, independently of benchmark membership; observed counts in build and validation reports"
+    },
+    {
+      "id": "EPA_PARENT_FIELD_FACETS",
+      "scope": "All ACTIVE EPA normalized native-field configuration references",
+      "conditions": "Explicit CONFIGURATION_OF assertion with native_parent_field model/baseModel and retained source-row SHA256",
+      "operation": "Expose the declared make and referenced model designation on that exact target identity; never propagate year, engine or other variant properties onto whole models",
+      "rollback": "Use original candidate; source tables untouched",
+      "exceptions": "Missing/ambiguous source fields are not inferred; source role and view restrictions retained",
+      "evidence": "Original source edge/record ID and native field payload; no name-prefix inference",
+      "affected_nodes": "All records satisfying conditions, independently of benchmark membership; observed counts in build and validation reports"
+    },
+    {
+      "id": "WITNESSED_FINER_ROUTE",
+      "scope": "High-degree parents, source domain roots, and configuration parents across all views",
+      "conditions": "A source-supported two-link route through a different intermediate identity; allowed relation composition; no normalized-role conflict",
+      "operation": "Prefer surviving finer routes in default browsing and browse_path_result; retain every original direct source link and shortest-path API",
+      "exceptions": "Regulatory links remain independent; coarse-only or unproved links remain visible; include_coarse=True restores complete direct-link browsing",
+      "rollback": "Set include_coarse=True and use path_result; no source mutation required",
+      "evidence": "Original source edge/record ID and native field payload; no name-prefix inference",
+      "affected_nodes": "All records satisfying conditions, independently of benchmark membership; observed counts in build and validation reports"
+    }
+  ],
+  "manual_cases": [
+    {
+      "id": "CRJ700_IDENTITY",
+      "action": "Historical mapping and SOURCE_ONLY status retained; exact identity remains unconfirmed",
+      "evidence_report": "reports/crj700_review.json"
+    }
+  ],
+  "no_images_or_visual_models": true
+}
