@@ -21,6 +21,7 @@ def main():
     c=sqlite3.connect(a.baseline.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
     c.execute('PRAGMA cache_size=-1000000');c.execute('PRAGMA temp_store=MEMORY')
     c.execute('ATTACH DATABASE ? AS candidate',(a.database.resolve().as_uri()+'?mode=ro&immutable=1',))
+    c.execute('PRAGMA candidate.cache_size=-1000000')
     quote=lambda x:'"'+x.replace('"','""')+'"'
     results={};start=time.monotonic()
     tables=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'alias_search%' AND name NOT LIKE 'browse_%' ORDER BY name")]

@@ -1,6 +1,9 @@
 """Independent public browse regressions: roles, views, source identity, pages."""
 import json
 import sqlite3
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 import unittest
 
@@ -99,6 +102,7 @@ class BrowsingTest(unittest.TestCase):
         self.build()
         self.assertEqual(self.tree.browse_location('absent')['status'],'NOT_FOUND')
         self.assertEqual(self.tree.locate('same name','bad-domain')['status'],'UNKNOWN_DOMAIN')
+        with self.assertRaises(ValueError):self.tree.locate('same name','bad-domain',limit=1001)
         self.assertEqual(self.tree.browse_children_page('type:root')['items'][0]['uid'],'type:river')
 
     def test_preferred_configuration_route_preserves_full_source_connections(self):
@@ -189,6 +193,13 @@ class BrowsingTest(unittest.TestCase):
         with sqlite3.connect(output) as staged:
             self.assertEqual(json.loads(staged.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()[0]),'FINEATLAS_BROWSE_INDEX_V1')
             self.assertGreater(staged.execute('SELECT count(*) FROM browse_links').fetchone()[0],0)
+        candidate=Path(self.temp.name)/'candidate.sqlite';shutil.copyfile(self.path,candidate)
+        subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'scripts/apply_browse_indexes.py'),
+                        '--database',str(candidate),'--baseline',str(self.path),'--staging',str(output),
+                        '--output',str(Path(self.temp.name)/'application.json')],check=True,stdout=subprocess.PIPE)
+        with FineAtlas(candidate) as applied:
+            self.assertEqual(applied.browse_children_page('type:root')['items'][0]['uid'],'type:river')
+        self.assertEqual(before,self.path.read_bytes())
         self.tree=FineAtlas(self.path)
 
     def test_finer_route_lookup_uses_child_index_before_statistics_exist(self):
@@ -203,6 +214,18 @@ class BrowsingTest(unittest.TestCase):
             query=next(q for q in statements if q.startswith('INSERT OR IGNORE INTO browse_preferences'))
             plan=[r[-1] for r in c.execute('EXPLAIN QUERY PLAN '+query)]
             self.assertTrue(any('SEARCH first USING INDEX browse_links_child' in step and 'child_component=?' in step for step in plan),plan)
+
+    def test_role_filter_does_not_hide_identity_role_conflicts(self):
+        def change(c):
+            self.add(c,'model-role',10,'MODEL');self.add(c,'family-role',10,'MODEL_FAMILY')
+            c.executemany('INSERT INTO entity_relations VALUES(?,?,?,?,?,?,?,?)',[
+                (30,'model-role','type:river','DESIGN_TYPE_OF','ACTIVE','fixture','proof:1','{}'),
+                (31,'family-role','type:river','DESIGN_TYPE_OF','ACTIVE','fixture','proof:1','{}')])
+        self.build(change)
+        item=self.tree.browse_children_page('type:river',node_kind='MODEL')['items'][0]
+        self.assertEqual(item['browse_roles'],['MODEL'])
+        self.assertEqual(item['identity_roles'],['MODEL','MODEL_FAMILY'])
+        self.assertTrue(item['identity_role_conflict'])
 
 
 if __name__=='__main__':unittest.main()

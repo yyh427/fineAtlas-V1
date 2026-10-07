@@ -5,8 +5,9 @@
   "baseline_release": "v1.8.1-hierarchy-review",
   "baseline_database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
   "unit_tests": {
-    "passed": 83,
-    "seconds": 42.517
+    "passed": 84,
+    "seconds": 52.768,
+    "scope": "Completed API regressions; final repeat with candidate application and bounded locator fixes in progress"
   },
   "baseline_public": {
     "observed_task_records": 1822,
@@ -21,9 +22,11 @@
     "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
   },
   "fixed_nonfocus_samples": {
-    "count": 897,
+    "count": 2230,
     "file": "night_fixed_nonfocus_samples.json",
-    "sha256": "cc3feebf93e2ad478af22efc58747c22a02c514b570eed745f6b3a87d30ea154"
+    "sha256": "38efdd044b0f34da4d6260a4e672f1c80c880ba1e83c42260fa5a806fd849416",
+    "sources": 79,
+    "previous_seed_samples": 897
   },
   "source_graph_changes": false,
   "new_semantic_nodes": 0,
@@ -38,5 +41,10 @@
     "All actual entry and fixed sample regression",
     "Stable pages, groups, examples, performance",
     "Protected file hashes and independent reproduction"
-  ]
+  ],
+  "independent_derived_reproduction": {
+    "all_pass": true,
+    "logical_checks": 9,
+    "runtime_stage_logs_excluded": true
+  }
 }

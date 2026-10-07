@@ -151,7 +151,10 @@ class BrowsingAtlas:
             item["browse_connections"] = evidence
             item["identity_component"] = row[0]
             item["browse_roles"] = sorted(row[2].split(','))
-            item["identity_role_conflict"] = len(item["browse_roles"]) > 1
+            identity_roles=[r[0] for r in self.con.execute(
+                'SELECT DISTINCT role FROM browse_nodes WHERE component_id=? ORDER BY role',(row[0],))]
+            item["identity_roles"] = identity_roles
+            item["identity_role_conflict"] = len(identity_roles) > 1
             item["source_members_available"] = True
             items.append(item)
         more = len(rows) > limit
@@ -268,6 +271,9 @@ class BrowsingAtlas:
                 "relation_view":self.relation_view,"directory_facets_are_is_a":False}
 
     def locate(self, text, domain, limit=20):
+        self._limit(limit)
+        if limit>1000:
+            raise ValueError('Location page limit must be at most 1000')
         if not self.domain(domain):
             return self._browse_empty("UNKNOWN_DOMAIN",requested_domain=domain)
         page=self.search_page(text,limit=limit,domain=domain)

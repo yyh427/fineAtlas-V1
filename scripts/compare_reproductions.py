@@ -22,6 +22,7 @@ c.execute(
     "ATTACH DATABASE ? AS other",
     (Path(a.reproduction).resolve().as_uri() + "?mode=ro&immutable=1",),
 )
+c.execute("PRAGMA other.cache_size=-1048576")
 out = Path(a.output)
 out.parent.mkdir(parents=True, exist_ok=True)
 results = {}

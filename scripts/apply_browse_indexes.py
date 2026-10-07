@@ -20,24 +20,28 @@ def main():
     meta={r[0]:json.loads(r[1]) for r in c.execute('SELECT key,value FROM staged.metadata')}
     assert meta['schema']=='FINEATLAS_BROWSE_INDEX_V1' and meta['browse_indexes_ready']
     candidate_meta={r[0]:json.loads(r[1]) for r in c.execute('SELECT key,value FROM metadata')}
-    expected=candidate_meta.get('browse_parent_revision',candidate_meta['database_revision'])
+    with sqlite3.connect(a.baseline.resolve().as_uri()+'?mode=ro&immutable=1',uri=True) as baseline:
+        baseline_meta={r[0]:json.loads(r[1]) for r in baseline.execute('SELECT key,value FROM metadata')}
+    baseline_revision=baseline_meta.get('database_revision',baseline_meta.get('release','')+':'+str(a.baseline.stat().st_size))
+    expected=candidate_meta.get('browse_parent_revision',candidate_meta.get('database_revision',baseline_revision))
+    assert baseline_revision==meta['browse_source_revision'],(baseline_revision,meta['browse_source_revision'])
     assert expected==meta['browse_source_revision'],(expected,meta['browse_source_revision'])
     tables=[r[0] for r in c.execute("SELECT name FROM staged.sqlite_master WHERE type='table' AND name LIKE 'browse_%' ORDER BY name")]
     c.execute('BEGIN IMMEDIATE')
     c.execute("INSERT OR REPLACE INTO metadata VALUES('browse_indexes_ready','false')")
     for table in tables:
         assert table.replace('_','').isalnum()
-        c.execute('DROP TABLE IF EXISTS '+table)
+        c.execute('DROP TABLE IF EXISTS main.'+table)
         sql=c.execute('SELECT sql FROM staged.sqlite_master WHERE type="table" AND name=?',(table,)).fetchone()[0]
         c.execute(sql)
-        c.execute('INSERT INTO '+table+' SELECT * FROM staged.'+table)
+        c.execute('INSERT INTO main.'+table+' SELECT * FROM staged.'+table)
         print('APPLIED',table,flush=True)
     for name,sql in c.execute("SELECT name,sql FROM staged.sqlite_master WHERE type='index' AND sql IS NOT NULL AND tbl_name LIKE 'browse_%'").fetchall():
         c.execute(sql)
     for key,value in meta.items():
         if key.startswith('browse_') or key in ('release','database_revision'):
             c.execute('INSERT OR REPLACE INTO metadata VALUES(?,?)',(key,json.dumps(value)))
-    c.commit();c.execute('PRAGMA analysis_limit=1000');c.execute('ANALYZE');c.commit()
+    c.commit();c.execute('PRAGMA analysis_limit=1000');c.execute('ANALYZE main');c.commit()
     result={'database':str(a.database),'staging':str(a.staging),'tables':tables,'source_revision':expected,'revision':meta['database_revision'],'source_graph_mutated':False,'complete':True}
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(result,indent=2)+'\n');c.close()
     print('CANDIDATE BROWSE INDEX APPLICATION COMPLETE',flush=True)
