@@ -193,12 +193,23 @@ class BrowsingTest(unittest.TestCase):
         with sqlite3.connect(output) as staged:
             self.assertEqual(json.loads(staged.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()[0]),'FINEATLAS_BROWSE_INDEX_V1')
             self.assertGreater(staged.execute('SELECT count(*) FROM browse_links').fetchone()[0],0)
+        with FineAtlas(self.path,browse_index=output) as attached:
+            attached_page=attached.browse_children_page('type:root')
+            self.assertEqual(attached_page['items'][0]['uid'],'type:river')
+            self.assertEqual(attached.metadata['database_revision'],result['index_revision'])
+            with self.assertRaises(sqlite3.OperationalError):attached.con.execute('DELETE FROM fineatlas_browse.browse_nodes')
+        self.assertEqual(before,self.path.read_bytes())
         candidate=Path(self.temp.name)/'candidate.sqlite';shutil.copyfile(self.path,candidate)
         subprocess.run([sys.executable,str(Path(__file__).resolve().parents[1]/'scripts/apply_browse_indexes.py'),
                         '--database',str(candidate),'--baseline',str(self.path),'--staging',str(output),
                         '--output',str(Path(self.temp.name)/'application.json')],check=True,stdout=subprocess.PIPE)
         with FineAtlas(candidate) as applied:
-            self.assertEqual(applied.browse_children_page('type:root')['items'][0]['uid'],'type:river')
+            self.assertEqual(applied.browse_children_page('type:root'),attached_page)
+            with self.assertRaises(ValueError):FineAtlas(candidate,browse_index=output)
+        with sqlite3.connect(output) as staged:
+            staged.execute("UPDATE metadata SET value=? WHERE key='browse_source_revision'",(json.dumps('wrong-source'),))
+            staged.commit()
+        with self.assertRaises(ValueError):FineAtlas(self.path,browse_index=output)
         self.assertEqual(before,self.path.read_bytes())
         self.tree=FineAtlas(self.path)
 

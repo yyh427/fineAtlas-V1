@@ -2,6 +2,28 @@
 
 接口版本：`1.9.0rc1`。这是候选功能，最终验证和产物状态以本轮结果报告为准。
 
+## 只读索引候选
+
+大型库可直接复用已冻结的 `v1.8.1-hierarchy-review` 原始库，另行打开本轮浏览索引。
+两份文件都以只读方式打开，接口检查索引的来源修订和自身修订。
+来源修订不一致、索引不完整，或主库已包含另一套浏览表时拒绝打开。
+该方式无需复制或改写原始库；它与将相同索引应用到独立单文件候选的查询语义一致。
+它不是单独的完整数据库，必须与匹配的原始库一起使用。
+
+```python
+with FineAtlas('/path/to/v1.8.1/fineatlas.sqlite',
+               browse_index='/path/to/night/fineatlas-browse.sqlite',
+               relation_view='taxonomy') as atlas:
+    print(atlas.browse_children_page('cars', node_kind='MODEL', limit=20))
+```
+
+```bash
+fineatlas --data-dir /path/to/v1.8.1/fineatlas.sqlite \
+  --browse-index /path/to/night/fineatlas-browse.sqlite browse-summary aircraft
+```
+
+完整库和只读索引候选的验证状态分别报告。单文件应用未完成时，不把阶段库标为可用。
+
 ## 明确区分四种组织
 
 普通类型使用所选视图允许的分类关系；家族、型号和配置使用原有的
@@ -88,6 +110,12 @@ python3 scripts/audit_browse_preservation.py --baseline /path/to/frozen-baseline
 python3 scripts/audit_browsing.py --baseline /path/to/frozen-baseline.sqlite \
   --database /path/to/work/candidate.sqlite --fixed-samples /path/to/fixed_nonfocus_samples.json \
   --output /path/to/work/browse-regression
+# 已完成的暂存索引也可通过真实公共接口验证；源库保持只读。
+python3 scripts/audit_usability.py --database /path/to/frozen-baseline.sqlite \
+  --browse-index /path/to/work/browse-staging.sqlite --output /path/to/work/overlay-public
+python3 scripts/audit_browsing.py --baseline /path/to/frozen-baseline.sqlite \
+  --database /path/to/frozen-baseline.sqlite --browse-index /path/to/work/browse-staging.sqlite \
+  --fixed-samples /path/to/fixed_nonfocus_samples.json --output /path/to/work/overlay-browse
 ```
 
 完整身份集合保留同时检查源表逐行相等、身份分区相等，以及每条默认隐藏连接均能

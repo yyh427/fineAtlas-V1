@@ -11,6 +11,7 @@ def main() -> None:
         description="Query the FineAtlas V1 SQLite database."
     )
     parser.add_argument("--data-dir", help="SQLite file or downloaded data directory")
+    parser.add_argument('--browse-index',help='Readonly, revision-bound browse artifact for an unindexed frozen baseline')
     parser.add_argument(
         "--view", choices=["wordnet", "all"], help="Navigation view (default: wordnet)"
     )
@@ -175,6 +176,7 @@ def main() -> None:
         relation_view=args.relation_view,
         root=args.root,
         language=args.language,
+        browse_index=args.browse_index,
     ) as graph:
         if args.command == "stats":
             result = graph.stats()

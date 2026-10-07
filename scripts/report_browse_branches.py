@@ -13,8 +13,14 @@ from fineatlas import FineAtlas
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--database',required=True);p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--staging',type=Path,help='Optional readonly staged indexes; database must be their original baseline')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
     with FineAtlas(a.database) as tree:
+        if a.staging:
+            if 'browse_links' in tree._tables:raise ValueError('Staged report needs the original unindexed baseline')
+            tree.con.execute('ATTACH DATABASE ? AS staged',(a.staging.resolve().as_uri()+'?mode=ro&immutable=1',))
+            revision=json.loads(tree.con.execute("SELECT value FROM staged.metadata WHERE key='browse_source_revision'").fetchone()[0])
+            if revision!=tree._revision:raise ValueError('Staging source revision mismatch')
         rows=tree.con.execute('''WITH hidden AS (
           SELECT view,parent_component,role,relation,count(*) n FROM browse_preferences
           GROUP BY view,parent_component,role,relation), affected AS (
@@ -42,6 +48,7 @@ def main():
         with (a.output/'branches.csv').open('w',newline='') as f:
             writer=csv.DictWriter(f,fieldnames=list(result[0]) if result else []);writer.writeheader();writer.writerows(result)
         summary={'view_parent_role_relation_rows':len(result),
+                 'staging_preview':bool(a.staging),'final_candidate_verification_pending':bool(a.staging),
                  'affected_view_parent_pairs':tree.con.execute('SELECT count(*) FROM (SELECT DISTINCT view,parent_component FROM browse_preferences)').fetchone()[0],
                  'source_graph_mutated':False,'new_semantic_nodes':0,
                  'physical_source_degree_reduced':False,'default_display_prefers_existing_finer_routes':True,

@@ -17,16 +17,22 @@ def write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n')
 
 
+def topology(tree,result):
+    return [(tree._basic(s['uid'])['component_id'],tree._basic(s['parent_uid'])['component_id'],s['edge']['relation'])
+            for s in result['path'] if s['edge']['relation']!='SAME_CONCEPT']
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--database', required=True)
     p.add_argument('--baseline', required=True)
     p.add_argument('--fixed-samples', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--browse-index')
     a = p.parse_args(); a.output.mkdir(parents=True, exist_ok=True)
     start = time.monotonic(); portals=[]; aliases=[]; focus_checks=[]; fixed=[]; pages=[]; examples=[]; performance=[]
     for view in ('strict', 'taxonomy', 'membership'):
-        with FineAtlas(a.database, relation_view=view) as tree, FineAtlas(a.baseline, relation_view=view) as old:
+        with FineAtlas(a.database, relation_view=view,browse_index=a.browse_index) as tree, FineAtlas(a.baseline, relation_view=view) as old:
             for entry in tree.domains(include_aliases=True):
                 name=entry.get('requested_domain',entry['domain'])
                 for role in ('CLASS','SERIES','MODEL','CONFIGURATION','INSTANCE'):
@@ -54,7 +60,8 @@ def main():
                 assert finer['status']==before['status'],(view,uid,finer['status'],before['status'])
                 fixed.append({'view':view,'domain':sample['domain'],'uid':uid,'role':sample['role'],
                               'shortest_status':after['status'],'shortest_unchanged':True,
-                              'display_changed':finer['path']!=before['path'],
+                              'display_payload_changed':finer['path']!=before['path'],
+                              'display_changed':topology(tree,finer)!=topology(tree,before),
                               'display_distance':finer.get('distance'),'shortest_distance':before.get('distance')})
             for alias, in tree.con.execute('SELECT alias FROM domain_aliases ORDER BY alias').fetchall():
                 entry=tree.domain(alias);canonical=entry['domain']
@@ -73,11 +80,12 @@ def main():
                     assert display['status']==path['status'],(view,dataset,class_id,path['status'],display['status'])
                     focus_checks.append({'view':view,'dataset':dataset,'class_id':class_id,'uid':uid,
                                          'identity_and_label_preserved':True,'status':path['status'],
-                                         'display_changed':path['path']!=display['path']})
+                                         'display_payload_changed':path['path']!=display['path'],
+                                         'display_changed':topology(tree,path)!=topology(tree,display)})
         write(a.output/'portal_checks.json',portals);write(a.output/'fixed_samples.json',fixed)
         write(a.output/'alias_checks.json',aliases);write(a.output/'focus_browse_checks.json',focus_checks)
         print('PORTALS AND FIXED SAMPLES',view,len(portals),len(fixed),flush=True)
-    with FineAtlas(a.database) as tree, FineAtlas(a.baseline) as old:
+    with FineAtlas(a.database,browse_index=a.browse_index) as tree, FineAtlas(a.baseline) as old:
         largest=list(tree.con.execute("""SELECT parent_component,role,relation,count(*) n
           FROM browse_links WHERE view='strict' AND role IN ('MODEL','CONFIGURATION')
           GROUP BY parent_component,role,relation
@@ -132,7 +140,7 @@ def main():
             seed=old.domain_page(name,1)['items'][0]
             for operation in ('domain_page','search','instances','path'):
                 for mode,database in (('before',a.baseline),('after',a.database)):
-                    opened=time.perf_counter();subject=FineAtlas(database)
+                    opened=time.perf_counter();subject=FineAtlas(database,browse_index=a.browse_index if mode=='after' else None)
                     startup=time.perf_counter()-opened
                     with subject:
                         runs=[];signature=None
@@ -170,14 +178,26 @@ def main():
                   FROM domain_members dm JOIN browse_nodes n ON n.uid=dm.uid
                   JOIN browse_facets f ON f.uid=n.uid AND f.facet='manufacturer'
                   WHERE dm.domain_id=? AND dm.view='strict' ORDER BY n.component_id LIMIT 8""",(entry['domain_id'],)))
-            focus=[];dataset='fgvc_aircraft' if domain=='aircraft' else 'stanford_cars'
+            focus=[];fallback=[];dataset='fgvc_aircraft' if domain=='aircraft' else 'stanford_cars'
             for row in tree.con.execute('SELECT class_id FROM dataset_targets WHERE dataset=? ORDER BY length(class_id),class_id',(dataset,)).fetchall():
                 target=tree.target(dataset,row[0]);uid=target['target_uid']
                 if tree.path_result(uid)['status'] not in ('ROOT','CONNECTED'):continue
-                focus.append((tree.node(uid)['component_id'],uid))
+                candidate=(tree.node(uid)['component_id'],uid)
+                if topology(tree,tree.path_result(uid))==topology(tree,tree.browse_path_result(uid)):
+                    fallback.append(candidate);continue
+                focus.append(candidate)
                 if len(focus)==2:break
+            focus+=(fallback[:2-len(focus)] if len(focus)<2 else [])
             used={r[0] for r in focus}
-            nonfocus=[r for r in selected if r[0] not in used][:3]
+            nonfocus=[r for r in selected if r[0] not in used][:2]
+            native=tree.con.execute('''SELECT DISTINCT n.component_id,n.uid FROM domain_members dm
+                JOIN browse_nodes n ON n.uid=dm.uid
+                WHERE dm.domain_id=? AND dm.view='strict' AND n.uid LIKE ?
+                ORDER BY n.component_id LIMIT 200''',(entry['domain_id'],'faa-aircraft:%' if domain=='aircraft' else 'epa:%')).fetchall()
+            options=[r for r in native if r[0] not in used|{x[0] for x in nonfocus}]
+            extra=next((r for r in options if topology(tree,tree.path_result(r[1]))!=topology(tree,tree.browse_path_result(r[1]))),options[0] if options else None)
+            if extra:nonfocus.append(extra)
+            else:nonfocus=[r for r in selected if r[0] not in used][:3]
             selected=focus+nonfocus
             assert len(selected)>=5,(domain,'insufficient source examples')
             for component,uid in selected:
@@ -185,7 +205,8 @@ def main():
                 examples.append({'domain':domain,'uid':uid,'label':tree.node(uid)['label'],
                                  'benchmark_example':uid in {r[1] for r in focus},
                                  'before':before,'after':after,'location':tree.browse_location(uid,domain),
-                                 'interpretation':'Source-witnessed finer route' if before['path']!=after['path'] else 'Native catalogue grouping; no new semantic middle class'})
+                                 'topology_changed':topology(tree,before)!=topology(tree,after),
+                                 'interpretation':'Source-witnessed finer route' if topology(tree,before)!=topology(tree,after) else 'Native catalogue grouping; original semantic path unchanged'})
         assert tree.browse_children_page('unknown:uid')['status']=='NOT_FOUND'
         assert tree.locate('test','unknown-domain')['status']=='UNKNOWN_DOMAIN'
         write(a.output/'complete_pagination.json',pages);write(a.output/'path_examples.json',examples)
@@ -193,7 +214,9 @@ def main():
     summary={'all_pass':True,'portal_role_view_checks':len(portals),'fixed_nonfocus_samples':len(fixed),
              'all_stored_alias_view_checks':len(aliases),'focus_label_view_browse_checks':len(focus_checks),
              'focus_display_changes':sum(r['display_changed'] for r in focus_checks),
+             'focus_payload_changes':sum(r['display_payload_changed'] for r in focus_checks),
              'fixed_shortest_paths_and_states_unchanged':True,'fixed_display_changes':sum(s['display_changed'] for s in fixed),
+             'fixed_payload_changes':sum(s['display_payload_changed'] for s in fixed),
              'complete_branch_page_checks':len(pages),'transport_examples':dict(Counter(e['domain'] for e in examples)),
              'performance_workloads_match':True,'seconds':time.monotonic()-start,
              'images_or_visual_models_run':False}
