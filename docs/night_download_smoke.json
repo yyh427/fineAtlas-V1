@@ -1,0 +1,11 @@
+{
+  "all_pass": true,
+  "actual_public_release_download": true,
+  "compressed_asset_sha256": "87a85785533a72dc6334cdc9cfd287c55469922ce13ea856e6a7fa217b6d2679",
+  "decompressed_index_sha256": "0ecd456a40fee1549fff221c657aaf4df6fd46cc9a9483406b9fd15382315cb3",
+  "downloaded_index_opened_through_public_api": true,
+  "aircraft_model_items": 20,
+  "car_year_groups": 5,
+  "scoped_search_status": "MATCHES",
+  "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a"
+}

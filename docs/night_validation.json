@@ -1,7 +1,7 @@
 {
-  "status": "ALL_LOCAL_CHECKS_PASS_REMOTE_DELIVERY_IN_PROGRESS",
+  "status": "COMPLETE_LOCAL_AND_GITHUB_CANDIDATE_DELIVERY",
   "sdk_version": "1.9.0rc1",
-  "candidate_release": "v1.9.0-night-review",
+  "candidate_release": "https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.9.0-night-review",
   "baseline_release": "v1.8.1-hierarchy-review",
   "baseline_database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
   "unit_tests": {
@@ -33,10 +33,7 @@
   "images_or_visual_models_run": false,
   "crj700_exact_identity": "UNCONFIRMED",
   "production_replacement_ready": false,
-  "remaining_validation": [
-    "Remote asset hashes and actual downloaded installation verification",
-    "GitHub final source/report synchronization"
-  ],
+  "remaining_validation": [],
   "independent_derived_reproduction": {
     "all_pass": true,
     "logical_checks": 9,
@@ -111,7 +108,7 @@
     "seconds": 109.49456677306443
   },
   "real_cli_calls": 14,
-  "single_file_candidate_status": "All local checks PASS; remote delivery being verified",
+  "single_file_candidate_status": "All local source/public/integrity/compression checks and remote hashes PASS",
   "sqlite_integrity": {
     "pass": true,
     "artifact": "browse-staging-final.sqlite",
@@ -227,5 +224,21 @@
     "bytes": 63136358400,
     "sha256": "36fda1fc8bd9fe0ebbb0e6320797eb7293e6d8c4cc8f83b01f25f14c4b664cff"
   },
-  "single_file_cli_calls": 14
+  "single_file_cli_calls": 14,
+  "remote_assets": {
+    "all_pass": true,
+    "assets_and_manifests": 9
+  },
+  "actual_public_download_smoke": {
+    "all_pass": true,
+    "actual_public_release_download": true,
+    "compressed_asset_sha256": "87a85785533a72dc6334cdc9cfd287c55469922ce13ea856e6a7fa217b6d2679",
+    "decompressed_index_sha256": "0ecd456a40fee1549fff221c657aaf4df6fd46cc9a9483406b9fd15382315cb3",
+    "downloaded_index_opened_through_public_api": true,
+    "aircraft_model_items": 20,
+    "car_year_groups": 5,
+    "scoped_search_status": "MATCHES",
+    "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a"
+  },
+  "production_replacement_limit": "Large source branches still lack some trustworthy intermediate semantic types; CRJ-700 precise external identity remains unconfirmed. Verified candidates are available for review/use; no production promotion performed."
 }

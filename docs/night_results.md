@@ -1,6 +1,6 @@
 # 今晚的优化结果
 
-只读索引候选已完成构建、独立复现和真实接口回归。它复用冻结的 v1.8.1 原始库，另加一份 8.60 GB 的浏览索引，两个文件都只读打开。完整来源边覆盖核验、SQLite 完整性检查及十份原始库与 V26 归档的哈希核验全部通过；单文件候选也通过 90 张核心表逐行比较、公开接口重复回归、SQLite 完整性和压缩包回读校验，远端分发确认正在完成。正式版本不替换。
+只读索引候选已完成构建、独立复现和真实接口回归。它复用冻结的 v1.8.1 原始库，另加一份 8.60 GB 的浏览索引，两个文件都只读打开。完整来源边覆盖核验、SQLite 完整性检查及十份原始库与 V26 归档的哈希核验全部通过；单文件候选也通过 90 张核心表逐行比较、公开接口重复回归、SQLite 完整性和压缩包回读校验，两种候选与清单的全部 9 项远端 SHA-256 已核对一致，公开下载、解压、SHA-256 校验及下载后接口查询均已通过。正式版本不替换。
 
 ## 实际改善
 
@@ -31,3 +31,7 @@ CRJ-700 的精确外部身份仍未确认；保留原标签、历史 UID 和 SOU
 [数据与后代身份集合保留](night_preservation.json)、[受保护文件](night_protected_files.json)、[详细验证](night_validation.json)、[所有受影响及大分支](night_branches.csv)、[飞机与汽车各 5 个路径实例](night_path_examples.json)、[完整分页](night_pagination.json)、[匹配工作量性能](night_performance.json)、[来源见证](night_source_witnesses.json)、[复现](night_reproduction.json)、[规则与回滚](night_browse_rules.json)、[使用及恢复命令](night_browsing.md)。
 
 单文件库为 63,136,358,400 字节，SHA-256 为 `36fda1fc8bd9fe0ebbb0e6320797eb7293e6d8c4cc8f83b01f25f14c4b664cff`。只读索引为 8,604,495,872 字节，SHA-256 为 `0ecd456a40fee1549fff221c657aaf4df6fd46cc9a9483406b9fd15382315cb3`。两种方式具有相同图数据和查询修订，单文件和只读组合分别经过真实回归；[单文件保留核验](night_single_preservation.json)逐行检查了所有核心记录。
+
+候选预发布：[v1.9.0-night-review](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.9.0-night-review)。正式版 latest 仍为 v1.6.0；该候选不会自动替换生产库。
+
+本轮验收与 GitHub 候选分发已完成，没有已发现的数据或接口退步。仍不建议直接替换正式版：最大的飞机/汽油配置分支缺少可信中间语义分类，CRJ-700 精确身份仍未确认。只读索引已通过真实公开下载安装及查询验证；完整库远端分片哈希与本地压缩回读校验一致。
