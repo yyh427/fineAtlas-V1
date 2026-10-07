@@ -33,6 +33,7 @@ p.add_argument(
         "hierarchy_contract_repairs",
         "hierarchy_role_repairs",
         "hierarchy_semantic_repairs",
+        "hierarchy_identity_role_repairs",
         "graphs",
     ],
     default=[
@@ -52,6 +53,7 @@ p.add_argument(
         "hierarchy_contract_repairs",
         "hierarchy_role_repairs",
         "hierarchy_semantic_repairs",
+        "hierarchy_identity_role_repairs",
         "sync_role_contracts",
         "graphs",
     ],

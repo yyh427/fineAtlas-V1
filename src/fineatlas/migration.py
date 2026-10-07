@@ -1590,6 +1590,10 @@ class Migration:
         from .hierarchy import apply_refinements
         return apply_refinements(self, 'hierarchy_semantic_repairs.jsonl')
 
+    def hierarchy_identity_role_repairs(self):
+        from .hierarchy import apply_identity_role_repairs
+        return apply_identity_role_repairs(self)
+
     def role_reconciliation(self):
         """Replay independently checked nominal roles across the entire source scope.
 
@@ -1748,7 +1752,7 @@ class Migration:
             print("COMPLETE", stage, flush=True)
         if self.c.execute(
             "SELECT 1 FROM usability_stages WHERE stage='graphs'"
-        ).fetchone() and (not mutated or "graphs" in stages or ('sync_role_contracts' in stages and set(stages).issubset({'adjudicate_design_grain','sync_role_contracts'})) or ('hierarchy_endpoint_contracts' in stages and 'sync_role_contracts' in stages and set(stages).issubset({'hierarchy_endpoint_contracts','sync_role_contracts'}))):
+        ).fetchone() and (not mutated or "graphs" in stages or ('sync_role_contracts' in stages and set(stages).issubset({'adjudicate_design_grain','sync_role_contracts'})) or ('hierarchy_endpoint_contracts' in stages and 'sync_role_contracts' in stages and set(stages).issubset({'hierarchy_endpoint_contracts','sync_role_contracts'})) or ('hierarchy_identity_role_repairs' in stages and 'sync_role_contracts' in stages and set(stages).issubset({'hierarchy_identity_role_repairs','sync_role_contracts'}))):
             self.meta("usability_indexes_ready", True)
             self.c.commit()
         self.c.close()

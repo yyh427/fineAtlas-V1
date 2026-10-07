@@ -66,6 +66,38 @@ def reconcile_instance_endpoints(m):
 VERSION = 'v1.8.0-hierarchy-review'
 LAYER = 'v1.8-hierarchy-review'
 
+def validate_identity_role_only(c, records):
+    """Prove an isolated source alias can adopt its native design identity.
+
+    CLASS and design roles have identical classification admission. With no
+    incident admitted assertions, changing this alias cannot alter any graph,
+    witness, scope, terminal connection or classification weight.
+    """
+    for r in records:
+        if r.get('op')!='role' or r.get('role') not in {'MODEL','MODEL_FAMILY'}:
+            raise ValueError('Identity role refresh only accepts design role decisions')
+        uid=r['uid'];authority=r['proof'].get('native_design_authority_uid')
+        n=c.execute('SELECT n.component_id,n.data,n.visibility,'+role_expression('n','p')+' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?',(uid,)).fetchone()
+        a=c.execute('SELECT n.component_id,n.source,n.data,n.visibility,p.attributes,'+role_expression('n','p')+' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?',(authority,)).fetchone()
+        if not n or not a or n['visibility']!='ACTIVE' or a['visibility']!='ACTIVE' or n['component_id']!=a['component_id'] or n['role'] not in {'CLASS',r['role']} or a['role']!=r['role']:
+            raise ValueError('Alias lacks an admitted same-identity native design authority')
+        if a['source'] not in {'faa','epa'} and json.loads(a['attributes'] or '{}').get('role_status')!='VERIFIED':
+            raise ValueError('Identity authority has no explicit verified design grain')
+        for value,key in [(n,'native_record_sha256'),(a,'authority_native_record_sha256')]:
+            if hashlib.sha256(value['data'].encode()).hexdigest()!=r['proof'].get(key):
+                raise ValueError('Identity role source checksum differs')
+        if c.execute("SELECT 1 FROM edges WHERE status IN ('ACTIVE','TYPED_ACTIVE') AND (child_uid=? OR parent_uid=?) LIMIT 1",(uid,uid)).fetchone() or c.execute("SELECT 1 FROM entity_relations WHERE status='ACTIVE' AND (subject_uid=? OR object_uid=?) LIMIT 1",(uid,uid)).fetchone():
+            raise ValueError('Alias has incident assertions; a complete graph rebuild is required')
+    return {'source_uids':len(records),'graph_admission_unchanged':True}
+
+def apply_identity_role_repairs(m):
+    path=m.inputs/'hierarchy_identity_role_repairs.jsonl'
+    if not path.exists():return {'status':'not_requested'}
+    records=[json.loads(line) for line in path.open() if line.strip()]
+    proof=validate_identity_role_only(m.c,records)
+    result=apply_refinements(m,path.name)
+    return {**result,**proof}
+
 def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     m=migration;c=m.c;path=m.inputs/input_name
     if any((m.inputs/name).exists() for name in ['hierarchy_facts.incomplete','hierarchy_work.incomplete']):
@@ -197,6 +229,6 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     for source,rows in sorted(by_source.items()):
         licenses=sorted({r['proof'].get('license','Original source terms and attribution retained') for r in rows})
         c.execute('INSERT OR REPLACE INTO source_catalogs VALUES (?,?,?,?,?)',('Hierarchy refinement: '+source,rows[0]['uri'],'; '.join(licenses),hashlib.sha256(path.read_bytes()).hexdigest(),json.dumps({'operations':len(rows),'classes':sum(r['op']=='class' for r in rows),'source_statement_retained':True},sort_keys=True)))
-    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair'}[input_name]
+    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair'}[input_name]
     m.meta('release',VERSION);m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
     return dict(counts)
