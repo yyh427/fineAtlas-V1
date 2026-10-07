@@ -1,63 +1,63 @@
 {
-  "release": "v1.7.1-review",
-  "database_sha256": "52ed3777de469925513ed5ab609704f1369c250e7fd2076cfccdb950c6aa82e1",
-  "source_uid_count": 12653743,
+  "release": "v1.8.0-hierarchy-review",
+  "database_sha256": "3062c9c4ab77160ca702c57e6eb04d616cad6b6814173c973c0c7d87d7b860c1",
+  "source_uid_count": 12654331,
   "visibility": {
-    "ACTIVE": 12399658,
+    "ACTIVE": 12400246,
     "PRUNED_WORDNET": 79,
     "SOURCE_ONLY": 254006
   },
   "active_roles": {
     "ATTRIBUTE": 49,
     "BIOLOGICAL_VARIANT": 41883,
-    "CLASS": 8409468,
+    "CLASS": 8403543,
     "CONFIGURATION": 319290,
     "DATASET_CATEGORY": 594,
-    "INSTANCE": 3401544,
-    "MODEL": 144299,
-    "MODEL_FAMILY": 1729,
-    "ORGANIZATION": 80793,
+    "INSTANCE": 3401555,
+    "MODEL": 150073,
+    "MODEL_FAMILY": 2458,
+    "ORGANIZATION": 80792,
     "UNKNOWN": 9
   },
   "canonical_portals": 91,
   "compatible_portals": 93,
   "views": {
     "strict": {
-      "class_root_groups": 5159278,
-      "class_root_source_uids": 5173925,
-      "class_groups_total": 8631753,
-      "arcs": 5435107,
-      "provenance_rows": 5438532,
+      "class_root_groups": 5063544,
+      "class_root_source_uids": 5077354,
+      "class_groups_total": 8632328,
+      "arcs": 5340147,
+      "provenance_rows": 5345597,
       "cycle_arcs": 0,
-      "weak_components": 3208668,
-      "unrooted_weak_components": 3208667,
-      "unrooted_frontier_groups": 3208790,
+      "weak_components": 3305029,
+      "unrooted_weak_components": 3305028,
+      "unrooted_frontier_groups": 3305140,
       "max_root_shortest_depth": 40,
-      "typed_terminal_root_uids": 3528140
+      "typed_terminal_root_uids": 3628598
     },
     "taxonomy": {
-      "class_root_groups": 8521014,
-      "class_root_source_uids": 8496534,
-      "class_groups_total": 8882229,
-      "arcs": 8552461,
-      "provenance_rows": 8780389,
+      "class_root_groups": 8425284,
+      "class_root_source_uids": 8399967,
+      "class_groups_total": 8882808,
+      "arcs": 8458436,
+      "provenance_rows": 8687458,
       "cycle_arcs": 0,
-      "weak_components": 352369,
-      "unrooted_weak_components": 352368,
-      "unrooted_frontier_groups": 352452,
+      "weak_components": 448730,
+      "unrooted_weak_components": 448729,
+      "unrooted_frontier_groups": 448802,
       "max_root_shortest_depth": 86,
-      "typed_terminal_root_uids": 3730575
+      "typed_terminal_root_uids": 3831033
     },
     "membership": {
       "class_root_groups": 1,
       "class_root_source_uids": 1,
-      "class_groups_total": 8632347,
+      "class_groups_total": 8632922,
       "arcs": 13766,
       "provenance_rows": 13766,
       "cycle_arcs": 0,
-      "weak_components": 8618641,
-      "unrooted_weak_components": 8618640,
-      "unrooted_frontier_groups": 8618673,
+      "weak_components": 8619216,
+      "unrooted_weak_components": 8619215,
+      "unrooted_frontier_groups": 8619248,
       "max_root_shortest_depth": 0,
       "typed_terminal_root_uids": 0
     }
@@ -67,7 +67,7 @@
       "labels": 755,
       "root_path": 568,
       "hierarchy_usable": 568,
-      "strict_classification_usable": 365
+      "strict_classification_usable": 340
     },
     "taxonomy": {
       "labels": 755,
@@ -89,5 +89,197 @@
     "typed_terminal_root_uids": "Role-compatible explicit terminal connections; not strict IS_A count.",
     "depth": "Maximum shortest rooted classification distance; identity links cost zero.",
     "domain_scope": "Native-root descendant membership can include a legitimate unrooted global branch. Domain counts overlap."
-  }
+  },
+  "hierarchy_cohort": {
+    "operations": 264718,
+    "unique_operations": 264718,
+    "operations_by_kind": {
+      "class": 588,
+      "role": 6575,
+      "withdraw_typed": 4558,
+      "split_identity": 1,
+      "link": 148846,
+      "withdraw_edge": 102511,
+      "portal_roots": 2,
+      "restore_edge": 1637
+    },
+    "class_records": 588,
+    "unique_class_uids": 588,
+    "new_classes_by_domain": {
+      "aircraft": 44,
+      "medical_devices": 288,
+      "cars": 9,
+      "mountain_ranges": 2,
+      "mountains": 14,
+      "rivers": 4,
+      "lakes": 66,
+      "islands": 15,
+      "beaches": 6,
+      "valleys": 19,
+      "volcanoes": 11,
+      "glaciers": 12,
+      "clouds": 24,
+      "ceramic_capacitors": 1,
+      "computer_monitors": 6,
+      "television_sets": 3,
+      "cameras": 2,
+      "digital_cameras": 2,
+      "camera_lenses": 2,
+      "network_switches": 3,
+      "network_routers": 3,
+      "solid_state_drives": 6,
+      "integrated_circuits": 1,
+      "semiconductor_diodes": 4,
+      "microprocessors": 2,
+      "printers": 1,
+      "desktop_computers": 1,
+      "laptops": 1,
+      "single_board_computers": 1,
+      "headphones": 1,
+      "earbuds": 2,
+      "fitness_trackers": 2,
+      "wearable_computers": 1,
+      "game_consoles": 2,
+      "tractors": 4,
+      "tablets": 3,
+      "computer_hardware": 3,
+      "gpus": 3,
+      "smartwatches": 3,
+      "loudspeakers": 1,
+      "aquifers": 1,
+      "surgical_instruments": 4,
+      "habitat_complexes": 2,
+      "deserts": 1,
+      "graphics_cards": 2
+    },
+    "link_relations": {
+      "CONFIGURATION_OF": 1,
+      "DESIGN_TYPE_OF": 107091,
+      "IS_A": 7051,
+      "CONFIGURATION_TYPE_OF": 25978,
+      "INSTANCE_OF": 94,
+      "REGULATED_AS": 5598,
+      "NATIVE_DESIGN_PARENT": 3033
+    },
+    "original_hierarchy_operations": 244397,
+    "contract_repair_operations": 9824,
+    "contract_repair_operations_by_kind": {
+      "withdraw_typed": 4424,
+      "link": 2796,
+      "withdraw_edge": 967,
+      "restore_edge": 1637
+    },
+    "contract_repair_link_relations": {
+      "DESIGN_TYPE_OF": 2294,
+      "IS_A": 502
+    },
+    "derived_authoritative_instance_endpoint_exclusions": 1,
+    "counts_note": "Operation counts include corrective history and repeated link proposals; class counts are unique professional types. Corrective supersession preserves source declarations.",
+    "original_operations_by_kind": {
+      "class": 588,
+      "role": 2350,
+      "withdraw_typed": 129,
+      "split_identity": 1,
+      "link": 142935,
+      "withdraw_edge": 98392,
+      "portal_roots": 2
+    },
+    "original_link_relations": {
+      "CONFIGURATION_OF": 1,
+      "DESIGN_TYPE_OF": 104720,
+      "IS_A": 6547,
+      "CONFIGURATION_TYPE_OF": 25978,
+      "INSTANCE_OF": 91,
+      "REGULATED_AS": 5598
+    },
+    "engineering_role_repair": {
+      "operations": 10496,
+      "role_uids": 4225,
+      "role_counts": {
+        "MODEL": 3584,
+        "MODEL_FAMILY": 635,
+        "CLASS": 3,
+        "INSTANCE": 3
+      },
+      "operation_counts": {
+        "role": 4225,
+        "withdraw_edge": 3152,
+        "link": 3115,
+        "withdraw_typed": 4
+      },
+      "relation_counts": {
+        "NATIVE_DESIGN_PARENT": 3033,
+        "DESIGN_TYPE_OF": 77,
+        "IS_A": 2,
+        "INSTANCE_OF": 3
+      },
+      "retained_reviews": [
+        {
+          "uid": "wikidata-v4:Q112862060",
+          "label": "RAF Voyager fleet",
+          "reason": "Source describes an operational fleet; preserve assertion for collection review"
+        }
+      ],
+      "superseded_input_links": [],
+      "late_root_shortcut_repairs": {
+        "ordinary_CLASS_root_shortcuts": 3,
+        "named_design_role_repairs": 3,
+        "alternate_class_witnesses_preserved": true
+      },
+      "isolated_identity_role_repairs": 1,
+      "fourth_cohort_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+      "isolated_identity_cohort_sha256": "3394d003668815156b025bb214ba675b6d95d1677d9d1ea57c55ebc87f031794",
+      "cohort_files": [
+        "hierarchy_role_repairs.jsonl",
+        "hierarchy_identity_role_repairs.jsonl"
+      ]
+    },
+    "input_files": [
+      {
+        "name": "hierarchy_facts.jsonl",
+        "sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+        "operations": 232661
+      },
+      {
+        "name": "hierarchy_extensions.jsonl",
+        "sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+        "operations": 11736
+      },
+      {
+        "name": "hierarchy_contract_repairs.jsonl",
+        "sha256": "80d6f1c837a1e29a49aa571ed2b4ab68973aa8524f67321b484b4288b8d954e2",
+        "operations": 9824
+      },
+      {
+        "name": "hierarchy_role_repairs.jsonl",
+        "sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+        "operations": 10495
+      },
+      {
+        "name": "hierarchy_semantic_repairs.jsonl",
+        "sha256": "054e077c03199db7e86d424cfb6610aaf7ee12a34f3f3816f64b9bf00d9adbeb",
+        "operations": 1
+      },
+      {
+        "name": "hierarchy_identity_role_repairs.jsonl",
+        "sha256": "3394d003668815156b025bb214ba675b6d95d1677d9d1ea57c55ebc87f031794",
+        "operations": 1
+      }
+    ],
+    "professional_root_shortcut_summary": {
+      "candidate_pairs": 25,
+      "witnessed_root_shortcuts": 6,
+      "by_professional_domain": {
+        "deserts": 2,
+        "tablets": 2,
+        "wearable_computers": 1,
+        "aircraft": 1
+      },
+      "unproved_pairs_retained": 19,
+      "removed_source_claims": 0
+    },
+    "semantic_repairs": 1
+  },
+  "ordinary_CLASS_layers_file": "review_hierarchy.csv",
+  "professional_CLASS_definitions_file": "review_middle_classes.csv"
 }

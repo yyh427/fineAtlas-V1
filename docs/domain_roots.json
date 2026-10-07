@@ -166,8 +166,8 @@
     "domain": "computer_hardware",
     "entry_uid": "fineatlas-domain:computer_hardware",
     "root_uids": [
-      "wikidata:Q183484",
       "wikidata:Q3966",
+      "wikidata:Q183484",
       "wikidata:Q487343",
       "wikidata:Q5290",
       "wikidata:Q5297"
@@ -231,8 +231,6 @@
     "domain": "earbuds",
     "entry_uid": "fineatlas-domain:earbuds",
     "root_uids": [
-      "apple-model:c0f86089ceef6af4bd3e",
-      "samsung-family:galaxy-buds",
       "wikidata:Q50184015"
     ],
     "description": "One domain entry collects independently identified, root-connected source scopes."

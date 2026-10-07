@@ -1,6 +1,6 @@
 {
-  "release": "v1.7.1-review",
-  "database_sha256": "52ed3777de469925513ed5ab609704f1369c250e7fd2076cfccdb950c6aa82e1",
+  "release": "v1.8.0-hierarchy-review",
+  "database_sha256": "3062c9c4ab77160ca702c57e6eb04d616cad6b6814173c973c0c7d87d7b860c1",
   "engineering_checks": {
     "source_false_active_ISA": 0,
     "baseline_nodes_deleted": 0,
@@ -35,19 +35,98 @@
       "changed_or_deleted": 0
     }
   },
-  "tests_passed": 34,
+  "tests_passed": 47,
+  "independent_database_sha256": "c91834d535d7cd57bff00ad95e8953eb1cb4a43e311bc7842de0034d16a877be",
   "public_interface_audit": {
     "observed_task_records": 1822,
     "observed_legacy_portals": 93,
     "six_dataset_labels": 755,
     "view_task_checks": 5466,
     "view_portal_checks": 279,
-    "public_path_samples": 1706,
-    "member_search_checks": 1281,
+    "public_path_samples": 1762,
+    "member_search_checks": 1296,
     "errors": [],
-    "seconds": 39.50560249434784,
+    "seconds": 41.684085813350976,
     "semantic_boundary": "Interface/contract audit and source-grounded sampled paths; not a scientific certification of all claims."
   },
-  "independent_rebuild_logical_checks": 90,
-  "scope": "Whole-table engineering/source-preservation contracts and source-grounded semantic samples; no certification of every scientific claim or recognition-accuracy claim."
+  "independent_rebuild_logical_checks": 91,
+  "scope": "Whole-table engineering/source-preservation contracts and source-grounded semantic samples; no certification of every scientific claim or recognition-accuracy claim.",
+  "professional_hierarchy_checks": {
+    "engineering_role_source_uids": 4225,
+    "professional_root_shortcuts": 3,
+    "late_named_design_leaf_repairs": 3,
+    "new_source_uid_classes": 588,
+    "new_classes_by_domain": {
+      "aircraft": 44,
+      "medical_devices": 288,
+      "cars": 9,
+      "mountain_ranges": 2,
+      "mountains": 14,
+      "rivers": 4,
+      "lakes": 66,
+      "islands": 15,
+      "beaches": 6,
+      "valleys": 19,
+      "volcanoes": 11,
+      "glaciers": 12,
+      "clouds": 24,
+      "ceramic_capacitors": 1,
+      "computer_monitors": 6,
+      "television_sets": 3,
+      "cameras": 2,
+      "digital_cameras": 2,
+      "camera_lenses": 2,
+      "network_switches": 3,
+      "network_routers": 3,
+      "solid_state_drives": 6,
+      "integrated_circuits": 1,
+      "semiconductor_diodes": 4,
+      "microprocessors": 2,
+      "printers": 1,
+      "desktop_computers": 1,
+      "laptops": 1,
+      "single_board_computers": 1,
+      "headphones": 1,
+      "earbuds": 2,
+      "fitness_trackers": 2,
+      "wearable_computers": 1,
+      "game_consoles": 2,
+      "tractors": 4,
+      "tablets": 3,
+      "computer_hardware": 3,
+      "gpus": 3,
+      "smartwatches": 3,
+      "loudspeakers": 1,
+      "aquifers": 1,
+      "surgical_instruments": 4,
+      "habitat_complexes": 2,
+      "deserts": 1,
+      "graphics_cards": 2
+    },
+    "faa": 94043,
+    "identity_splits": 1
+  },
+  "all_domain_layer_census": {
+    "canonical_domains": 91,
+    "domain_views_checked": 273,
+    "unique_new_CLASS_UIDs": 588,
+    "native_regulatory_CLASS_UIDs": 4,
+    "before_strict_depth_at_most_one_domains": 24,
+    "after_strict_depth_at_most_one_domains": 2,
+    "before_CLASS_path_role_gap_UIDs_sum_overlapping_domains": 4477,
+    "after_CLASS_path_role_gap_UIDs_sum_overlapping_domains": 0,
+    "scope_boundary": "Domain scopes overlap; source UIDs are not unique real objects; shortest layer differences do not prove incorrect edges. Source-grounded layer census is not certification of every scientific fact.",
+    "legitimate_short_CLASS_domains": [
+      {
+        "domain": "desktop_computers",
+        "layers": "1,1",
+        "boundary": "本次覆盖支持台式机→一体式台式机这一层专业细分；未用尺寸、品牌或年份制造额外层次。型号/配置另列。"
+      },
+      {
+        "domain": "waterfalls",
+        "layers": "2,12",
+        "boundary": "现有瀑布专业类型为根下直接子类；未找到充分证据把这些并列形态强行串成更深链。命名瀑布另作实例。"
+      }
+    ]
+  }
 }
