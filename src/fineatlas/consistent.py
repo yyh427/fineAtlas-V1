@@ -21,12 +21,16 @@ from .semantics import (
     edge_predicate,
     role_for_rank,
     role_expression,
+    source_admission_view,
+    terminal_relations,
+    classification_roles,
+    navigation_parent_roles,
 )
 
 
 class ConsistentAtlas(SingleAtlas):
     def __init__(
-        self, path, view="wordnet", relation_view="strict", *, root=None, language="en"
+        self, path, view="wordnet", relation_view=None, *, root=None, language="en"
     ):
         super().__init__(path, view=view, relation_view=relation_view)
         self.root_uid = root or self.metadata["root_uid"]
@@ -111,6 +115,7 @@ class ConsistentAtlas(SingleAtlas):
         native_rank = (result.get("native_rank") or result.get("rank") or "").casefold()
         taxonomic_ranks = {
             "species",
+            "cultivar",
             "subspecies",
             "variety",
             "genus",
@@ -460,19 +465,15 @@ class ConsistentAtlas(SingleAtlas):
             and node["visibility"] == "ACTIVE"
             and (
                 node.get("allowed_views") is None
-                or self.relation_view in node["allowed_views"]
+                or source_admission_view(self.relation_view) in node["allowed_views"]
             )
         )
 
     def _role_allowed(self, role):
-        return (
-            role in CLASS_ROLES
-            or (self.relation_view == "taxonomy" and role == "BIOLOGICAL_VARIANT")
-            or (self.relation_view == "membership" and role == "DATASET_CATEGORY")
-        )
+        return role in classification_roles(self.relation_view)
 
     def _parents(self, uid, *, include_terminal=True):
-        key = (uid, include_terminal)
+        key = (self.relation_view, uid, include_terminal)
         if key in self._parent_cache:
             return self._parent_cache[key]
         own = self._basic(uid)
@@ -506,12 +507,12 @@ class ConsistentAtlas(SingleAtlas):
                             rel
                             for kind, rels in TYPED_TERMINALS.items()
                             if kind in CLASS_ROLES
-                            for rel in rels
+                            for rel in terminal_relations(kind, self.relation_view)
                         }
                     )
                 )
                 if own["node_kind"] in CLASS_ROLES
-                else TYPED_TERMINALS.get(own["node_kind"], ())
+                else terminal_relations(own["node_kind"], self.relation_view)
             )
             if relations:
                 marks = ",".join("?" for _ in relations)
@@ -524,7 +525,7 @@ class ConsistentAtlas(SingleAtlas):
                     child = self._basic(row["subject_uid"])
                     if not self._node_admitted(child) or row[
                         "relation"
-                    ] not in TYPED_TERMINALS.get(child["node_kind"], ()):
+                    ] not in terminal_relations(child["node_kind"], self.relation_view):
                         continue
                     compatible = (
                         child["node_kind"] in CLASS_ROLES
@@ -533,9 +534,7 @@ class ConsistentAtlas(SingleAtlas):
                     )
                     if not compatible:
                         continue
-                    if self._node_admitted(parent) and self._role_allowed(
-                        parent["node_kind"]
-                    ):
+                    if self._node_admitted(parent) and parent["node_kind"] in navigation_parent_roles(self.relation_view):
                         edge = self._edge(row)
                         edge["child_uid"] = row["subject_uid"]
                         edge["parent_uid"] = edge["object_uid"]
@@ -665,7 +664,9 @@ class ConsistentAtlas(SingleAtlas):
         if uid.startswith("fineatlas-domain:"):
             entry = self.domain(uid)
             return (
-                None
+                ({'uid':uid,'status':'NOT_FOUND','path_status':'NOT_FOUND','root_reachable':False,
+                  'view_admitted':False,'relation_view':self.relation_view,'root_uid':self.root_uid}
+                 if self.relation_view=='unified' else None)
                 if not entry
                 else {
                     "uid": uid,
@@ -677,7 +678,10 @@ class ConsistentAtlas(SingleAtlas):
             )
         node = self._basic(uid)
         if not node:
-            return None
+            return ({'uid':uid,'status':'NOT_FOUND','path_status':'NOT_FOUND',
+                     'root_reachable':False,'view_admitted':False,
+                     'relation_view':self.relation_view,'root_uid':self.root_uid}
+                    if self.relation_view=='unified' else None)
         record = self._root_record(uid) if self._node_admitted(node) else None
         if record is not None:
             connected = record["root_reachable"]
@@ -721,7 +725,7 @@ class ConsistentAtlas(SingleAtlas):
                 or node["node_kind"] in TYPED_TERMINALS
             ),
             "root_reachable": connected,
-            "classification_root_reachable": strict_class,
+            "classification_root_reachable": class_in_view if self.relation_view=='unified' else strict_class,
             "strict_classification_root_reachable": strict_class,
             "class_root_reachable_in_view": class_in_view,
             "native_navigation_root_reachable": native_navigation,
@@ -753,13 +757,9 @@ class ConsistentAtlas(SingleAtlas):
                 own
                 and own["visibility"] == "ACTIVE"
                 and (
-                    own["node_kind"] in CLASS_ROLES
-                    or view == "taxonomy"
-                    and own["node_kind"] == "BIOLOGICAL_VARIANT"
-                    or view == "membership"
-                    and own["node_kind"] == "DATASET_CATEGORY"
+                    own["node_kind"] in classification_roles(view)
                 )
-                and (own.get("allowed_views") is None or view in own["allowed_views"])
+                and (own.get("allowed_views") is None or source_admission_view(view) in own["allowed_views"])
             )
 
         own = self._basic(uid)
@@ -883,6 +883,9 @@ class ConsistentAtlas(SingleAtlas):
     def browse_domain(self, name, limit=20):
         entry = self.domain(name)
         if not entry:
+            if self.relation_view=='unified':
+                return {'status':'NOT_FOUND','reason':'UNKNOWN_DOMAIN','domain':name,
+                        'roots':[],'children':[],'relation_view':self.relation_view}
             raise ValueError("Unknown domain: " + name)
         return {
             "entry": entry,
@@ -1000,12 +1003,12 @@ class ConsistentAtlas(SingleAtlas):
         permitted = sorted(
             CLASS_ROLES
             | set(TYPED_TERMINALS)
-            | ({"BIOLOGICAL_VARIANT"} if self.relation_view == "taxonomy" else set())
+            | ({"BIOLOGICAL_VARIANT"} if self.relation_view in ("taxonomy", "unified") else set())
         )
         roles = ",".join("'" + x + "'" for x in permitted)
         extra = ""
         if "node_profiles" in self._tables:
-            extra = f" AND NOT EXISTS(SELECT 1 FROM node_profiles ap WHERE ap.uid={alias}.uid AND json_type(ap.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(ap.attributes,'$.allowed_views') av WHERE av.value='{self.relation_view}'))"
+            extra = f" AND NOT EXISTS(SELECT 1 FROM node_profiles ap WHERE ap.uid={alias}.uid AND json_type(ap.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(ap.attributes,'$.allowed_views') av WHERE av.value='{source_admission_view(self.relation_view)}'))"
         return f"{alias}.visibility='ACTIVE' AND {role} IN ({roles})" + extra
 
     def _custom_scope(self):
@@ -1107,7 +1110,13 @@ class ConsistentAtlas(SingleAtlas):
                 "relation_view": self.relation_view,
                 "database_revision": self._revision,
             }
-        domain_sql, domain_args = self._domain_filter(domain)
+        try:
+            domain_sql, domain_args = self._domain_filter(domain)
+        except ValueError:
+            if self.relation_view!='unified':raise
+            return {'status':'NOT_FOUND','reason':'UNKNOWN_DOMAIN','domain':domain,
+                    'items':[],'next_cursor':None,'has_more':False,
+                    'relation_view':self.relation_view,'database_revision':self._revision}
         kind_sql, kind_args = self._kind_filter(node_kind)
         visible = (
             self._visible_sql("n")
@@ -1194,6 +1203,10 @@ class ConsistentAtlas(SingleAtlas):
             raise ValueError("Page limit must be at most 10000")
         entry = self.domain(name)
         if not entry:
+            if self.relation_view=='unified':
+                return {'status':'NOT_FOUND','reason':'UNKNOWN_DOMAIN','domain':name,
+                        'items':[],'next_cursor':None,'has_more':False,
+                        'relation_view':self.relation_view,'database_revision':self._revision}
             raise ValueError("Unknown domain: " + name)
         context = self._page_context("domain", [entry["domain"], node_kind])
         after = self._after(cursor, context)
@@ -1296,7 +1309,7 @@ class ConsistentAtlas(SingleAtlas):
                     CLASS_ROLES
                     | (
                         {"BIOLOGICAL_VARIANT"}
-                        if self.relation_view == "taxonomy"
+                        if self.relation_view in ("taxonomy", "unified")
                         else set()
                     )
                 )
@@ -1431,6 +1444,100 @@ class ConsistentAtlas(SingleAtlas):
                 raise QueryLimitError("Ancestor query exceeded max_nodes")
         return found
 
+    def relation_reward_index(self, dataset, *, policy=None, excluded_labels=None,
+                              blocked_ancestors=(), coarse_roots=(), review_policy=None,
+                              max_nodes=10000, source_scope=None, requirement=None):
+        """Prepare a frozen, typed, bounded batch index for text tree rewards.
+
+        Applicable results are structurally screened, not scientific validation.
+        Use a reviewed label exclusion policy alongside the frozen DB revision.
+        """
+        from .rewards import RelationRewardIndex
+        config=self.metadata.get('unified_reward_policies',{}).get(dataset,{}) if self.relation_view=='unified' else {}
+        if review_policy is None and config and policy is None and not coarse_roots and source_scope is None and requirement is None:
+            policy=config.get('policy');coarse_roots=config.get('coarse_roots',())
+            source_scope=config.get('source_scope');requirement=config.get('requirement')
+        return RelationRewardIndex(self, dataset, policy=policy,
+                                   excluded_labels=excluded_labels,
+                                   blocked_ancestors=blocked_ancestors,
+                                   coarse_roots=coarse_roots, review_policy=review_policy,
+                                   max_nodes=max_nodes, source_scope=source_scope,
+                                   requirement=requirement)
+
+    def export_training(self, dataset, directory, *, max_nodes=10000):
+        """Export every original label and pair with an explicit reward mask.
+
+        Invalid hierarchy terms do not remove labels or disable label accuracy.
+        A common-ancestor distance is a typed navigation metric, not a validated
+        measure of visual similarity or calibrated classification severity.
+        """
+        from collections import Counter
+        directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
+        index=self.relation_reward_index(dataset,max_nodes=max_nodes)
+        labels=self.task_labels(dataset,requirement=index.requirement)
+        with (directory/'labels.jsonl').open('w',encoding='utf-8') as stream:
+            for label in labels:
+                checked=dict(index.labels[str(label['class_id'])])
+                stream.write(json.dumps({'target':label,'path':self.task_path(dataset,label['class_id'],index=index),
+                    'category_reward_applicable':True,'hierarchy_endpoint_applicable':checked['reason'] is None,
+                    'hierarchy_endpoint_reason':checked['reason'],'snapshot_revision':self._revision,
+                    'relation_view':self.relation_view},ensure_ascii=False)+'\n')
+        counts=Counter()
+        with (directory/'pairs.jsonl').open('w',encoding='utf-8') as stream:
+            for pair in index.pairs():
+                counts[pair['status']]+=1
+                stream.write(json.dumps(pair,ensure_ascii=False)+'\n')
+        result={'dataset':dataset,'labels':len(labels),'pairs':sum(counts.values()),
+                'pair_statuses':dict(counts),'database_revision':self._revision,
+                'relation_view':self.relation_view,'policy':index.policy,
+                'source_scope':index.source_scope,'requirement':index.requirement,
+                'nonapplicable_distance':None,'category_reward_preserved':True,
+                'metric':'minimum_upward_informative_lca_arc_sum',
+                'semantic_scope':'Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified'}
+        (directory/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
+        return result
+
+    def task_path(self,dataset,class_id,*,index=None,max_depth=256,max_nodes=10000):
+        """Show the same typed/source lineage selected by the frozen task policy.
+
+        A valid navigation path and an eligible training endpoint are distinct
+        fields. Caller needs dataset/class ID, never native UID conventions.
+        """
+        target=self.target(dataset,class_id)
+        if not target:return {'status':'UNKNOWN_LABEL','dataset':dataset,'class_id':str(class_id),'path':[]}
+        index=index or self.relation_reward_index(dataset,max_nodes=max_nodes)
+        from .rewards import POLICIES
+        own=self._basic(target['target_uid']);policy=POLICIES[index.policy]
+        label=index.labels[str(class_id)]
+        base={'uid':target['target_uid'],'dataset':dataset,'class_id':str(class_id),
+              'relation_view':self.relation_view,'policy':index.policy,'source_scope':index.source_scope,
+              'training_endpoint_applicable':label['reason'] is None,
+              'training_endpoint_reason':label['reason'],'root_uid':self.root_uid,'path':[]}
+        if not self._node_admitted(own):return {**base,'status':'NOT_ADMITTED'}
+        if own['node_kind'] not in policy['roles']:return {**base,'status':'ROLE_NOT_APPLICABLE'}
+        goals=set(index._floor_components) or {self._basic(self.root_uid)['component_id']}
+        queue=deque([(own['uid'],[],0)]);seen=set();depth_cut=False
+        while queue:
+            current,upward,depth=queue.popleft();comp=self._basic(current)['component_id']
+            if comp in seen:continue
+            seen.add(comp)
+            if len(seen)>max_nodes:return {**base,'status':'QUERY_LIMIT'}
+            if comp in goals:
+                prefix=self.path_result(current,max_depth=max_depth-depth)
+                if prefix['status'] not in ('ROOT','CONNECTED'):return {**base,'status':prefix['status']}
+                return {**base,'status':'CONNECTED','path':prefix['path']+list(reversed(upward)),
+                        'classification_arc_count':depth+prefix.get('distance',0),
+                        'identity_steps_cost':0}
+            if depth>=max_depth:depth_cut=True;continue
+            for parent,edge in self._parents(current):
+                child=self._basic(edge['child_uid']);pn=self._basic(parent)
+                if edge['relation'] not in policy['relations'] or child['node_kind'] not in policy['roles'] or pn['node_kind'] not in policy['roles']:continue
+                if index.source_scope is not None and not(child['source']==index.source_scope and
+                    (pn['source']==index.source_scope or pn['component_id'] in goals)):continue
+                aligned=self._identity_steps(current,edge['child_uid'])
+                queue.append((parent,upward+aligned+[self._step_for(edge['child_uid'],parent,edge)],depth+1))
+        return {**base,'status':'DEPTH_LIMIT' if depth_cut else 'NO_POLICY_PATH'}
+
     def ancestors(self, uid, limit=1000, *, include_self=False, max_nodes=100000):
         self._limit(limit)
         found = self._ancestor_map(uid, max_nodes)
@@ -1445,7 +1552,66 @@ class ConsistentAtlas(SingleAtlas):
         ]
         return ResultList(items, has_more=len(rows) > limit)
 
-    def lca(self, left, right, *, max_nodes=100000):
+    def ancestors_result(self, uid, limit=1000, *, include_self=False, max_nodes=100000):
+        """Structured ancestor query; invalid endpoints never receive fake paths."""
+        base={'uid':uid,'relation_view':self.relation_view,'root_uid':self.root_uid}
+        status=self.path_result(uid)['status']
+        if status not in ('CONNECTED','ROOT','UNREACHABLE'):
+            return {**base,'status':status,'items':[],'has_more':False}
+        try:
+            items=self.ancestors(uid,limit,include_self=include_self,max_nodes=max_nodes)
+        except QueryLimitError as error:
+            return {**base,'status':'QUERY_LIMIT','reason':str(error),'items':[],'has_more':False}
+        except ValueError as error:
+            return {**base,'status':'VIEW_NOT_APPLICABLE','reason':str(error),'items':[],'has_more':False}
+        return {**base,'status':status,'items':list(items),'has_more':items.has_more}
+
+    def source_hierarchy(self, uid, *, direction='parents', limit=100):
+        """Inspect direct retained source assertions without identity expansion.
+
+        This native-record view includes disposition and does not assert that
+        every original declaration is eligible for the unified classification.
+        """
+        self._limit(limit)
+        if direction not in ('parents','children'):
+            return {'status':'UNSUPPORTED_DIRECTION','items':[]}
+        own=self._basic(uid)
+        if own is None:return {'status':'NOT_FOUND','uid':uid,'items':[]}
+        endpoint='child_uid' if direction=='parents' else 'parent_uid'
+        other='parent_uid' if direction=='parents' else 'child_uid'
+        rows=self.con.execute(f'''SELECT e.* FROM edges e JOIN nodes n ON n.uid=e.{other}
+            WHERE e.{endpoint}=? AND n.source=? ORDER BY e.id LIMIT ?''',
+            (uid,own['source'],limit+1)).fetchall()
+        return {'status':'SOURCE_RECORD_VIEW','uid':uid,'source':own['source'],
+                'direction':direction,'items':[dict(r) for r in rows[:limit]],
+                'has_more':len(rows)>limit,'identity_expanded':False,
+                'classification_admission_is_separate':True}
+
+    def _typed_relation_query(self, left, right, policy, max_nodes):
+        from .rewards import RelationRewardIndex,POLICIES
+        if policy not in POLICIES:
+            return {'status':'UNSUPPORTED_POLICY','applicable':False,'distance':None,'lcas':[],
+                    'policy':policy,'relation_view':self.relation_view,'allowed_policies':sorted(POLICIES)}
+        if not all(isinstance(u,str) and u for u in (left,right)):
+            return {'status':'INVALID_UID','applicable':False,'distance':None,'lcas':[],
+                    'relation_view':self.relation_view}
+        blocked=[]
+        if 'unified_domain_rules' in self._tables:
+            blocked=[r[0] for r in self.con.execute('SELECT DISTINCT wordnet_anchor_uid FROM unified_domain_rules')]
+        index=RelationRewardIndex(self,'uid',uids=[left,right],policy=policy,
+                                  coarse_roots=blocked,max_nodes=max_nodes)
+        result=index.query(left,right)
+        result['training_reward']=False
+        result['reward_note']='Generic UID relations are not calibrated classification penalties; use a frozen dataset reward index'
+        return result
+
+    def lca(self, left, right, *, max_nodes=100000, policy=None):
+        if self.relation_view=='unified' or policy is not None:
+            result=self._typed_relation_query(left,right,policy or 'classification',max_nodes)
+            return {**result,'items':result['lcas'],
+                    'status':'CONNECTED' if result['applicable'] else
+                             'COMMON_ANCESTOR_INFORMATION_INSUFFICIENT' if result['status']=='COARSE_COMMON_ANCESTOR_ONLY' else result['status'],
+                    'definition':'All lowest common identity-group ancestors under the explicit role/relation policy; identity costs zero; multiple LCAs retained'}
         a = self._ancestor_map(left, max_nodes)
         b = self._ancestor_map(right, max_nodes)
         common = set(a) & set(b)
@@ -1499,7 +1665,14 @@ class ConsistentAtlas(SingleAtlas):
             ):
                 yield child_uid
 
-    def distance(self, left, right, *, direction="undirected", max_nodes=100000):
+    def distance(self, left, right, *, direction=None, max_nodes=100000, policy=None):
+        if self.relation_view=='unified' or policy is not None:
+            if direction not in (None,'common_ancestor'):
+                return {'status':'UNSUPPORTED_DIRECTION','distance':None,'applicable':False,
+                        'relation_view':self.relation_view,
+                        'reason':'Unified comparison uses upward paths through legal LCAs, not an undirected union of relation types'}
+            return self._typed_relation_query(left,right,policy or 'classification',max_nodes)
+        direction=direction or 'undirected'
         if direction not in ("undirected", "upward", "downward"):
             raise ValueError("Invalid distance direction")
         a = self._basic(left)
@@ -1597,7 +1770,7 @@ class ConsistentAtlas(SingleAtlas):
             "identity": True,
             "native_label": True,
             "hierarchy": role not in ("UNKNOWN", "ORGANIZATION")
-            and (role != "BIOLOGICAL_VARIANT" or self.relation_view == "taxonomy"),
+            and (role != "BIOLOGICAL_VARIANT" or self.relation_view in ("taxonomy", "unified")),
             "strict_classification": role in CLASS_ROLES,
             "model_design": role in ("MODEL", "MODEL_FAMILY"),
             "species": role == "CLASS"
@@ -1659,6 +1832,14 @@ class ConsistentAtlas(SingleAtlas):
         if result:
             verified = result["decision_status"] in ("VERIFIED", "VERIFIED_ATTRIBUTE")
             result["identity_verified"] = verified
+            result['stored_identity_claim_verified']=verified
+            if 'dataset_mapping_checks' in self._tables:
+                check=self.con.execute('SELECT status,reason,proof FROM dataset_mapping_checks WHERE dataset=? AND class_id=?',
+                                       (dataset,str(class_id))).fetchone()
+                result['mapping_review']=dict(check) if check else None
+                if self.relation_view=='unified' and check and check['status']=='ANNOTATION_SCOPE_REVIEW':
+                    verified=False
+                    result['identity_verified']=False
             result["mapping_verified"] = result["decision_status"].startswith(
                 "VERIFIED"
             )
@@ -1682,6 +1863,8 @@ class ConsistentAtlas(SingleAtlas):
                 if result["mapping_verified"]
                 else "NATIVE_LABEL_ONLY"
             )
+            if result.get('mapping_review') and result['mapping_review']['status']=='ANNOTATION_SCOPE_REVIEW':
+                result['mapping_kind']='ANNOTATION_SCOPE_REVIEW'
             result["task_admission"] = self.eligibility(
                 result["target_uid"], identity_verified=result["mapping_verified"]
             )

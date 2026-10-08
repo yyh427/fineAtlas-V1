@@ -19,8 +19,9 @@ def main():
     c=sqlite3.connect(a.staging.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
     c.execute('ATTACH DATABASE ? AS native',(a.baseline.resolve().as_uri()+'?mode=ro&immutable=1',))
     c.execute('PRAGMA native.cache_size=-1000000');c.execute('PRAGMA cache_size=-1000000')
-    classification="""((b.view IN ('strict','taxonomy') AND e.status='ACTIVE' AND e.relation='IS_A')
-        OR (b.view='taxonomy' AND e.status='TYPED_ACTIVE' AND e.relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT'))
+    classification="""((b.view IN ('strict','taxonomy','unified') AND e.status='ACTIVE' AND e.relation='IS_A')
+        OR (b.view IN ('taxonomy','unified') AND e.status='TYPED_ACTIVE' AND e.relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT'))
+        OR (b.view='unified' AND e.status='BACKBONE_ACTIVE' AND e.relation='IS_A')
         OR (b.view='membership' AND e.status='TYPED_ACTIVE' AND e.relation='REUSABLE_TYPE_MEMBERSHIP'))"""
     typed=' OR '.join("(n.role='"+role+"' AND e.relation IN ("+','.join("'"+r+"'" for r in rels)+'))' for role,rels in TYPED_TERMINALS.items())
     results={}
@@ -42,30 +43,36 @@ def main():
             OR b.child_component IS NOT n.component_id OR b.parent_component IS NOT p.component_id
             OR b.role IS NOT n.role OR b.relation IS NOT e.relation
             OR b.child_component=b.parent_component OR NOT ({legal})
-            OR (n.view_mask & CASE b.view WHEN 'strict' THEN 1 WHEN 'taxonomy' THEN 2 ELSE 4 END)=0
-            OR (p.view_mask & CASE b.view WHEN 'strict' THEN 1 WHEN 'taxonomy' THEN 2 ELSE 4 END)=0
-            OR (b.storage='entity' AND p.role NOT IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION'))
+            OR (n.view_mask & CASE b.view WHEN 'strict' THEN 1 WHEN 'taxonomy' THEN 2 WHEN 'unified' THEN 8 ELSE 4 END)=0
+            OR (p.view_mask & CASE b.view WHEN 'strict' THEN 1 WHEN 'taxonomy' THEN 2 WHEN 'unified' THEN 8 ELSE 4 END)=0
+            OR (b.view='unified' AND b.storage='edge' AND (n.role NOT IN ('CLASS','BIOLOGICAL_VARIANT') OR p.role NOT IN ('CLASS','BIOLOGICAL_VARIANT')))
+            OR (b.storage='entity' AND p.role NOT IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION') AND NOT(b.view IN ('taxonomy','unified') AND p.role='BIOLOGICAL_VARIANT'))
             OR (b.storage='edge' AND (n.role NOT IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION')
-                AND NOT (b.view='taxonomy' AND n.role='BIOLOGICAL_VARIANT')
+                AND NOT (b.view IN ('taxonomy','unified') AND n.role='BIOLOGICAL_VARIANT')
                 AND NOT (b.view='membership' AND n.role='DATASET_CATEGORY')))
             OR (b.storage='edge' AND (p.role NOT IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION')
-                AND NOT (b.view='taxonomy' AND p.role='BIOLOGICAL_VARIANT')
+                AND NOT (b.view IN ('taxonomy','unified') AND p.role='BIOLOGICAL_VARIANT')
                 AND NOT (b.view='membership' AND p.role='DATASET_CATEGORY'))))'''
         results[storage+'_invalid_records']=c.execute(sql,(storage,)).fetchone()[0]
         print(storage,results[storage+'_invalid_records'],flush=True)
         assert results[storage+'_invalid_records']==0,results
     # Independently start from every original admitted source arc, rather
     # than trusting the grouped index's totals, and verify its exact key.
-    for view,bit in [('strict',1),('taxonomy',2),('membership',4)]:
+    views=[('strict',1),('taxonomy',2),('membership',4)]
+    if c.execute("SELECT 1 FROM browse_links WHERE view='unified' LIMIT 1").fetchone():views.append(('unified',8))
+    for view,bit in views:
         for storage,table,child,parent in [('edge','edges','child_uid','parent_uid'),('entity','entity_relations','subject_uid','object_uid')]:
             if storage=='edge':
                 legal=("e.status='ACTIVE' AND e.relation='IS_A'" if view=='strict' else
-                       "(e.status='ACTIVE' AND e.relation='IS_A') OR (e.status='TYPED_ACTIVE' AND e.relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT'))" if view=='taxonomy' else
+                       "(e.status='ACTIVE' AND e.relation='IS_A') OR (e.status='TYPED_ACTIVE' AND e.relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT'))" if view in ('taxonomy','unified') else
                        "e.status='TYPED_ACTIVE' AND e.relation='REUSABLE_TYPE_MEMBERSHIP'")
-                roles="'CLASS','MODEL','MODEL_FAMILY','CONFIGURATION'"+(", 'BIOLOGICAL_VARIANT'" if view=='taxonomy' else ", 'DATASET_CATEGORY'" if view=='membership' else '')
+                if view=='unified':legal+=' OR (e.status=\'BACKBONE_ACTIVE\' AND e.relation=\'IS_A\')'
+                roles="'CLASS','BIOLOGICAL_VARIANT'" if view=='unified' else "'CLASS','MODEL','MODEL_FAMILY','CONFIGURATION'"+(", 'BIOLOGICAL_VARIANT'" if view=='taxonomy' else ", 'DATASET_CATEGORY'" if view=='membership' else '')
                 condition=f'({legal}) AND n.role IN ({roles}) AND p.role IN ({roles})'
             else:
                 condition="e.status='ACTIVE' AND ("+typed+") AND p.role IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION')"
+                if view in ('taxonomy','unified'):
+                    condition="e.status='ACTIVE' AND ("+typed+") AND p.role IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION','BIOLOGICAL_VARIANT')"
             key=view+'_'+storage+'_missing_source_arcs'
             results[key]=c.execute(f'''SELECT count(*) FROM native.{table} e
               JOIN browse_nodes n ON n.uid=e.{child} JOIN browse_nodes p ON p.uid=e.{parent}

@@ -11,7 +11,9 @@ from .semantics import role_expression
 LINK_ROLES = {'IS_A':({'CLASS'},{'CLASS'}),'DESIGN_TYPE_OF':({'MODEL','MODEL_FAMILY'},{'CLASS'}),'CONFIGURATION_TYPE_OF':({'CONFIGURATION'},{'CLASS'}),'CONFIGURATION_OF':({'CONFIGURATION'},{'MODEL','MODEL_FAMILY'}),'INSTANCE_OF':({'INSTANCE'},{'CLASS','MODEL','MODEL_FAMILY'}),'SERIES_MEMBER_OF':({'MODEL'},{'MODEL_FAMILY'})}
 LINK_ROLES['REGULATED_AS']=({'MODEL','CONFIGURATION'},{'CLASS'})
 LINK_ROLES['NATIVE_CLASSIFICATION_PARENT']=({'CLASS'},{'CLASS'})
+LINK_ROLES['TAXONOMIC_PARENT']=({'CLASS','BIOLOGICAL_VARIANT'},{'CLASS','BIOLOGICAL_VARIANT'})
 LINK_ROLES['NATIVE_DESIGN_PARENT']=({'MODEL','MODEL_FAMILY'},{'MODEL','MODEL_FAMILY'})
+LINK_ROLES['CONFIGURATION_OF']=({'CONFIGURATION'},{'MODEL','MODEL_FAMILY','CONFIGURATION'})
 
 def validate_link_roles(relation, child_role, parent_role):
     roles=LINK_ROLES.get(relation)
@@ -66,11 +68,26 @@ def reconcile_instance_endpoints(m):
 VERSION = 'v1.8.0-hierarchy-review'
 LAYER = 'v1.8-hierarchy-review'
 
+UNIFIED_INPUT_PREFIXES={
+    'unified_field_refinements.jsonl':'unified_field',
+    'unified_role_links.jsonl':'unified_role_navigation',
+    'unified_classification_projection.jsonl':'unified_classification_projection',
+    'unified_source_scope.jsonl':'unified_source_scope',
+    'unified_navigation_completion.jsonl':'unified_navigation_completion',
+    'unified_design_scope.jsonl':'unified_design_scope',
+    'unified_breed_parents.jsonl':'unified_breed_parents',
+    'unified_regulatory_roles.jsonl':'unified_regulatory_roles',
+    'unified_taxonomic_scope.jsonl':'unified_taxonomic_scope',
+    'unified_biological_units.jsonl':'unified_biological_units',
+    'unified_final_role_links.jsonl':'unified_final_role_navigation',
+    'unified_root_contracts.jsonl':'unified_root_contracts',
+}
+
 def review_version(inputs):
     path = Path(inputs)/'review_release.json'
     if path.exists():
         value = json.loads(path.read_text())['version']
-        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review'}:
+        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review', 'v1.10.0-unified-review'}:
             raise ValueError('Unsupported hierarchy candidate version')
         return value
     return VERSION if (Path(inputs)/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review'
@@ -188,6 +205,8 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     if any((m.inputs/name).exists() for name in ['hierarchy_facts.incomplete','hierarchy_work.incomplete']):
         raise ValueError('Hierarchy source preparation is incomplete; resume this stage after its frozen manifest is ready')
     if not path.exists(): return {'status':'not_requested'}
+    if input_name.startswith('unified_') and input_name not in UNIFIED_INPUT_PREFIXES:
+        raise ValueError('Unsupported unified source input; no source rules have been applied: '+input_name)
     counts=collections.Counter()
     c.executescript('''
     CREATE TABLE IF NOT EXISTS hierarchy_decisions(id TEXT PRIMARY KEY,operation TEXT NOT NULL,
@@ -258,6 +277,14 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             counts['restored_native_types']+=1
         elif op=='role':
             counts['role_decisions']+=1
+            if r['proof'].get('basis') in ('DEFINED_PRIMARY_DESIGN_UNIT_PLUS_MANUFACTURER_AND_UNCHANGED_ENTITY_SCOPE',
+                                         'DEFINED_PRIMARY_DESIGN_UNIT_AND_CORROBORATED_FULL_ENTITY_SCOPE'):
+                prior=json.loads(c.execute('SELECT attributes FROM node_profiles WHERE uid=?',(uid,)).fetchone()[0])
+                attributes={**prior,'verified_wikidata_manufacturer_ids':r['proof']['manufacturers'],
+                            'source_scope_snapshot':r['proof']['snapshot'],
+                            'native_design_scope':r['proof']['unit_rule']['semantic_definition']}
+                c.execute('UPDATE node_profiles SET attributes=? WHERE uid=?',(json.dumps(attributes,sort_keys=True),uid))
+                m.change('verified_source_scope','profile_attributes',uid,prior,attributes,r['proof'])
         elif op=='source_review':
             n=c.execute('SELECT visibility FROM nodes WHERE uid=?',(uid,)).fetchone()
             if not n:raise ValueError('Missing source-review record')
@@ -268,7 +295,8 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             counts['source_records_retained_for_review']+=1
         elif op=='link':
             parent=r['parent'];rel=r['relation']
-            if rel=='IS_A':add_class_edge(uid,parent,r)
+            if rel in ('IS_A','NATIVE_CLASSIFICATION_PARENT','TAXONOMIC_PARENT'):
+                add_class_edge(uid,parent,r,rel)
             else:
                 validate_link_roles(rel,endpoint_role(uid),endpoint_role(parent))
                 m.typed(uid,parent,rel,r['proof'],r['source'],r['uri'])
@@ -279,6 +307,19 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             data=json.loads(e['data'] or '{}');data.update(eligible_for_final_dag=False,hierarchy_disposition=r['proof'],hierarchy_evidence_id=eid)
             c.execute("UPDATE edges SET status='HIERARCHY_SUPERSEDED',data=?,reason=? WHERE id=?",(json.dumps(data,sort_keys=True),r['proof']['basis'],e['id']))
             m.change('hierarchy','edge',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof']);counts['superseded_source_edges']+=1
+        elif op=='quarantine_source_edge':
+            e=c.execute('SELECT * FROM edges WHERE id=?',(r['edge_id'],)).fetchone()
+            if not e or (e['child_uid'],e['parent_uid'])!=(uid,r['parent']):raise ValueError('Source semantic quarantine endpoints differ')
+            if not r['proof'].get('individual_semantic_review') or not r['proof'].get('source_scope_conflict'):
+                raise ValueError('Source quarantine requires an explicit semantic counterexample')
+            alternatives=r['proof'].get('replacement_edge_ids',[])
+            if not alternatives or not all(c.execute("SELECT 1 FROM edges WHERE id=? AND child_uid=? AND status='ACTIVE' AND relation='IS_A'",(rid,uid)).fetchone() for rid in alternatives):
+                raise ValueError('Source correction lacks retained valid alternative parents')
+            # Keep the entire original source payload and endpoints untouched;
+            # the new disposition and review live in their normal ledgers.
+            c.execute("UPDATE edges SET status='HIERARCHY_SUPERSEDED' WHERE id=?",(e['id'],))
+            m.change('source_semantic_contract','edge',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof'])
+            counts['invalid_source_arcs_quarantined']+=1
         elif op=='withdraw_typed':
             e=c.execute('SELECT * FROM entity_relations WHERE id=?',(r['relation_id'],)).fetchone()
             if not e or e['subject_uid']!=uid:raise ValueError('Typed withdrawal differs')
@@ -336,6 +377,7 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
     for source,rows in sorted(by_source.items()):
         licenses=sorted({r['proof'].get('license','Original source terms and attribution retained') for r in rows})
         c.execute('INSERT OR REPLACE INTO source_catalogs VALUES (?,?,?,?,?)',('Hierarchy refinement: '+source,rows[0]['uri'],'; '.join(licenses),hashlib.sha256(path.read_bytes()).hexdigest(),json.dumps({'operations':len(rows),'classes':sum(r['op']=='class' for r in rows),'source_statement_retained':True},sort_keys=True)))
-    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair','hierarchy_type_repairs.jsonl':'hierarchy_type_repair','hierarchy_shape_repairs.jsonl':'hierarchy_shape_repair','hierarchy_structure_repairs.jsonl':'hierarchy_structure_repair','hierarchy_shape_completion.jsonl':'hierarchy_shape_completion','hierarchy_subject_repairs.jsonl':'hierarchy_subject_repair','hierarchy_admission_reviews.jsonl':'hierarchy_admission_review'}[input_name]
+    prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair','hierarchy_type_repairs.jsonl':'hierarchy_type_repair','hierarchy_shape_repairs.jsonl':'hierarchy_shape_repair','hierarchy_structure_repairs.jsonl':'hierarchy_structure_repair','hierarchy_shape_completion.jsonl':'hierarchy_shape_completion','hierarchy_subject_repairs.jsonl':'hierarchy_subject_repair','hierarchy_admission_reviews.jsonl':'hierarchy_admission_review',
+            **UNIFIED_INPUT_PREFIXES}[input_name]
     m.meta('release',review_version(m.inputs));m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
     return dict(counts)

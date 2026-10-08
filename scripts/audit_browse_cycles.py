@@ -15,7 +15,8 @@ def main():
     c=sqlite3.connect(a.staging.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
     c.execute('PRAGMA cache_size=-1000000');results={}
     size=c.execute('SELECT max(component_id)+1 FROM browse_nodes').fetchone()[0]
-    for view in ('strict','taxonomy','membership'):
+    views=[r[0] for r in c.execute('SELECT DISTINCT view FROM browse_links ORDER BY view')]
+    for view in views:
         tick=time.monotonic();degree=array('I',[0])*size;offset=array('I',[0])*(size+1)
         seen=bytearray(size);children=array('I');position=0
         for parent,child in c.execute('''SELECT parent_component,child_component FROM browse_links

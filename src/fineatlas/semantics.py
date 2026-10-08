@@ -3,7 +3,24 @@
 from __future__ import annotations
 
 CLASS_ROLES = frozenset({"CLASS", "MODEL", "MODEL_FAMILY", "CONFIGURATION"})
-VIEWS = ("strict", "taxonomy", "membership")
+VIEWS = ("strict", "taxonomy", "membership", "unified")
+VIEW_BITS = {view: 1 << i for i, view in enumerate(VIEWS)}
+
+
+def source_admission_view(view):
+    """Unified inherits native taxonomy admission, without changing old views."""
+    return 'taxonomy' if view == 'unified' else view
+
+
+def classification_roles(view):
+    if view == 'unified':
+        return frozenset(('CLASS','BIOLOGICAL_VARIANT'))
+    return CLASS_ROLES | ({'BIOLOGICAL_VARIANT'} if view == 'taxonomy' else
+                          {'DATASET_CATEGORY'} if view == 'membership' else set())
+
+
+def navigation_parent_roles(view):
+    return classification_roles(view) | CLASS_ROLES
 ROLE_ALIASES = {"SERIES": "MODEL_FAMILY"}
 TYPED_TERMINALS = {
     "INSTANCE": ("INSTANCE_OF",),
@@ -15,10 +32,18 @@ TYPED_TERMINALS = {
 }
 
 
+def terminal_relations(role, view):
+    # Regulatory catalog navigation is retained as its own relation. It never
+    # enters edge_predicate() or a classification/design reward policy.
+    return TYPED_TERMINALS.get(role, ())
+
+
 def edge_predicate(view: str, alias: str = "e") -> str:
     if view not in VIEWS:
-        raise ValueError("relation_view must be strict, taxonomy or membership")
+        raise ValueError("relation_view must be strict, taxonomy, membership or unified")
     strict = f"{alias}.status='ACTIVE' AND {alias}.relation='IS_A'"
+    if view == 'unified':
+        return f"(({strict}) OR ({alias}.status='TYPED_ACTIVE' AND {alias}.relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT')) OR ({alias}.status='BACKBONE_ACTIVE' AND {alias}.relation='IS_A'))"
     if view == "taxonomy":
         return f"(({strict}) OR ({alias}.status='TYPED_ACTIVE' AND {alias}.relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT')))"
     if view == "membership":

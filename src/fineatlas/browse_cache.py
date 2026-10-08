@@ -24,7 +24,7 @@ def build_group_cache(c):
           CROSS JOIN browse_links b ON b.view=cp.view AND b.parent_component=cp.parent_component
           CROSS JOIN browse_facets f ON f.component_id=b.child_component
           CROSS JOIN browse_nodes n ON n.uid=f.uid
-          WHERE (n.view_mask & CASE b.view WHEN 'strict' THEN 1 WHEN 'taxonomy' THEN 2 ELSE 4 END)<>0
+          WHERE (n.view_mask & CASE b.view WHEN 'strict' THEN 1 WHEN 'taxonomy' THEN 2 WHEN 'unified' THEN 8 ELSE 4 END)<>0
           {preferred}
           GROUP BY b.view,b.parent_component,b.role,f.facet,f.value""",(mode,))
         totals[mode]=c.execute('SELECT changes()').fetchone()[0]

@@ -16,6 +16,15 @@ class BrowsingTest(unittest.TestCase):
     setUp=test_single.TypedInterfaceTest.setUp
     tearDown=test_single.TypedInterfaceTest.tearDown
 
+    def test_unified_search_location_uses_its_view_bit(self):
+        def change(c):
+            c.executemany('INSERT OR REPLACE INTO metadata VALUES(?,?)',
+                          [('default_relation_view',json.dumps('unified')),('unified_ready','true')])
+        self.build(change)
+        result=self.tree.browse_location('type:river')
+        self.assertEqual(result['status'],'OK')
+        self.assertEqual(result['parents'][0]['uid'],'type:root')
+
     def build(self, change=None):
         self.tree.close()
         c=sqlite3.connect(self.path)

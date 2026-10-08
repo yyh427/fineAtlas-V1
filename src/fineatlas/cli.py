@@ -17,8 +17,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--relation-view",
-        choices=["strict", "taxonomy", "membership"],
-        default="strict",
+        choices=["strict", "taxonomy", "membership", "unified"],
+        default=None,
         help="Relation navigation: strict IS_A, native taxonomy, or source membership",
     )
     parser.add_argument(
@@ -137,13 +137,15 @@ def main() -> None:
     p = sub.add_parser("lca")
     p.add_argument("left")
     p.add_argument("right")
+    p.add_argument('--policy',choices=['classification','design','configuration'])
     p = sub.add_parser("distance")
     p.add_argument("left")
     p.add_argument("right")
+    p.add_argument('--policy',choices=['classification','design','configuration'])
     p.add_argument(
         "--direction",
-        choices=["upward", "downward", "undirected"],
-        default="undirected",
+        choices=["upward", "downward", "undirected", "common_ancestor"],
+        default=None,
     )
     requirements = [
         "identity",
@@ -267,9 +269,9 @@ def main() -> None:
                 args.uid, args.limit, include_self=args.include_self
             )
         elif args.command == "lca":
-            result = graph.lca(args.left, args.right)
+            result = graph.lca(args.left, args.right, policy=args.policy)
         elif args.command == "distance":
-            result = graph.distance(args.left, args.right, direction=args.direction)
+            result = graph.distance(args.left, args.right, direction=args.direction, policy=args.policy)
         elif args.command == "eligibility":
             result = graph.eligibility(args.uid, args.requirement)
         elif args.command == "task-labels":

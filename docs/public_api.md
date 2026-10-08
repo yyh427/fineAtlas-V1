@@ -1,58 +1,45 @@
-# Public query contract
+# FineAtlas 1.10 公开接口
 
-The SDK is read-only. Open `FineAtlas(path, view="wordnet", relation_view="strict", root=None, language="en")`. `root=None` selects the stored WordNet entity root. A custom root must be a real native node UID, not a navigation portal. `view="all"` exposes retained source records for inspection; visibility does not grant hierarchy admission. Large custom-root scopes have an explicit work bound.
+本候选 `v1.10.0-unified-review` 固定 `unified`。`FineAtlas(path)` 从快照读取默认视图；旧快照保持原默认，显式传入 `relation_view` 可复现旧查询。构建未完成时拒绝暴露统一查询，外部索引的来源修订必须匹配数据库。
 
-## Views and roles
+## 入口、搜索和浏览
 
-Strict classification uses ACTIVE IS_A only. Taxonomy additionally permits admitted TAXONOMIC_PARENT and NATIVE_CLASSIFICATION_PARENT; membership is the separate REUSABLE_TYPE_MEMBERSHIP graph, not the union of the other views. Compatible INSTANCE_OF, DESIGN_TYPE_OF, CONFIGURATION_OF, CONFIGURATION_TYPE_OF, SERIES_MEMBER_OF, REGULATED_AS, ATTRIBUTE_KIND_OF and DEPICTS_TYPE connections are preserved as typed steps. REGULATED_AS is regulatory navigation, not physical subtype identity.
+`domains()` 列出规范领域、原生根和别名。`domain(name)` 接受规范名称、别名和 `fineatlas-domain:<name>`，目录入口不属于分类节点。按领域检索与 `domain_page()` 使用相同成员范围；`source:<tag>` 显式选择来源域。
 
-CLASS is a reusable category. MODEL is a named product design. MODEL_FAMILY is a named series/family; CONFIGURATION is an orderable part, SKU, sized variant or year configuration. INSTANCE is a concrete named/serialized object. Biological variants and task categories have distinct roles. None of these roles are automatically interchangeable.
+`search_page(text, limit=20, domain=None, node_kind=None, cursor=None, exact=False)` 提供稳定分页。`domain_page()`、`domain_instances()`、`instances_page()` 查询领域成员和实例，旧列表接口通过 `.has_more/.truncated` 报告截断。未知领域在统一视图下返回 `NOT_FOUND/UNKNOWN_DOMAIN`；旧视图保留解释性的参数错误。
 
-Professional middle classes carry `attributes.classification_axis` and `attributes.hierarchy_definition`. Structure, propulsion, operating principle and ecological axes may coexist in a DAG; only source-supported subsumption creates IS_A. A whole family is narrowed only when the evidence covers that family. Variant fields apply to CONFIGURATION, and native regulatory classes use taxonomy navigation. Ordinary CLASS-only layer counts are published separately in `review_hierarchy.csv`; conceptual graph totals can also include reusable design/configuration roles and should not be interpreted as ordinary class counts.
+`browse_children_page(parent, limit=20, node_kind='CLASS', relation=None, filters=None, cursor=None, include_coarse=False)` 查询直接关系，最多 1,000 条。角色包括 `CLASS`、`BIOLOGICAL_VARIANT`、`MODEL`、`MODEL_FAMILY`（别名 `SERIES`）、`CONFIGURATION`、`INSTANCE`。`PRODUCT_DESIGN` 合并型号与家族角色用于筛选，不更改源角色。
 
-Native source UID, label, rank, role, domain and raw payload are retained. Display names prefer the requested language, then English, multilingual scientific names and undetermined language. Missing reliable names fall back to the UID and set `label_fallback`. `normalized_rank` uses explicit native grades and unambiguous accepted identity peers; conflicting grades remain CONFLICT_REVIEW. A source-declared grade is metadata, not independent scientific certification.
+`browse_summary()` 分开返回完整直接关系计数和默认展示计数。`include_coarse=True` 保留显示有证据的直接粗连接。默认偏好仅在完整图中存在核验过的替代细分路径时隐藏展示捷径，不删除源边。
 
-## Queries
+`browse_groups(parent, group_by, ...)` 使用真实制造商、年份、国家等可用字段，明确为目录／属性分组。`locate(text, domain=...)` 和 `browse_location(uid, ...)` 定位搜索结果，不要求使用者预先知道原生 UID。游标绑定快照修订、视图、根和筛选条件，跨条件游标会拒绝使用。
 
-- `node(uid)`, `identity(uid)`, `aliases(uid, limit=100, language=None)` expose identifiers, roles, source/name evidence and accepted identity links. `node.aliases_truncated` marks its bounded alias summary.
-- `domains(include_aliases=False)`, `domain(name)`, `domain_roots(name)` inspect scopes. Legacy names and portal UIDs resolve to the canonical entry; native root aliases are added only when unambiguous.
-- `search(query, limit=20, domain=None, node_kind=None)` and `exact(label, ...)` return all matching independent source identities within the bound. `PRODUCT_DESIGN` includes MODEL and MODEL_FAMILY; `SERIES` maps to MODEL_FAMILY. Equal labels do not cause identity merging.
-- `browse_domain(name, limit=20)` returns separate roots, children and a page of instances. `domain_children(name, limit=20)` returns classification children, not a counterfeit instance list.
-- `search_page(query, limit=20, cursor=None, domain=None, node_kind=None)`, `domain_page(name, limit=20, cursor=None, node_kind=None)`, `domain_instances(name, limit=20, cursor=None)`, `instances_page(type_uid, limit=20, cursor=None, recursive=True)` return `{items, next_cursor, has_more, ...}`. Sorting is stable by source UID. Cursors bind the revision, SDK contract, visibility, view, root and selector. Follow `next_cursor` until null; do not switch conditions mid-pagination.
-- `neighbors(uid, direction="children", limit=20, structural_only=True)` and `instances(uid_or_domain, limit=20, recursive=True)` keep compatible legacy list behaviour. Structural child browsing selects the chosen classification view; use domain pages to enumerate MODEL or CONFIGURATION terminals and inspect their typed paths. ResultList exposes `truncated` and `has_more`; the CLI warns on stderr.
+## 身份、路径和状态
 
-Canonical scope selectors compute descendants under the declared relations and typed roles. An object may appear in multiple legitimate scopes. `source:<tag>` filters original domain tags instead. An unknown scope raises ValueError; it never falls back to global search.
+`node(uid)`、`identity(uid)`、`aliases(uid)` 保留不同来源 UID、原始标签、原生秩、当前角色及证据。角色不一致的身份组显式返回 `CONFLICT_REVIEW`；同名不会自动合并。
 
-With an explicit custom root and `view="wordnet"`, search, domain pages, child browsing, instance pages and domain exports intersect the domain/type selector with that root's admitted descendants. `view="all"` retains source inspection behaviour. Native domain roots describe the domain's source scope; they are not replaced by the custom root.
+`path_result(uid)`、`connection_status(uid)`、`ancestors_result(uid)` 对缺节点、缺路径、未准入和深度／工作量上限返回明确状态。路径每步保留真实端点、边类型、来源、证据和零成本身份对应。全局确定路径只是一个路径见证，多父图不要求唯一父节点。
 
-## Paths, reachability and failures
+`task_path(dataset, class_id)` 遵守冻结的来源／关系策略，例如 CUB 选择 AviList 分类，再通过已核验身份关联其他表示。它与全局路径均保留源 UID，并单独标记训练端点是否适用。
 
-`path_result(uid, anchors=None, max_depth=256)` distinguishes ROOT, CONNECTED, UNREACHABLE, NOT_FOUND, NOT_ADMITTED, VIEW_NOT_APPLICABLE, NAVIGATION_ONLY and DEPTH_LIMIT. `path()` retains the old list return, with an empty list for legitimate non-path outcomes; use `path_result()` for the reason. Portal calls return NAVIGATION_ONLY with native `root_uids`. Unknown anchor/root identifiers raise ValueError. Corrupt identity witnesses raise RuntimeError; query bounds raise QueryLimitError. Errors are not converted into empty success results.
+`source_hierarchy(uid, direction='parents', limit=100)` 查看原始来源的直接声明，包括其准入／待审／停用状态，不扩展身份组，不把保留的原始声明自动认证为分类事实。
 
-Each step retains its real edge relation, endpoints, evidence/source and identity alignment. A displayed SAME_CONCEPT alignment is zero distance and does not invent taxonomy depth. The global precomputed path is a deterministic shortest admitted witness, not a claim that a DAG has one parent.
+## LCA、距离和训练
 
-`connection_status()` uses the same root/view as `path_result()`. It separately reports view admission, `strict_classification_root_reachable`, `class_root_reachable_in_view`, `native_navigation_root_reachable`, `typed_root_reachable` and mixed `root_reachable`. Legacy `wordnet_reachable` retains global strict classification meaning even when the selected view changes.
+`relation_reward_index(dataset)` 在冻结快照中批量缓存合法祖先，`query(class_id_a, class_id_b)` 查询，`pairs()` 遍历全部不同类别对。
 
-`ancestors(uid, limit=1000, include_self=False, max_nodes=100000)` returns shortest upward distances by identity group. `lca(a, b, max_nodes=100000)` returns every common ancestor without a more specific common descendant, with separate distances to both inputs. `distance(a, b, direction="undirected", max_nodes=100000)` uses the selected hierarchy and compatible typed connections, with directed upward/downward alternatives. It returns UNREACHABLE with null distance for disconnected inputs. Identity links cost zero; hierarchy/type edges cost one. Pagination cannot silently make a graph calculation complete: bounds and truncation are explicit.
+| 策略 | 允许的关系 |
+|---|---|
+| `classification` | `IS_A`、`TAXONOMIC_PARENT`、`NATIVE_CLASSIFICATION_PARENT` |
+| `design` | 上述分类边及 `DESIGN_TYPE_OF`、`NATIVE_DESIGN_PARENT`、`SERIES_MEMBER_OF` |
+| `configuration` | 上述设计边及 `CONFIGURATION_OF` |
 
-## Training selection and exports
+目录、属性、身份和监管关系不混算成分类深度，`CONFIGURATION_TYPE_OF` 不作为配置谱系距离的捷径。`REGULATED_AS` 仅用于监管导航。源数据声明的未定位／不确定分类放置不会作为可靠奖励边。
 
-`eligibility(uid, requirement="hierarchy", identity_verified=None)` checks the actual source record role, admission and root requirements. `None` means an external label mapping has not been asserted or assessed; it does not assert that mapping is verified. `target(dataset, class_id)` exposes both exact identity and broader typed mapping status. `task_labels(dataset, requirement="hierarchy", usable_only=False)` supplies mapping status explicitly.
+`lca(a,b,policy=...)` 返回全部最低公共祖先身份组；多个不可比较的 LCA 全部保留。`distance(a,b,policy=...)` 最小化经有信息量 LCA 的向上边数之和，身份成本为零。在 `unified` 中不支持把混合图无向最短路冒充分类距离。旧视图显式保留历史方向参数，不能直接当作训练奖励。
 
-Requirements: `native_label` retains native dataset identity without asserting hierarchy mapping; `identity` requires the verified exact mapping; `hierarchy` requires verified identity or typed mapping and a root path in the selected view; `strict_classification` additionally requires a pure strict IS_A path; `species`, `model`, `model_design`, `configuration`, `instance` require their declared terminal role/grade and a compatible root path. A genus-level task category connected by DEPICTS_TYPE can be hierarchy-usable while failing exact identity/species requirements. Year/trim identity boundaries remain separate from broad configuration-to-design membership evidence.
+通用 UID 查询标记 `training_reward=false`：跨领域距离及其量纲没有校准为分类惩罚。训练使用数据集冻结策略，分别检查身份、角色、来源、粒度、循环、祖先身份冲突及共同祖先信息量。不可用返回原因与 `distance=null`，不返回任意最大距离。
 
-`export_domain(name, path, page_size=1000, node_kind=None, requirement="hierarchy")` writes all selected source UIDs in JSONL, retaining node identity, source role/raw provenance, normalized role, parent relationships and edge evidence, selected view and task admission. This is a domain export; benchmark-label admission is separately available from `task_labels()`.
+`target()` 同时返回原存储的身份声明、当前核验状态、任务准入和映射待审理由。`export_training(dataset, directory)` 输出全部原始标签与全部类别对，并保留无效层次项的掩码；类别正确性奖励始终独立保留。SFT 可使用文本／原标签，RL 必须跳过不适用的层次项并报告覆盖率。
 
-## Migration and compatibility
-
-Existing positional constructors, default strict relation view, UID identifiers and legacy path/list APIs are retained. New indexes and scope semantics apply to the review database; old databases use bounded contract-based traversals. Canonical domain filters now mean declared graph membership. Original source-domain filters use `source:<tag>`; old unambiguous raw domain names remain supported. Default domain listings deduplicate equivalent portals; use `include_aliases=True` for the legacy registry. Bare Q names and lost native rank/definition fields are recovered from source metadata, without rewriting original source payloads. Download into a new directory; rebuild refuses an existing destination and checks the v1.6 baseline hash.
-
-Index readiness is transactional: incomplete migrations refuse queries. A database revision fingerprints all frozen inputs and graph-building code; stable cursors cannot be reused with a different revision. Per-stage source manifests and checks support resuming an unchanged migration. Changed inputs should be rebuilt from a fresh baseline, not repeatedly applied to an already changed publication.
-
-`stats()` reports the current database census and separate rooted counts for the selected relation view. `statistics_root_uid` identifies the root used by precomputed aggregate statistics; changing the query root does not recompute whole-database aggregates. Source UIDs, identity groups and typed-terminal counts have separate fields.
-# 本轮直接关系浏览
-
-`1.9.0rc1` 增加 `browse_summary`、`browse_children_page`、`browse_groups`、
-`browse_location`、`locate`、`source_members_page` 和 `browse_path_result`。
-默认展开直接普通类型，型号、系列、配置和实例分别查询。目录分组明确不属于 `IS_A`。
-完整签名示例、游标合同、来源依据、构建及剩余限制见 [浏览优化说明](night_browsing.md)。
+`eligibility()` 和可达性不等于奖励有效性。根可达、无环、能够输出数字均不能独自证明关系语义或训练适用性。

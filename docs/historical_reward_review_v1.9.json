@@ -1,0 +1,79 @@
+{
+  "schema": "FINEATLAS_RELATION_REWARD_REVIEW_V1",
+  "database_revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
+  "relation_view": "taxonomy",
+  "root_uid": "wordnet31:00001740-n",
+  "purpose": "Conservative structural reward screening, not a species-identity certification; no endpoint remapping",
+  "datasets": {
+    "cub200": {
+      "policy": "classification",
+      "coarse_roots": [
+        "ott:81461",
+        "wordnet31:01505702-n",
+        "v4root:bird"
+      ],
+      "excluded_labels": {
+        "17": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "44": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "62": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "70": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "74": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "83": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "91": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "92": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "101": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "103": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "105": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "110": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "124": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "126": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "130": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "134": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "141": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "171": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "182": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "196": "Frozen source-alignment audit has no unique species candidate; generic label, differing grain, obsolete name or split requires review",
+        "100": "Current target is generic WordNet pelican; retained AviList Pelecanus occidentalis is a separate identity group"
+      }
+    },
+    "flowers102": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wfo:wfo-4100001250",
+        "wordnet31:00017402-n"
+      ],
+      "excluded_labels": {}
+    },
+    "pets37": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:02086723-n",
+        "wordnet31:02124460-n"
+      ],
+      "excluded_labels": {}
+    },
+    "stanford_dogs": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:02086723-n"
+      ],
+      "excluded_labels": {}
+    },
+    "fgvc_aircraft": {
+      "policy": "design",
+      "coarse_roots": [
+        "wordnet31:02689427-n"
+      ],
+      "excluded_labels": {}
+    },
+    "stanford_cars": {
+      "policy": "configuration",
+      "coarse_roots": [
+        "wordnet31:02961779-n"
+      ],
+      "excluded_labels": {}
+    }
+  },
+  "historical_snapshot_only": true,
+  "current_candidate_policy": "The v1.10 unified snapshot uses its own revision-bound unified_reward_policies metadata; do not apply this old v1.9 review policy"
+}
