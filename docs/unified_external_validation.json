@@ -1,0 +1,1196 @@
+{
+  "all_pass": true,
+  "release": "v1.10.0-unified-review",
+  "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+  "database_sha256": "c8db664711255202d51ed571d60df66fe5b4315e879c1d509a5dd935bb3ee019",
+  "full_hash_verification_stage": "Completed download_single streamed SHA-256/size/exact-revision verification; byte-identical receipt required",
+  "default_view": "unified",
+  "matching_embedded_browse_index": true,
+  "sdk_module": "<isolated-public-checkout>/src/fineatlas",
+  "frozen_sdk_files_checked": 20,
+  "domains": [
+    {
+      "domain": "agricultural_habitats",
+      "native_roots": [
+        "eunis2012:I"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "aircraft",
+      "native_roots": [
+        "wordnet31:02689427-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "animals",
+      "native_roots": [
+        "ott:691846",
+        "wordnet31:00015568-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "aquifers",
+      "native_roots": [
+        "wordnet31:09224876-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "archaea",
+      "native_roots": [
+        "ott:996421"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "artificial_habitats",
+      "native_roots": [
+        "eunis2012:J"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "bacteria",
+      "native_roots": [
+        "ott:844192",
+        "wordnet31:01351171-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "beaches",
+      "native_roots": [
+        "wikidata:Q40080",
+        "wordnet31:09240137-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "birds",
+      "native_roots": [
+        "ott:81461",
+        "wordnet31:01505702-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "bridges",
+      "native_roots": [
+        "wikidata:Q12280",
+        "wordnet31:02901994-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "buildings",
+      "native_roots": [
+        "wikidata:Q41176",
+        "wordnet31:02916498-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "camera_bodies",
+      "native_roots": [
+        "aat:300022636",
+        "wordnet31:02946154-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "camera_lenses",
+      "native_roots": [
+        "wikidata:Q192234",
+        "wordnet31:02946696-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "cameras",
+      "native_roots": [
+        "wikidata:Q15328"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "cars",
+      "native_roots": [
+        "wordnet31:02961779-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "ceramic_capacitors",
+      "native_roots": [
+        "wikidata:Q337701"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "clothing",
+      "native_roots": [
+        "wikidata:Q11460",
+        "wordnet31:03055525-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "clouds",
+      "native_roots": [
+        "wikidata:Q8074",
+        "wordnet31:09270316-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "coastal_habitats",
+      "native_roots": [
+        "eunis2012:B",
+        "eunis2021:N"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "computer_hardware",
+      "native_roots": [
+        "wikidata:Q3966",
+        "wikidata:Q183484",
+        "wikidata:Q487343",
+        "wikidata:Q5290",
+        "wikidata:Q5297"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "computer_monitors",
+      "native_roots": [
+        "wikidata:Q5290",
+        "wordnet31:03089261-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "computers",
+      "native_roots": [
+        "wikidata:Q68",
+        "wordnet31:03086983-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "deserts",
+      "native_roots": [
+        "wikidata:Q8514",
+        "wordnet31:08522594-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "desktop_computers",
+      "native_roots": [
+        "wikidata:Q56155"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "digital_cameras",
+      "native_roots": [
+        "wikidata:Q62927",
+        "wordnet31:03200746-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "dishes",
+      "native_roots": [
+        "wikidata:Q746549",
+        "wordnet31:07572999-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "earbuds",
+      "native_roots": [
+        "wikidata:Q50184015"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "electronic_components",
+      "native_roots": [
+        "wikidata:Q11653"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "electronic_devices",
+      "native_roots": [
+        "wikidata:Q2858615",
+        "wordnet31:03282682-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "electronic_equipment",
+      "native_roots": [
+        "wordnet31:03283159-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "fitness_trackers",
+      "native_roots": [
+        "wikidata:Q16001686"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "food_products",
+      "native_roots": [
+        "foodon:FOODON_00001002"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "forest_habitats",
+      "native_roots": [
+        "eunis2012:G",
+        "eunis2021:T"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "forests",
+      "native_roots": [
+        "eunis2012:G",
+        "eunis2021:T",
+        "wikidata:Q4421",
+        "wordnet31:09306921-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "freshwater_habitats",
+      "native_roots": [
+        "eunis2012:C"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "fungi",
+      "native_roots": [
+        "ott:352914",
+        "wordnet31:13013628-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "furniture",
+      "native_roots": [
+        "wikidata:Q14745",
+        "wordnet31:03410635-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "game_consoles",
+      "native_roots": [
+        "wikidata:Q8076"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "glaciers",
+      "native_roots": [
+        "wikidata:Q35666",
+        "wordnet31:09312237-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "gpus",
+      "native_roots": [
+        "wikidata:Q183484"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "graphics_cards",
+      "native_roots": [
+        "wikidata:Q4308"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "grasslands",
+      "native_roots": [
+        "eunis2012:E",
+        "eunis2021:R"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "habitat_complexes",
+      "native_roots": [
+        "eunis2012:X"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "habitats",
+      "native_roots": [
+        "wordnet31:08598111-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "hand_tools",
+      "native_roots": [
+        "wikidata:Q2578402",
+        "wordnet31:03494245-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "headphones",
+      "native_roots": [
+        "wikidata:Q186819",
+        "wordnet31:03266479-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "home_appliances",
+      "native_roots": [
+        "wikidata:Q212920",
+        "wordnet31:03533443-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "integrated_circuits",
+      "native_roots": [
+        "wikidata:Q80831",
+        "wordnet31:03582259-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "islands",
+      "native_roots": [
+        "wikidata:Q23442",
+        "wordnet31:09339360-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "lakes",
+      "native_roots": [
+        "eunis2012:C1",
+        "wikidata:Q23397",
+        "wordnet31:09351810-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "laptops",
+      "native_roots": [
+        "wikidata:Q3962",
+        "wordnet31:03648120-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "locomotives",
+      "native_roots": [
+        "wikidata:Q93301",
+        "wordnet31:03690149-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "loudspeakers",
+      "native_roots": [
+        "wikidata:Q570"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "marine_habitats",
+      "native_roots": [
+        "eunis2012:A"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "medical_devices",
+      "native_roots": [
+        "wikidata:Q6554101"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "microprocessors",
+      "native_roots": [
+        "wikidata:Q5297",
+        "wordnet31:03765845-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "minerals",
+      "native_roots": [
+        "wikidata:Q7946",
+        "wordnet31:14686753-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "mountain_ranges",
+      "native_roots": [
+        "geonames-feature:T.MTS",
+        "wikidata:Q46831"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "mountains",
+      "native_roots": [
+        "wikidata:Q8502",
+        "wordnet31:09382700-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "musical_instruments",
+      "native_roots": [
+        "wikidata:Q34379",
+        "wordnet31:03806455-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "network_routers",
+      "native_roots": [
+        "wikidata:Q5318",
+        "wordnet31:04121938-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "network_switches",
+      "native_roots": [
+        "wikidata:Q4503"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "pcbs",
+      "native_roots": [
+        "wikidata:Q173350"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "plants",
+      "native_roots": [
+        "wfo:wfo-4100001250",
+        "wordnet31:00017402-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "power_tools",
+      "native_roots": [
+        "wikidata:Q1327701",
+        "wordnet31:04003842-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "printers",
+      "native_roots": [
+        "wikidata:Q82"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "rivers",
+      "native_roots": [
+        "eunis2012:C2",
+        "wikidata:Q4022",
+        "wordnet31:09434308-n",
+        "wordnet31:09471510-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "rocks",
+      "native_roots": [
+        "wikidata:Q8063",
+        "wordnet31:14720954-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "scrub_and_tundra",
+      "native_roots": [
+        "eunis2012:F",
+        "eunis2021:S"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "semiconductor_devices",
+      "native_roots": [
+        "wikidata:Q175805"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "semiconductor_diodes",
+      "native_roots": [
+        "wikidata:Q1929430",
+        "wordnet31:03207444-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "ships",
+      "native_roots": [
+        "wikidata:Q11446",
+        "wordnet31:04201332-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "single_board_computers",
+      "native_roots": [
+        "wikidata:Q944780"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "smartphones",
+      "native_roots": [
+        "wikidata:Q22645"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "smartwatches",
+      "native_roots": [
+        "wikidata:Q5362345"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "solid_state_drives",
+      "native_roots": [
+        "wikidata:Q487343"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "source_electronic_devices",
+      "native_roots": [
+        "wikidata:Q2858615"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "source_integrated_circuits",
+      "native_roots": [
+        "wikidata:Q80831"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "source_semiconductor_diodes",
+      "native_roots": [
+        "wikidata:Q1929430"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "sparse_vegetation_habitats",
+      "native_roots": [
+        "eunis2012:H",
+        "eunis2021:U"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "sports_equipment",
+      "native_roots": [
+        "wordnet31:04292284-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "surgical_instruments",
+      "native_roots": [
+        "wikidata:Q1074814",
+        "wordnet31:04371632-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "tablets",
+      "native_roots": [
+        "wikidata:Q155972"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "television_sets",
+      "native_roots": [
+        "wikidata:Q8075",
+        "wordnet31:04413042-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "tools",
+      "native_roots": [
+        "wikidata:Q39546",
+        "wordnet31:04459089-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "tractors",
+      "native_roots": [
+        "wikidata:Q39495",
+        "wordnet31:04472736-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "valleys",
+      "native_roots": [
+        "wikidata:Q39816",
+        "wordnet31:09491734-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "volcanoes",
+      "native_roots": [
+        "wikidata:Q8072",
+        "wordnet31:09495727-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "waterfalls",
+      "native_roots": [
+        "wikidata:Q34038",
+        "wordnet31:09498422-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "wearable_computers",
+      "native_roots": [
+        "wikidata:Q1334829"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    },
+    {
+      "domain": "wetlands",
+      "native_roots": [
+        "eunis2012:D",
+        "eunis2021:Q",
+        "wordnet31:09501020-n"
+      ],
+      "root_paths_pass": true,
+      "public_page_schema": "KEYSET_PAGE_V1",
+      "public_page_status": null,
+      "public_page_items": 1,
+      "public_page_has_more": true
+    }
+  ],
+  "labels": {
+    "strict": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 752,
+      "root_reachable": 751,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 751
+    },
+    "taxonomy": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 752,
+      "root_reachable": 754,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 754
+    },
+    "unified": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 732,
+      "root_reachable": 754,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 754
+    },
+    "membership": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 752,
+      "root_reachable": 0,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 0
+    }
+  },
+  "pairs": {
+    "cub200": {
+      "pairs": 19900,
+      "pair_statuses": {
+        "APPLICABLE": 7770,
+        "COARSE_COMMON_ANCESTOR_ONLY": 8340,
+        "ENDPOINT_NOT_APPLICABLE": 3790
+      },
+      "equal_published_validation": true
+    },
+    "fgvc_aircraft": {
+      "pairs": 4950,
+      "pair_statuses": {
+        "APPLICABLE": 3028,
+        "ENDPOINT_NOT_APPLICABLE": 1295,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
+        "COARSE_COMMON_ANCESTOR_ONLY": 212
+      },
+      "equal_published_validation": true
+    },
+    "flowers102": {
+      "pairs": 5151,
+      "pair_statuses": {
+        "APPLICABLE": 1077,
+        "ENDPOINT_NOT_APPLICABLE": 3071,
+        "COARSE_COMMON_ANCESTOR_ONLY": 1003
+      },
+      "equal_published_validation": true
+    },
+    "pets37": {
+      "pairs": 666,
+      "pair_statuses": {
+        "APPLICABLE": 638,
+        "COARSE_COMMON_ANCESTOR_ONLY": 28
+      },
+      "equal_published_validation": true
+    },
+    "stanford_dogs": {
+      "pairs": 7140,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 6423,
+        "APPLICABLE": 717
+      },
+      "equal_published_validation": true
+    },
+    "stanford_cars": {
+      "pairs": 19110,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 15269,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 3710,
+        "APPLICABLE": 131
+      },
+      "equal_published_validation": true
+    }
+  },
+  "unresolved_source_evidence_is_not_certified_by_this_install_test": true,
+  "images_or_models_run": false,
+  "actual_release_code_commit": "ca46e6c45a2cc17f59ea4ab9f57c4d83f6cf3cd1",
+  "release_code_tag": "v1.10.0-unified-code.1",
+  "original_artifact_code_tag": "v1.10.0-unified-review",
+  "manifest_public_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.10.0-unified-review/unified_data.json",
+  "public_manifest_sha256": "fee32e5a461d12a4eebcabbb0039b0fc93543303c4179b4b0246d48d2b84e539",
+  "public_download_command_exit_code": 0,
+  "real_cli_calls": 14,
+  "public_download_pagination_pass": true,
+  "public_nonfocus": {
+    "count": 2230,
+    "domains": 91,
+    "preserved": 2230,
+    "connected": 2229,
+    "regressions": 0,
+    "semantic_all_edges_certified": false
+  },
+  "public_frozen_inputs_sha256": "e7965a99b373318e943c8d07b063967e1848050d623f43e1d01f82ff653e3591",
+  "public_training_export_datasets": 6,
+  "production_replacement_ready": false,
+  "all_source_semantics_certified": false,
+  "sdk_module_path_recorded_in_local_replay": true,
+  "public_committed_tests_passed": 120,
+  "public_test_log_sha256": "f73c5189ec6adf268c18b43d2cce68a4e18b72b2d64e15789128b7c6dd9a033d",
+  "initial_verifier_schema_error_corrected": true,
+  "initial_failure_logs_retained": true,
+  "nonfocus_invocation": "Fresh dedicated virtual environment with script-directory imports; PYTHONPATH/PYTHONHOME/FINEATLAS_DATA_DIR cleared",
+  "recommended_code_tag": "v1.10.0-unified-code.1",
+  "database_rebuilt_for_verifier_fix": false
+}
