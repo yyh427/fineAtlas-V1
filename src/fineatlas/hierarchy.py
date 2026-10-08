@@ -20,6 +20,40 @@ def validate_link_roles(relation, child_role, parent_role):
     if not roles or child_role not in roles[0] or parent_role not in roles[1]:
         raise ValueError(f'Refinement relation {relation} cannot join {child_role} to {parent_role}')
 
+
+def source_assertion_content(row):
+    """Stable source content; row IDs and later dispositions are not identity."""
+    return {key: value for key, value in dict(row).items()
+            if key not in {'id', 'status', 'reason'}}
+
+
+def source_assertion_sha256(row):
+    return hashlib.sha256(json.dumps(source_assertion_content(row), sort_keys=True).encode()).hexdigest()
+
+
+def locate_source_assertion(c, table, locator):
+    """Resolve one exact frozen assertion across independent replay row IDs.
+
+    The complete original content is checked after indexed endpoint lookup.
+    Same names or a different source claim never substitute for this assertion.
+    Ambiguous identical duplicates require review instead of picking the first.
+    """
+    endpoint_columns = {'entity_relations': ('subject_uid', 'object_uid'),
+                        'bridges': ('left_uid', 'right_uid')}
+    if table not in endpoint_columns:
+        raise ValueError('Unsupported frozen assertion table')
+    left, right = endpoint_columns[table]
+    keys = (left, right, 'relation', 'source')
+    if not all(locator.get(key) for key in keys) or not locator.get('content_sha256'):
+        raise ValueError('Frozen assertion locator needs exact endpoints, source and content hash')
+    rows = c.execute('SELECT * FROM ' + table + ' WHERE ' +
+                     ' AND '.join(key + '=?' for key in keys),
+                     tuple(locator[key] for key in keys)).fetchall()
+    matches = [row for row in rows if source_assertion_sha256(row) == locator['content_sha256']]
+    if len(matches) != 1:
+        raise ValueError('Frozen source assertion is missing, changed or ambiguous')
+    return matches[0]
+
 def reconcile_instance_endpoints(m):
     """Apply authoritative later instance roles to earlier inclusion claims.
 
@@ -81,13 +115,16 @@ UNIFIED_INPUT_PREFIXES={
     'unified_biological_units.jsonl':'unified_biological_units',
     'unified_final_role_links.jsonl':'unified_final_role_navigation',
     'unified_root_contracts.jsonl':'unified_root_contracts',
+    'shared_role_repairs.jsonl':'shared_role_repairs',
+    'repair_role_links.jsonl':'repair_role_navigation',
+    'annotation_taxonomic_navigation.jsonl':'annotation_taxonomic_navigation',
 }
 
 def review_version(inputs):
     path = Path(inputs)/'review_release.json'
     if path.exists():
         value = json.loads(path.read_text())['version']
-        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review', 'v1.10.0-unified-review'}:
+        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review', 'v1.10.0-unified-review', 'v1.10.1-repair-review'}:
             raise ValueError('Unsupported hierarchy candidate version')
         return value
     return VERSION if (Path(inputs)/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review'
@@ -320,6 +357,15 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             c.execute("UPDATE edges SET status='HIERARCHY_SUPERSEDED' WHERE id=?",(e['id'],))
             m.change('source_semantic_contract','edge',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof'])
             counts['invalid_source_arcs_quarantined']+=1
+        elif op=='withdraw_typed_source':
+            e=locate_source_assertion(c,'entity_relations',r['locator'])
+            if e['subject_uid']!=uid or e['status'] not in {'ACTIVE','HIERARCHY_SUPERSEDED'}:
+                raise ValueError('Exact typed source withdrawal has incompatible scope/status')
+            if e['status']=='ACTIVE':
+                c.execute("UPDATE entity_relations SET status='HIERARCHY_SUPERSEDED' WHERE id=?",(e['id'],))
+                m.change('hierarchy','typed',e['id'],dict(e),{'status':'HIERARCHY_SUPERSEDED'},r['proof'])
+                counts['superseded_exact_typed_sources']+=1
+            else:counts['typed_source_withdrawals_already_applied']+=1
         elif op=='withdraw_typed':
             e=c.execute('SELECT * FROM entity_relations WHERE id=?',(r['relation_id'],)).fetchone()
             if not e or e['subject_uid']!=uid:raise ValueError('Typed withdrawal differs')
@@ -334,9 +380,17 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
             if not before or before['status']!='ACTIVE':raise ValueError('No original active declaration for restoration')
             c.execute('UPDATE edges SET status=?,data=?,reason=? WHERE id=?',(before['status'],before['data'],before['reason'],e['id']))
             m.change('hierarchy','edge',e['id'],dict(e),{'status':'ACTIVE','restored_original_admission':True},r['proof'])
-        elif op=='split_identity':
-            b=c.execute('SELECT * FROM bridges WHERE id=?',(r['bridge_id'],)).fetchone()
+        elif op in ('split_identity','split_identity_source'):
+            b=(locate_source_assertion(c,'bridges',r['locator']) if op=='split_identity_source'
+               else c.execute('SELECT * FROM bridges WHERE id=?',(r['bridge_id'],)).fetchone())
             if not b or {b['left_uid'],b['right_uid']}!={uid,r['parent']}:raise ValueError('Identity withdrawal differs')
+            if b['status']=='GRAIN_REJECTED' and b['reason']==r['proof']['basis']:
+                # Replaying the same source review cannot allocate more
+                # components or invent another identity partition.
+                counts['identity_source_splits_already_applied']+=1
+                continue
+            if b['status']!='ACTIVE' or b['relation']!='SAME_CONCEPT':
+                raise ValueError('Identity withdrawal needs its original active source declaration')
             c.execute("UPDATE bridges SET status='GRAIN_REJECTED',reason=? WHERE id=?",(r['proof']['basis'],b['id']))
             # Repartition only this old identity component using every surviving bridge.
             old=c.execute('SELECT component_id FROM nodes WHERE uid=?',(uid,)).fetchone()[0]

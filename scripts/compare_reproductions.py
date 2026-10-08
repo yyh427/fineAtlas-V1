@@ -26,12 +26,63 @@ c.execute("PRAGMA other.cache_size=-1048576")
 out = Path(a.output)
 out.parent.mkdir(parents=True, exist_ok=True)
 results = {}
+def schema_inventory(schema):
+    # Include FTS/shadow/runtime-stage table definitions even though their
+    # duplicate or runtime row content is intentionally excluded below.
+    found = {}
+    for name, sql in c.execute(
+        "SELECT name,sql FROM " + schema + ".sqlite_master WHERE type='table' "
+        "AND name NOT GLOB 'sqlite_*' ORDER BY name"
+    ):
+        escaped = name.replace('"', '""')
+        columns = [list(row) for row in c.execute(
+            'PRAGMA ' + schema + '.table_xinfo("' + escaped + '")')]
+        found[name] = {'definition': sql, 'columns': columns}
+    return found
+
+primary_schema, reproduction_schema = schema_inventory('main'), schema_inventory('other')
+schema_result = {
+    'primary_only_tables': sorted(set(primary_schema) - set(reproduction_schema)),
+    'reproduction_only_tables': sorted(set(reproduction_schema) - set(primary_schema)),
+    'different_table_schemas': {
+        table: {'primary': primary_schema[table], 'reproduction': reproduction_schema[table]}
+        for table in sorted(set(primary_schema) & set(reproduction_schema))
+        if primary_schema[table] != reproduction_schema[table]},
+    'table_counts': [len(primary_schema), len(reproduction_schema)],
+}
+schema_result['pass'] = not any(schema_result[key] for key in (
+    'primary_only_tables', 'reproduction_only_tables', 'different_table_schemas'))
+results['schema_inventory'] = schema_result
+def object_inventory(schema):
+    return {(kind, name): {'type': kind, 'name': name, 'table_name': table, 'sql': sql}
+            for kind, name, table, sql in c.execute(
+                'SELECT type,name,tbl_name,sql FROM ' + schema + '.sqlite_master '
+                "WHERE name NOT GLOB 'sqlite_*' ORDER BY type,name")}
+
+primary_objects, reproduction_objects = object_inventory('main'), object_inventory('other')
+objects_result = {
+    'primary_only_objects': [primary_objects[key]
+        for key in sorted(set(primary_objects) - set(reproduction_objects))],
+    'reproduction_only_objects': [reproduction_objects[key]
+        for key in sorted(set(reproduction_objects) - set(primary_objects))],
+    'different_object_definitions': [
+        {'primary': primary_objects[key], 'reproduction': reproduction_objects[key]}
+        for key in sorted(set(primary_objects) & set(reproduction_objects))
+        if primary_objects[key] != reproduction_objects[key]],
+    'object_counts': [len(primary_objects), len(reproduction_objects)],
+}
+objects_result['pass'] = not any(objects_result[key] for key in (
+    'primary_only_objects', 'reproduction_only_objects', 'different_object_definitions'))
+results['schema_objects'] = objects_result
+out.write_text(json.dumps(results, indent=2))
+if not schema_result['pass'] or not objects_result['pass']:
+    raise SystemExit('Reproduction schema/table inventory mismatch; see ' + str(out))
 # FTS shadow tables duplicate alias content. Their MATCH behaviour is checked
 # by public audits; compare the actual native alias and node records here.
 tables = [
     r[0]
     for r in c.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'alias_search%' ORDER BY name"
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT GLOB 'sqlite_*' AND name NOT LIKE 'alias_search%' ORDER BY name"
     )
 ]
 for table in tables:

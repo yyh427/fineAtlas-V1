@@ -181,6 +181,16 @@ class Migration:
                 "role_evidence_id": eid,
             }
         )
+        if (kind == 'CLASS'
+            and proof.get('basis') == 'REVIEWED_GENERIC_WHOLE_SUBJECT_REPLACES_ADAPTER_DESIGN_ROLE'
+            and proof.get('individual_semantic_review')
+            and proof.get('source_statement') and proof.get('subject_kind_head')
+            and proof.get('scope_observation')):
+            attrs.update(canonical_scope_guard='GENERIC_PHYSICAL_KIND',
+                         canonical_scope_evidence_id=eid)
+        elif kind != 'CLASS':
+            attrs.pop('canonical_scope_guard', None)
+            attrs.pop('canonical_scope_evidence_id', None)
         self.c.execute(
             "INSERT OR REPLACE INTO node_profiles VALUES (?,?,?,?,?,?)",
             (
@@ -684,7 +694,7 @@ class Migration:
             proof = p["proof"]
             if source == 'Independent native product-family definition':
                 native = self.c.execute('SELECT data FROM nodes WHERE uid=?', (p['uid'],)).fetchone()
-                profile = self.c.execute('SELECT node_kind FROM node_profiles WHERE uid=?', (p['uid'],)).fetchone()
+                profile = self.c.execute('SELECT * FROM node_profiles WHERE uid=?', (p['uid'],)).fetchone()
                 if native and not allows_model_extraction(json.loads(native[0] or '{}'), dict(profile) if profile else None):
                     raise ValueError('Stale model extraction input conflicts with explicit source role: ' + p['uid'])
             catalog = catalogs.setdefault(
@@ -942,8 +952,106 @@ class Migration:
         self.c.commit()
         return {"task_scope_updates": count}
 
-    def portals(self):
+    def portals(self, *, preserve_registry=False):
+        """Register grounded portals, optionally extending canonical scopes only.
+
+        Historical domain_entries remain the raw declarations. Later reviewed
+        registry scopes may intentionally be narrower or merge those entries;
+        an additive extension must not reconstruct them from the historical rows.
+        """
         new_domains = self.inputs / "new_domains.jsonl"
+        if preserve_registry:
+            c = self.c
+            registry = {r['canonical_name']: dict(r) for r in c.execute('SELECT * FROM domain_registry')}
+            aliases = {r['alias']: dict(r) for r in c.execute('SELECT * FROM domain_aliases')}
+            entries = [json.loads(line) for line in new_domains.read_text().splitlines() if line.strip()] if new_domains.exists() else []
+            root_groups = {}
+
+            def grounded_groups(roots):
+                if not roots or len(roots) != len(set(roots)):
+                    raise ValueError('Domain roots must be a nonempty distinct UID set')
+                groups = set()
+                for uid in roots:
+                    node = c.execute('SELECT visibility,component_id FROM nodes WHERE uid=?', (uid,)).fetchone()
+                    if not node or node['visibility'] != 'ACTIVE':
+                        raise ValueError('Domain root is not grounded: ' + uid)
+                    groups.add(node['component_id'])
+                return tuple(sorted(groups))
+
+            for name, row in registry.items():
+                groups = grounded_groups(json.loads(row['root_uids']))
+                root_groups.setdefault(groups, set()).add(name)
+            plans, seen = [], set()
+            for entry in entries:
+                name, roots = entry['domain'], entry['root_uids']
+                if name in seen:
+                    raise ValueError('Duplicate reviewed domain declaration: ' + name)
+                seen.add(name)
+                if not entry.get('proof') or not entry.get('source_uri'):
+                    raise ValueError('Domain scope lacks source evidence')
+                groups = grounded_groups(roots)
+                existing = registry.get(name)
+                if existing:
+                    if set(json.loads(existing['root_uids'])) != set(roots):
+                        raise ValueError('Canonical domain name has a different protected scope: ' + name)
+                    # Repeated registration cannot rewrite old raw entries or ledger.
+                    continue
+                if name in aliases:
+                    raise ValueError('New canonical domain name conflicts with a protected alias: ' + name)
+                if groups in root_groups:
+                    raise ValueError('New domain duplicates a complete existing root identity-group set: ' + name)
+                raw = c.execute('SELECT * FROM domain_entries WHERE domain=?', (name,)).fetchone()
+                if raw and set(json.loads(raw['root_uids'])) != set(roots):
+                    raise ValueError('New domain conflicts with a retained historical declaration: ' + name)
+                root_groups[groups] = {name}
+                plans.append((entry, dict(raw) if raw else None))
+            # Preflight every entry before any mutation, then keep the addition atomic.
+            c.execute('SAVEPOINT additive_portals')
+            try:
+                next_id = c.execute('SELECT coalesce(max(domain_id),0)+1 FROM domain_registry').fetchone()[0]
+                ambiguous = 0
+                for entry, raw in plans:
+                    name, roots = entry['domain'], entry['root_uids']
+                    eid = self.evidence('Declared native domain scope', entry['source_uri'], entry['proof'], 'DOMAIN_SCOPE')
+                    entry_uid = 'fineatlas-domain:' + name
+                    if raw is None:
+                        c.execute('INSERT INTO domain_entries VALUES(?,?,?,?,?,?)',
+                                  (name, entry_uid, entry['label'], roots[0], dump(roots), entry['description']))
+                        c.executemany('INSERT INTO domain_entry_roots VALUES(?,?)', ((name, uid) for uid in roots))
+                    c.execute('INSERT INTO domain_registry VALUES(?,?,?,?,?,?)',
+                              (next_id, name, entry_uid, entry['label'], dump(roots), entry['description']))
+                    c.execute('INSERT INTO domain_aliases VALUES(?,?,?)',
+                              (name, next_id, dump({'basis': 'Reviewed additive canonical scope; existing registry and raw declarations preserved', 'evidence_id': eid})))
+                    for alias in sorted({a[0] for root in roots for a in c.execute('SELECT alias FROM aliases WHERE uid=?', (root,))
+                                         if a[0] and not re.fullmatch(r'q\d+', a[0])}):
+                        existing_alias = c.execute('SELECT domain_id FROM domain_aliases WHERE alias=?', (alias,)).fetchone()
+                        if existing_alias:
+                            if existing_alias[0] != next_id:
+                                ambiguous += 1
+                            continue
+                        c.execute('INSERT INTO domain_aliases VALUES(?,?,?)',
+                                  (alias, next_id, dump({'basis': 'Stored native root alias for reviewed new domain', 'evidence_id': eid})))
+                    self.change('portals', 'entry', name, {}, entry, {'evidence_id': eid, 'existing_canonical_registry_preserved': True})
+                    next_id += 1
+                # Check the protected rows themselves, including IDs/provenance.
+                for name, row in registry.items():
+                    current = c.execute('SELECT * FROM domain_registry WHERE canonical_name=?', (name,)).fetchone()
+                    if not current or dict(current) != row:
+                        raise ValueError('Additive portal registration changed a protected canonical row')
+                for alias, row in aliases.items():
+                    current = c.execute('SELECT * FROM domain_aliases WHERE alias=?', (alias,)).fetchone()
+                    if not current or dict(current) != row:
+                        raise ValueError('Additive portal registration changed a protected alias')
+                c.execute('RELEASE SAVEPOINT additive_portals')
+            except Exception:
+                c.execute('ROLLBACK TO SAVEPOINT additive_portals')
+                c.execute('RELEASE SAVEPOINT additive_portals')
+                raise
+            c.commit()
+            return {'preserved_canonical_portals': len(registry), 'added_canonical_portals': len(plans),
+                    'canonical_portals': len(registry) + len(plans),
+                    'original_portals': c.execute('SELECT count(*) FROM domain_entries').fetchone()[0],
+                    'ambiguous_native_aliases_not_added': ambiguous, 'existing_domain_ids_preserved': True}
         if new_domains.exists():
             for line in new_domains.read_text().splitlines():
                 entry = json.loads(line)

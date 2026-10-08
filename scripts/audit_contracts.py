@@ -11,7 +11,107 @@ import sqlite3
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from fineatlas.semantics import role_expression
+from fineatlas.semantics import (role_expression, VIEWS, TYPED_TERMINALS,
+    source_admission_view, classification_roles, navigation_parent_roles,
+    terminal_relations, edge_predicate)
+
+
+def _values(values):
+    return ','.join("'" + value.replace("'", "''") + "'" for value in sorted(values))
+
+
+def _source_view(view):
+    return "CASE " + ' '.join("WHEN " + view + "='" + v + "' THEN '" +
+        source_admission_view(v) + "'" for v in VIEWS) + " ELSE NULL END"
+
+
+def _admitted(node, profile, view):
+    return (f"{node}.visibility='ACTIVE' AND (json_type({profile}.attributes,'$.allowed_views') IS NOT 'array' "
+            f"OR EXISTS(SELECT 1 FROM json_each({profile}.attributes,'$.allowed_views') av "
+            f"WHERE av.value={_source_view(view)}))")
+
+
+def _class_legal(view):
+    child, parent = role_expression('n','np'), role_expression('t','tp')
+    return '(' + ' OR '.join(f"({view}='{v}' AND ({edge_predicate(v)}) "
+        f"AND {child} IN ({_values(classification_roles(v))}) "
+        f"AND {parent} IN ({_values(classification_roles(v))}))" for v in VIEWS) + ')'
+
+
+def _typed_legal(view):
+    child, parent = role_expression('n','np'), role_expression('t','tp')
+    choices = []
+    for v in VIEWS:
+        terminals = ' OR '.join(f"({child}='{role}' AND e.relation IN ({_values(terminal_relations(role,v))}))"
+            for role in sorted(TYPED_TERMINALS) if terminal_relations(role,v))
+        choices.append(f"({view}='{v}' AND e.status='ACTIVE' AND ({terminals}) "
+            f"AND {parent} IN ({_values(navigation_parent_roles(v))}))")
+    return '(' + ' OR '.join(choices) + ')'
+
+
+def view_graph_contract_queries():
+    """Inspect actual admitted arcs/caches; retained declarations are not admission.
+
+    Source view and role/relation rules match the public interface. Unknown
+    views fail explicitly. Strict full-graph checks include unrooted components,
+    rather than accepting a root witness as proof that other arcs are legal.
+    """
+    joins = " LEFT JOIN nodes n ON n.uid=e.{child} LEFT JOIN nodes t ON t.uid=e.{parent} " \
+            "LEFT JOIN node_profiles np ON np.uid=n.uid LEFT JOIN node_profiles tp ON tp.uid=t.uid "
+    queries = {}
+    known = _values(VIEWS)
+    for table in ('view_roots','view_paths','browse_links'):
+        queries[table+'_unknown_views'] = f"SELECT count(*) FROM {table} WHERE view NOT IN ({known})"
+    for cache in ('view_roots','view_paths'):
+        queries[cache+'_invalid_root_witness_shape'] = f"SELECT count(*) FROM {cache} WHERE (depth=0 AND (parent_component_id IS NOT NULL OR witness_id IS NOT NULL)) OR (depth>0 AND (parent_component_id IS NULL OR witness_id IS NULL OR witness_id=0)) OR depth<0"
+        sql = f"SELECT count(*) FROM {cache} v LEFT JOIN edges e ON e.id=v.witness_id " + joins.format(child='child_uid',parent='parent_uid')
+        invalid = (f"e.id IS NULL OR n.uid IS NULL OR t.uid IS NULL OR NOT ({_class_legal('v.view')}) "
+            f"OR NOT ({_admitted('n','np','v.view')}) OR NOT ({_admitted('t','tp','v.view')}) "
+            "OR v.component_id IS NOT n.component_id OR v.parent_component_id IS NOT t.component_id")
+        queries[cache+'_class_witness_contract'] = sql + f"WHERE v.witness_id>0 AND ({invalid})"
+    queries['typed_relations_entering_classification_caches'] = "SELECT count(*) FROM view_roots WHERE witness_id<0"
+    sql = "SELECT count(*) FROM view_paths v LEFT JOIN entity_relations e ON e.id=-v.witness_id " + joins.format(child='subject_uid',parent='object_uid')
+    invalid = (f"e.id IS NULL OR n.uid IS NULL OR t.uid IS NULL OR NOT ({_typed_legal('v.view')}) "
+        f"OR NOT ({_admitted('n','np','v.view')}) OR NOT ({_admitted('t','tp','v.view')}) "
+        "OR v.component_id IS NOT n.component_id OR v.parent_component_id IS NOT t.component_id")
+    queries['view_paths_typed_witness_contract'] = sql + f"WHERE v.witness_id<0 AND ({invalid})"
+    strict_legal = (f"({edge_predicate('strict')}) AND {role_expression('n','np')} IN ({_values(classification_roles('strict'))}) "
+        f"AND {role_expression('t','tp')} IN ({_values(classification_roles('strict'))}) "
+        f"AND ({_admitted('n','np',repr('strict'))}) AND ({_admitted('t','tp',repr('strict'))})")
+    sql = "SELECT count(*) FROM browse_links b LEFT JOIN edges e ON e.id=b.record_id " + joins.format(child='child_uid',parent='parent_uid')
+    queries['strict_full_classification_graph_contract'] = sql + (f"WHERE b.view='strict' AND b.storage='edge' AND "
+        f"(e.id IS NULL OR n.uid IS NULL OR t.uid IS NULL OR NOT ({strict_legal}) "
+        f"OR b.role IS NOT {role_expression('n','np')} OR b.relation IS NOT e.relation "
+        "OR b.child_component IS NOT n.component_id OR b.parent_component IS NOT t.component_id "
+        "OR b.child_component=b.parent_component)")
+    sql = "SELECT count(*) FROM edges e " + joins.format(child='child_uid',parent='parent_uid')
+    queries['strict_full_graph_missing_admitted_source_arcs'] = (
+        "SELECT count(*) FROM (SELECT DISTINCT t.component_id parent_component,n.component_id child_component,"
+        + role_expression('n','np') + " child_role,e.relation FROM edges e "
+        + joins.format(child='child_uid',parent='parent_uid')
+        + f"WHERE ({strict_legal}) AND n.component_id<>t.component_id) expected "
+        + "WHERE NOT EXISTS(SELECT 1 FROM browse_links b WHERE b.view='strict' AND b.storage='edge' "
+        + "AND b.parent_component=expected.parent_component AND b.child_component=expected.child_component "
+        + "AND b.role=expected.child_role AND b.relation=expected.relation)")
+    return queries
+
+
+def raw_strict_exclusion_census(c):
+    """Visible inventory of declarations whose endpoints do not admit strict IS_A."""
+    result = {}
+    roles = _values(classification_roles('strict'))
+    for endpoint in ('child_uid','parent_uid'):
+        role = role_expression('n','p')
+        sql = (f"SELECT {role} role,json_extract(p.attributes,'$.allowed_views') allowed_views,count(*) records FROM edges e JOIN nodes n ON n.uid=e.{endpoint} "
+            f"LEFT JOIN node_profiles p ON p.uid=n.uid WHERE e.status='ACTIVE' AND e.relation='IS_A' "
+            f"AND ({role} NOT IN ({roles}) OR NOT ({_admitted('n','p',repr('strict'))})) "
+            "GROUP BY 1,2 ORDER BY 1,2")
+        result[endpoint] = []
+        for row in c.execute(sql):
+            allowed = json.loads(row[1]) if row[1] and row[1].startswith('[') else row[1]
+            result[endpoint].append({'role':row[0],'allowed_views':allowed,
+                'retained_active_ISA_records':row[2],'strict_admitted':False})
+    return result
 
 
 def main():
@@ -63,11 +163,9 @@ def main():
         "original_edge_declarations_changed",
         "SELECT count(*) FROM base.edges b JOIN edges e ON e.id=b.id WHERE b.original_relation IS NOT e.original_relation OR b.source_relation IS NOT e.source_relation OR b.child_uid IS NOT e.child_uid OR b.parent_uid IS NOT e.parent_uid",
     )
-    for endpoint in ("child_uid", "parent_uid"):
-        check(
-            "strict_" + endpoint + "_role",
-            f"SELECT count(*) FROM edges e JOIN nodes n ON n.uid=e.{endpoint} LEFT JOIN node_profiles p ON p.uid=n.uid WHERE e.status='ACTIVE' AND e.relation='IS_A' AND {role} NOT IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION')",
-        )
+    counts['retained_raw_ISA_excluded_from_strict'] = raw_strict_exclusion_census(c)
+    for key, sql in view_graph_contract_queries().items():
+        check(key, sql)
     check(
         "unknown_active_instances",
         "SELECT count(*) FROM entity_relations r JOIN node_profiles p ON p.uid=r.subject_uid WHERE r.status='ACTIVE' AND r.relation='INSTANCE_OF' AND p.node_kind<>'INSTANCE'",
@@ -76,16 +174,6 @@ def main():
           'SELECT count(*) FROM normalization_roles r JOIN node_profiles p ON p.uid=r.uid WHERE r.canonical_role<>p.node_kind OR r.evidence_id<>p.evidence_id')
     check('domain_member_role_disagreement',
           'SELECT count(*) FROM domain_members m JOIN node_profiles p ON p.uid=m.uid WHERE m.role<>p.node_kind')
-    check(
-        "view_witness_class_endpoint_admission",
-        """SELECT count(*) FROM view_paths v JOIN edges e ON e.id=v.witness_id JOIN nodes n ON n.uid=e.child_uid JOIN nodes t ON t.uid=e.parent_uid
-      WHERE v.witness_id>0 AND (n.visibility<>'ACTIVE' OR t.visibility<>'ACTIVE' OR EXISTS(SELECT 1 FROM node_profiles p WHERE p.uid IN(n.uid,t.uid) AND json_type(p.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') av WHERE av.value=v.view)))""",
-    )
-    check(
-        "view_witness_typed_endpoint_admission",
-        """SELECT count(*) FROM view_paths v JOIN entity_relations e ON e.id=-v.witness_id JOIN nodes n ON n.uid=e.subject_uid JOIN nodes t ON t.uid=e.object_uid
-      WHERE v.witness_id<0 AND (n.visibility<>'ACTIVE' OR t.visibility<>'ACTIVE' OR e.status<>'ACTIVE' OR EXISTS(SELECT 1 FROM node_profiles p WHERE p.uid IN(n.uid,t.uid) AND json_type(p.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') av WHERE av.value=v.view)))""",
-    )
     check(
         "new_ISA_without_provenance",
         "SELECT count(*) FROM edges WHERE layer IN ('v1.7-generality-review','v1.8-hierarchy-review') AND status='ACTIVE' AND relation='IS_A' AND (provenance='{}' OR classification_basis='' OR coalesce(json_extract(data,'$.eligible_for_final_dag'),0)<>1)",

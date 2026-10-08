@@ -67,6 +67,36 @@ def apply_display_aliases(m):
     m.c.commit();return {'existing_names_indexed':count,'identity_assertions_added':0}
 
 
+def apply_repair_extensions(m):
+    """Replay separately frozen 1.10 repairs before any derived cache is built."""
+    results={}
+    if (m.inputs/'shared_role_repairs.jsonl').exists():
+        from prepare_shared_role_repairs import apply_shared_repairs
+        results['shared_roles']=apply_shared_repairs(m)
+    if (m.inputs/'annotation_scope_repairs.json').exists():
+        from prepare_annotation_scope_repairs import apply_scope_repairs
+        results['annotation_scope']=apply_scope_repairs(m)
+    if (m.inputs/'annotation_historical_alias_repairs.json').exists():
+        from prepare_annotation_scope_repairs import apply_scope_supplement
+        results['annotation_historical_aliases']=apply_scope_supplement(m)
+    if (m.inputs/'abo_furniture_records.jsonl').exists():
+        from prepare_abo_furniture import apply_abo_inputs
+        results['furniture_trial']=apply_abo_inputs(m)
+    if (m.inputs/'living_domains_manifest.json').exists():
+        from prepare_living_domains import apply_living_inputs
+        results['living_domains']=apply_living_inputs(m)
+    if (m.inputs/'repair_role_links.jsonl').exists():
+        results['repaired_role_navigation']=apply_refinements(m,'repair_role_links.jsonl')
+    if results:
+        from fineatlas.hierarchy import review_version
+        m.meta('release',review_version(m.inputs))
+        m.meta('browse_indexes_ready',False)
+        m.meta('unified_ready',False)
+        m.c.commit()
+        (m.out/'repair_extensions_summary.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\n')
+    return results
+
+
 def apply(m):
     c=m.c;counts=Counter()
     c.executescript('''
@@ -185,7 +215,7 @@ def apply(m):
         counts.update(apply_refinements(m,'unified_role_links.jsonl'))
     for filename in ('unified_classification_projection.jsonl','unified_source_scope.jsonl','unified_navigation_completion.jsonl',
                      'unified_design_scope.jsonl','unified_breed_parents.jsonl','unified_regulatory_roles.jsonl',
-                     'unified_taxonomic_scope.jsonl','unified_biological_units.jsonl','unified_final_role_links.jsonl','unified_root_contracts.jsonl'):
+                     'unified_taxonomic_scope.jsonl','unified_biological_units.jsonl','unified_root_contracts.jsonl','unified_final_role_links.jsonl'):
         if (m.inputs/filename).exists():counts.update(apply_refinements(m,filename))
     m.meta('unified_attachment_rules',{'domains':c.execute('SELECT count(DISTINCT domain_id) FROM unified_domain_rules').fetchone()[0],
         'rules':c.execute('SELECT count(*) FROM unified_domain_rules').fetchone()[0],
@@ -206,6 +236,8 @@ def main():
     p.add_argument('--final-navigation-only',action='store_true',help='Replay frozen regulatory role and corroborated breed-parent navigation, then rebuild')
     p.add_argument('--root-contracts-only',action='store_true',help='Apply individually evidenced incorrect root-parent quarantines then rebuild')
     p.add_argument('--scope-reconciliation-only',action='store_true',help='Replay exact-QID primary role corrections and complete typed role navigation, then rebuild')
+    p.add_argument('--repair-extensions-only',action='store_true',help='Resume completed original 1.10 source replay; apply frozen shared/scope/living/furniture deltas and rebuild')
+    p.add_argument('--repair-role-navigation-only',action='store_true',help='Apply separately frozen regenerated role navigation without repeating source repair decisions')
     a=p.parse_args()
     baseline=json.loads((a.inputs/'baseline.json').read_text())
     source=a.baseline or Path(baseline['database'])
@@ -216,7 +248,12 @@ def main():
     if source.stat().st_size!=baseline['database_bytes'] or source_meta.get('database_revision')!=baseline['database_revision']:
         raise ValueError('Protected baseline size/revision differs from the frozen source manifest')
     m=Migration(a.database,a.inputs,a.reports);m.schema()
-    if a.scope_reconciliation_only:
+    if a.repair_role_navigation_only:
+        print(json.dumps(apply_refinements(m,'repair_role_links.jsonl'),indent=2),flush=True)
+        m.meta('browse_indexes_ready',False);m.c.commit()
+    elif a.repair_extensions_only:
+        print(json.dumps(apply_repair_extensions(m),ensure_ascii=False,indent=2),flush=True)
+    elif a.scope_reconciliation_only:
         print(json.dumps(apply_refinements(m,'unified_root_contracts.jsonl')),flush=True)
         from prepare_unified_role_links import prepare
         prepare(a.database,m.inputs/'unified_final_role_links.jsonl')
@@ -240,7 +277,9 @@ def main():
         counts={filename:apply_refinements(m,filename) for filename in
                 ('unified_classification_projection.jsonl','unified_source_scope.jsonl')}
         print(json.dumps(counts,indent=2),flush=True)
-    elif not a.graphs_only:print(json.dumps(apply(m),indent=2),flush=True)
+    elif not a.graphs_only:
+        print(json.dumps(apply(m),indent=2),flush=True)
+        print(json.dumps(apply_repair_extensions(m),ensure_ascii=False,indent=2),flush=True)
     if not a.apply_only:
         result=ram_graphs(m)
         (a.reports/'graphs_summary.json').write_text(json.dumps(result,indent=2)+'\n')
