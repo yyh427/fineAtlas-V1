@@ -21,7 +21,7 @@ lines=['# FineAtlas 统一层次验收与训练使用',
  '| 分类与分角色导航循环 | 四视图独立全图检查，见验证 JSON |',
  f"| 未接入的有效角色来源记录 | {d['unrooted_navigation_source_records']}；保留逐 UID 原始父声明和证据边界 |",
  f"| 角色冲突身份组 | {d['identity_role_conflict_groups']}；不凭角色名强行拆分／合并 |",
- '\n全部 91 领域的入口、原生根、WordNet synset、定义、接入关系、依据及根路径结果在 [unified_domains.csv](unified_domains.csv)。领域成员的完整冻结可达性 join 已检查；未定位源记录没有删掉或静默排除。语义抽查包含全部接入根和选定定义、跨来源规则、固定样本、来源字段及发现的反例，不宣称全部源边逐条独立认证。',
+ '\n全部 91 领域的入口、原生根、WordNet synset、定义、接入关系、依据及根 UID 链在 [unified_domains.csv](unified_domains.csv)，每步源关系见 [unified_domains.json](unified_domains.json)。领域成员的完整冻结可达性 join 已检查；未定位源记录没有删掉或静默排除。语义抽查包含全部接入根和选定定义、跨来源规则、固定样本、来源字段及发现的反例，不宣称全部源边逐条独立认证。',
  '\n## 标签与视图\n','| 视图 | 原存储身份声明 | 当前身份核验 | 根可达 | 路径／状态一致 | 任务准入 |','|---|---:|---:|---:|---:|---:|']
 for view,x in d['labels'].items():lines.append(f"| {view} | {x['stored_identity_claim_verified']} | {x['identity_verified']} | {x['root_reachable']} | {x['path_state_consistent']}/755 | {x['hierarchy_admitted']} |")
 lines+=['\n身份声明、当前核验、根可达和奖励有效是不同指标。755 标签覆盖来自原数据；本轮不把它计为新增成果。旧视图保留其历史核验口径，不能把旧声明 753 与统一视图的新严格核验数字当成同口径下降。CRJ-700 的原 UID 表示更宽系列，精确注释范围未确认，没有替换成宽系列冒充确认。',

@@ -85,3 +85,5 @@ python3 scripts/audit_browse_cli.py --database /path/to/candidate.sqlite \
 发布前压缩 roundtrip 与完整 SHA 校验后上传分块；最后从公开附件重新下载，在干净进程中使用已推送代码加载，核验默认视图、修订、真实查询与回归结果。源图可达性、来源语义抽查、奖励适用性、发布一致性分别报告。
 
 最终源输入还包含同 QID 的主源角色纠正。发现这一类明确错误时，先运行 `prepare_unified_same_qid_roles.py` 生成预览，核对其主源范围后将规则加入 `unified_root_contracts.jsonl`。本轮 23 个决定均已冻结。增量恢复可以使用 `build_unified_candidate.py --scope-reconciliation-only`，它会重放该队列、重新生成完整型号／配置导航并重建全部视图，随后必须重新冻结元数据和生成匹配索引。完整基线重放已包括此队列，不需要另建不兼容格式。
+
+最后的食物角色补全使用 `prepare_unified_food_scope.py`：输入当前带 revision 的 Wikidata 快照，以及单独复核的 `unified_food_scope_facts.json`；输出预览，再并入既有 `unified_root_contracts.jsonl`。它只接受未限定的原生 food 上位声明、未改变的完整范围／名称和经独立确认的食物概念，使用来源分类关系而非严格 `IS_A`。本轮 7 个非基准对象随全部视图及浏览索引再次重建；限定某部分的声明和命名用餐实例均不能通过该规则。

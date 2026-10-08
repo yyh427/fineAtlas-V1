@@ -1,5 +1,6 @@
 {
   "same_code_and_policy": true,
+  "sdk_implementation_commit": "1b88ff9f172a3a2db78ba64029c48f524413a596",
   "snapshots": {
     "v35": {
       "cub200": {
