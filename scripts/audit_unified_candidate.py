@@ -5,6 +5,7 @@ Output files are stage checkpoints. A summary is not an unconditional semantic
 certification: unresolved source concepts and annotation grain remain visible.
 """
 import argparse
+import csv
 from collections import Counter
 import json
 from pathlib import Path
@@ -131,6 +132,22 @@ def structure(tree,out):
     result['identity_role_conflicts']=[dict(r) for r in c.execute(f'''SELECT n.component_id,count(DISTINCT {role}) roles,count(*) representations,min(n.uid) example
         FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.visibility='ACTIVE'
         GROUP BY n.component_id HAVING count(DISTINCT {role})>1''')]
+    unresolved=0
+    with (out/'unrooted_navigation_source_uids.csv').open('w',newline='') as stream:
+        writer=csv.writer(stream);writer.writerow(['uid','label','source','native_rank','current_role','role_evidence_status','reason'])
+        for n in c.execute(f'''SELECT n.uid,n.label,n.source,n.rank,{role} role,p.attributes FROM nodes n
+            LEFT JOIN node_profiles p ON p.uid=n.uid LEFT JOIN view_paths v ON v.component_id=n.component_id AND v.view='unified'
+            WHERE n.visibility='ACTIVE' AND v.component_id IS NULL
+            AND {role} IN ('CLASS','BIOLOGICAL_VARIANT','MODEL','MODEL_FAMILY','CONFIGURATION','INSTANCE')
+            AND (json_type(p.attributes,'$.allowed_views') IS NOT 'array' OR EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') j WHERE j.value='taxonomy'))
+            ORDER BY n.source,n.uid'''):
+            attrs=json.loads(n['attributes'] or '{}')
+            writer.writerow([n['uid'],n['label'],n['source'],n['rank'],n['role'],attrs.get('role_status','LEGACY_RANK_FALLBACK'),
+                             'No admitted unified parent path; record preserved for source-grain/parent/identity review, not silently excluded or forcibly attached'])
+            unresolved+=1
+    result['retained_unrooted_navigation_source_uids']=unresolved
+    result['universal_all_active_source_navigation_complete']=unresolved==0
+    result['raw_source_unrooted_records_excluded_to_inflate_pass_rate']=False
     write(out/'structure.json',result);return result
 
 def preservation(tree,baseline,out):

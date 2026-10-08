@@ -3,6 +3,8 @@
 import argparse
 from collections import Counter
 import json
+import sqlite3
+from math import comb
 from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
@@ -25,6 +27,21 @@ def run(database,view,primary_records,output):
             name=r['row'].get(field)
             if name:keys.setdefault(label_key(name),set()).add(r['uid'])
     with FineAtlas(database,relation_view=view) as tree:
+        tables={r[0] for r in tree.con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if 'node_profiles' not in tables:
+            # A legacy raw distance API cannot certify typed reward semantics.
+            # Do not synthesize role profiles or treat absent contracts as IS_A.
+            summary={}
+            for dataset,config in CONFIGS.items():
+                count=len(tree.task_labels(dataset));pairs=comb(count,2)
+                summary[dataset]={'pairs':pairs,'statuses':{'INTERFACE_SCHEMA_NOT_SUPPORTED':pairs},
+                    'configuration':config,'revision':tree._revision,'view':view,
+                    'public_reward_interface_available':False,
+                    'reason':'Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison',
+                    'scientific_or_visual_reward_calibration':False}
+            (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+            print(json.dumps(summary),flush=True)
+            return summary
         excluded={str(r['class_id']):'No unique full primary checklist annotation alignment'
                   for r in tree.task_labels('cub200') if len(keys.get(label_key(r['label']),set()))!=1}
         summary={}

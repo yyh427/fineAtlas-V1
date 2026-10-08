@@ -205,6 +205,7 @@ def main():
     p.add_argument('--breed-only',action='store_true',help='Replay verified source-wide breed identities then rebuild all view caches')
     p.add_argument('--final-navigation-only',action='store_true',help='Replay frozen regulatory role and corroborated breed-parent navigation, then rebuild')
     p.add_argument('--root-contracts-only',action='store_true',help='Apply individually evidenced incorrect root-parent quarantines then rebuild')
+    p.add_argument('--scope-reconciliation-only',action='store_true',help='Replay exact-QID primary role corrections and complete typed role navigation, then rebuild')
     a=p.parse_args()
     baseline=json.loads((a.inputs/'baseline.json').read_text())
     source=a.baseline or Path(baseline['database'])
@@ -215,7 +216,13 @@ def main():
     if source.stat().st_size!=baseline['database_bytes'] or source_meta.get('database_revision')!=baseline['database_revision']:
         raise ValueError('Protected baseline size/revision differs from the frozen source manifest')
     m=Migration(a.database,a.inputs,a.reports);m.schema()
-    if a.root_contracts_only:
+    if a.scope_reconciliation_only:
+        print(json.dumps(apply_refinements(m,'unified_root_contracts.jsonl')),flush=True)
+        from prepare_unified_role_links import prepare
+        prepare(a.database,m.inputs/'unified_final_role_links.jsonl')
+        print(json.dumps(apply_refinements(m,'unified_final_role_links.jsonl')),flush=True)
+        m.meta('browse_indexes_ready',False);m.c.commit()
+    elif a.root_contracts_only:
         print(json.dumps(apply_refinements(m,'unified_root_contracts.jsonl')),flush=True)
         print(json.dumps(apply_display_aliases(m)),flush=True)
         m.meta('browse_indexes_ready',False);m.c.commit()
