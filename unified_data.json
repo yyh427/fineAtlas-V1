@@ -1,0 +1,62 @@
+{
+  "public_name": "FineAtlas V1",
+  "release": "v1.10.0-unified-review",
+  "graph_version": "V1",
+  "candidate": true,
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.10.0-unified-review",
+  "database": {
+    "name": "fineatlas.sqlite",
+    "bytes": 68496932864,
+    "sha256": "c8db664711255202d51ed571d60df66fe5b4315e879c1d509a5dd935bb3ee019"
+  },
+  "assets": [
+    {
+      "name": "fineatlas-v1.10.0-unified-review.sqlite.zst.part-000",
+      "bytes": 1073741824,
+      "sha256": "10d9f1dcbb6f8687ef5f0e86831f92a4a350e6277d73c4273bbc88cfdc162214"
+    },
+    {
+      "name": "fineatlas-v1.10.0-unified-review.sqlite.zst.part-001",
+      "bytes": 1073741824,
+      "sha256": "4a1ea081abfff7c28bbb53e42580b9ca8f3ecfcb681f3ef060e9bdec80570142"
+    },
+    {
+      "name": "fineatlas-v1.10.0-unified-review.sqlite.zst.part-002",
+      "bytes": 1073741824,
+      "sha256": "f6ad35719d39de02e5258dc91f021db3f18a87f3bd9756059c33bc1ea9f4bac2"
+    },
+    {
+      "name": "fineatlas-v1.10.0-unified-review.sqlite.zst.part-003",
+      "bytes": 1073741824,
+      "sha256": "0200250e819f00b23f23616008bfd73b67d23b59507802db8fb9b7bc201ca248"
+    },
+    {
+      "name": "fineatlas-v1.10.0-unified-review.sqlite.zst.part-004",
+      "bytes": 1073741824,
+      "sha256": "c719b3823e5f0f330a891ecbfda3b62f5c36168509ccf63b940478a64902300b"
+    },
+    {
+      "name": "fineatlas-v1.10.0-unified-review.sqlite.zst.part-005",
+      "bytes": 452107179,
+      "sha256": "f5258ad882937059ec58fd63d7fa135634e2f1af0d00be7f24da687b20f665fa"
+    }
+  ],
+  "database_build_version": "v1.10.0-unified-review",
+  "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+  "artifact_kind": "single",
+  "source_revision": "0403baaa57d5068f67fbad9b201c9050e18b28c0559fc05072b7031f79e928fa",
+  "source_graph_changed": true,
+  "default_relation_view": "unified",
+  "supported_relation_views": [
+    "strict",
+    "taxonomy",
+    "membership",
+    "unified"
+  ],
+  "sdk_version": "1.10.0rc1",
+  "release_code_tag": "v1.10.0-unified-review",
+  "sdk_implementation_commit": "1b88ff9f172a3a2db78ba64029c48f524413a596",
+  "frozen_sdk_manifest_asset": "frozen_metadata.json",
+  "full_source_semantic_certification": false,
+  "production_replacement_ready": false
+}

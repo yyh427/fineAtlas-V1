@@ -39,12 +39,12 @@ for d in compact_domains:
 dump('unified_domains.json',compact_domains)
 for name,path in [('unified_cub_examples.json',reports/'labels/cub_examples.json'),('unified_performance.json',reports/'browse/performance.json'),('unified_branch_details.json',reports/'browse/branches.json'),('unified_nonfocus_summary.json',reports/'nonfocus/nonfocus_summary.json'),('unified_source_corrections.json',reports/'preservation/corrected_root_relations.json')]:dump(name,portable(load(path)))
 with (out/'unified_domains.csv').open('w',newline='') as stream:
- w=csv.writer(stream);w.writerow(['domain','entry','native_root','WordNet_anchor','synset','definition','relation','selection_basis','path_status','public_contract_pass','member_identities','root_to_native_uid_path'])
+ w=csv.writer(stream,lineterminator='\n');w.writerow(['domain','entry','native_root','WordNet_anchor','synset','definition','relation','selection_basis','path_status','public_contract_pass','member_identities','root_to_native_uid_path'])
  for d in domains:
   total=sum(m['identities'] for m in d['member_census'])
   for r in d['roots']:w.writerow([d['domain'],d['entry_uid'],r['native_root_uid'],r['wordnet_anchor_uid'],r['synset_id'],r['definition'],r['attachment_relation'],r['basis'],r['status'],d['pass'],total,' -> '.join(([r['path'][0]['parent_uid']] if r['path'] and r['path'][0].get('parent_uid') else [])+[n['uid'] for n in r['path']])])
 with (out/'unified_labels.csv').open('w',newline='') as stream:
- w=csv.writer(stream);w.writerow(['view','dataset','class_id','label','UID','source','role','stored_identity_claim','current_identity_verified','root_reachable','path_status','path_state_agree','task_usable','mapping_review'])
+ w=csv.writer(stream,lineterminator='\n');w.writerow(['view','dataset','class_id','label','UID','source','role','stored_identity_claim','current_identity_verified','root_reachable','path_status','path_state_agree','task_usable','mapping_review'])
  for view in labels:
   for r in load(reports/('labels/'+view+'_labels.json')):w.writerow([view,r['dataset'],r['class_id'],r['label'],r['uid'],r['source'],r['role'],r['stored_identity_claim_verified'],r['identity_verified'],r['state']['root_reachable'],r['path']['status'],r['consistent'],r['task_admission']['usable'],r['mapping_review']])
 with (out/'unified_pairs.jsonl.gz').open('wb') as f:
