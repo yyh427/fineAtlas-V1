@@ -147,6 +147,16 @@ def structure(tree,out):
             writer.writerow([n['uid'],n['label'],n['source'],n['rank'],n['role'],attrs.get('role_status','LEGACY_RANK_FALLBACK'),
                              'No admitted unified parent path; record preserved for source-grain/parent/identity review, not silently excluded or forcibly attached'])
             unresolved+=1
+    result['unrooted_records_outside_classification_navigation_roles']=[dict(r) for r in c.execute(f"""SELECT {role} role,count(*) records,min(n.uid) example
+        FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid LEFT JOIN view_paths v ON v.component_id=n.component_id AND v.view='unified'
+        WHERE n.visibility='ACTIVE' AND v.component_id IS NULL
+        AND {role} NOT IN ('CLASS','BIOLOGICAL_VARIANT','MODEL','MODEL_FAMILY','CONFIGURATION','INSTANCE')
+        GROUP BY 1 ORDER BY records DESC""")]
+    result['non_navigation_role_exclusion_basis']={
+        'ATTRIBUTE':'Source attributes/catalogue fields, not ordinary subclass objects; exposed separately',
+        'ORGANIZATION':'Named manufacturer/organization directory identity; no fabricated ordinary IS_A or type reward',
+        'DATASET_CATEGORY':'Task label/depicted scope, not automatically a physical subclass; original task identity retained',
+        'UNKNOWN':'Source role/grain not confirmed; retained as unresolved, not claimed integrated or reward-valid'}
     result['retained_unrooted_navigation_source_uids']=unresolved
     result['universal_all_active_source_navigation_complete']=unresolved==0
     result['raw_source_unrooted_records_excluded_to_inflate_pass_rate']=False

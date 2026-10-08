@@ -1859,6 +1859,15 @@ class ConsistentAtlas(SingleAtlas):
                 if self.relation_view=='unified' and check and check['status']=='ANNOTATION_SCOPE_REVIEW':
                     verified=False
                     result['identity_verified']=False
+            target_node = self._basic(result["target_uid"])
+            if not target_node or target_node.get("visibility") != "ACTIVE" or target_node.get("node_kind") == "UNKNOWN":
+                verified = False
+                result["identity_verified"] = False
+                result["world_identity_review"] = {
+                    "reason": "TARGET_SCOPE_OR_ROLE_NOT_CONFIRMED",
+                    "native_label_retained": True,
+                    "stored_identity_claim_verified": result["stored_identity_claim_verified"],
+                }
             result["mapping_verified"] = result["decision_status"].startswith(
                 "VERIFIED"
             )
@@ -1887,6 +1896,11 @@ class ConsistentAtlas(SingleAtlas):
             result["task_admission"] = self.eligibility(
                 result["target_uid"], identity_verified=result["mapping_verified"]
             )
+            result["task_admission"].update(
+                identity_verified=verified,
+                mapping_verified=result["mapping_verified"],
+                admission_scope="Typed mapping and legal navigation; exact world identity and relation reward are separate",
+            )
         return result
 
     def task_labels(self, dataset, requirement="hierarchy", *, usable_only=False):
@@ -1912,6 +1926,12 @@ class ConsistentAtlas(SingleAtlas):
                 )
                 else target["mapping_verified"],
             )
+            if requirement == "hierarchy":
+                target["task_admission"].update(
+                    identity_verified=target["identity_verified"],
+                    mapping_verified=target["mapping_verified"],
+                    admission_scope="Typed mapping and legal navigation; exact world identity and relation reward are separate",
+                )
             if not usable_only or target["task_admission"]["usable"]:
                 values.append(target)
         return values

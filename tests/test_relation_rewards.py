@@ -27,6 +27,19 @@ class RewardIndexTest(unittest.TestCase):
         if change:change(c)
         c.commit();c.close();self.tree=FineAtlas(self.path)
 
+    def test_source_only_unknown_target_does_not_promote_stored_identity_claim(self):
+        def change(c):
+            c.execute("UPDATE nodes SET visibility='SOURCE_ONLY',rank='type_or_product_model' WHERE uid='a'")
+        self.prepare(change)
+        target=self.tree.target('cub200','1')
+        self.assertTrue(target['stored_identity_claim_verified'])
+        self.assertFalse(target['identity_verified'])
+        self.assertFalse(target['task_admission']['identity_verified'])
+        self.assertTrue(target['native_label_admission']['usable'])
+        pair=self.tree.relation_reward_index('cub200').query('1','2')
+        self.assertFalse(pair['applicable'])
+        self.assertIsNone(pair['distance'])
+
     def test_all_lowest_ancestors_are_retained(self):
         def change(c):
             self.add(c,'other','other common type',12,('type:root',))
