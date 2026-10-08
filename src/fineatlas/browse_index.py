@@ -8,7 +8,7 @@ import sqlite3
 import time
 from pathlib import Path
 
-from .semantics import CLASS_ROLES, TYPED_TERMINALS, VIEWS, edge_predicate, role_expression
+from .semantics import CLASS_ROLES, TYPED_TERMINALS, VIEWS, edge_predicate, role_expression, terminal_relations, classification_roles, navigation_parent_roles
 from .browse_preferences import build_preferences
 from .browse_cache import build_group_cache
 
@@ -83,17 +83,15 @@ def build_browse_index(database, reports, *, release=None, source=None):
 
     def nodes():
         c.execute('DELETE FROM browse_nodes')
-        mask='+'.join(f"CASE WHEN p.uid IS NULL OR json_type(p.attributes,'$.allowed_views') IS NOT 'array' OR EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') av WHERE av.value='{view}') THEN {bit} ELSE 0 END" for view,bit in zip(VIEWS,[1,2,4]))
+        mask='+'.join(f"CASE WHEN p.uid IS NULL OR json_type(p.attributes,'$.allowed_views') IS NOT 'array' OR EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') av WHERE av.value='{'taxonomy' if view == 'unified' else view}') THEN {bit} ELSE 0 END" for view,bit in zip(VIEWS,[1,2,4,8]))
         c.execute("INSERT INTO browse_nodes SELECT n.uid,n.component_id,"+role_expression('n','p')+",("+mask+"),coalesce(n.source,'') FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.visibility='ACTIVE'")
         return {'rows':c.execute('SELECT count(*) FROM browse_nodes').fetchone()[0]}
     stage('nodes',nodes)
 
-    for view,bit in zip(VIEWS,[1,2,4]):
+    for view,bit in zip(VIEWS,[1,2,4,8]):
         def links(view=view,bit=bit):
             c.execute('DELETE FROM browse_links WHERE view=?',(view,))
-            roles=set(CLASS_ROLES)
-            if view=='taxonomy':roles.add('BIOLOGICAL_VARIANT')
-            if view=='membership':roles.add('DATASET_CATEGORY')
+            roles=set(classification_roles(view))
             marks=','.join('?' for _ in roles);ordered=sorted(roles)
             c.execute(f"""INSERT INTO browse_links
                 SELECT ?,p.component_id,n.component_id,n.role,e.relation,min(n.uid),'edge',min(e.id),count(*)
@@ -105,8 +103,11 @@ def build_browse_index(database, reports, *, release=None, source=None):
                 GROUP BY p.component_id,n.component_id,n.role,e.relation""",
                 [view,*ordered,*ordered,bit,bit])
             before=c.execute('SELECT count(*) FROM browse_links WHERE view=?',(view,)).fetchone()[0]
+            terminal_ordered=sorted(navigation_parent_roles(view))
+            terminal_marks=','.join('?' for _ in terminal_ordered)
             combinations=[];arguments=[]
             for role,rels in sorted(TYPED_TERMINALS.items()):
+                rels=terminal_relations(role,view)
                 combinations.append('(n.role=? AND e.relation IN ('+','.join('?' for _ in rels)+'))')
                 arguments += [role,*rels]
             c.execute(f"""INSERT INTO browse_links
@@ -114,10 +115,10 @@ def build_browse_index(database, reports, *, release=None, source=None):
                 FROM entity_relations e JOIN browse_nodes n ON n.uid=e.subject_uid
                 JOIN browse_nodes p ON p.uid=e.object_uid
                 WHERE e.status='ACTIVE' AND ({' OR '.join(combinations)})
-                AND p.role IN ({marks}) AND (n.view_mask & ?)<>0 AND (p.view_mask & ?)<>0
+                AND p.role IN ({terminal_marks}) AND (n.view_mask & ?)<>0 AND (p.view_mask & ?)<>0
                 AND n.component_id<>p.component_id
                 GROUP BY p.component_id,n.component_id,n.role,e.relation""",
-                [view,*arguments,*ordered,bit,bit])
+                [view,*arguments,*terminal_ordered,bit,bit])
             after=c.execute('SELECT count(*) FROM browse_links WHERE view=?',(view,)).fetchone()[0]
             return {'classification_links':before,'typed_links':after-before,'identity_self_links_excluded':True}
         stage('links-'+view,links)
@@ -145,6 +146,13 @@ def build_browse_index(database, reports, *, release=None, source=None):
             ('catalogue',"trim(json_extract(n.data,'$.catalogue'))","json_type(n.data,'$.catalogue')='text'",'nodes.data.catalogue'),
         ]
         totals={}
+        c.execute('''INSERT OR IGNORE INTO browse_facets
+            SELECT bn.uid,bn.component_id,'manufacturer','wikidata:'||j.value,
+                   'verified primary Wikidata P176 manufacturer identifier'
+            FROM node_profiles p JOIN browse_nodes bn ON bn.uid=p.uid,
+                 json_each(p.attributes,'$.verified_wikidata_manufacturer_ids') j
+            WHERE j.type='text' AND j.value GLOB 'Q[0-9]*' ''')
+        totals['verified_primary_P176_manufacturer_ids']=c.execute('SELECT changes()').fetchone()[0]
         for facet,expression,condition,field in conditions:
             c.execute(f"""INSERT OR IGNORE INTO browse_facets
                 SELECT n.uid,n.component_id,?,{expression},? FROM nodes n

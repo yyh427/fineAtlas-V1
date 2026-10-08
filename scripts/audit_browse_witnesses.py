@@ -14,7 +14,10 @@ def main():
     c=sqlite3.connect(a.staging.resolve().as_uri()+'?mode=ro&immutable=1',uri=True);c.row_factory=sqlite3.Row
     c.execute('ATTACH DATABASE ? AS native',(a.baseline.resolve().as_uri()+'?mode=ro&immutable=1',))
     c.execute('PRAGMA native.cache_size=-1000000')
-    revision=json.loads(c.execute("SELECT value FROM native.metadata WHERE key='database_revision'").fetchone()[0])
+    native_meta={r[0]:json.loads(r[1]) for r in c.execute('SELECT key,value FROM native.metadata')}
+    revision=native_meta['database_revision']
+    if native_meta.get('browse_indexes_ready') and native_meta.get('browse_index_revision')==revision:
+        revision=native_meta['browse_parent_revision']
     bound=json.loads(c.execute("SELECT value FROM main.metadata WHERE key='browse_source_revision'").fetchone()[0])
     assert revision==bound
     wrong_nodes=c.execute('''SELECT count(*) FROM browse_nodes b LEFT JOIN native.nodes n ON n.uid=b.uid

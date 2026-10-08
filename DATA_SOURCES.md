@@ -156,3 +156,37 @@ source labels and aliases verify the subject of a definition without merging
 independent source records. Exact engine and propeller classification conditions
 retain their units and counts; only explicit inclusion between existing source
 types supplies a narrower parent.
+
+## Unified candidate primary evidence (1.10)
+
+The unified candidate fixes WordNet at **3.1**; selected upper synsets retain
+Princeton definitions, original hypernyms and attribution. An identity link
+never grants permission to replace a source record or erase its provenance.
+
+AviList **v2025b**, extended checklist dated 10 June 2026, is credited under
+**CC BY 4.0**: [official checklist](https://www.avilist.org/checklist/v2025b/),
+[version DOI](https://doi.org/10.2173/avilist.v2025b). Frozen derived species rows
+retain checklist sequence, scientific scope, shared identifiers and source SHA.
+Wikidata primary identifier, rank and defined-unit snapshots are **CC0**, with
+entity URLs, revision IDs and snapshot checksums retained.
+
+The imported OpenTree taxonomy's actual `version.txt` is **OTT 3.7draft3**;
+its host directory name is not used as the source version. Original identifiers,
+parent declarations, synthesized-tree flags and retained source rows remain.
+Source-declared uncertain placement is honest navigation, not reliable reward
+ancestry. Native taxonomy records denote organism classes only when their scope
+and role contracts support that interpretation.
+
+FAA and EPA intermediate categories use explicit retained source fields and
+source dictionaries, not aircraft/car label prefixes or benchmark class lists.
+FDA regulatory classification and GUDID model/configuration records retain
+openFDA attribution, source field distinctions and `REGULATED_AS` navigation;
+regulatory catalogue membership is not a physical subclass or design distance.
+
+One individual McLaren design-type review cites the manufacturer's 2011 North
+American brochure, page 7, hosted at
+[manufacturer brochure mirror](https://www.auto-brochures.com/makes/mclaren/McLaren_US%20MP4_2011.pdf).
+Only a short factual type statement, document URL and SHA-256 are included.
+The complete proprietary brochure is **not** a release asset. EASA and Transport
+Canada CRJ evidence is recorded for a scope review, without claiming exact
+CRJ-700 annotation identity or redistributing the full source publications.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import base64
 import json
 
-from .semantics import ROLE_ALIASES
+from .semantics import ROLE_ALIASES, VIEW_BITS
 
 
 FACETS = frozenset({
@@ -88,12 +88,12 @@ class BrowsingAtlas:
             sql += f""" AND EXISTS(SELECT 1 FROM browse_facets f
                 JOIN browse_nodes bn ON bn.uid=f.uid WHERE f.component_id={alias}.child_component
                 AND f.facet=? AND f.value=? AND (bn.view_mask & ?)<>0)"""
-            args += [facet, value, {"strict": 1, "taxonomy": 2, "membership": 4}[self.relation_view]]
+            args += [facet, value, VIEW_BITS[self.relation_view]]
         return sql, args
 
     def _browse_node(self, component, role, domain=None):
         scope, args = self._domain_filter(domain) if domain else ("", [])
-        bit = {"strict": 1, "taxonomy": 2, "membership": 4}[self.relation_view]
+        bit = VIEW_BITS[self.relation_view]
         row = self.con.execute(f"""SELECT n.* FROM browse_nodes bn
             CROSS JOIN nodes n WHERE bn.component_id=? AND bn.role=?
             AND (bn.view_mask & ?)<>0 AND n.uid=bn.uid {scope}
@@ -170,7 +170,7 @@ class BrowsingAtlas:
             "preferred_routes_have_source_witnesses": True,
         }
 
-    def browse_summary(self, parent):
+    def browse_summary(self, parent, *, include_coarse=True):
         scope, status = self._browse_scope(parent)
         if not scope:
             return {"status": status, "requested_parent": parent, "relations": []}
@@ -179,8 +179,19 @@ class BrowsingAtlas:
             sum(source_arc_count) source_arcs FROM browse_link_counts
             WHERE view=? AND parent_component IN ({marks})
             GROUP BY role,relation ORDER BY role,relation""", [self.relation_view, *scope["components"]])
+        hidden={(r[0],r[1]):r[2] for r in self.con.execute(f'''SELECT role,relation,count(*)
+            FROM browse_preferences WHERE view=? AND parent_component IN ({marks})
+            GROUP BY role,relation''',[self.relation_view,*scope['components']])}
+        items=[]
+        for row in rows:
+            item=dict(row);item['full_direct_concepts']=item['concepts']
+            item['default_presented_concepts']=item['concepts']-hidden.get((item['role'],item['relation']),0)
+            if not include_coarse:item['concepts']=item['default_presented_concepts']
+            items.append(item)
         return {"status": "OK", "scope": scope, "relation_view": self.relation_view,
-                "relations": [dict(r) for r in rows], "default_node_kind": "CLASS",
+                "relations": items, "default_node_kind": "CLASS",
+                "source_arcs_describe_preserved_full_graph":True,
+                "include_coarse":include_coarse,
                 "counts_overlap_across_relations_or_roots": True,
                 "directory_groups_are_graph_nodes": False}
 
@@ -196,7 +207,7 @@ class BrowsingAtlas:
         context = self._browse_context("browse_groups", scope, node_kind, relation, {}, [group_by,include_coarse])
         after = self._after(cursor, context)
         where, args = self._browse_where(scope, node_kind, relation, {}, include_coarse=include_coarse)
-        bit = {"strict": 1, "taxonomy": 2, "membership": 4}[self.relation_view]
+        bit = VIEW_BITS[self.relation_view]
         role=ROLE_ALIASES.get(node_kind,node_kind)
         cached=(not scope.get('domain') and len(scope['components'])==1 and role and role!='PRODUCT_DESIGN' and relation is None
                 and 'browse_group_cache' in self._tables and self.con.execute(
@@ -260,7 +271,7 @@ class BrowsingAtlas:
         values=[]
         for row in parents[:100]:
             p=self.con.execute("SELECT uid FROM browse_nodes WHERE component_id=? AND (view_mask & ?)<>0 ORDER BY uid LIMIT 1",
-                               (row[0],{"strict":1,"taxonomy":2,"membership":4}[self.relation_view])).fetchone()
+                               (row[0],VIEW_BITS[self.relation_view])).fetchone()
             if p:values.append({"uid":p[0],"relation":row[1],"child_role":row[2]})
         facets=[dict(r) for r in self.con.execute("SELECT uid,facet,value,source_field FROM browse_facets WHERE component_id=? ORDER BY facet,value,uid LIMIT 101",(own["component_id"],))]
         path=self.path_result(uid)

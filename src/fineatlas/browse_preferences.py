@@ -1,5 +1,6 @@
 """Prefer witnessed finer routes while retaining every independent source arc."""
 import json
+from .semantics import VIEWS
 
 
 def build_preferences(c):
@@ -33,7 +34,7 @@ def build_preferences(c):
             row=c.execute('SELECT component_id FROM nodes WHERE uid=?',(uid,)).fetchone()
             if row:
                 c.executemany('INSERT OR IGNORE INTO browse_large_parents VALUES(?,?)',
-                              [(v,row[0]) for v in ['strict','taxonomy','membership']])
+                              [(v,row[0]) for v in VIEWS])
     # Only declared relation compositions qualify. Regulatory and directory
     # relationships are not treated as inferred physical subclass inclusion.
     compositions="""

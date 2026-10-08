@@ -1,0 +1,274 @@
+{
+  "schema": "FINEATLAS_UNIFIED_ACCEPTANCE_V1",
+  "release": "v1.10.0-unified-review",
+  "domains": {
+    "actual": 91,
+    "public_contract_passes": 91
+  },
+  "labels": {
+    "strict": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 752,
+      "root_reachable": 751,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 751
+    },
+    "taxonomy": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 752,
+      "root_reachable": 754,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 754
+    },
+    "unified": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 732,
+      "root_reachable": 754,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 754
+    },
+    "membership": {
+      "labels": 755,
+      "stored_identity_claim_verified": 753,
+      "identity_verified": 752,
+      "root_reachable": 0,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 0
+    }
+  },
+  "identity_peer_checks": {
+    "strict": {
+      "peer_representations_checked": 565,
+      "peer_internal_path_state_mismatches": 0,
+      "peer_vs_target_status_differences": 0
+    },
+    "taxonomy": {
+      "peer_representations_checked": 565,
+      "peer_internal_path_state_mismatches": 0,
+      "peer_vs_target_status_differences": 0
+    },
+    "unified": {
+      "peer_representations_checked": 565,
+      "peer_internal_path_state_mismatches": 0,
+      "peer_vs_target_status_differences": 0
+    },
+    "membership": {
+      "peer_representations_checked": 565,
+      "peer_internal_path_state_mismatches": 0,
+      "peer_vs_target_status_differences": 0
+    }
+  },
+  "pairs": {
+    "cub200": {
+      "dataset": "cub200",
+      "labels": 200,
+      "pairs": 19900,
+      "pair_statuses": {
+        "APPLICABLE": 7770,
+        "COARSE_COMMON_ANCESTOR_ONLY": 8340,
+        "ENDPOINT_NOT_APPLICABLE": 3790
+      },
+      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "relation_view": "unified",
+      "policy": "classification",
+      "source_scope": "avilist",
+      "requirement": "species",
+      "nonapplicable_distance": null,
+      "category_reward_preserved": true,
+      "metric": "minimum_upward_informative_lca_arc_sum",
+      "semantic_scope": "Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified"
+    },
+    "fgvc_aircraft": {
+      "dataset": "fgvc_aircraft",
+      "labels": 100,
+      "pairs": 4950,
+      "pair_statuses": {
+        "APPLICABLE": 3028,
+        "ENDPOINT_NOT_APPLICABLE": 1295,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
+        "COARSE_COMMON_ANCESTOR_ONLY": 212
+      },
+      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "relation_view": "unified",
+      "policy": "design",
+      "source_scope": null,
+      "requirement": "model_design",
+      "nonapplicable_distance": null,
+      "category_reward_preserved": true,
+      "metric": "minimum_upward_informative_lca_arc_sum",
+      "semantic_scope": "Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified"
+    },
+    "flowers102": {
+      "dataset": "flowers102",
+      "labels": 102,
+      "pairs": 5151,
+      "pair_statuses": {
+        "APPLICABLE": 1077,
+        "ENDPOINT_NOT_APPLICABLE": 3071,
+        "COARSE_COMMON_ANCESTOR_ONLY": 1003
+      },
+      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "relation_view": "unified",
+      "policy": "classification",
+      "source_scope": null,
+      "requirement": "species",
+      "nonapplicable_distance": null,
+      "category_reward_preserved": true,
+      "metric": "minimum_upward_informative_lca_arc_sum",
+      "semantic_scope": "Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified"
+    },
+    "pets37": {
+      "dataset": "pets37",
+      "labels": 37,
+      "pairs": 666,
+      "pair_statuses": {
+        "APPLICABLE": 638,
+        "COARSE_COMMON_ANCESTOR_ONLY": 28
+      },
+      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "relation_view": "unified",
+      "policy": "classification",
+      "source_scope": null,
+      "requirement": "hierarchy",
+      "nonapplicable_distance": null,
+      "category_reward_preserved": true,
+      "metric": "minimum_upward_informative_lca_arc_sum",
+      "semantic_scope": "Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified"
+    },
+    "stanford_dogs": {
+      "dataset": "stanford_dogs",
+      "labels": 120,
+      "pairs": 7140,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 6423,
+        "APPLICABLE": 717
+      },
+      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "relation_view": "unified",
+      "policy": "classification",
+      "source_scope": null,
+      "requirement": "hierarchy",
+      "nonapplicable_distance": null,
+      "category_reward_preserved": true,
+      "metric": "minimum_upward_informative_lca_arc_sum",
+      "semantic_scope": "Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified"
+    },
+    "stanford_cars": {
+      "dataset": "stanford_cars",
+      "labels": 196,
+      "pairs": 19110,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 15269,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 3710,
+        "APPLICABLE": 131
+      },
+      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "relation_view": "unified",
+      "policy": "configuration",
+      "source_scope": null,
+      "requirement": "configuration",
+      "nonapplicable_distance": null,
+      "category_reward_preserved": true,
+      "metric": "minimum_upward_informative_lca_arc_sum",
+      "semantic_scope": "Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified"
+    }
+  },
+  "retention": {
+    "original_nodes_missing": 0,
+    "original_source_payload_changed": 0,
+    "original_active_nodes_removed": 0,
+    "edges_original_records_missing_or_retargeted": 0,
+    "edges_old_active_arc_not_preserved_or_identity_resolved": 2,
+    "entity_relations_original_records_missing_or_retargeted": 0,
+    "entity_relations_old_active_arc_not_preserved_or_identity_resolved": 1,
+    "all_original_task_labels_retained": true,
+    "mapping_changes_have_original_target_history": true,
+    "explicitly_verified_invalid_design_corrections": 1,
+    "explicitly_verified_invalid_root_corrections": 2,
+    "unexpected_active_relation_losses": 0,
+    "descendant_identity_preservation_basis": "All original source UIDs, raw source payloads and original source endpoints/relations remain. Original valid arcs are retained or zero-depth identity-resolved. Explicitly documented incorrect FDA design and native root-parent arcs are quarantined with retained valid alternative paths; their old wrong ancestor/domain sets are intentionally not certified as legitimate. Focused wide-branch source UID sets are additionally checked by pagination audits.",
+    "pass": true
+  },
+  "nonfocus": {
+    "count": 2230,
+    "domains": 91,
+    "preserved": 2230,
+    "connected": 2229,
+    "regressions": 0,
+    "semantic_all_edges_certified": false
+  },
+  "browsing": {
+    "pagination_pass": true,
+    "all_pages_checked": true,
+    "same_return_scale": true,
+    "browsing_improvement_is_not_semantic_depth_certification": true
+  },
+  "cycles": {
+    "membership": {
+      "unique_arcs": 3876981,
+      "incident_identity_vertices": 3694556,
+      "processed_vertices": 3694556,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 7.2037365371361375,
+      "default_preferred_graph_acyclic": true
+    },
+    "strict": {
+      "unique_arcs": 9145538,
+      "incident_identity_vertices": 9030770,
+      "processed_vertices": 9030770,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 14.539883635006845,
+      "default_preferred_graph_acyclic": true
+    },
+    "taxonomy": {
+      "unique_arcs": 12604917,
+      "incident_identity_vertices": 12262930,
+      "processed_vertices": 12262930,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 19.21648590452969,
+      "default_preferred_graph_acyclic": true
+    },
+    "unified": {
+      "unique_arcs": 12604815,
+      "incident_identity_vertices": 12262844,
+      "processed_vertices": 12262844,
+      "cyclic_or_cycle_dependent_vertices": 0,
+      "acyclic": true,
+      "seconds": 18.865551526658237,
+      "default_preferred_graph_acyclic": true
+    }
+  },
+  "contracts": {
+    "all_pass": true,
+    "checks": {
+      "edge_invalid_records": 0,
+      "entity_invalid_records": 0,
+      "strict_edge_missing_source_arcs": 0,
+      "strict_entity_missing_source_arcs": 0,
+      "taxonomy_edge_missing_source_arcs": 0,
+      "taxonomy_entity_missing_source_arcs": 0,
+      "membership_edge_missing_source_arcs": 0,
+      "membership_entity_missing_source_arcs": 0,
+      "unified_edge_missing_source_arcs": 0,
+      "unified_entity_missing_source_arcs": 0
+    },
+    "all_indexed_relations": 38762384,
+    "source_record_endpoint_relation_role_and_view_checks": "All indexed records; original evidence IDs retained",
+    "new_semantic_relations": 0,
+    "new_semantic_nodes": 0,
+    "seconds": 251.364152722992
+  },
+  "real_cli_calls": 14,
+  "unrooted_active_classification_source_records": 5598,
+  "unrooted_navigation_source_records": 5608,
+  "universal_all_active_source_navigation_complete": false,
+  "identity_role_conflict_groups": 287,
+  "all_source_edges_independently_semantically_certified": false,
+  "images_or_visual_models_run": false
+}

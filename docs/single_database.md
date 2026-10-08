@@ -21,11 +21,11 @@
 | `normalization_roles` / `usability_changes` | 原始角色、规范决定、保留的先前角色与变更证据 |
 | `node_names` / `node_definitions` / `node_taxon_ranks` | 有来源和语言的名称、独立定义及原生分类阶元 |
 | `domain_registry` / `domain_aliases` / `domain_members` | 规范入口、兼容别名和逐视图成员范围 |
-| `view_roots` / `view_paths` / `view_terminal_connections` | 严格或原生分类路径、混合路径和类型连接的分别索引 |
+| `view_roots` / `view_paths` / `view_terminal_connections` | strict / taxonomy / unified 分类路径及分角色导航的分别索引 |
 | `pruning` / `suppressed_edges` | 裁剪与隔离记录，保留原始身份但不激活不合格分类 |
 | `wordnet_nodes` / `wordnet_edges` | 分类根可达的导航投影 |
 
-扩展节点使用 `CLASS`、`MODEL_FAMILY`、`MODEL`、`INSTANCE`、`ATTRIBUTE`、`DATASET_CATEGORY`、`ORGANIZATION` 或 `UNKNOWN`。`node_profiles` 不覆盖全部继承来源；接口按原生 rank 补充显示种类，混合或未确认型号保留 UNKNOWN。
+扩展节点使用 `CLASS`、`BIOLOGICAL_VARIANT`、`MODEL_FAMILY`、`MODEL`、`CONFIGURATION`、`INSTANCE`、`ATTRIBUTE`、`DATASET_CATEGORY`、`ORGANIZATION` 或 `UNKNOWN`。`node_profiles` 不覆盖全部继承来源；接口按原生 rank 补充显示种类，混合或未确认型号保留 UNKNOWN。
 
 参数是结构化文本事实，不提供图片。GeoNames 坐标采用 WGS84；海拔、区域字段仅在原生记录存在时保留。国家归属连接按来源字段保存，不保证唯一归属或独立的边界裁定。
 
@@ -39,4 +39,8 @@
 
 `active_edges` 仅包含严格有效的 `IS_A`。接口的 `taxonomy` 视图另包含已准入的 `TAXONOMIC_PARENT` 和 `NATIVE_CLASSIFICATION_PARENT`；`membership` 只包含 `REUSABLE_TYPE_MEMBERSHIP`。`components` 中的可达性和路径证据以严格视图计算，候选库的逐视图索引分别保存在 `view_*` 表中。`BIOLOGICAL_VARIANT` 标记原生无阶元的菌株等记录，`native_rank` 保留原始阶元；该角色不进入严格分类 DAG。
 
-本分支使用 v1.8.1-hierarchy-review 候选库，文件与哈希见 [review_data.json](../review_data.json)。`single_download.json` 保留正式版 v1.6.0 下载配置；候选库使用独立清单和新目录安装。精确统计见 [review_statistics.json](review_statistics.json)，查询与训练要求见 [public_api.md](public_api.md)。
+本分支默认候选为 `v1.10.0-unified-review`，视图 `unified`，精确数据库 SHA、图修订及附件见 [unified_data.json](../unified_data.json)。`review_data.json`（1.8.1）和 `single_download.json`（正式版 1.6.0）保留为明确的旧快照配置，不能用于复现本轮结果。下载工具优先使用本分支的统一候选清单；安装到独立目录，关闭旧连接并重新加载，不能套用 1.9 的外部索引。
+
+`unified_backbone_nodes` / `unified_backbone_edges` 记录固定 WordNet 3.1 上层，`unified_wordnet_usage` 记录所有被使用 WordNet 概念的定义和来源，`unified_domain_rules` 保存原生根接入依据。`browse_*` 是与当前图修订绑定的分页／目录派生索引，不提供新的语义边。统一视图使用原生分类和分角色导航；目录、属性、身份关系不计为分类深度。验收与限制见 [unified_results.md](unified_results.md)，接口与训练要求见 [public_api.md](public_api.md)。
+
+本次推荐加载／核验代码标签为 `v1.10.0-unified-code.1`，数据仍为同一 `v1.10.0-unified-review` SHA。原构建标签的安装复验器误要求成功分页含 `status`；修正版按既有有界 keyset 页合同检查，缺失字段、错误状态、错误视图／修订和不一致游标均失败。`unified_code.json` 固定修正版；原 `unified_data.json.release_code_tag` 保留历史构建记录，不强推旧标签。

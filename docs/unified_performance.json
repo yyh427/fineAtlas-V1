@@ -1,0 +1,164 @@
+[
+  {
+    "before": {
+      "view": "taxonomy",
+      "snapshot": "<local-workspace>/night_20261007/fineatlas-night.sqlite",
+      "parent": "hierarchy-type:aircraft-4-engine-1",
+      "kind": "MODEL",
+      "filters": {
+        "source": "faa"
+      },
+      "cold_connection_seconds": 0.006003553979098797,
+      "warm_median_seconds": 0.004071412608027458,
+      "warm_samples_seconds": [
+        0.004197750240564346,
+        0.004123222082853317,
+        0.004008868709206581,
+        0.004090866073966026,
+        0.003994421102106571,
+        0.004085821099579334,
+        0.00399676151573658,
+        0.004071073606610298,
+        0.003992815501987934,
+        0.004071751609444618
+      ],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "cache_condition": "Fresh SDK/SQLite connection then ten repeats; shared OS cache left intact",
+      "page_limit": 20,
+      "include_coarse": true
+    },
+    "after": {
+      "view": "unified",
+      "snapshot": "<local-workspace>/unified_20261008/fineatlas-unified.sqlite",
+      "parent": "hierarchy-type:aircraft-4-engine-1",
+      "kind": "MODEL",
+      "filters": {
+        "source": "faa"
+      },
+      "cold_connection_seconds": 0.005630476400256157,
+      "warm_median_seconds": 0.0040508899837732315,
+      "warm_samples_seconds": [
+        0.00408732146024704,
+        0.0039726747199893,
+        0.0040564583614468575,
+        0.0039758021011948586,
+        0.004046444781124592,
+        0.003972122445702553,
+        0.00406345259398222,
+        0.003968077711760998,
+        0.004058098420500755,
+        0.004055335186421871
+      ],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "cache_condition": "Fresh SDK/SQLite connection then ten repeats; shared OS cache left intact",
+      "page_limit": 20,
+      "include_coarse": true
+    },
+    "same_return_scale": true
+  },
+  {
+    "before": {
+      "view": "taxonomy",
+      "snapshot": "<local-workspace>/night_20261007/fineatlas-night.sqlite",
+      "parent": "hierarchy-type:car-gasoline",
+      "kind": "CONFIGURATION",
+      "filters": {
+        "source": "epa"
+      },
+      "cold_connection_seconds": 0.005894367583096027,
+      "warm_median_seconds": 0.004481760784983635,
+      "warm_samples_seconds": [
+        0.0045566316694021225,
+        0.004419867880642414,
+        0.004499012604355812,
+        0.004426588304340839,
+        0.004494485445320606,
+        0.0044908104464411736,
+        0.004392972216010094,
+        0.004550697281956673,
+        0.004472711123526096,
+        0.004469967447221279
+      ],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "cache_condition": "Fresh SDK/SQLite connection then ten repeats; shared OS cache left intact",
+      "page_limit": 20,
+      "include_coarse": true
+    },
+    "after": {
+      "view": "unified",
+      "snapshot": "<local-workspace>/unified_20261008/fineatlas-unified.sqlite",
+      "parent": "hierarchy-type:car-gasoline",
+      "kind": "CONFIGURATION",
+      "filters": {
+        "source": "epa"
+      },
+      "cold_connection_seconds": 0.005792237818241119,
+      "warm_median_seconds": 0.004466009791940451,
+      "warm_samples_seconds": [
+        0.004472348839044571,
+        0.004459559917449951,
+        0.004502958618104458,
+        0.004496036097407341,
+        0.004486318677663803,
+        0.004444184713065624,
+        0.004455862566828728,
+        0.0044672805815935135,
+        0.004464739002287388,
+        0.00445979367941618
+      ],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "cache_condition": "Fresh SDK/SQLite connection then ten repeats; shared OS cache left intact",
+      "page_limit": 20,
+      "include_coarse": true
+    },
+    "same_return_scale": true
+  }
+]

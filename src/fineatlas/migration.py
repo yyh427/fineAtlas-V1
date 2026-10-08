@@ -24,6 +24,10 @@ from .semantics import (
     edge_predicate,
     role_for_rank,
     role_expression,
+    source_admission_view,
+    terminal_relations,
+    classification_roles,
+    navigation_parent_roles,
 )
 
 LAYER = "v1.7-generality-review"
@@ -1097,6 +1101,8 @@ class Migration:
         category_mask = np.zeros(N, bool)
         class_mask = np.zeros(N, bool)
         class_weight = np.zeros(N, np.int32)
+        pure_class_mask = np.zeros(N, bool)
+        pure_class_weight = np.zeros(N, np.int32)
         terminal_role = {}
         role_counts = collections.Counter()
         for comp, role, count in c.execute(
@@ -1105,9 +1111,12 @@ class Migration:
             + ",count(*) FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.visibility='ACTIVE' GROUP BY 1,2"
         ):
             role_counts[role] += count
+            if role == "CLASS":
+                pure_class_mask[comp] = True
+                pure_class_weight[comp] += count
             if role == "DATASET_CATEGORY":
                 category_mask[comp] = True
-            if role in TYPED_TERMINALS and role not in CLASS_ROLES:
+            if role in TYPED_TERMINALS:
                 terminal_role[comp] = role
             if role in CLASS_ROLES:
                 class_mask[comp] = True
@@ -1133,16 +1142,22 @@ class Migration:
             blocked = np.zeros(N, bool)
             allowed = (
                 class_mask | variant
-                if view == "taxonomy"
+                if view in ("taxonomy", "unified")
                 else class_mask | category_mask
                 if view == "membership"
                 else class_mask
             ).copy()
             for (comp,) in c.execute(
                 """SELECT n.component_id FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.visibility='ACTIVE' GROUP BY n.component_id HAVING sum(CASE WHEN json_type(p.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') j WHERE j.value=?) THEN 0 ELSE 1 END)=0""",
-                (view,),
+                (source_admission_view(view),),
             ):
                 blocked[comp] = True
+            navigation_allowed = allowed.copy()
+            navigation_allowed[blocked] = False
+            view_class_weight = class_weight
+            if view == "unified":
+                allowed = pure_class_mask | variant
+                view_class_weight = pure_class_weight
             allowed[blocked] = False
             chunks = []
             cur = c.execute(
@@ -1155,14 +1170,7 @@ class Migration:
                 + ",".join(
                     "'" + r + "'"
                     for r in sorted(
-                        CLASS_ROLES
-                        | (
-                            {"BIOLOGICAL_VARIANT"}
-                            if view == "taxonomy"
-                            else {"DATASET_CATEGORY"}
-                            if view == "membership"
-                            else set()
-                        )
+                        classification_roles(view)
                     )
                 )
                 + ") AND "
@@ -1171,18 +1179,11 @@ class Migration:
                 + ",".join(
                     "'" + r + "'"
                     for r in sorted(
-                        CLASS_ROLES
-                        | (
-                            {"BIOLOGICAL_VARIANT"}
-                            if view == "taxonomy"
-                            else {"DATASET_CATEGORY"}
-                            if view == "membership"
-                            else set()
-                        )
+                        classification_roles(view)
                     )
                 )
                 + ")",
-                (view,),
+                (source_admission_view(view),),
             )
             while rows := cur.fetchmany(250000):
                 chunks.append(np.asarray(rows, dtype=np.int64))
@@ -1237,15 +1238,16 @@ class Migration:
             # It never changes strict classification reachability or its counts.
             terminals = []
             for role, rels in TYPED_TERMINALS.items():
+                rels = terminal_relations(role, view)
                 marks = ",".join("?" for _ in rels)
                 query = f"""SELECT t.component_id,n.component_id,-r.id FROM entity_relations r
                   JOIN nodes n ON n.uid=r.subject_uid JOIN nodes t ON t.uid=r.object_uid
-                  LEFT JOIN node_profiles p ON p.uid=n.uid LEFT JOIN node_profiles tp ON tp.uid=t.uid WHERE {role_expression("t", "tp")} IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION' {",'BIOLOGICAL_VARIANT'" if view == "taxonomy" else ""}) AND NOT EXISTS(SELECT 1 FROM node_profiles bp WHERE bp.uid IN (n.uid,t.uid) AND json_type(bp.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(bp.attributes,'$.allowed_views') av WHERE av.value=?)) AND r.status='ACTIVE'
+                  LEFT JOIN node_profiles p ON p.uid=n.uid LEFT JOIN node_profiles tp ON tp.uid=t.uid WHERE {role_expression("t", "tp")} IN ('CLASS','MODEL','MODEL_FAMILY','CONFIGURATION' {",'BIOLOGICAL_VARIANT'" if view in ("taxonomy", "unified") else ""}) AND NOT EXISTS(SELECT 1 FROM node_profiles bp WHERE bp.uid IN (n.uid,t.uid) AND json_type(bp.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(bp.attributes,'$.allowed_views') av WHERE av.value=?)) AND r.status='ACTIVE'
                   AND n.visibility='ACTIVE' AND t.visibility='ACTIVE' AND r.relation IN ({marks}) AND {roles}=?"""
-                cur = c.execute(query, (view, *rels, role))
+                cur = c.execute(query, (source_admission_view(view), *rels, role))
                 while rows := cur.fetchmany(250000):
                     values = np.asarray(rows, dtype=np.int64)
-                    values = values[allowed[values[:, 0]] & ~blocked[values[:, 1]]]
+                    values = values[navigation_allowed[values[:, 0]] & ~blocked[values[:, 1]]]
                     terminals.append(values)
             typed = (
                 np.concatenate(terminals) if terminals else np.empty((0, 3), np.int64)
@@ -1338,6 +1340,7 @@ class Migration:
                 ),
             )
             for role, rels in TYPED_TERMINALS.items():
+                rels = terminal_relations(role, view)
                 marks = ",".join("?" for _ in rels)
                 c.execute(
                     f"""INSERT OR IGNORE INTO view_terminal_connections
@@ -1345,7 +1348,7 @@ class Migration:
                   JOIN nodes t ON t.uid=r.object_uid LEFT JOIN node_profiles p ON p.uid=n.uid
                   JOIN view_paths vp ON vp.component_id=t.component_id AND vp.view=?
                   WHERE r.status='ACTIVE' AND n.visibility='ACTIVE' AND t.visibility='ACTIVE'
-                  AND r.relation IN ({marks}) AND {roles}=? AND NOT EXISTS(SELECT 1 FROM node_profiles bp WHERE bp.uid IN (n.uid,t.uid) AND json_type(bp.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(bp.attributes,'$.allowed_views') av WHERE av.value=vp.view)) ORDER BY vp.depth,r.id""",
+                  AND r.relation IN ({marks}) AND {roles}=? AND NOT EXISTS(SELECT 1 FROM node_profiles bp WHERE bp.uid IN (n.uid,t.uid) AND json_type(bp.attributes,'$.allowed_views')='array' AND NOT EXISTS(SELECT 1 FROM json_each(bp.attributes,'$.allowed_views') av WHERE av.value=CASE WHEN vp.view='unified' THEN 'taxonomy' ELSE vp.view END)) ORDER BY vp.depth,r.id""",
                     (view, view, *rels, role),
                 )
             c.commit()
@@ -1367,7 +1370,7 @@ class Migration:
             )
             summary = {
                 "class_root_groups": int(global_classes.sum()),
-                "class_root_source_uids": int(class_weight[global_classes].sum()),
+                "class_root_source_uids": int(view_class_weight[global_classes].sum()),
                 "class_groups_total": int(allowed.sum()),
                 "arcs": int(g.nnz),
                 "provenance_rows": len(triples),
@@ -1430,7 +1433,7 @@ class Migration:
                     "domain": entry["canonical_name"],
                     "domain_id": entry["domain_id"],
                     "class_groups": len(selected),
-                    "class_source_uids": int(class_weight[selected].sum()),
+                    "class_source_uids": int(view_class_weight[selected].sum()),
                     "levels": int(ds[selected].max()) if len(selected) else None,
                     "leaf_groups": int((outdegree[selected] == 0).sum()),
                     "strict_or_view_root_groups": int((depth[selected] >= 0).sum()),
@@ -1454,7 +1457,7 @@ class Migration:
             admitted_roles = sorted(
                 CLASS_ROLES
                 | set(TYPED_TERMINALS)
-                | ({"BIOLOGICAL_VARIANT"} if view == "taxonomy" else set())
+                | ({"BIOLOGICAL_VARIANT"} if view in ("taxonomy", "unified") else set())
             )
             markers = ",".join("?" for _ in admitted_roles)
             for entry in entries:
@@ -1464,7 +1467,7 @@ class Migration:
                    WHERE dc.domain_id=? AND dc.view=? AND n.component_id=dc.component_id AND n.visibility='ACTIVE'
                    AND {roles} IN ({markers}) AND (json_type(p.attributes,'$.allowed_views') IS NOT 'array'
                    OR EXISTS(SELECT 1 FROM json_each(p.attributes,'$.allowed_views') av WHERE av.value=?))""",
-                    (entry["domain_id"], view, *admitted_roles, view),
+                    (entry["domain_id"], view, *admitted_roles, source_admission_view(view)),
                 )
                 c.commit()
             summary["seconds"] = round(time.monotonic() - start, 3)

@@ -22,7 +22,7 @@ class FineAtlas(BrowsingAtlas, ConsistentAtlas):
         data_dir: str | Path | None = None,
         *,
         view: str | None = None,
-        relation_view: str = "strict",
+        relation_view: str | None = None,
         root: str | None = None,
         language: str = "en",
         browse_index: str | Path | None = None,

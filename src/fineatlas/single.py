@@ -16,12 +16,9 @@ class SingleAtlas:
     the target catalog retain archived UIDs regardless of navigation view.
     """
 
-    def __init__(self, path: str | Path, view: str = 'wordnet', relation_view: str = 'strict'):
+    def __init__(self, path: str | Path, view: str = 'wordnet', relation_view: str | None = None):
         if view not in ('wordnet', 'all'):
             raise ValueError('view must be wordnet or all')
-        if relation_view not in ('strict', 'taxonomy', 'membership'):
-            raise ValueError('relation_view must be strict, taxonomy or membership')
-        self.relation_view = relation_view
         path = Path(path).resolve()
         self.path_file = path / 'fineatlas.sqlite' if path.is_dir() else path
         if not self.path_file.is_file():
@@ -30,6 +27,13 @@ class SingleAtlas:
         self.con.row_factory = sqlite3.Row
         self.view = view
         self.metadata = {row['key']: json.loads(row['value']) for row in self.con.execute('SELECT * FROM metadata')}
+        self.relation_view = relation_view or self.metadata.get('default_relation_view','strict')
+        if self.relation_view not in ('strict', 'taxonomy', 'membership', 'unified'):
+            self.con.close()
+            raise ValueError('Unknown relation_view')
+        if self.relation_view == 'unified' and not self.metadata.get('unified_ready'):
+            self.con.close()
+            raise ValueError('This snapshot does not contain the unified hierarchy; select an explicit legacy view')
         if self.metadata.get('schema') != 'FINEATLAS_SINGLE_DB_V1':
             self.con.close()
             raise ValueError('Unsupported single-database schema')
@@ -221,6 +225,9 @@ class SingleAtlas:
         return edge
 
     def _relation_sql(self, alias: str = 'e') -> str:
+        if self.relation_view == 'unified':
+            from .semantics import edge_predicate
+            return edge_predicate('unified',alias)
         strict = f"{alias}.status='ACTIVE' AND {alias}.relation='IS_A'"
         if self.relation_view == 'taxonomy':
             return f"(({strict}) OR ({alias}.status='TYPED_ACTIVE' AND {alias}.relation='TAXONOMIC_PARENT'))"

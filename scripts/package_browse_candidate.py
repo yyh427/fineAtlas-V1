@@ -53,7 +53,10 @@ def main():
               'database':{'name':'fineatlas-browse.sqlite' if a.kind=='browse-index' else 'fineatlas.sqlite','bytes':size,'sha256':expected},'assets':parts,
               'database_build_version':a.release,'database_revision':metadata['database_revision'],
               'artifact_kind':a.kind,'source_revision':metadata.get('browse_source_revision',metadata.get('browse_parent_revision')),
-              'source_graph_changed':False}
+              'source_graph_changed':metadata.get('source_graph_changed',False),
+              'default_relation_view':metadata.get('default_relation_view','strict'),
+              'supported_relation_views':metadata.get('supported_relation_views',['strict','taxonomy','membership']),
+              'sdk_version':'1.10.0rc1' if a.release=='v1.10.0-unified-review' else '1.9.0rc1'}
     (a.output/'review_data.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (a.output/'compression_verification.json').write_text(json.dumps({'pass':True,'database_bytes':size,
         'sha256':expected,'compressed_bytes':compressed.stat().st_size,'chunks':len(parts)},indent=2)+'\n')

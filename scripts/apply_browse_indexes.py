@@ -9,20 +9,27 @@ import sys
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--database',type=Path,required=True)
-    p.add_argument('--baseline',type=Path,required=True)
+    source=p.add_mutually_exclusive_group(required=True)
+    source.add_argument('--baseline',type=Path,help='Protected graph-identical source used by legacy browser-only builds')
+    source.add_argument('--source-revision',help='Exact frozen candidate graph revision for a graph-changing build')
     p.add_argument('--staging',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args()
-    if a.database.samefile(a.baseline) or a.database.samefile(a.staging):raise ValueError('Candidate must be independent')
+    if (a.baseline and a.database.samefile(a.baseline)) or a.database.samefile(a.staging):raise ValueError('Candidate must be independent')
     c=sqlite3.connect(a.database)
     c.execute('PRAGMA cache_size=-500000');c.execute('PRAGMA busy_timeout=30000')
     c.execute('ATTACH DATABASE ? AS staged',(a.staging.resolve().as_uri()+'?mode=ro&immutable=1',))
     meta={r[0]:json.loads(r[1]) for r in c.execute('SELECT key,value FROM staged.metadata')}
     assert meta['schema']=='FINEATLAS_BROWSE_INDEX_V1' and meta['browse_indexes_ready']
     candidate_meta={r[0]:json.loads(r[1]) for r in c.execute('SELECT key,value FROM metadata')}
-    with sqlite3.connect(a.baseline.resolve().as_uri()+'?mode=ro&immutable=1',uri=True) as baseline:
-        baseline_meta={r[0]:json.loads(r[1]) for r in baseline.execute('SELECT key,value FROM metadata')}
-    baseline_revision=baseline_meta.get('database_revision',baseline_meta.get('release','')+':'+str(a.baseline.stat().st_size))
+    if a.baseline:
+        with sqlite3.connect(a.baseline.resolve().as_uri()+'?mode=ro&immutable=1',uri=True) as baseline:
+            baseline_meta={r[0]:json.loads(r[1]) for r in baseline.execute('SELECT key,value FROM metadata')}
+        baseline_revision=baseline_meta.get('database_revision',baseline_meta.get('release','')+':'+str(a.baseline.stat().st_size))
+    else:
+        baseline_revision=a.source_revision
+        if candidate_meta.get('database_revision')!=baseline_revision:
+            raise ValueError('Candidate graph changed after the source revision was frozen')
     expected=candidate_meta.get('browse_parent_revision',candidate_meta.get('database_revision',baseline_revision))
     assert baseline_revision==meta['browse_source_revision'],(baseline_revision,meta['browse_source_revision'])
     assert expected==meta['browse_source_revision'],(expected,meta['browse_source_revision'])
