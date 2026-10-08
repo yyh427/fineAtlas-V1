@@ -93,6 +93,25 @@ class ConsistentAtlas(SingleAtlas):
                 result["definition_source"] = definition["source"]
                 result["definition_evidence_id"] = definition["evidence_id"]
         domains = json.loads(native.get("domains") or "[]")
+        # Native domain declarations precede stale extension profile hints.
+        # Resolve through the persisted registry, never through role/name rules.
+        if "domain_registry" in self._tables:
+            if not hasattr(self, "_native_domain_aliases"):
+                self._native_domain_aliases = {
+                    r[0]: r[1] for r in self.con.execute(
+                        "SELECT a.alias,r.canonical_name FROM domain_aliases a "
+                        "JOIN domain_registry r ON r.domain_id=a.domain_id"
+                    )
+                }
+            declared = [native.get("domain", ""), *domains]
+            resolved = [self._native_domain_aliases.get(str(x).casefold())
+                        or self._native_domain_aliases.get(norm(str(x)))
+                        for x in declared if x]
+            resolved = [x for x in resolved if x]
+            if resolved and result["domain"] != resolved[0]:
+                result["profile_domain"] = result["domain"]
+                result["domain"] = resolved[0]
+                result["domain_basis"] = "Retained native declarations resolved by domain registry"
         if result["domain"] and result["domain"] not in domains:
             domains.append(result["domain"])
         result["domains"] = json.dumps(domains, ensure_ascii=False)

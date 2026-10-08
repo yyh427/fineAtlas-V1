@@ -14,7 +14,30 @@ for f in sorted(a.inputs.glob('*review*.json')):
     for r in rows:
         if isinstance(r,dict) and isinstance(r.get('uid'),str):reviews[r['uid']].append({'file':f.name,'review':r})
 c=sqlite3.connect(a.database.resolve().as_uri()+'?mode=ro&immutable=1',uri=True);c.row_factory=sqlite3.Row
-counts=collections.Counter();examples={};n=0
+def retained_boundary(start):
+    trace=[];seen=set();uid=start
+    for _ in range(32):
+        if uid in seen:return {'trace':trace,'reason':'Retained source assertions cycle; not an admitted classification path'}
+        seen.add(uid)
+        assertions=[dict(r) for r in c.execute("SELECT id,parent_uid,relation,status,reason FROM edges WHERE child_uid=? ORDER BY CASE WHEN status IN ('ACTIVE','TYPED_ACTIVE') THEN 0 ELSE 1 END,id",(uid,))]
+        if not assertions:
+            assertions=[dict(r) for r in c.execute("SELECT id,object_uid parent_uid,relation,status,NULL reason FROM entity_relations WHERE subject_uid=? ORDER BY id",(uid,))]
+        step={'uid':uid,'frozen_reviews':reviews[uid]}
+        if not assertions:trace.append(step);return {'trace':trace,'reason':'No retained source parent assertion at boundary'}
+        edge=assertions[0];step['retained_assertion']=edge;trace.append(step)
+        if edge['status'] not in ('ACTIVE','TYPED_ACTIVE','BACKBONE_ACTIVE'):
+            rr=c.execute('SELECT verdict,reason,proof FROM repair_rank_reviews WHERE edge_id=?',(edge['id'],)).fetchone()
+            if rr:step['independent_rank_review']={**dict(rr),'proof':json.loads(rr['proof'])}
+            nr=c.execute('SELECT verdict,proof FROM native_variant_reviews WHERE uid=?',(uid,)).fetchone()
+            if nr:step['native_variant_review']={**dict(nr),'proof':json.loads(nr['proof'])}
+            return {'trace':trace,'reason':edge['reason'] or 'Source assertion not admitted'}
+        uid=edge['parent_uid']
+        parent=c.execute('SELECT component_id FROM nodes WHERE uid=?',(uid,)).fetchone()
+        if not parent:return {'trace':trace,'reason':'Retained parent node missing'}
+        if c.execute("SELECT 1 FROM view_paths WHERE view='unified' AND component_id=?",(parent['component_id'],)).fetchone():
+            return {'trace':trace,'reason':'Retained source assertion reaches a rooted parent but its role/view contract is not admitted'}
+    return {'trace':trace,'reason':'Source boundary trace limit reached; not treated as no connection'}
+counts=collections.Counter();boundary_counts=collections.Counter();examples={};n=0
 with gzip.open(a.output/'unresolved_evidence.jsonl.gz','wt') as stream:
     for row in csv.DictReader(a.unrooted_csv.open()):
         uid=row['uid'];parents=[]
@@ -33,9 +56,10 @@ with gzip.open(a.output/'unresolved_evidence.jsonl.gz','wt') as stream:
             reasons=sorted({x['reason'] for x in parents if x.get('reason')})
         if not reasons:
             reasons=['Retained parent lacks admitted unified path' if parents else 'No retained source parent assertion']
-        record={**row,'frozen_reviews':reviews[uid],'retained_parent_assertions':parents,'evidence_gap_reasons':reasons,
+        boundary=retained_boundary(uid)
+        record={**row,'retained_boundary_inspection':boundary,'frozen_reviews':reviews[uid],'retained_parent_assertions':parents,'evidence_gap_reasons':reasons,
             'action':'Retained; not force-attached or silently excluded. Requires source scope/role/parent evidence before admission.'}
-        stream.write(json.dumps(record,ensure_ascii=False)+'\n');n+=1
+        stream.write(json.dumps(record,ensure_ascii=False)+'\n');n+=1;boundary_counts[boundary['reason']]+=1
         for reason in reasons:counts[reason]+=1;examples.setdefault(reason,record)
-(a.output/'unresolved_summary.json').write_text(json.dumps({'source_records':n,'reasons_nonexclusive':dict(counts),'representative_objects':list(examples.values()),'all_records_retained':True,'all_unresolved_individually_adjudicated':False},ensure_ascii=False,indent=2)+'\n')
+(a.output/'unresolved_summary.json').write_text(json.dumps({'source_records':n,'reasons_nonexclusive':dict(counts),'source_boundary_reasons':dict(boundary_counts),'representative_objects':list(examples.values()),'all_records_retained':True,'all_unresolved_individually_adjudicated':False},ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'source_records':n,'distinct_evidence_gap_reasons':len(counts)}))

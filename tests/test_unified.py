@@ -29,6 +29,23 @@ class UnifiedTest(unittest.TestCase):
             c.execute("INSERT INTO metadata VALUES('default_relation_view','\"unified\"')")
         with self.assertRaises(ValueError):FineAtlas(self.path)
 
+    def test_native_scope_precedes_stale_profile_hint_and_keeps_provenance(self):
+        self.tree.close()
+        with sqlite3.connect(self.path) as c:
+            c.execute("CREATE TABLE domain_registry(domain_id INTEGER PRIMARY KEY,canonical_name TEXT)")
+            c.execute("CREATE TABLE domain_aliases(alias TEXT PRIMARY KEY,domain_id INTEGER)")
+            c.executemany("INSERT INTO domain_registry VALUES(?,?)",[(1,'plants'),(2,'tools')])
+            c.executemany("INSERT INTO domain_aliases VALUES(?,?)",[('plant',1),('plants',1),('tools',2)])
+            c.execute("UPDATE nodes SET domain='plant',domains='[\"plant\"]' WHERE uid='attr:1'")
+            c.execute("UPDATE node_profiles SET domain='tools' WHERE uid='attr:1'")
+        self.tree=FineAtlas(self.path)
+        node=self.tree.node('attr:1')
+        self.assertEqual(node['domain'],'plants')
+        self.assertEqual(node['source_domain'],'plant')
+        self.assertEqual(node['profile_domain'],'tools')
+        self.assertNotIn('tools',json.loads(node['domains']))
+        self.assertEqual(self.tree.con.execute("SELECT domain FROM node_profiles WHERE uid='attr:1'").fetchone()[0],'tools')
+
     def test_unknown_queries_are_structured(self):
         self.unified()
         self.assertEqual(self.tree.path_result('missing')['status'],'NOT_FOUND')

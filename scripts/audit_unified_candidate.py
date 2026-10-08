@@ -106,6 +106,8 @@ def labels(database,out):
             examples.append({'class_ids':[a,b],'labels':[x['label'],y['label']],
                              'uids':[x['target_uid'],y['target_uid']],
                              'paths':[tree.path_result(x['target_uid']),tree.path_result(y['target_uid'])],
+                             'task_paths':[tree.task_path('cub200',a),tree.task_path('cub200',b)],
+                             'source_representations':[tree.identity(x['target_uid']),tree.identity(y['target_uid'])],
                              'public_lca':tree.lca(x['target_uid'],y['target_uid']),
                              'public_distance':tree.distance(x['target_uid'],y['target_uid']),
                              'training_pair':index.query(a,b)})

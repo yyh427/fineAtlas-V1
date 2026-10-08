@@ -83,3 +83,5 @@ python3 scripts/audit_browse_cli.py --database /path/to/candidate.sqlite \
 源重放已完成且输入未改变时，可用 `--graphs-only` 从同一独立候选重新构建缓存。变更输入后应检查源规则重放的幂等性；外部完整重建优先从已校验基线的独立副本重放。冻结后若修复源图或 SDK 查询语义，重新冻结修订并重建匹配的索引，不能继续使用旧游标／缓存。
 
 发布前压缩 roundtrip 与完整 SHA 校验后上传分块；最后从公开附件重新下载，在干净进程中使用已推送代码加载，核验默认视图、修订、真实查询与回归结果。源图可达性、来源语义抽查、奖励适用性、发布一致性分别报告。
+
+最终源输入还包含同 QID 的主源角色纠正。发现这一类明确错误时，先运行 `prepare_unified_same_qid_roles.py` 生成预览，核对其主源范围后将规则加入 `unified_root_contracts.jsonl`。本轮 23 个决定均已冻结。增量恢复可以使用 `build_unified_candidate.py --scope-reconciliation-only`，它会重放该队列、重新生成完整型号／配置导航并重建全部视图，随后必须重新冻结元数据和生成匹配索引。完整基线重放已包括此队列，不需要另建不兼容格式。
