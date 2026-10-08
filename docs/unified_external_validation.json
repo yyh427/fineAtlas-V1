@@ -1,12 +1,393 @@
 {
-  "all_pass": false,
-  "status": "PENDING_ACTUAL_PUBLIC_DOWNLOAD",
+  "all_pass": true,
+  "status": "ACTUAL_PUBLIC_DOWNLOAD_VERIFIED",
   "release": "v1.10.1-repair-review",
+  "code_tag": "v1.10.1-repair-code.1",
+  "code_commit": "b36616f66bec48a7e47f576739efe88df3b466f6",
   "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
   "database_sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391",
-  "not_completed": [
-    "Unauthenticated release-asset download",
-    "Fresh public code checkout and environment",
-    "Installed public API verification and full regression"
-  ]
+  "database_bytes": 68495904768,
+  "default_view": "unified",
+  "download_authentication": "none",
+  "fresh_virtual_environment": true,
+  "installed_sdk_location_verified": true,
+  "sdk_loaded_from": "fresh virtual environment site-packages",
+  "release_url": "https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1-repair-review",
+  "manifest_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.10.1-repair-review/unified_data.json",
+  "manifest_sha256": "f6b2b8b0a6defa0f669f99f5f15204a35a07d3780bc198f084ecd4dae25ab4d4",
+  "started_utc": "2026-10-08T22:20:50.665610+00:00",
+  "ended_utc": "2026-10-08T23:11:10.439049+00:00",
+  "frozen_sdk_files_checked": 20,
+  "public_tests": {
+    "tests": 252,
+    "seconds": 118.028,
+    "pass": true,
+    "log_sha256": "03305159b43d523ac2776dc261a03bac6ebfbd4fae3db6e2b54224ecb7eb7369"
+  },
+  "ci": [
+    {
+      "run_id": 37850751365,
+      "url": "https://github.com/yyh427/fineAtlas-V1/actions/runs/37850751365",
+      "code_commit": "b36616f66bec48a7e47f576739efe88df3b466f6",
+      "pass": true,
+      "matrix_jobs": [
+        {
+          "name": "contracts (3.12)",
+          "pass": true
+        },
+        {
+          "name": "contracts (3.10)",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "run_id": 37850751348,
+      "url": "https://github.com/yyh427/fineAtlas-V1/actions/runs/37850751348",
+      "code_commit": "b36616f66bec48a7e47f576739efe88df3b466f6",
+      "pass": true,
+      "matrix_jobs": [
+        {
+          "name": "contracts (3.10)",
+          "pass": true
+        },
+        {
+          "name": "contracts (3.12)",
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "jobs": {
+    "domains": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:51:42.437302+00:00",
+      "ended_utc": "2026-10-08T22:52:07.816047+00:00",
+      "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+      "result_sha256": {
+        "domains.json": "2aa56db8f8571b0b1369055d40fe5e14ea7ef2a9c2f02f50a2ca013d7c2619e5",
+        "summary.json": "3fda60cf72bc0b17ebb7bf50c1a77a8424ef7151cc8db09532b641f063a8749e"
+      }
+    },
+    "labels": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:51:42.448779+00:00",
+      "ended_utc": "2026-10-08T22:52:26.306585+00:00",
+      "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+      "result_sha256": {
+        "cub_examples.json": "51a7ae4ebeb60d6b0296977a0c09ebd3a67145783de22009ef7d8ed9865aa112",
+        "label_summary.json": "094163b9fddef589a7411bad9ded533544a5600e705136f90aeb9c79298966a8",
+        "summary.json": "5b92272f2d7724cd6f7b02e9d7b4b7209412f975cd002734a6898f729bfb432e",
+        "strict_labels.json": "fd789936a62b29934e99dec4004ccc1582309983edbf58eddb613c80648db722",
+        "membership_labels.json": "1bf64acd805d09924fe8f44323d9f870cca9865e33173af94212884eb14f885d",
+        "unified_labels.json": "fb668e6204de8eb42e47ce32a4e22444f6e9527e725df0cbf9a6100c7b649686",
+        "pair_summary.json": "9052922045db0cafd8a572e31a69064912ba4f68ddd0f95fdf8d97edc109c24f",
+        "taxonomy_labels.json": "e448325211b9592f63e2b1bf3e5b2eaa5bddf10cfe036d9e042ceadaf10c60e3",
+        "training/cub200/pairs.jsonl": "19edaeca201b52ce16155926dd2c32bed987f5542bc40c0d785fb8caa11ce5a4",
+        "training/cub200/summary.json": "9234fe8f72b6a5736588f095f14e8baf7d76c01bad2500899b4b80e3915f3a5f",
+        "training/cub200/labels.jsonl": "be8f553fe71ff93a467d7cc49d19601d609f7135b62728f2633b394cac1124f7",
+        "training/stanford_dogs/pairs.jsonl": "0ff5a05bf5383bd455e9dc79d47362b34117bb956062c882e69847ad73324c84",
+        "training/stanford_dogs/summary.json": "11084060c3733dd0a20208a27e1d1b6c418894ce815f00000afe0c235342e0f8",
+        "training/stanford_dogs/labels.jsonl": "80136b34fe53b445613626107d3d28d61a97880702d60bb519afd2c190239cff",
+        "training/pets37/pairs.jsonl": "14daca03ee708432a8c2e81d25f8dfd87d1490b0ea2e2256677e3f317050473b",
+        "training/pets37/summary.json": "858741f6fd2e52e898bd317f5058e14a1d7adbb3e6260f0df7c1830b88930b85",
+        "training/pets37/labels.jsonl": "600ae11b242e984cab5f8cbd03b62b4ea2e9e6f373c38a98b47bbe7d35e1ddf5",
+        "training/fgvc_aircraft/pairs.jsonl": "4036bef6aecbcb80b1f586dbabcfb9ae10ca4d9b499f49de85a54f14fecbd5ad",
+        "training/fgvc_aircraft/summary.json": "b8c9f9a0f83cc66d29b7693f432a7ed77abe5f845daf008015ab74562907c490",
+        "training/fgvc_aircraft/labels.jsonl": "700796251f0ce0b598a72513a39053148d6b65638a1fdca39bdcfec291471888",
+        "training/stanford_cars/pairs.jsonl": "373a6504c0ab27a2cf2516e6f16f391a9e27d4ed08f4b538d0bc5871a5b97cad",
+        "training/stanford_cars/summary.json": "7d0a433aec889d06a678cf1ad189c19443d3fb7518ea8e53a523fb2f042e712b",
+        "training/stanford_cars/labels.jsonl": "dade5c7ce81d6dcd39e68b6c08c7902b0c3e5692eacf3b1f41b999d1c3803daf",
+        "training/flowers102/pairs.jsonl": "453f3a877445cc8cb333933642f9e52a84c38f95ba1cab85406fa1ff22e64a64",
+        "training/flowers102/summary.json": "e63428f3dcd11832b9f664d06d8fc07a1669c8b629f7dbe2a86ad25ead60f89d",
+        "training/flowers102/labels.jsonl": "c361745cf8ec25ed073968814b7443c30cc70f2b9b9b5b8671edf7e50094fddb"
+      }
+    },
+    "preservation": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:51:42.448872+00:00",
+      "ended_utc": "2026-10-08T23:04:07.130143+00:00",
+      "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+      "result_sha256": {
+        "corrected_root_relations.json": "4cc4d49864c5b2c9478ba866fec13de0318d9ea30e4c4e24deed8c624283426a",
+        "summary.json": "9c15e77b053fdbecf59be0ba617300f2624f00a0d3468f41e98f0b50e6f2f29c",
+        "corrected_source_relations.json": "80e87fbc168e69f0b96a00ad82bd2d0ec3feafae60fee21c2d5e8fe8ba0762b2",
+        "corrected_generic_kind_relations.json": "9131999233dbffc235bb18b0c22fcfa302e339dbc9278ae2a57cbba9b9da7d72",
+        "preservation.json": "813097069f1ce62af8b0785e01834c5ecf8753db61fdeb7674caf76e09204a6a"
+      }
+    },
+    "structure": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:51:42.448951+00:00",
+      "ended_utc": "2026-10-08T22:54:04.765647+00:00",
+      "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+      "result_sha256": {
+        "structure.json": "43535956a7a56fc13bbe88d488da15f94b4f7c3fec8968e096316dabd1a56e5f",
+        "summary.json": "8700e26a3ac748eebb94efc320c8cd834a76e03c84c96574c3569b0c3190d5e9"
+      }
+    },
+    "nonfocus": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:52:07.860930+00:00",
+      "ended_utc": "2026-10-08T22:52:17.143304+00:00",
+      "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+      "result_sha256": {
+        "nonfocus.json": "2cc7598b8ea2e59a01df4885ece34d334a74649858fb1d0ed270abd87fcf28f5",
+        "summary.json": "5e0cc07eec2f3cab0a765556cfe0042719fd647d601f956142de3c91c0cdba63",
+        "nonfocus_summary.json": "660328e0b873facb480ed3c4d0913ef191792c257dea91bc02bad0694d8804d9"
+      }
+    },
+    "browse": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:52:17.191875+00:00",
+      "ended_utc": "2026-10-08T22:52:38.979256+00:00",
+      "script_sha256": "cc099e2158b238c7a13146ee4a7bc755e1e4bf49bda8859fc68f78fd88077870",
+      "result_sha256": {
+        "performance.json": "4560df6ed4721cd5c19dd6a033b2ab25d45e2efb4466b49b41ef94c7f8c6ea60",
+        "summary.json": "c9be2a75bb7bdf967df66691bc47fde49d50443796afec92ea1085658da0d168",
+        "branches.json": "c4b548cd11dad09c3db1c500fddcd5061031a12416f52dbb3de166c7106e57a0",
+        "pagination.json": "d5dfaf634e19dd6316c3ccca020a2212ac9c841ea593222014bcc8c6ce11cd5c"
+      }
+    },
+    "contracts": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:52:26.654303+00:00",
+      "ended_utc": "2026-10-08T22:56:31.646805+00:00",
+      "script_sha256": "57d1617390eb5ede5c6e4644bec09abd10e2ba6fc65f6d122115e4f3bbf54126",
+      "result_sha256": {
+        "result.json": "8bf3adf1ad26a38a715be50fe3ed87ae977f28d7206a66040a03ae0366fca23d"
+      }
+    },
+    "cycles": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:52:39.013436+00:00",
+      "ended_utc": "2026-10-08T22:53:40.172635+00:00",
+      "script_sha256": "37192b42691a9de35f9856af7ba8440a192ffe93c44972941c7b7a38dd08041c",
+      "result_sha256": {
+        "result.json": "50ffad315f705bfe497e9a578a26a8b0d0734b68fe0158714454752a6f98e841"
+      }
+    },
+    "witnesses": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:53:40.205572+00:00",
+      "ended_utc": "2026-10-08T22:54:03.398984+00:00",
+      "script_sha256": "c75585413579878c6fe92c39acdef0560f657fd14e5e732d24af70f12283403c",
+      "result_sha256": {
+        "result.json": "889f28d34dfbe5944118cf9474d2fc1ba69ccf6dd4cf7f78d2d0f3a2675874d3"
+      }
+    },
+    "cli": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:54:03.433858+00:00",
+      "ended_utc": "2026-10-08T22:54:05.072863+00:00",
+      "script_sha256": "0c5dcb768188c78deacaf5fae84fc0e9607ebf360a12099450220da655ecd1c8",
+      "result_sha256": {
+        "11-browse-page.json": "9ad8e6a3ea0a5b42d9876a45abf2180afe38efdf9c2a6535dab916fd6ebb745a",
+        "03-browse-page.json": "bb53afd549775d587265b4d7a3160f153832e559838d68e140b01a0adb3d1fa5",
+        "02-browse-page.json": "e2f01654cca8af88b60e466fb596797d359fbcb628e59f55b8a71b3aaca6cdcc",
+        "09-locate.json": "ca77fe79c560335ed241bfea04973e9e2e537d93ff7127e80740168254c464d0",
+        "summary.json": "2dabbb40bab8bbbfd96c321a1d27bf9ddcd622ca8f7bcf7e3deb27fa69b126e0",
+        "00-browse-summary.json": "4d83dc2cd24c5ff6d3cc15ded4a74b417a48a2b276d721967a20b9d3b9f34093",
+        "08-locate.json": "e006d35e5d4ce6b7d8a832f7ab02e6987590d228c560572188a9dfe92bd9a614",
+        "01-browse-summary.json": "6887e7d0d494286b7e57ebb44c4163bf5f67e2ecaee2bf246b53967f3f3c1260",
+        "12-browse-groups.json": "b063b17e9f9dae99ec940064cb756ad990732921087e8e9bdd5777f00cab3722",
+        "07-browse-path.json": "85a59cd5076bc0d2010243e708df8ecf48b5e8a6af0ebf8d611dee94e4cd713f",
+        "05-browse-groups.json": "7a14248859167928a798016de181d85f5151bbdf2e1e021c4ec8006159cd5c3a",
+        "06-browse-path.json": "7619b6f908587443c00483da38b4ecc2d0c2e73fd1ea194acbb388d667942818",
+        "10-source-members-page.json": "0d5c2961454399b6e2cf5f2c13b9f810fea751e82e16c09bbe7c171e8d451574",
+        "04-browse-groups.json": "c43aed9d861ed3184763b3c347cf381cc8057ea447083a3a4954a87a0ba268b6",
+        "13-browse-page.json": "7a4489464592c4586b4d9a7e5e29a66f4cb988e6ed0fe99d7a360ab570aa9aa8"
+      }
+    },
+    "same-policy": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:54:04.799801+00:00",
+      "ended_utc": "2026-10-08T22:54:08.180193+00:00",
+      "script_sha256": "68bf9883406e49bcf1198a01765b33774fc13fa6a734eabf162a8b793bd0e55e",
+      "result_sha256": {
+        "fgvc_aircraft_pairs.jsonl": "4036bef6aecbcb80b1f586dbabcfb9ae10ca4d9b499f49de85a54f14fecbd5ad",
+        "flowers102_pairs.jsonl": "453f3a877445cc8cb333933642f9e52a84c38f95ba1cab85406fa1ff22e64a64",
+        "summary.json": "ca1168e317a1d6040eaf87d774f6dcc971a4264f27b70d71c61a5a9a0cbb8ca1",
+        "pets37_pairs.jsonl": "14daca03ee708432a8c2e81d25f8dfd87d1490b0ea2e2256677e3f317050473b",
+        "stanford_dogs_pairs.jsonl": "0ff5a05bf5383bd455e9dc79d47362b34117bb956062c882e69847ad73324c84",
+        "cub200_pairs.jsonl": "5483d6a5d27724367da8055632324678d8a349b6589adc81716c052932af02b2",
+        "stanford_cars_pairs.jsonl": "373a6504c0ab27a2cf2516e6f16f391a9e27d4ed08f4b538d0bc5871a5b97cad"
+      }
+    },
+    "global-contracts": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:54:05.112632+00:00",
+      "ended_utc": "2026-10-08T23:11:06.943629+00:00",
+      "script_sha256": "7d7c9c732bcc0f74c7320cf946c41ca427598569193d67ef1053d99e6f29a38d",
+      "result_sha256": {
+        "domain_role_census.json": "2b5b91ff7ce57ef8bf2121db7cdd7de93e994ebdabc0f0d36ed473634adf6430",
+        "contract.json": "511f176625f4c9fc9a2656d51fdbc5034fd8a73946861441d3d0308272c0ef7f",
+        "contract_checkpoint.json": "54a5f19cb424063099381d11acc18150386ffe0940666b32e97648dd3cc37e12"
+      }
+    },
+    "usability": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:54:08.332732+00:00",
+      "ended_utc": "2026-10-08T22:54:42.569985+00:00",
+      "script_sha256": "d8fb7699c872181b1f14bba629155c5aa4953209a186e87a68e35e5f6031295d",
+      "result_sha256": {
+        "strict_statistics.json": "bca032159f330a9c3a3fec8559c329aaed6ec879bfbb4d7299bdd18137854a76",
+        "portals.json": "cb190016f5853ec71404d8576f321160390603bce8b738ae70161211931afe6e",
+        "stratified_paths.jsonl": "2c131c227cc2fe7b5dc2cf49ee4ba7527cb0f89aaccb8a2b09c8e8313f1cc8fa",
+        "taxonomy_statistics.json": "1ded0eb981b3fed8fb3ae8c3cc3157aead0541ab20e5f8dc45df086277591748",
+        "summary.json": "5ba6da3ad67f975c7eb6d1ada969546b21e9616e23a3701c46cc36f9f7bd60d7",
+        "task_labels.jsonl": "5331775f28f21e9c65f1d3f6cd9f4dbd8daecb21589d1da354538a2642e26574",
+        "membership_portal_checkpoint.json": "cb190016f5853ec71404d8576f321160390603bce8b738ae70161211931afe6e",
+        "task_summary.json": "b368fccc49197b2d3231b55540010d6bb6dde5baf9d6173f746411eeaa84d884",
+        "strict_portal_checkpoint.json": "b5f6979020af71880809ff300a54937c9d687630aafc386a56f5797d67b1ef08",
+        "search_scope_checks.json": "4fa708f4cd0be77b22fbe1468c1fa84eae392da2bf0b67df93c4f178ad144ccc",
+        "taxonomy_portal_checkpoint.json": "d4aebe1673d6fa82de356c8130c04bd3ce6b7062359e48f5c83ef92940f91588",
+        "membership_statistics.json": "6c6701f533afb9fe2e09de9bb5cb9fd70cc2eabe9f508d4451d3eed1ce0e33ff",
+        "six_dataset_labels.jsonl": "9c4059ee5f59a6b5adb0ab4ecd8911673438b1dc29f7e9a2b5fc5ce54c5d1cbc"
+      }
+    },
+    "living-focused": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:54:42.815281+00:00",
+      "ended_utc": "2026-10-08T22:54:43.043149+00:00",
+      "script_sha256": "3725b89a5c4b67bd9bec8b66a2f14d07c090eec4d45e79e3ef5e049572d1728d",
+      "result_sha256": {
+        "result.json": "e1860bdfb1680d16a20e9f526bdac4f70105fa678b8d73c8e30d62d0b5e6ef20"
+      }
+    },
+    "repair-focus": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T22:54:43.075098+00:00",
+      "ended_utc": "2026-10-08T22:54:45.670929+00:00",
+      "script_sha256": "167b22146e61323ba6006d1752c23714745ef07f2c646645233bd03fbee19580",
+      "result_sha256": {
+        "result.json": "e0dfa30a24f3a27219098a046f17f616c6f45f65773abab997e3beea1557f671"
+      }
+    },
+    "self-reward": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-08T23:11:06.988164+00:00",
+      "ended_utc": "2026-10-08T23:11:08.206742+00:00",
+      "script_sha256": "7b74b1c869be27c022bba595791e4b1044dd48a0b3c6aeb3cdc5ee5fe22ce7bb",
+      "result_sha256": {
+        "summary.json": "d195f99695b1b8b144b1fb9f973fc736117f25ca01d7630dd81fb6f78e1c18e2"
+      }
+    }
+  },
+  "labels": {
+    "strict": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 752,
+      "root_reachable": 752,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 752
+    },
+    "taxonomy": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 752,
+      "root_reachable": 755,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 755
+    },
+    "unified": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 737,
+      "root_reachable": 755,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 755
+    },
+    "membership": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 752,
+      "root_reachable": 0,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 0
+    }
+  },
+  "pairs": {
+    "cub200": {
+      "pairs": 19900,
+      "pair_statuses": {
+        "APPLICABLE": 8185,
+        "COARSE_COMMON_ANCESTOR_ONLY": 8835,
+        "ENDPOINT_NOT_APPLICABLE": 2880
+      },
+      "equal_published_validation": true
+    },
+    "fgvc_aircraft": {
+      "pairs": 4950,
+      "pair_statuses": {
+        "APPLICABLE": 3028,
+        "ENDPOINT_NOT_APPLICABLE": 1295,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
+        "COARSE_COMMON_ANCESTOR_ONLY": 212
+      },
+      "equal_published_validation": true
+    },
+    "flowers102": {
+      "pairs": 5151,
+      "pair_statuses": {
+        "APPLICABLE": 1077,
+        "ENDPOINT_NOT_APPLICABLE": 3071,
+        "COARSE_COMMON_ANCESTOR_ONLY": 1003
+      },
+      "equal_published_validation": true
+    },
+    "pets37": {
+      "pairs": 666,
+      "pair_statuses": {
+        "APPLICABLE": 638,
+        "COARSE_COMMON_ANCESTOR_ONLY": 28
+      },
+      "equal_published_validation": true
+    },
+    "stanford_dogs": {
+      "pairs": 7140,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 6423,
+        "APPLICABLE": 717
+      },
+      "equal_published_validation": true
+    },
+    "stanford_cars": {
+      "pairs": 19110,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 16336,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 2639,
+        "APPLICABLE": 135
+      },
+      "equal_published_validation": true
+    }
+  },
+  "domains_checked": 95,
+  "evidence_sha256": {
+    "public_status": "fa4e5ca4ff051ffd16b973b92be10b38f83c2df48900de9f48348411f1775a87",
+    "acceptance_receipt": "b2d0e97500323e1e757f8d0b582025c4869a3c36bf845860658b0297131c7b65",
+    "installed_api_report": "dbae81cea4e54860bd0f11e5b175e51e4ca9be6b7ae1baf80c22890d8eb48649",
+    "ci_proof": "a5447147138450156ba2c795c8534be64d89d0579260bd21771f813e31b42073"
+  },
+  "all_source_semantics_certified": false,
+  "production_replacement_ready": false,
+  "images_or_models_run": false,
+  "scientific_or_visual_reward_calibration": false
 }

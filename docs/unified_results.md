@@ -6,7 +6,7 @@
 
 本候选完成通用来源角色修复、四个生活领域入口和四条家具目录配置的有界试接入。新入口组织已有分类及原生专业数据，不把已有 WordNet 类别计为新建概念。原 91 个规范领域及其兼容入口保留，实际领域数为 95。
 
-完整本地验收的 16 项均通过，包含全部领域、原标签、六个数据集全部 56,917 个不同类别对、全图结构及循环、源记录保留、固定非基准样本、全局合同、公开 API、真实 CLI 和聚焦语义检查。两份完整独立重建的逻辑数据与模式一致。实际检查范围与绑定校验值见 [验收汇总](unified_validation.json)、[逐阶段验收](unified_acceptance_status.json) 和 [复建对照](unified_reproduction.json)。公开下载复验单独记录在 [安装核验](unified_external_verification.md)，当前尚待执行。
+完整本地验收的 16 项均通过，包含全部领域、原标签、六个数据集全部 56,917 个不同类别对、全图结构及循环、源记录保留、固定非基准样本、全局合同、公开 API、真实 CLI 和聚焦语义检查。两份完整独立重建的逻辑数据与模式一致。实际检查范围与绑定校验值见 [验收汇总](unified_validation.json)、[逐阶段验收](unified_acceptance_status.json) 和 [复建对照](unified_reproduction.json)。实际无认证公网下载、独立安装和完整 16 项复验均通过，记录见 [安装核验](unified_external_verification.md)。公开代码固定到经 CI 和 252 项公开测试验证的提交 `b36616f66bec48a7e47f576739efe88df3b466f6`。
 
 ## 标签和视图
 
