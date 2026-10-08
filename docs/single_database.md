@@ -42,3 +42,5 @@
 本分支默认候选为 `v1.10.0-unified-review`，视图 `unified`，精确数据库 SHA、图修订及附件见 [unified_data.json](../unified_data.json)。`review_data.json`（1.8.1）和 `single_download.json`（正式版 1.6.0）保留为明确的旧快照配置，不能用于复现本轮结果。下载工具优先使用本分支的统一候选清单；安装到独立目录，关闭旧连接并重新加载，不能套用 1.9 的外部索引。
 
 `unified_backbone_nodes` / `unified_backbone_edges` 记录固定 WordNet 3.1 上层，`unified_wordnet_usage` 记录所有被使用 WordNet 概念的定义和来源，`unified_domain_rules` 保存原生根接入依据。`browse_*` 是与当前图修订绑定的分页／目录派生索引，不提供新的语义边。统一视图使用原生分类和分角色导航；目录、属性、身份关系不计为分类深度。验收与限制见 [unified_results.md](unified_results.md)，接口与训练要求见 [public_api.md](public_api.md)。
+
+本次推荐加载／核验代码标签为 `v1.10.0-unified-code.1`，数据仍为同一 `v1.10.0-unified-review` SHA。原构建标签的安装复验器误要求成功分页含 `status`；修正版按既有有界 keyset 页合同检查，缺失字段、错误状态、错误视图／修订和不一致游标均失败。`unified_code.json` 固定修正版；原 `unified_data.json.release_code_tag` 保留历史构建记录，不强推旧标签。

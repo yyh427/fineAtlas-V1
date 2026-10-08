@@ -4,6 +4,8 @@ FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及
 
 ## 固定代码和数据
 
+加载／核验代码固定到 `v1.10.0-unified-code.1`，见 [unified_code.json](unified_code.json)。数据清单中的 `release_code_tag` 是原构建代码，保留作历史追溯；修正版不改变数据库及 20 个冻结 SDK 文件。
+
 候选清单为 [unified_data.json](unified_data.json)，包含分发附件、完整数据库 SHA-256、图修订、默认视图和索引版本。最终核验结果、代码版本及未确认项见 [统一层次结果](docs/unified_results.md)。不要将 PyPI 中其他版本的 SDK、旧数据库或 `v1.9` 浏览索引与本候选混用。
 
 ```bash

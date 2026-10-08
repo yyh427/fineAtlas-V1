@@ -8,7 +8,7 @@ assert d['retention']['pass'] and d['domains']=={'actual':91,'public_contract_pa
 assert sum(x['pairs'] for x in d['pairs'].values())==56917
 assert all(x['database_revision']==m['database_revision'] for x in d['pairs'].values()),'Manifest and audit refer to different snapshots'
 lines=['# FineAtlas 统一层次验收与训练使用',
- f"\n固定数据：`{m['release']}`；代码：同名 Git 标签；SDK `{m['sdk_version']}`；视图：`unified`；WordNet 3.1。",
+ f"\n固定数据：`{m['release']}`；代码：`v1.10.0-unified-code.1`；SDK `{m['sdk_version']}`；视图：`unified`；WordNet 3.1。",
  f"\n数据库修订：`{m['database_revision']}`\n\nSHA-256：`{m['database']['sha256']}`\n\n解压字节数：{m['database']['bytes']:,}。",
  '\n本候选已实施全领域来源规则、统一查询与匹配索引；未达到所有保留来源记录均已核验接入。缺证据、身份粒度冲突和不适用奖励仍明确保留，因此不能无条件替换正式库。文本 SFT 保留原标签，RL 只使用适用标记为真的层次项，类别正确性奖励独立保留。',
  '\n## 实际检查范围\n',
@@ -50,7 +50,7 @@ lines+=['\n实例包括当前缺少明确设计／栽培单位的 Buick Marquett
  '\n个例：McLaren MP4-12C sports car 采用厂商手册；游戏主机→显示器和扬声器→连接件两条错误边按独立主源定义隔离，已有合法替代路径保留。三个 FDA 监管类别角色和一条错误设计边单独记录。通用同 QID 主源角色修复 23 个表示；13 个已有家族与通用 model 单位冲突保持待审。完整原 UID、payload、原始关系端点及标签历史均保留。',
  '\n末轮还核验并接入 7 个非基准食物概念：当前主源的未限定 food 上位声明与独立范围复核一致，使用原生分类关系，不伪造更细的菜系或配方层。补充来源快照及实际 revision 在发布附件 `late_primary_food_sources.json`。Callender-Hamilton bridge 的命名桥／桥型范围、M-11 Shtorm 的完整系统／弹体范围仍冲突，两个记录保持 UNKNOWN 并保存证据，不靠修改角色名称制造通过。',
  '\n## 获取和最小复现\n',
- '```bash\ngit clone --branch v1.10.0-unified-review https://github.com/yyh427/fineAtlas-V1.git\ncd fineAtlas-V1\npython3 -m pip install -e .\npython3 scripts/download_single.py --manifest unified_data.json --output-dir /path/to/fineatlas-1.10\npython3 - <<\'PYCODE\'\nfrom fineatlas import FineAtlas\nwith FineAtlas("/path/to/fineatlas-1.10/fineatlas.sqlite", relation_view="unified") as tree:\n    print(tree.task_path("cub200", "1"))\n    a=tree.target("cub200", "1")["target_uid"]\n    b=tree.target("cub200", "2")["target_uid"]\n    print(tree.lca(a,b,policy="classification"))\n    print(tree.distance(a,b,policy="classification"))\n    print(tree.relation_reward_index("cub200").query("1", "2"))\n    tree.export_training("cub200", "/path/to/cub-text-training")\nPYCODE\n```',
+ '```bash\ngit clone --branch v1.10.0-unified-code.1 https://github.com/yyh427/fineAtlas-V1.git\ncd fineAtlas-V1\npython3 -m pip install -e .\npython3 scripts/download_single.py --manifest unified_data.json --output-dir /path/to/fineatlas-1.10\npython3 - <<\'PYCODE\'\nfrom fineatlas import FineAtlas\nwith FineAtlas("/path/to/fineatlas-1.10/fineatlas.sqlite", relation_view="unified") as tree:\n    print(tree.task_path("cub200", "1"))\n    a=tree.target("cub200", "1")["target_uid"]\n    b=tree.target("cub200", "2")["target_uid"]\n    print(tree.lca(a,b,policy="classification"))\n    print(tree.distance(a,b,policy="classification"))\n    print(tree.relation_reward_index("cub200").query("1", "2"))\n    tree.export_training("cub200", "/path/to/cub-text-training")\nPYCODE\n```',
  '\n新目录安装，关闭旧 SDK／SQLite 连接；验证完整 SHA、数据库修订、默认视图和匹配索引。不套用旧 1.9 overlay，不共享旧游标／进程缓存。完整重建、检查和恢复命令见 [unified_build.md](unified_build.md)。候选分块／冻结输入／来源快照沿用同名 GitHub prerelease 分发，原生产库、旧候选、原始来源和用户未提交文件保留。',
  '\n公开下载后干净代码／进程的复验结果另存同一 release 附件 `external_validation.json`，记录实际代码 commit、模块来源、完整下载 SHA、默认视图、91 入口及 755／56,917 查询比对；只有该附件记录的真实完成项可称已外部分发复验。未运行图像识别、视觉训练或推理，不宣称识别准确率提高。']
 a.output.write_text('\n'.join(lines)+'\n');print(a.output)

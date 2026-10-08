@@ -1,0 +1,11 @@
+{
+  "data_release": "v1.10.0-unified-review",
+  "code_tag": "v1.10.0-unified-code.1",
+  "sdk_version": "1.10.0rc1",
+  "relation_view": "unified",
+  "database_sha256": "c8db664711255202d51ed571d60df66fe5b4315e879c1d509a5dd935bb3ee019",
+  "original_artifact_code_tag": "v1.10.0-unified-review",
+  "original_artifact_code_commit": "d8155fae0a4884d44cb01f1dcc492a12e0fb05dc",
+  "frozen_sdk_source_bytes_changed": false,
+  "reason": "Published installation verifier corrected to validate the existing keyset success-page schema; database and frozen 20 SDK files unchanged."
+}

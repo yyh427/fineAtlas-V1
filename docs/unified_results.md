@@ -1,6 +1,6 @@
 # FineAtlas 统一层次验收与训练使用
 
-固定数据：`v1.10.0-unified-review`；代码：同名 Git 标签；SDK `1.10.0rc1`；视图：`unified`；WordNet 3.1。
+固定数据：`v1.10.0-unified-review`；代码：`v1.10.0-unified-code.1`；SDK `1.10.0rc1`；视图：`unified`；WordNet 3.1。
 
 数据库修订：`650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd`
 
@@ -113,7 +113,7 @@ FAA 单发动机活塞固定翼原有 61,283 个型号身份仍完整可浏览�
 ## 获取和最小复现
 
 ```bash
-git clone --branch v1.10.0-unified-review https://github.com/yyh427/fineAtlas-V1.git
+git clone --branch v1.10.0-unified-code.1 https://github.com/yyh427/fineAtlas-V1.git
 cd fineAtlas-V1
 python3 -m pip install -e .
 python3 scripts/download_single.py --manifest unified_data.json --output-dir /path/to/fineatlas-1.10
@@ -133,3 +133,5 @@ PYCODE
 新目录安装，关闭旧 SDK／SQLite 连接；验证完整 SHA、数据库修订、默认视图和匹配索引。不套用旧 1.9 overlay，不共享旧游标／进程缓存。完整重建、检查和恢复命令见 [unified_build.md](unified_build.md)。候选分块／冻结输入／来源快照沿用同名 GitHub prerelease 分发，原生产库、旧候选、原始来源和用户未提交文件保留。
 
 公开下载后干净代码／进程的复验结果另存同一 release 附件 `external_validation.json`，记录实际代码 commit、模块来源、完整下载 SHA、默认视图、91 入口及 755／56,917 查询比对；只有该附件记录的真实完成项可称已外部分发复验。未运行图像识别、视觉训练或推理，不宣称识别准确率提高。
+
+发布下载复验发现并修复核验器的成功分页 schema 假设：成功页不强制含 `status`，但必须有合法分页字段、正确视图／修订及有界结果。原始失败日志保留；代码固定到 `v1.10.0-unified-code.1`，数据 SHA 与冻结 SDK 字节保持不变。
