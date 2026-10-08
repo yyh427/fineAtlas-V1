@@ -1,0 +1,41 @@
+{
+  "all_pass": true,
+  "revisions_equal": true,
+  "distinct_source_files": true,
+  "artifacts": {
+    "primary": {
+      "release": "v1.10.1-repair-review",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "browse_index_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "ready_flags": {
+        "unified_ready": true,
+        "usability_indexes_ready": true,
+        "browse_indexes_ready": true
+      },
+      "sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391",
+      "bytes_scanned": 68495904768,
+      "integrity_check": [
+        "ok"
+      ],
+      "file_unchanged_during_checks": true,
+      "pass": true
+    },
+    "reproduction": {
+      "release": "v1.10.1-repair-review",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "browse_index_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "ready_flags": {
+        "unified_ready": true,
+        "usability_indexes_ready": true,
+        "browse_indexes_ready": true
+      },
+      "sha256": "aedd134e80b870f607b58624ef9545be40f5389b616ca69f277ad94481d24047",
+      "bytes_scanned": 68495904768,
+      "integrity_check": [
+        "ok"
+      ],
+      "file_unchanged_during_checks": true,
+      "pass": true
+    }
+  }
+}

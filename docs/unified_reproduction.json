@@ -1,0 +1,865 @@
+{
+  "schema_inventory": {
+    "primary_only_tables": [],
+    "reproduction_only_tables": [],
+    "different_table_schemas": {},
+    "table_counts": [
+      112,
+      112
+    ],
+    "pass": true
+  },
+  "schema_objects": {
+    "primary_only_objects": [],
+    "reproduction_only_objects": [],
+    "different_object_definitions": [],
+    "object_counts": [
+      146,
+      146
+    ],
+    "pass": true
+  },
+  "admission_decisions": {
+    "counts": [
+      252084,
+      252084
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "aliases": {
+    "counts": [
+      23758249,
+      23758249
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "annotation_scope_target_history": {
+    "counts": [
+      6,
+      6
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_00_v3_unified_bio_qids": {
+    "counts": [
+      3459193,
+      3459193
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_01_v4_extension_build_state": {
+    "counts": [
+      4,
+      4
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_01_v4_extension_rejected_edges": {
+    "counts": [
+      1,
+      1
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_02_v4_alignment_v5_build_state": {
+    "counts": [
+      5,
+      5
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_02_v4_alignment_v5_unresolved": {
+    "counts": [
+      0,
+      0
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_03_v4_lexical_sidecar_build_state": {
+    "counts": [
+      4,
+      4
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_04_v4_col_vernacular_sidecar_build_state": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_04_v4_col_vernacular_sidecar_col_names": {
+    "counts": [
+      200325,
+      200325
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_04_v4_col_vernacular_sidecar_col_vernacular": {
+    "counts": [
+      386315,
+      386315
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_06_v25_identity_projection_v2_composable_variants": {
+    "counts": [
+      2045,
+      2045
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_06_v25_identity_projection_v2_metadata": {
+    "counts": [
+      9,
+      9
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_06_v25_identity_projection_v2_presentation_aliases": {
+    "counts": [
+      531099,
+      531099
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_06_v25_identity_projection_v2_presentations": {
+    "counts": [
+      261629,
+      261629
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_07_v26_fineatlas_v26_completion_change_log": {
+    "counts": [
+      755,
+      755
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_07_v26_fineatlas_v26_completion_metadata": {
+    "counts": [
+      7,
+      7
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_08_v27_fineatlas_v27_cross_domain_metadata": {
+    "counts": [
+      6,
+      6
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_09_v28_fineatlas_v28_expansion_metadata": {
+    "counts": [
+      7,
+      7
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_10_v29_fineatlas_v29_expansion_metadata": {
+    "counts": [
+      1,
+      1
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_11_v30_fineatlas_v30_wiki_expansion_metadata": {
+    "counts": [
+      1,
+      1
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_12_v31_fineatlas_v31_second_level_metadata": {
+    "counts": [
+      1,
+      1
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_14_v32_electronic_components_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_15_v32_home_appliances_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_16_v32_public_transport_buildings_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_17_v32_medical_devices_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_18_v32_food_identity_alignment_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_19_v33_fineatlas_v33_mimo_repair_metadata": {
+    "counts": [
+      6,
+      6
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_19_v33_fineatlas_v33_mimo_repair_repair_evidence": {
+    "counts": [
+      7,
+      7
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_20_v33_wikidata_batch_0001_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_21_v33_wikidata_batch_0002_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_22_v33_wikidata_batch_0003_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_23_v33_identity_path_repair_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_24_v33_wikidata_local_em_wikidata_batch_0001_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_25_v33_wikidata_local_em_wikidata_batch_0002_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_26_v33_curated_food_batch_0001_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_27_v33_curated_food_batch_0002_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_28_v33_curated_authority_batch_0001_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_29_v33_curated_authority_batch_0002_metadata": {
+    "counts": [
+      3,
+      3
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "archive_30_v33_curated_identity_metadata": {
+    "counts": [
+      2,
+      2
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "bridges": {
+    "counts": [
+      4404320,
+      4404320
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_cached_parents": {
+    "counts": [
+      34199,
+      34199
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_facets": {
+    "counts": [
+      19822740,
+      19822740
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_group_cache": {
+    "counts": [
+      1862640,
+      1862640
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_link_counts": {
+    "counts": [
+      2095666,
+      2095666
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_links": {
+    "counts": [
+      38762404,
+      38762404
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_nodes": {
+    "counts": [
+      12400292,
+      12400292
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_preferences": {
+    "counts": [
+      403345,
+      403345
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "candidate_role_reviews": {
+    "counts": [
+      2772,
+      2772
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "classification_repairs": {
+    "counts": [
+      282407,
+      282407
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "components": {
+    "counts": [
+      12620418,
+      12620418
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "dataset_catalogs": {
+    "counts": [
+      13,
+      13
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "dataset_mapping_candidates": {
+    "counts": [
+      587,
+      587
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "dataset_mapping_checks": {
+    "counts": [
+      202,
+      202
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "dataset_target_history": {
+    "counts": [
+      1822,
+      1822
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "dataset_targets": {
+    "counts": [
+      1822,
+      1822
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "domain_aliases": {
+    "counts": [
+      610,
+      610
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "domain_components": {
+    "counts": [
+      28321204,
+      28321204
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "domain_entries": {
+    "counts": [
+      97,
+      97
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "domain_entry_roots": {
+    "counts": [
+      166,
+      166
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "domain_members": {
+    "counts": [
+      28515006,
+      28515006
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "domain_registry": {
+    "counts": [
+      95,
+      95
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "edges": {
+    "counts": [
+      9772409,
+      9772409
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "entity_connections": {
+    "counts": [
+      3402114,
+      3402114
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "entity_relations": {
+    "counts": [
+      7631227,
+      7631227
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "evidence": {
+    "counts": [
+      1594293,
+      1594293
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "geographical_countries": {
+    "counts": [
+      252,
+      252
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "hierarchy_decisions": {
+    "counts": [
+      649387,
+      649387
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "identity_decisions": {
+    "counts": [
+      9010,
+      9010
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "inputs": {
+    "counts": [
+      31,
+      31
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "metadata": {
+    "counts": [
+      145,
+      145
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "native_variant_reviews": {
+    "counts": [
+      2587,
+      2587
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "node_definitions": {
+    "counts": [
+      3061972,
+      3061972
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "node_dispositions": {
+    "counts": [
+      181382,
+      181382
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "node_names": {
+    "counts": [
+      442546,
+      442546
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "node_profiles": {
+    "counts": [
+      3919714,
+      3919714
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "node_revisions": {
+    "counts": [
+      0,
+      0
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "node_taxon_ranks": {
+    "counts": [
+      3330529,
+      3330529
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "nodes": {
+    "counts": [
+      12654588,
+      12654588
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "normalization_roles": {
+    "counts": [
+      428621,
+      428621
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "pruning": {
+    "counts": [
+      79,
+      79
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "relation_rechecks": {
+    "counts": [
+      52183,
+      52183
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_edge_decisions": {
+    "counts": [
+      3404504,
+      3404504
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_entity_decisions": {
+    "counts": [
+      1,
+      1
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_entry_changes": {
+    "counts": [
+      8,
+      8
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_node_decisions": {
+    "counts": [
+      68,
+      68
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_rank_reviews": {
+    "counts": [
+      464,
+      464
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_source_alignment": {
+    "counts": [
+      0,
+      0
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "repair_stages": {
+    "counts": [
+      54,
+      54
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "source_catalogs": {
+    "counts": [
+      82,
+      82
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "source_scope_reviews": {
+    "counts": [
+      85098,
+      85098
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "source_tables": {
+    "counts": [
+      170,
+      170
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "suppressed_edges": {
+    "counts": [
+      190,
+      190
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "target_revisions": {
+    "counts": [
+      6,
+      6
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "task_mapping_admissions": {
+    "counts": [
+      327,
+      327
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "unified_backbone_edges": {
+    "counts": [
+      158,
+      158
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "unified_backbone_nodes": {
+    "counts": [
+      167,
+      167
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "unified_domain_rules": {
+    "counts": [
+      163,
+      163
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "unified_identity_rules": {
+    "counts": [
+      19644,
+      19644
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "unified_wordnet_usage": {
+    "counts": [
+      74426,
+      74426
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "usability_changes": {
+    "counts": [
+      1912508,
+      1912508
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "view_paths": {
+    "counts": [
+      33245284,
+      33245284
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "view_roots": {
+    "counts": [
+      21841390,
+      21841390
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "view_terminal_connections": {
+    "counts": [
+      11500457,
+      11500457
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "view_statistics_without_runtime": {
+    "pass": true
+  }
+}

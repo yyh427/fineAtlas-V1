@@ -1,523 +1,145 @@
 {
-  "same_code_and_policy": true,
-  "sdk_implementation_commit": "1b88ff9f172a3a2db78ba64029c48f524413a596",
-  "snapshots": {
-    "v35": {
-      "cub200": {
-        "pairs": 19900,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 19900
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:01505702-n",
-            "v4root:bird",
-            "ott:81461"
-          ],
-          "source_scope": "avilist",
-          "requirement": "species"
-        },
-        "revision": "v1.2.0:28508917760",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "fgvc_aircraft": {
-        "pairs": 4950,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 4950
-        },
-        "configuration": {
-          "policy": "design",
-          "coarse_roots": [
-            "wordnet31:02689427-n"
-          ],
-          "requirement": "model_design"
-        },
-        "revision": "v1.2.0:28508917760",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "flowers102": {
-        "pairs": 5151,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 5151
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00017402-n"
-          ],
-          "requirement": "species"
-        },
-        "revision": "v1.2.0:28508917760",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "pets37": {
-        "pairs": 666,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 666
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00015568-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "revision": "v1.2.0:28508917760",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_dogs": {
-        "pairs": 7140,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 7140
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:02086723-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "revision": "v1.2.0:28508917760",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_cars": {
-        "pairs": 19110,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 19110
-        },
-        "configuration": {
-          "policy": "configuration",
-          "coarse_roots": [
-            "wordnet31:02961779-n"
-          ],
-          "requirement": "configuration"
-        },
-        "revision": "v1.2.0:28508917760",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      }
+  "cub200": {
+    "pairs": 19900,
+    "statuses": {
+      "APPLICABLE": 7770,
+      "COARSE_COMMON_ANCESTOR_ONLY": 8340,
+      "ENDPOINT_NOT_APPLICABLE": 3790
     },
-    "v36": {
-      "cub200": {
-        "pairs": 19900,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 19900
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:01505702-n",
-            "v4root:bird",
-            "ott:81461"
-          ],
-          "source_scope": "avilist",
-          "requirement": "species"
-        },
-        "revision": "v1.3.0:28636983296",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "fgvc_aircraft": {
-        "pairs": 4950,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 4950
-        },
-        "configuration": {
-          "policy": "design",
-          "coarse_roots": [
-            "wordnet31:02689427-n"
-          ],
-          "requirement": "model_design"
-        },
-        "revision": "v1.3.0:28636983296",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "flowers102": {
-        "pairs": 5151,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 5151
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00017402-n"
-          ],
-          "requirement": "species"
-        },
-        "revision": "v1.3.0:28636983296",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "pets37": {
-        "pairs": 666,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 666
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00015568-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "revision": "v1.3.0:28636983296",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_dogs": {
-        "pairs": 7140,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 7140
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:02086723-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "revision": "v1.3.0:28636983296",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_cars": {
-        "pairs": 19110,
-        "statuses": {
-          "INTERFACE_SCHEMA_NOT_SUPPORTED": 19110
-        },
-        "configuration": {
-          "policy": "configuration",
-          "coarse_roots": [
-            "wordnet31:02961779-n"
-          ],
-          "requirement": "configuration"
-        },
-        "revision": "v1.3.0:28636983296",
-        "view": "taxonomy",
-        "public_reward_interface_available": false,
-        "reason": "Snapshot lacks node_profiles and typed role contracts required by the current reward API; raw legacy distance is not certified by this comparison",
-        "scientific_or_visual_reward_calibration": false
-      }
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:01505702-n",
+        "v4root:bird",
+        "ott:81461"
+      ],
+      "source_scope": "avilist",
+      "requirement": "species"
     },
-    "whole_tree": {
-      "cub200": {
-        "pairs": 19900,
-        "statuses": {
-          "ENDPOINT_NOT_APPLICABLE": 17554,
-          "COARSE_COMMON_ANCESTOR_ONLY": 1147,
-          "APPLICABLE": 1199
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:01505702-n",
-            "v4root:bird",
-            "ott:81461"
-          ],
-          "source_scope": "avilist",
-          "requirement": "species"
-        },
-        "annotation_review_labels": [
-          "101",
-          "103",
-          "105",
-          "110",
-          "126",
-          "130",
-          "134",
-          "141",
-          "146",
-          "17",
-          "171",
-          "182",
-          "196",
-          "44",
-          "62",
-          "70",
-          "74",
-          "83",
-          "91",
-          "92"
-        ],
-        "revision": "v1.6.0-local:41621147648",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "fgvc_aircraft": {
-        "pairs": 4950,
-        "statuses": {
-          "ENDPOINT_NOT_APPLICABLE": 4944,
-          "COARSE_COMMON_ANCESTOR_ONLY": 6
-        },
-        "configuration": {
-          "policy": "design",
-          "coarse_roots": [
-            "wordnet31:02689427-n"
-          ],
-          "requirement": "model_design"
-        },
-        "annotation_review_labels": [],
-        "revision": "v1.6.0-local:41621147648",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "flowers102": {
-        "pairs": 5151,
-        "statuses": {
-          "APPLICABLE": 1074,
-          "ENDPOINT_NOT_APPLICABLE": 3260,
-          "COARSE_COMMON_ANCESTOR_ONLY": 817
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00017402-n"
-          ],
-          "requirement": "species"
-        },
-        "annotation_review_labels": [],
-        "revision": "v1.6.0-local:41621147648",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "pets37": {
-        "pairs": 666,
-        "statuses": {
-          "APPLICABLE": 630,
-          "ENDPOINT_NOT_APPLICABLE": 36
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00015568-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "annotation_review_labels": [],
-        "revision": "v1.6.0-local:41621147648",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_dogs": {
-        "pairs": 7140,
-        "statuses": {
-          "COARSE_COMMON_ANCESTOR_ONLY": 6949,
-          "APPLICABLE": 191
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:02086723-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "annotation_review_labels": [],
-        "revision": "v1.6.0-local:41621147648",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_cars": {
-        "pairs": 19110,
-        "statuses": {
-          "ENDPOINT_NOT_APPLICABLE": 18759,
-          "IDENTITY_LINEAGE_ROLE_CONFLICT": 345,
-          "COARSE_COMMON_ANCESTOR_ONLY": 5,
-          "APPLICABLE": 1
-        },
-        "configuration": {
-          "policy": "configuration",
-          "coarse_roots": [
-            "wordnet31:02961779-n"
-          ],
-          "requirement": "configuration"
-        },
-        "annotation_review_labels": [],
-        "revision": "v1.6.0-local:41621147648",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      }
-    },
-    "night_v1.9": {
-      "cub200": {
-        "pairs": 19900,
-        "statuses": {
-          "NO_COMMON_ANCESTOR": 11515,
-          "COARSE_COMMON_ANCESTOR_ONLY": 1147,
-          "ENDPOINT_NOT_APPLICABLE": 6039,
-          "APPLICABLE": 1199
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:01505702-n",
-            "v4root:bird",
-            "ott:81461"
-          ],
-          "source_scope": "avilist",
-          "requirement": "species"
-        },
-        "annotation_review_labels": [
-          "101",
-          "103",
-          "105",
-          "110",
-          "126",
-          "130",
-          "134",
-          "141",
-          "146",
-          "17",
-          "171",
-          "182",
-          "196",
-          "44",
-          "62",
-          "70",
-          "74",
-          "83",
-          "91",
-          "92"
-        ],
-        "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "fgvc_aircraft": {
-        "pairs": 4950,
-        "statuses": {
-          "APPLICABLE": 3007,
-          "ENDPOINT_NOT_APPLICABLE": 1295,
-          "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
-          "COARSE_COMMON_ANCESTOR_ONLY": 233
-        },
-        "configuration": {
-          "policy": "design",
-          "coarse_roots": [
-            "wordnet31:02689427-n"
-          ],
-          "requirement": "model_design"
-        },
-        "annotation_review_labels": [],
-        "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "flowers102": {
-        "pairs": 5151,
-        "statuses": {
-          "APPLICABLE": 1077,
-          "ENDPOINT_NOT_APPLICABLE": 3071,
-          "COARSE_COMMON_ANCESTOR_ONLY": 1003
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00017402-n"
-          ],
-          "requirement": "species"
-        },
-        "annotation_review_labels": [],
-        "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "pets37": {
-        "pairs": 666,
-        "statuses": {
-          "APPLICABLE": 638,
-          "COARSE_COMMON_ANCESTOR_ONLY": 28
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:00015568-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "annotation_review_labels": [],
-        "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_dogs": {
-        "pairs": 7140,
-        "statuses": {
-          "COARSE_COMMON_ANCESTOR_ONLY": 6948,
-          "APPLICABLE": 192
-        },
-        "configuration": {
-          "policy": "classification",
-          "coarse_roots": [
-            "wordnet31:02086723-n"
-          ],
-          "requirement": "hierarchy"
-        },
-        "annotation_review_labels": [],
-        "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      },
-      "stanford_cars": {
-        "pairs": 19110,
-        "statuses": {
-          "COARSE_COMMON_ANCESTOR_ONLY": 15272,
-          "IDENTITY_LINEAGE_ROLE_CONFLICT": 3710,
-          "APPLICABLE": 128
-        },
-        "configuration": {
-          "policy": "configuration",
-          "coarse_roots": [
-            "wordnet31:02961779-n"
-          ],
-          "requirement": "configuration"
-        },
-        "annotation_review_labels": [],
-        "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-        "view": "taxonomy",
-        "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
-        "scientific_or_visual_reward_calibration": false
-      }
-    }
+    "annotation_review_labels": [
+      "101",
+      "103",
+      "105",
+      "110",
+      "126",
+      "130",
+      "134",
+      "141",
+      "146",
+      "17",
+      "171",
+      "182",
+      "196",
+      "44",
+      "62",
+      "70",
+      "74",
+      "83",
+      "91",
+      "92"
+    ],
+    "revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
   },
-  "interpretation": "Legacy snapshots without typed role contracts are INTERFACE_SCHEMA_NOT_SUPPORTED; no raw legacy numeric distances are promoted to reward validity. Source identities and target mappings remain version-specific."
+  "fgvc_aircraft": {
+    "pairs": 4950,
+    "statuses": {
+      "APPLICABLE": 3028,
+      "ENDPOINT_NOT_APPLICABLE": 1295,
+      "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
+      "COARSE_COMMON_ANCESTOR_ONLY": 212
+    },
+    "configuration": {
+      "policy": "design",
+      "coarse_roots": [
+        "wordnet31:02689427-n"
+      ],
+      "requirement": "model_design"
+    },
+    "annotation_review_labels": [],
+    "revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "flowers102": {
+    "pairs": 5151,
+    "statuses": {
+      "APPLICABLE": 1077,
+      "ENDPOINT_NOT_APPLICABLE": 3071,
+      "COARSE_COMMON_ANCESTOR_ONLY": 1003
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:00017402-n"
+      ],
+      "requirement": "species"
+    },
+    "annotation_review_labels": [],
+    "revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "pets37": {
+    "pairs": 666,
+    "statuses": {
+      "APPLICABLE": 638,
+      "COARSE_COMMON_ANCESTOR_ONLY": 28
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:00015568-n"
+      ],
+      "requirement": "hierarchy"
+    },
+    "annotation_review_labels": [],
+    "revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "stanford_dogs": {
+    "pairs": 7140,
+    "statuses": {
+      "COARSE_COMMON_ANCESTOR_ONLY": 6423,
+      "APPLICABLE": 717
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:02086723-n"
+      ],
+      "requirement": "hierarchy"
+    },
+    "annotation_review_labels": [],
+    "revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "stanford_cars": {
+    "pairs": 19110,
+    "statuses": {
+      "COARSE_COMMON_ANCESTOR_ONLY": 16336,
+      "IDENTITY_LINEAGE_ROLE_CONFLICT": 2639,
+      "APPLICABLE": 135
+    },
+    "configuration": {
+      "policy": "configuration",
+      "coarse_roots": [
+        "wordnet31:02961779-n"
+      ],
+      "requirement": "configuration"
+    },
+    "annotation_review_labels": [],
+    "revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  }
 }

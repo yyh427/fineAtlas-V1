@@ -1,10 +1,12 @@
 # FineAtlas V1
 
-FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及命名实例的本地 SQLite 图数据库。本分支的 SDK 是 `1.10.0rc1`，统一候选为 `v1.10.0-unified-review`，查询视图固定为 `unified`。候选与正式版本分开发布，不覆盖旧库。
+FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及命名实例的本地 SQLite 图数据库。本分支的 SDK 是 `1.10.1rc1`，统一候选为 `v1.10.1-repair-review`，查询视图固定为 `unified`。候选与正式版本分开发布，不覆盖旧库。
 
 ## 固定代码和数据
 
-加载／核验代码固定到 `v1.10.0-unified-code.1`，见 [unified_code.json](unified_code.json)。数据清单中的 `release_code_tag` 是原构建代码，保留作历史追溯；修正版不改变数据库及 20 个冻结 SDK 文件。
+加载／核验代码固定到 `v1.10.1-repair-code.1`，见 [unified_code.json](unified_code.json)。代码标签与数据清单分别固定可安装代码和精确数据库；候选的冻结构建清单记录 SDK、构建脚本及全部来源输入的 SHA-256。
+
+四个生活入口和家具目录配置的范围说明见 [生活领域](docs/living_domains_v1.10.1.md)。
 
 候选清单为 [unified_data.json](unified_data.json)，包含分发附件、完整数据库 SHA-256、图修订、默认视图和索引版本。最终核验结果、代码版本及未确认项见 [统一层次结果](docs/unified_results.md)。不要将 PyPI 中其他版本的 SDK、旧数据库或 `v1.9` 浏览索引与本候选混用。
 

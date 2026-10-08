@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 import sqlite3
 import subprocess
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+from fineatlas import __version__ as sdk_version
 
 
 def digest(path):
@@ -26,6 +30,7 @@ def main():
             raise ValueError('Candidate is not frozen under the requested release')
         required_schema='FINEATLAS_SINGLE_DB_V1' if a.kind=='single' else 'FINEATLAS_BROWSE_INDEX_V1'
         if metadata.get('schema')!=required_schema:raise ValueError('Requested artifact kind differs from its schema')
+        domain_inventory={name:json.loads(roots) for name,roots in c.execute('SELECT canonical_name,root_uids FROM domain_registry ORDER BY canonical_name')} if a.kind=='single' else None
     a.output.mkdir(parents=True,exist_ok=True)
     compressed=a.output/('fineatlas-'+a.release+('.browse' if a.kind=='browse-index' else '')+'.sqlite.zst')
     subprocess.run(['zstd','-T8','-8','-o',str(compressed),'--',str(a.database)],check=True)
@@ -56,7 +61,10 @@ def main():
               'source_graph_changed':metadata.get('source_graph_changed',False),
               'default_relation_view':metadata.get('default_relation_view','strict'),
               'supported_relation_views':metadata.get('supported_relation_views',['strict','taxonomy','membership']),
-              'sdk_version':'1.10.0rc1' if a.release=='v1.10.0-unified-review' else '1.9.0rc1'}
+              'sdk_version':sdk_version}
+    if domain_inventory is not None:
+        manifest['domain_count']=len(domain_inventory)
+        manifest['domain_inventory']=domain_inventory
     (a.output/'review_data.json').write_text(json.dumps(manifest,indent=2)+'\n')
     (a.output/'compression_verification.json').write_text(json.dumps({'pass':True,'database_bytes':size,
         'sha256':expected,'compressed_bytes':compressed.stat().st_size,'chunks':len(parts)},indent=2)+'\n')

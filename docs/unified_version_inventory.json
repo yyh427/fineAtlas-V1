@@ -1,101 +1,29 @@
 {
-  "historical_snapshots": [
-    {
-      "name": "v35",
-      "local_database_path": "/data/yaoyuhan/FineAtlas-Eval/v1/v35_connectivity_20261003/fineatlas.sqlite",
-      "bytes": 28508917760,
-      "release": "v1.2.0",
-      "sha256": "5f9484388762f5b7422e3b50fdc350668fa1f9dcec7c0abca77e06024102c539",
-      "code_reference_commit": "89ee555301b1c00060f79ebd67525b2d6383f200",
-      "revision": null,
-      "supported_views": [
-        "legacy_strict"
-      ],
-      "filesystem_mtime_is_not_build_version": true,
-      "exact_build_utc": null,
-      "build_time_status": "Not independently recoverable from SQLite metadata; never inferred from filename/mtime",
-      "checksum_basis": "Reused existing verified artifact manifests/copy audits; no redundant full-file rescan",
-      "code_reference_basis": "Recorded historical manifest/release tag; whole_tree local commit is not the formal v1.6 published code"
+  "current_candidate": {
+    "release": "v1.10.1-repair-review",
+    "sdk_version": "1.10.1rc1",
+    "code_tag": "v1.10.1-repair-code.1",
+    "database": {
+      "name": "fineatlas.sqlite",
+      "bytes": 68495904768,
+      "sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391"
     },
-    {
-      "name": "v36",
-      "local_database_path": "/data/yaoyuhan/FineAtlas-Eval/v1/v36_semantic_connections_20261003/fineatlas.sqlite",
-      "bytes": 28636983296,
-      "release": "v1.3.0",
-      "sha256": "02d3c08a54fb11a5d7ad9184a537ad7a3d3ab5a8d4a9db6e184c8b0a06d7c713",
-      "code_reference_commit": "ef89ce79ce2b0a6e2c648ac6ffa85f02587a4a3e",
-      "revision": null,
-      "supported_views": [
-        "legacy_strict"
-      ],
-      "filesystem_mtime_is_not_build_version": true,
-      "exact_build_utc": null,
-      "build_time_status": "Not independently recoverable from SQLite metadata; never inferred from filename/mtime",
-      "checksum_basis": "Reused existing verified artifact manifests/copy audits; no redundant full-file rescan",
-      "code_reference_basis": "Recorded historical manifest/release tag; whole_tree local commit is not the formal v1.6 published code"
-    },
-    {
-      "name": "whole_tree",
-      "local_database_path": "/data/yaoyuhan/FineAtlas-Eval/v1/v1_whole_tree_repair_20261004/fineatlas.sqlite",
-      "bytes": 41621147648,
-      "release": "v1.6.0-local",
-      "sha256": "52dcaf6c3dc139d27ebebcc9ae10933969aa93c6e42f4947529de541bcefd43f",
-      "code_reference_commit": "93d1cf8d635670f54d6a6086a419a55a226311f7",
-      "revision": null,
-      "supported_views": [
-        "legacy_strict"
-      ],
-      "filesystem_mtime_is_not_build_version": true,
-      "exact_build_utc": null,
-      "build_time_status": "Not independently recoverable from SQLite metadata; never inferred from filename/mtime",
-      "checksum_basis": "Reused existing verified artifact manifests/copy audits; no redundant full-file rescan",
-      "code_reference_basis": "Recorded historical manifest/release tag; whole_tree local commit is not the formal v1.6 published code"
-    },
-    {
-      "name": "hierarchy_final",
-      "local_database_path": "/data/yaoyuhan/FineAtlas-Eval/v1/v1_generality_finalize_20261006.LxJa4t/hierarchy_semantic_20261007/fineatlas-hierarchy-final.sqlite",
-      "bytes": 54641315840,
-      "release": "v1.8.1-hierarchy-review",
-      "sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
-      "code_reference_commit": "a84d46b24dde5be81571608b3d827c1cf2fdea2e",
-      "revision": "fd5dfb79f85e91050980fc245f2221af293bc19d05049d1e1bce3cbec52e37ca",
-      "supported_views": [
-        "membership",
-        "strict",
-        "taxonomy"
-      ],
-      "filesystem_mtime_is_not_build_version": true,
-      "exact_build_utc": null,
-      "build_time_status": "Not independently recoverable from SQLite metadata; never inferred from filename/mtime",
-      "checksum_basis": "Reused existing verified artifact manifests/copy audits; no redundant full-file rescan",
-      "code_reference_basis": "Recorded historical manifest/release tag; whole_tree local commit is not the formal v1.6 published code"
-    },
-    {
-      "name": "night",
-      "local_database_path": "/data/yaoyuhan/FineAtlas-Eval/v1/v1_generality_finalize_20261006.LxJa4t/night_20261007/fineatlas-night.sqlite",
-      "bytes": 63136358400,
-      "release": "v1.9.0-night-review",
-      "sha256": "36fda1fc8bd9fe0ebbb0e6320797eb7293e6d8c4cc8f83b01f25f14c4b664cff",
-      "code_reference_commit": "e0ccfb8f10b0a188dd4934af006fcf4ad27585af",
-      "revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
-      "supported_views": [
-        "membership",
-        "strict",
-        "taxonomy"
-      ],
-      "filesystem_mtime_is_not_build_version": true,
-      "exact_build_utc": null,
-      "build_time_status": "Not independently recoverable from SQLite metadata; never inferred from filename/mtime",
-      "checksum_basis": "Reused existing verified artifact manifests/copy audits; no redundant full-file rescan",
-      "code_reference_basis": "Recorded historical manifest/release tag; whole_tree local commit is not the formal v1.6 published code"
-    }
-  ],
-  "current_formal_release": {
-    "release": "v1.6.0",
-    "code_commit": "b3c8407a8dc84becc575575023d091e23204483a",
-    "candidate_replaces_production": false
+    "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "default_relation_view": "unified",
+    "domains": 95,
+    "built": true,
+    "local_acceptance_pass": true,
+    "published": false,
+    "public_download_verified": false
   },
-  "junior_H1_experiment_config_located": false,
-  "H1_status": "Bounded project searches did not locate the actual tree path/config/log; no obsolete-snapshot claim inferred",
-  "current_candidate": "See unified_data.json for precise bytes/hash/revision and the v1.10.0-unified-review tag for exact code"
+  "previous_candidate": {
+    "release": "v1.10.0-unified-review",
+    "sha256": "c8db664711255202d51ed571d60df66fe5b4315e879c1d509a5dd935bb3ee019",
+    "preserved": true
+  },
+  "production": {
+    "release": "v1.6.0",
+    "preserved": true,
+    "replaced": false
+  }
 }

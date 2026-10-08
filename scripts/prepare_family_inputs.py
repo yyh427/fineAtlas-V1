@@ -93,9 +93,9 @@ with open(a.output, "w") as out:
         family = bool(re.search(r"\bfamily\b", desc, re.I))
         native_role = meta_roles.get(row["uid"])
         native_definition = json.loads(row["data"] or "{}")
-        profile=c.execute('SELECT node_kind FROM node_profiles WHERE uid=?',(row['uid'],)).fetchone()
+        profile=c.execute('SELECT * FROM node_profiles WHERE uid=?',(row['uid'],)).fetchone()
         if not allows_model_extraction(native_definition,dict(profile) if profile else None):
-            reviews.append({'uid':row['uid'],'reason':'Existing explicit non-design role must be re-adjudicated with independent design evidence; native rank/P31 is insufficient'})
+            reviews.append({'uid':row['uid'],'reason':'Existing explicit non-design role or reviewed generic CLASS must be re-adjudicated with independent scope evidence; native rank/P31 is insufficient'})
             continue
         explicit_model = (
             row["rank"] in ("model", "product_model", "model_family", "series")
@@ -217,7 +217,7 @@ with open(a.output, "w") as out:
             ("wikidata:" + q, "wikidata-v4:" + q, "v26-wikidata:" + q),
         ):
             own = c.execute('SELECT data FROM nodes WHERE uid=?', (uid,)).fetchone()
-            own_profile = c.execute('SELECT node_kind FROM node_profiles WHERE uid=?', (uid,)).fetchone()
+            own_profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (uid,)).fetchone()
             if not allows_model_extraction(json.loads(own[0] or '{}'), dict(own_profile) if own_profile else None):
                 reviews.append({'uid': uid, 'reason': 'Independent source UID has explicit non-design role'})
                 continue

@@ -9,6 +9,18 @@ import argparse,collections,hashlib,json,pathlib,sys
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]/'src'))
 import fineatlas
 from fineatlas import FineAtlas
+def validate_acceptance_revision(expected, manifest):
+ """A release name and aggregate counts cannot identify the accepted snapshot."""
+ accepted=expected.get('database_revision');published=manifest.get('database_revision')
+ assert isinstance(accepted,str) and accepted, 'Expected validation lacks its accepted database revision'
+ assert isinstance(published,str) and published, 'Published manifest lacks its database revision'
+ assert accepted==published, 'Acceptance revision differs from the published database revision'
+ assert expected.get('release')==manifest.get('release'), 'Acceptance belongs to another release'
+ if 'database_sha256' in expected:
+  assert expected['database_sha256']==manifest.get('database',{}).get('sha256'), 'Acceptance file hash differs from the published artifact'
+ return accepted
+
+
 def validate_domain_page(page, view, revision, limit):
  """Check the documented keyset page schema; success need not carry status."""
  assert page.get('status') in (None, 'OK', 'EMPTY'), page
@@ -22,10 +34,31 @@ def validate_domain_page(page, view, revision, limit):
          'public_page_items': len(page['items']), 'public_page_has_more': page['has_more']}
 
 
+def validate_domain_inventory(domains, expected, manifest):
+ """Require the actual release's complete accepted inventory, not an old constant."""
+ assert expected['release'] == manifest['release'], 'Acceptance belongs to another release'
+ census=expected['domains'];count=census['actual']
+ assert type(count) is int and count > 0 and census['public_contract_passes'] == count
+ assert len(domains) == count, 'Published domain count differs from accepted inventory'
+ names=[d['domain'] for d in domains]
+ assert len(names) == len(set(names)), 'Duplicate canonical domain'
+ if 'domain_count' in manifest: assert count == manifest['domain_count']
+ if 'domain_inventory' in manifest:
+  assert 'domain_inventory' in expected and manifest['domain_inventory']==expected['domain_inventory'], 'Manifest and acceptance scopes differ'
+ if 'domain_inventory' in expected:
+  inventory=expected['domain_inventory']
+  assert set(names) == set(inventory), 'Published domains differ from frozen acceptance'
+  for d in domains:
+   assert set(d['root_uids']) == set(inventory[d['domain']]), d['domain']
+ return count
+
+
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for name in ('database','manifest','expected-validation','output'):p.add_argument('--'+name,type=pathlib.Path,required=True)
- a=p.parse_args();m=json.loads(a.manifest.read_text());expected=json.loads(a.expected_validation.read_text());a.output.mkdir(parents=True,exist_ok=True)
+ a=p.parse_args();m=json.loads(a.manifest.read_text());expected=json.loads(a.expected_validation.read_text())
+ validate_acceptance_revision(expected,m)
+ a.output.mkdir(parents=True,exist_ok=True)
  receipt=a.database.parent/'single_database.json'
  assert receipt.exists() and json.loads(receipt.read_text())==m,'Use the completed verified installer and its actual receipt'
  assert a.database.stat().st_size==m['database']['bytes']
@@ -36,7 +69,7 @@ def main():
   assert meta['browse_index_revision']==tree._revision
   code=meta['unified_frozen_build_manifest']['code'];source=pathlib.Path(fineatlas.__file__).resolve().parent
   for name,digest in code.items():assert hashlib.sha256((source/pathlib.Path(name).name).read_bytes()).hexdigest()==digest,name
-  domains=tree.domains();assert len(domains)==91
+  domains=tree.domains();validate_domain_inventory(domains,expected,m)
   domain_checks=[]
   for d in domains:
    entry=tree.domain(d['domain']);checks=[tree.path_result(uid)['status'] in ('ROOT','CONNECTED') for uid in entry['root_uids']]
@@ -70,7 +103,7 @@ def main():
   'default_view':'unified','matching_embedded_browse_index':True,'sdk_module':str(source),'frozen_sdk_files_checked':len(code),
   'domains':domain_checks,'labels':labels,'pairs':pairs,'unresolved_source_evidence_is_not_certified_by_this_install_test':True,'images_or_models_run':False}
  (a.output/'external_validation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
- print(json.dumps({'all_pass':True,'domains':len(domain_checks),'labels_per_view':755,'pairs':sum(x['pairs'] for x in pairs.values())}))
+ print(json.dumps({'all_pass':True,'domains':len(domain_checks),'labels_per_view':{v:x['labels'] for v,x in labels.items()},'pairs':sum(x['pairs'] for x in pairs.values())}))
 
 
 if __name__=='__main__':main()

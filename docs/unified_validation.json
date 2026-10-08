@@ -1,38 +1,395 @@
 {
   "schema": "FINEATLAS_UNIFIED_ACCEPTANCE_V1",
-  "release": "v1.10.0-unified-review",
+  "release": "v1.10.1-repair-review",
+  "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+  "database_sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391",
+  "domain_inventory": {
+    "agricultural_habitats": [
+      "eunis2012:I"
+    ],
+    "aircraft": [
+      "wordnet31:02689427-n"
+    ],
+    "animals": [
+      "ott:691846",
+      "wordnet31:00015568-n"
+    ],
+    "aquifers": [
+      "wordnet31:09224876-n"
+    ],
+    "archaea": [
+      "ott:996421"
+    ],
+    "artificial_habitats": [
+      "eunis2012:J"
+    ],
+    "bacteria": [
+      "ott:844192",
+      "wordnet31:01351171-n"
+    ],
+    "bags_and_luggage": [
+      "wordnet31:02772753-n",
+      "wordnet31:02777157-n",
+      "wordnet31:02777635-n"
+    ],
+    "beaches": [
+      "wikidata:Q40080",
+      "wordnet31:09240137-n"
+    ],
+    "birds": [
+      "ott:81461",
+      "wordnet31:01505702-n"
+    ],
+    "bridges": [
+      "wikidata:Q12280",
+      "wordnet31:02901994-n"
+    ],
+    "buildings": [
+      "wikidata:Q41176",
+      "wordnet31:02916498-n"
+    ],
+    "camera_bodies": [
+      "aat:300022636",
+      "wordnet31:02946154-n"
+    ],
+    "camera_lenses": [
+      "wikidata:Q192234",
+      "wordnet31:02946696-n"
+    ],
+    "cameras": [
+      "wikidata:Q15328"
+    ],
+    "cars": [
+      "wordnet31:02961779-n"
+    ],
+    "ceramic_capacitors": [
+      "wikidata:Q337701"
+    ],
+    "clothing": [
+      "wikidata:Q11460",
+      "wordnet31:03055525-n"
+    ],
+    "clouds": [
+      "wikidata:Q8074",
+      "wordnet31:09270316-n"
+    ],
+    "coastal_habitats": [
+      "eunis2012:B",
+      "eunis2021:N"
+    ],
+    "computer_hardware": [
+      "wikidata:Q3966",
+      "wikidata:Q183484",
+      "wikidata:Q487343",
+      "wikidata:Q5290",
+      "wikidata:Q5297"
+    ],
+    "computer_monitors": [
+      "wikidata:Q5290",
+      "wordnet31:03089261-n"
+    ],
+    "computers": [
+      "wikidata:Q68",
+      "wordnet31:03086983-n"
+    ],
+    "deserts": [
+      "wikidata:Q8514",
+      "wordnet31:08522594-n"
+    ],
+    "desktop_computers": [
+      "wikidata:Q56155"
+    ],
+    "digital_cameras": [
+      "wikidata:Q62927",
+      "wordnet31:03200746-n"
+    ],
+    "dishes": [
+      "wikidata:Q746549",
+      "wordnet31:07572999-n"
+    ],
+    "earbuds": [
+      "wikidata:Q50184015"
+    ],
+    "electronic_components": [
+      "wikidata:Q11653"
+    ],
+    "electronic_devices": [
+      "wikidata:Q2858615",
+      "wordnet31:03282682-n"
+    ],
+    "electronic_equipment": [
+      "wordnet31:03283159-n"
+    ],
+    "fitness_trackers": [
+      "wikidata:Q16001686"
+    ],
+    "food_products": [
+      "foodon:FOODON_00001002"
+    ],
+    "forest_habitats": [
+      "eunis2012:G",
+      "eunis2021:T"
+    ],
+    "forests": [
+      "eunis2012:G",
+      "eunis2021:T",
+      "wikidata:Q4421",
+      "wordnet31:09306921-n"
+    ],
+    "freshwater_habitats": [
+      "eunis2012:C"
+    ],
+    "fungi": [
+      "ott:352914",
+      "wordnet31:13013628-n"
+    ],
+    "furniture": [
+      "wikidata:Q14745",
+      "wordnet31:03410635-n"
+    ],
+    "game_consoles": [
+      "wikidata:Q8076"
+    ],
+    "glaciers": [
+      "wikidata:Q35666",
+      "wordnet31:09312237-n"
+    ],
+    "gpus": [
+      "wikidata:Q183484"
+    ],
+    "graphics_cards": [
+      "wikidata:Q4308"
+    ],
+    "grasslands": [
+      "eunis2012:E",
+      "eunis2021:R"
+    ],
+    "habitat_complexes": [
+      "eunis2012:X"
+    ],
+    "habitats": [
+      "wordnet31:08598111-n"
+    ],
+    "hand_tools": [
+      "wikidata:Q2578402",
+      "wordnet31:03494245-n"
+    ],
+    "headphones": [
+      "wikidata:Q186819",
+      "wordnet31:03266479-n"
+    ],
+    "home_appliances": [
+      "wikidata:Q212920",
+      "wordnet31:03533443-n"
+    ],
+    "integrated_circuits": [
+      "wikidata:Q80831",
+      "wordnet31:03582259-n"
+    ],
+    "islands": [
+      "wikidata:Q23442",
+      "wordnet31:09339360-n"
+    ],
+    "kitchen_and_tableware": [
+      "wordnet31:03626258-n",
+      "wordnet31:04389081-n"
+    ],
+    "lakes": [
+      "eunis2012:C1",
+      "wikidata:Q23397",
+      "wordnet31:09351810-n"
+    ],
+    "laptops": [
+      "wikidata:Q3962",
+      "wordnet31:03648120-n"
+    ],
+    "lighting": [
+      "wordnet31:03641539-n",
+      "wordnet31:03641940-n",
+      "wordnet31:03672706-n"
+    ],
+    "locomotives": [
+      "wikidata:Q93301",
+      "wordnet31:03690149-n"
+    ],
+    "loudspeakers": [
+      "wikidata:Q570"
+    ],
+    "marine_habitats": [
+      "eunis2012:A"
+    ],
+    "medical_devices": [
+      "wikidata:Q6554101"
+    ],
+    "microprocessors": [
+      "wikidata:Q5297",
+      "wordnet31:03765845-n"
+    ],
+    "minerals": [
+      "wikidata:Q7946",
+      "wordnet31:14686753-n"
+    ],
+    "mountain_ranges": [
+      "geonames-feature:T.MTS",
+      "wikidata:Q46831"
+    ],
+    "mountains": [
+      "wikidata:Q8502",
+      "wordnet31:09382700-n"
+    ],
+    "musical_instruments": [
+      "wikidata:Q34379",
+      "wordnet31:03806455-n"
+    ],
+    "network_routers": [
+      "wikidata:Q5318",
+      "wordnet31:04121938-n"
+    ],
+    "network_switches": [
+      "wikidata:Q4503"
+    ],
+    "pcbs": [
+      "wikidata:Q173350"
+    ],
+    "plants": [
+      "wfo:wfo-4100001250",
+      "wordnet31:00017402-n"
+    ],
+    "power_tools": [
+      "wikidata:Q1327701",
+      "wordnet31:04003842-n"
+    ],
+    "printers": [
+      "wikidata:Q82"
+    ],
+    "rivers": [
+      "eunis2012:C2",
+      "wikidata:Q4022",
+      "wordnet31:09434308-n",
+      "wordnet31:09471510-n"
+    ],
+    "rocks": [
+      "wikidata:Q8063",
+      "wordnet31:14720954-n"
+    ],
+    "scrub_and_tundra": [
+      "eunis2012:F",
+      "eunis2021:S"
+    ],
+    "semiconductor_devices": [
+      "wikidata:Q175805"
+    ],
+    "semiconductor_diodes": [
+      "wikidata:Q1929430",
+      "wordnet31:03207444-n"
+    ],
+    "ships": [
+      "wikidata:Q11446",
+      "wordnet31:04201332-n"
+    ],
+    "single_board_computers": [
+      "wikidata:Q944780"
+    ],
+    "smartphones": [
+      "wikidata:Q22645"
+    ],
+    "smartwatches": [
+      "wikidata:Q5362345"
+    ],
+    "solid_state_drives": [
+      "wikidata:Q487343"
+    ],
+    "source_electronic_devices": [
+      "wikidata:Q2858615"
+    ],
+    "source_integrated_circuits": [
+      "wikidata:Q80831"
+    ],
+    "source_semiconductor_diodes": [
+      "wikidata:Q1929430"
+    ],
+    "sparse_vegetation_habitats": [
+      "eunis2012:H",
+      "eunis2021:U"
+    ],
+    "sports_equipment": [
+      "wordnet31:04292284-n"
+    ],
+    "surgical_instruments": [
+      "wikidata:Q1074814",
+      "wordnet31:04371632-n"
+    ],
+    "tablets": [
+      "wikidata:Q155972"
+    ],
+    "television_sets": [
+      "wikidata:Q8075",
+      "wordnet31:04413042-n"
+    ],
+    "tools": [
+      "wikidata:Q39546",
+      "wordnet31:04459089-n"
+    ],
+    "toys": [
+      "wordnet31:03971038-n"
+    ],
+    "tractors": [
+      "wikidata:Q39495",
+      "wordnet31:04472736-n"
+    ],
+    "valleys": [
+      "wikidata:Q39816",
+      "wordnet31:09491734-n"
+    ],
+    "volcanoes": [
+      "wikidata:Q8072",
+      "wordnet31:09495727-n"
+    ],
+    "waterfalls": [
+      "wikidata:Q34038",
+      "wordnet31:09498422-n"
+    ],
+    "wearable_computers": [
+      "wikidata:Q1334829"
+    ],
+    "wetlands": [
+      "eunis2012:D",
+      "eunis2021:Q",
+      "wordnet31:09501020-n"
+    ]
+  },
   "domains": {
-    "actual": 91,
-    "public_contract_passes": 91
+    "actual": 95,
+    "public_contract_passes": 95
   },
   "labels": {
     "strict": {
       "labels": 755,
-      "stored_identity_claim_verified": 753,
+      "stored_identity_claim_verified": 752,
       "identity_verified": 752,
-      "root_reachable": 751,
+      "root_reachable": 752,
       "path_state_consistent": 755,
-      "hierarchy_admitted": 751
+      "hierarchy_admitted": 752
     },
     "taxonomy": {
       "labels": 755,
-      "stored_identity_claim_verified": 753,
+      "stored_identity_claim_verified": 752,
       "identity_verified": 752,
-      "root_reachable": 754,
+      "root_reachable": 755,
       "path_state_consistent": 755,
-      "hierarchy_admitted": 754
+      "hierarchy_admitted": 755
     },
     "unified": {
       "labels": 755,
-      "stored_identity_claim_verified": 753,
-      "identity_verified": 732,
-      "root_reachable": 754,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 737,
+      "root_reachable": 755,
       "path_state_consistent": 755,
-      "hierarchy_admitted": 754
+      "hierarchy_admitted": 755
     },
     "membership": {
       "labels": 755,
-      "stored_identity_claim_verified": 753,
+      "stored_identity_claim_verified": 752,
       "identity_verified": 752,
       "root_reachable": 0,
       "path_state_consistent": 755,
@@ -67,11 +424,11 @@
       "labels": 200,
       "pairs": 19900,
       "pair_statuses": {
-        "APPLICABLE": 7770,
-        "COARSE_COMMON_ANCESTOR_ONLY": 8340,
-        "ENDPOINT_NOT_APPLICABLE": 3790
+        "APPLICABLE": 8185,
+        "COARSE_COMMON_ANCESTOR_ONLY": 8835,
+        "ENDPOINT_NOT_APPLICABLE": 2880
       },
-      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": "avilist",
@@ -91,7 +448,7 @@
         "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
         "COARSE_COMMON_ANCESTOR_ONLY": 212
       },
-      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
       "relation_view": "unified",
       "policy": "design",
       "source_scope": null,
@@ -110,7 +467,7 @@
         "ENDPOINT_NOT_APPLICABLE": 3071,
         "COARSE_COMMON_ANCESTOR_ONLY": 1003
       },
-      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": null,
@@ -128,7 +485,7 @@
         "APPLICABLE": 638,
         "COARSE_COMMON_ANCESTOR_ONLY": 28
       },
-      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": null,
@@ -146,7 +503,7 @@
         "COARSE_COMMON_ANCESTOR_ONLY": 6423,
         "APPLICABLE": 717
       },
-      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": null,
@@ -161,11 +518,11 @@
       "labels": 196,
       "pairs": 19110,
       "pair_statuses": {
-        "COARSE_COMMON_ANCESTOR_ONLY": 15269,
-        "IDENTITY_LINEAGE_ROLE_CONFLICT": 3710,
-        "APPLICABLE": 131
+        "COARSE_COMMON_ANCESTOR_ONLY": 16336,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 2639,
+        "APPLICABLE": 135
       },
-      "database_revision": "650353a713dc5e379d75c3660c34f88e4ff9027c496f96284b30ee21e29f6dcd",
+      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
       "relation_view": "unified",
       "policy": "configuration",
       "source_scope": null,
@@ -183,13 +540,13 @@
     "edges_original_records_missing_or_retargeted": 0,
     "edges_old_active_arc_not_preserved_or_identity_resolved": 2,
     "entity_relations_original_records_missing_or_retargeted": 0,
-    "entity_relations_old_active_arc_not_preserved_or_identity_resolved": 1,
+    "entity_relations_old_active_arc_not_preserved_or_identity_resolved": 13,
     "all_original_task_labels_retained": true,
     "mapping_changes_have_original_target_history": true,
     "explicitly_verified_invalid_design_corrections": 1,
+    "explicitly_verified_generic_kind_corrections": 12,
     "explicitly_verified_invalid_root_corrections": 2,
     "unexpected_active_relation_losses": 0,
-    "descendant_identity_preservation_basis": "All original source UIDs, raw source payloads and original source endpoints/relations remain. Original valid arcs are retained or zero-depth identity-resolved. Explicitly documented incorrect FDA design and native root-parent arcs are quarantined with retained valid alternative paths; their old wrong ancestor/domain sets are intentionally not certified as legitimate. Focused wide-branch source UID sets are additionally checked by pagination audits.",
     "pass": true
   },
   "nonfocus": {
@@ -213,34 +570,34 @@
       "processed_vertices": 3694556,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 7.2037365371361375,
+      "seconds": 10.812918452546,
       "default_preferred_graph_acyclic": true
     },
     "strict": {
-      "unique_arcs": 9145538,
-      "incident_identity_vertices": 9030770,
-      "processed_vertices": 9030770,
+      "unique_arcs": 9145546,
+      "incident_identity_vertices": 9030783,
+      "processed_vertices": 9030783,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 14.539883635006845,
+      "seconds": 18.643646894954145,
       "default_preferred_graph_acyclic": true
     },
     "taxonomy": {
-      "unique_arcs": 12604917,
-      "incident_identity_vertices": 12262930,
-      "processed_vertices": 12262930,
+      "unique_arcs": 12604926,
+      "incident_identity_vertices": 12262943,
+      "processed_vertices": 12262943,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 19.21648590452969,
+      "seconds": 29.78780054114759,
       "default_preferred_graph_acyclic": true
     },
     "unified": {
-      "unique_arcs": 12604815,
-      "incident_identity_vertices": 12262844,
-      "processed_vertices": 12262844,
+      "unique_arcs": 12604832,
+      "incident_identity_vertices": 12262864,
+      "processed_vertices": 12262864,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 18.865551526658237,
+      "seconds": 30.048456418327987,
       "default_preferred_graph_acyclic": true
     }
   },
@@ -258,17 +615,17 @@
       "unified_edge_missing_source_arcs": 0,
       "unified_entity_missing_source_arcs": 0
     },
-    "all_indexed_relations": 38762384,
+    "all_indexed_relations": 38762404,
     "source_record_endpoint_relation_role_and_view_checks": "All indexed records; original evidence IDs retained",
     "new_semantic_relations": 0,
     "new_semantic_nodes": 0,
-    "seconds": 251.364152722992
+    "seconds": 248.56244448758662
   },
   "real_cli_calls": 14,
-  "unrooted_active_classification_source_records": 5598,
-  "unrooted_navigation_source_records": 5608,
+  "unrooted_active_classification_source_records": 4170,
+  "unrooted_navigation_source_records": 4180,
   "universal_all_active_source_navigation_complete": false,
-  "identity_role_conflict_groups": 287,
+  "identity_role_conflict_groups": 283,
   "all_source_edges_independently_semantically_certified": false,
   "images_or_visual_models_run": false
 }

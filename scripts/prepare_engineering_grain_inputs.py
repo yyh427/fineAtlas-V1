@@ -6,7 +6,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 p=argparse.ArgumentParser();p.add_argument('--database',required=True,type=Path);p.add_argument('--inventory',required=True,type=Path);p.add_argument('--wordnet',required=True,type=Path);p.add_argument('--definitions',required=True,type=Path);p.add_argument('--supplement',type=Path);p.add_argument('--output',required=True,type=Path);a=p.parse_args();O=a.output;O.mkdir(parents=True,exist_ok=True)
 from fineatlas.engineering_roles import engineering_role_hint,definition_head,ENGINEERING_DOMAINS,native_subject_aliases
 from fineatlas._text import norm
-from fineatlas.role_contracts import allows_model_extraction
+from fineatlas.role_contracts import allows_model_extraction,reviewed_generic_class
 c=sqlite3.connect(a.database.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
 from functools import lru_cache
 w=sqlite3.connect(a.wordnet.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
@@ -54,8 +54,14 @@ for line in a.inventory.open():
  domains=[d for d in n['scopes'] if d in ENGINEERING_DOMAINS];priority=['ships','locomotives','tractors','cars','aircraft','smartphones','tablets','laptops','desktop_computers','smartwatches','fitness_trackers','camera_lenses','camera_bodies','digital_cameras','cameras','game_consoles','headphones','earbuds','network_routers','network_switches','printers'];domain=n['domain'] if n['domain'] in ENGINEERING_DOMAINS and n['domain'] not in {'tools','electronic_equipment','electronic_devices','computer_hardware','clothing','home_appliances'} else next((d for d in priority if d in domains),domains[0] if domains else n['domain']);role,basis=engineering_role_hint(n['source'],n['rank'],domain,n['label'],desc,definition,generic_label=norm(n['label']) in generic_aliases[domain],subject_aliases=subject_aliases)
  named_definition=norm(n['label']) in norm(definition[:220])
  independent_design=n['role']=='CLASS' and role in {'MODEL','MODEL_FAMILY'} and named_definition and re.search(r'\b(?:manufactured|produced|developed|built|marketed)\b[^.;]{0,100}\bby\b|\b(?:model|family|series) of\b',definition,re.I) and not re.search(r'\b(?:serial number|registration number|tail number)\b',definition,re.I)
- if role and n['role']!=role and (role=='INSTANCE' or allows_model_extraction(raw,{'node_kind':n['role']}) or independent_design):
-  x={'uid':n['uid'],'component_id':n['component_id'],'label':n['label'],'prior_role':n['role'],'role':role,'domain':domain,'scopes':n['scopes'],'basis':basis,'description':desc,'definition':definition,'native_subject_aliases':list(subject_aliases),'independent_native_role_adjudication':bool(independent_design and not allows_model_extraction(raw,{'node_kind':n['role']})),'source_uri':independent.get('source_uri') or raw.get('source_uri') or 'https://www.wikidata.org/wiki/'+n['uid'].split(':')[-1]};out.append(x);counts[domain,role]+=1
+ canonical_row=c.execute('SELECT node_kind,attributes,evidence_id FROM node_profiles WHERE uid=?',(n['uid'],)).fetchone()
+ canonical_profile=dict(zip(('node_kind','attributes','evidence_id'),canonical_row)) if canonical_row else {'node_kind':n['role']}
+ protected_generic=reviewed_generic_class(canonical_profile)
+ if role in {'MODEL','MODEL_FAMILY'} and protected_generic:
+  uncertain[domain].append({'uid':n['uid'],'label':n['label'],'reason':'Reviewed generic CLASS cannot be overwritten by rank/P31 or automatic nominal-design extraction'})
+  continue
+ if role and n['role']!=role and (role=='INSTANCE' or allows_model_extraction(raw,canonical_profile) or independent_design):
+  x={'uid':n['uid'],'component_id':n['component_id'],'label':n['label'],'prior_role':n['role'],'role':role,'domain':domain,'scopes':n['scopes'],'basis':basis,'description':desc,'definition':definition,'native_subject_aliases':list(subject_aliases),'independent_native_role_adjudication':bool(independent_design and not allows_model_extraction(raw,canonical_profile)),'source_uri':independent.get('source_uri') or raw.get('source_uri') or 'https://www.wikidata.org/wiki/'+n['uid'].split(':')[-1]};out.append(x);counts[domain,role]+=1
   if len(samples[domain])<15:samples[domain].append(x)
  elif n['role']=='CLASS' and not n['uid'].startswith('hierarchy-type:') and domain in {'cars','aircraft','ships','locomotives','tractors','smartphones'}:
   if len(uncertain[domain])<150:uncertain[domain].append({'uid':n['uid'],'label':n['label'],'description':desc,'definition':definition[:500]})

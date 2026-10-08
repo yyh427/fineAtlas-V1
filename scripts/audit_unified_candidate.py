@@ -7,14 +7,19 @@ certification: unresolved source concepts and annotation grain remain visible.
 import argparse
 import csv
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
+import re
 import sqlite3
 import sys
 import time
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from fineatlas import FineAtlas
-from fineatlas.semantics import role_expression
+from fineatlas.semantics import role_expression, edge_predicate, source_admission_view
+from fineatlas.engineering_roles import definition_head
+from fineatlas.hierarchy import source_assertion_sha256, locate_source_assertion
+from fineatlas.role_contracts import reviewed_generic_class
 from export_text_training import DATASETS
 
 def write(path,value):
@@ -162,6 +167,185 @@ def structure(tree,out):
     result['raw_source_unrooted_records_excluded_to_inflate_pass_rate']=False
     write(out/'structure.json',result);return result
 
+def _reviewed_decision(c, decision, operation, uid):
+    """Validate a frozen decision against its ledger and evidence content."""
+    record=json.loads(decision['payload']);proof=record['proof']
+    fingerprint=hashlib.sha256(json.dumps(record,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+    if (decision['id']!=fingerprint or decision['operation']!=operation
+        or decision['subject_uid']!=uid or record.get('op')!=operation
+        or record.get('uid')!=uid or decision['object_uid']!=record.get('parent','')
+        or record.get('source')!='Reviewed shared generic-kind contracts' or not record.get('uri')):
+        raise ValueError('Frozen semantic decision ledger/content differs')
+    stored=c.execute('SELECT * FROM hierarchy_decisions WHERE id=?',(decision['id'],)).fetchone()
+    if not stored or any(stored[key]!=decision[key] for key in ('operation','subject_uid','object_uid','evidence_id','payload')):
+        raise ValueError('Semantic decision is not present in the retained frozen ledger')
+    evidence=c.execute("SELECT * FROM evidence WHERE layer='v1.7-generality-review' AND evidence_id=?",
+                       (decision['evidence_id'],)).fetchone()
+    if (not evidence or hashlib.sha256(evidence['payload'].encode()).hexdigest()!=evidence['payload_sha256']
+        or decision['evidence_id']!='usability:'+evidence['payload_sha256']
+        or json.loads(evidence['payload'])!=proof or evidence['source_uri']!=record['uri']):
+        raise ValueError('Frozen semantic proof lacks matching retained evidence')
+    return record
+
+
+def _classification_witness(tree, uid):
+    """A cached root status alone cannot stand in for retained legal edges."""
+    path=tree.path_result(uid)
+    if path.get('status') not in ('ROOT','CONNECTED'):
+        raise ValueError('Reviewed classification replacement is not root-connected')
+    current=uid
+    # Public paths are ordered from the native root down to the subject.
+    for step in reversed(path.get('path',[])):
+        edge=step.get('edge',{})
+        child=edge.get('child_uid',step.get('child_uid',step.get('uid')))
+        parent=edge.get('parent_uid',step.get('parent_uid'))
+        if child!=current or not parent:
+            raise ValueError('Replacement witness has discontinuous source endpoints')
+        a=tree._basic(child);b=tree._basic(parent)
+        if (not a or not b or a.get('visibility')!='ACTIVE' or b.get('visibility')!='ACTIVE'
+            or a.get('node_kind')!='CLASS' or b.get('node_kind')!='CLASS'):
+            raise ValueError('Replacement witness contains a non-class endpoint')
+        if any(n.get('allowed_views') is not None and source_admission_view(tree.relation_view) not in n['allowed_views']
+               for n in (a,b)):
+            raise ValueError('Replacement classification endpoint is excluded from this view')
+        if edge.get('relation')=='SAME_CONCEPT':
+            if a['component_id']!=b['component_id']:
+                raise ValueError('Replacement identity step changes concept')
+            bridges=tree.con.execute("SELECT * FROM bridges WHERE ((left_uid=? AND right_uid=?) OR (left_uid=? AND right_uid=?)) AND relation='SAME_CONCEPT' AND status='ACTIVE'",
+                                      (child,parent,parent,child)).fetchall()
+            bridges=[b for b in bridges if b['id']==edge.get('id')]
+            if not bridges:
+                raise ValueError('Replacement identity step has no retained accepted bridge')
+        else:
+            # The SDK collapses duplicate source arcs by identity. A cached
+            # witness can use another retained legal declaration for the same
+            # pair, so check the actual source row rather than a display choice.
+            retained=tree.con.execute('SELECT e.* FROM edges e WHERE e.id=? AND e.child_uid=? AND e.parent_uid=? AND '+edge_predicate(tree.relation_view),
+                                      (edge.get('id'),child,parent)).fetchone()
+            if (edge.get('terminal_connection') or not retained
+                or retained['relation']!=edge.get('relation')):
+                raise ValueError('Replacement witness is not an actual legal classification edge')
+        current=parent
+    if current!=tree.root_uid:
+        raise ValueError('Replacement witness does not reach the declared native root')
+    return path
+
+
+def verify_generic_kind_correction(tree, old, current, decisions):
+    """Verify one specifically reviewed generic-kind design withdrawal.
+
+    Status-only preservation, source locator, full-subject definition, current
+    canonical role evidence and a reviewed legal classification replacement
+    must all agree. No current root-path-only exception is accepted.
+    """
+    c=tree.con
+    result={'original_id':old['id'],'uid':old['subject_uid'],'original_relation':old['relation'],
+            'original_parent':old['object_uid'],'verified_semantic_correction':False}
+    try:
+        if (old['status']!='ACTIVE' or current['status']!='HIERARCHY_SUPERSEDED'
+            or old['relation'] not in {'DESIGN_TYPE_OF','SERIES_MEMBER_OF','NATIVE_DESIGN_PARENT'}
+            or dict(current)!={**dict(old),'status':'HIERARCHY_SUPERSEDED'}):
+            raise ValueError('Generic withdrawal is not a status-only retained design assertion')
+        uid=old['subject_uid']
+        node=c.execute('SELECT * FROM nodes WHERE uid=?',(uid,)).fetchone()
+        profile=c.execute('SELECT * FROM node_profiles WHERE uid=?',(uid,)).fetchone()
+        if not node or node['visibility']!='ACTIVE' or not reviewed_generic_class(dict(profile) if profile else None):
+            raise ValueError('Current CLASS lacks a consistent verified generic scope guard')
+        attrs=json.loads(profile['attributes']);native_sha=hashlib.sha256(node['data'].encode()).hexdigest()
+        candidates=[]
+        for decision in decisions:
+            if decision['operation']!='withdraw_typed_source' or decision['subject_uid']!=uid:continue
+            record=_reviewed_decision(c,decision,'withdraw_typed_source',uid)
+            locator=record.get('locator',{})
+            if (locator.get('subject_uid'),locator.get('object_uid'),locator.get('relation'),locator.get('source'))!=(uid,old['object_uid'],old['relation'],old['source']):continue
+            if locator.get('content_sha256')!=source_assertion_sha256(old):
+                raise ValueError('Exact old source locator content checksum differs')
+            if locate_source_assertion(c,'entity_relations',locator)['id']!=current['id']:
+                raise ValueError('Frozen withdrawal refers to another source assertion')
+            candidates.append((decision,record))
+        if len(candidates)!=1:
+            raise ValueError('No unique frozen generic-kind withdrawal matches this assertion')
+        decision,withdrawal=candidates[0];proof=withdrawal['proof']
+        if (proof.get('basis')!='GENERIC_KIND_IS_NOT_DESIGN_TERMINAL'
+            or proof.get('native_record_sha256')!=native_sha
+            or proof.get('original_relation')!=old['relation'] or proof.get('original_parent_uid')!=old['object_uid']
+            or proof.get('prior_role') not in {'CLASS','MODEL','MODEL_FAMILY'}
+            or proof.get('native_rank')!=node['rank']
+            or proof.get('individual_semantic_review') is not True or not proof.get('scope_observation')
+            or proof.get('no_name_based_identity') is not True
+            or proof.get('original_source_payload_and_endpoints_preserved') is not True):
+            raise ValueError('Generic withdrawal lacks exact native scope or individual semantic review')
+        native=json.loads(node['data'] or '{}')
+        statement=native.get('definition') or node['description'] or ''
+        if not statement:
+            statement=' '.join(e.get('text','') for e in native.get('evidence',[]) if e.get('source')=='wikipedia_intro')
+        head=definition_head(statement,node['label'])
+        if (not statement or statement!=proof.get('source_statement') or not head or head!=proof.get('subject_kind_head')
+            or node['label']!=node['label'].lower()
+            or re.search(r'\b(?:series|family|model|line|range) of\b',head,re.I)
+            or not (re.match(r'\s*An?\s+'+re.escape(node['label'])+r'\b',statement,re.I)
+                    or re.search(r'\b(?:type|kind|class|category) of\b',head,re.I))):
+            raise ValueError('Retained whole-subject definition does not establish the reviewed generic kind')
+        members=[dict(r) for r in c.execute('SELECT * FROM nodes WHERE component_id=? ORDER BY uid',(node['component_id'],))]
+        if (sorted(m['uid'] for m in members)!=proof.get('identity_member_uids')
+            or any(m['uid'].split(':')[-1]!=uid.split(':')[-1]
+                   or not m['uid'].startswith(('wikidata:','wikidata-v4:','v26-wikidata:'))
+                   or tree._basic(m['uid']).get('node_kind')!='CLASS'
+                   or m['visibility']!='ACTIVE' for m in members)):
+            raise ValueError('Generic decision changes source identity membership')
+        role_rows=[r for r in decisions if r['operation']=='role' and r['subject_uid']==uid
+                   and r['evidence_id']==profile['evidence_id']]
+        if len(role_rows)!=1:
+            raise ValueError('Current role evidence is not the unique frozen CLASS decision')
+        role=_reviewed_decision(c,role_rows[0],'role',uid);role_proof=role['proof']
+        common=('source_statement','subject_kind_head','individual_semantic_review','scope_observation',
+                'identity_member_uids','native_record_sha256','no_name_based_identity')
+        if (role.get('role')!='CLASS' or role_proof.get('basis')!='REVIEWED_GENERIC_WHOLE_SUBJECT_REPLACES_ADAPTER_DESIGN_ROLE'
+            or any(role_proof.get(key)!=proof.get(key) for key in common)
+            or any(role_proof.get(key)!=proof.get(key) for key in ('prior_role','native_rank'))
+            or attrs.get('source_role')!=role_proof.get('source_role')
+            or attrs.get('allowed_views')!=role_proof.get('allowed_views')):
+            raise ValueError('Current canonical evidence does not corroborate this full generic scope')
+        normalized=c.execute('SELECT * FROM normalization_roles WHERE uid=?',(uid,)).fetchone()
+        if (not normalized or normalized['canonical_role']!='CLASS' or normalized['status']!='VERIFIED'
+            or normalized['evidence_id']!=profile['evidence_id']):
+            raise ValueError('Current normalization role ledger differs from guarded CLASS evidence')
+        alternatives=[]
+        for d in decisions:
+            if d['operation']!='link' or d['subject_uid']!=uid:continue
+            # The retained ledger also contains independent older inclusions.
+            # Select this review's scope before checking its exact fingerprint;
+            # an unrelated prior decision cannot certify this withdrawal.
+            candidate=json.loads(d['payload'])
+            if candidate.get('proof',{}).get('basis')!=role_proof['basis']:continue
+            link=_reviewed_decision(c,d,'link',uid);lp=link['proof']
+            if (link.get('relation')!='IS_A' or lp.get('basis')!=role_proof['basis']
+                or any(lp.get(key)!=proof.get(key) for key in common)
+                or not lp.get('entailment_observation') or lp.get('not_created_for_root_reachability') is not True):continue
+            parent=c.execute('SELECT * FROM nodes WHERE uid=?',(link['parent'],)).fetchone()
+            if (not parent or parent['visibility']!='ACTIVE' or parent['component_id']==node['component_id']
+                or parent['description']!=lp.get('parent_definition')
+                or hashlib.sha256(parent['data'].encode()).hexdigest()!=lp.get('parent_native_record_sha256')):
+                raise ValueError('Reviewed alternative parent source definition/checksum changed')
+            arcs=c.execute("SELECT * FROM edges WHERE child_uid=? AND parent_uid=? AND relation='IS_A' AND status='ACTIVE' AND source=?",
+                           (uid,link['parent'],link['source'])).fetchall()
+            arcs=[a for a in arcs if json.loads(a['data'] or '{}').get('admission_basis')==lp
+                  and d['evidence_id'] in json.loads(a['provenance'] or '{}').get('evidence_ids',[])]
+            if not arcs:continue
+            if not any(p==link['parent'] and e.get('id') in {a['id'] for a in arcs}
+                       for p,e in tree._parents(uid,include_terminal=False)):continue
+            alternatives.append({'parent_uid':link['parent'],'edge_ids':[a['id'] for a in arcs],
+                                 'decision_id':d['id'],'parent_path':_classification_witness(tree,link['parent'])})
+        if not alternatives:
+            raise ValueError('No independently reviewed retained legal classification replacement')
+        result.update(verified_semantic_correction=True,withdrawal_decision_id=decision['id'],
+                      role_evidence_id=profile['evidence_id'],replacement_classification=alternatives,
+                      replacement_path=_classification_witness(tree,uid),source_record_retained=True)
+    except (ValueError,KeyError,TypeError,sqlite3.DatabaseError,RuntimeError) as error:
+        result['rejection_reason']=str(error)
+    return result
+
+
 def preservation(tree,baseline,out):
     c=tree.con;c.execute('ATTACH DATABASE ? AS before',(baseline.resolve().as_uri()+'?mode=ro&immutable=1',))
     result={}
@@ -198,6 +382,21 @@ def preservation(tree,baseline,out):
     write(out/'corrected_source_relations.json',corrections)
     verified=sum(r['verified_semantic_correction'] for r in corrections)
     result['explicitly_verified_invalid_design_corrections']=verified
+    generic_corrections=[]
+    losses=[(dict(a),dict(c.execute('SELECT * FROM main.entity_relations WHERE id=?',(a['id'],)).fetchone()))
+            for a in c.execute("SELECT a.* FROM before.entity_relations a JOIN main.entity_relations b ON b.id=a.id WHERE a.status='ACTIVE' AND b.status<>a.status AND b.status<>'IDENTITY_RESOLVED'")]
+    subjects=sorted({a['subject_uid'] for a,b in losses})
+    decisions=[]
+    if subjects and c.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='hierarchy_decisions'").fetchone():
+        marks=','.join('?' for _ in subjects)
+        decisions=[dict(r) for r in c.execute("SELECT * FROM hierarchy_decisions WHERE subject_uid IN ("+marks+") AND operation IN ('withdraw_typed_source','role','link')",subjects)]
+    fda_ids={r['original_id'] for r in corrections if r['verified_semantic_correction']}
+    for old,current in losses:
+        if old['id'] not in fda_ids:
+            generic_corrections.append(verify_generic_kind_correction(tree,old,current,decisions))
+    write(out/'corrected_generic_kind_relations.json',generic_corrections)
+    verified_generic=sum(r['verified_semantic_correction'] for r in generic_corrections)
+    result['explicitly_verified_generic_kind_corrections']=verified_generic
     root_corrections=[]
     for old in c.execute("SELECT a.*,b.status current_status FROM before.edges a JOIN main.edges b ON b.id=a.id WHERE a.status IN ('ACTIVE','TYPED_ACTIVE') AND b.status<>a.status AND b.status<>'IDENTITY_RESOLVED'"):
         proof=c.execute("SELECT evidence FROM usability_changes WHERE stage='source_semantic_contract' AND object_type='edge' AND object_id=? ORDER BY id DESC LIMIT 1",(str(old['id']),)).fetchone()
@@ -211,8 +410,8 @@ def preservation(tree,baseline,out):
     write(out/'corrected_root_relations.json',root_corrections)
     verified_roots=sum(r['verified_semantic_correction'] for r in root_corrections)
     result['explicitly_verified_invalid_root_corrections']=verified_roots
-    result['unexpected_active_relation_losses']=result['edges_old_active_arc_not_preserved_or_identity_resolved']+result['entity_relations_old_active_arc_not_preserved_or_identity_resolved']-verified-verified_roots
-    result['descendant_identity_preservation_basis']='All original source UIDs, raw source payloads and original source endpoints/relations remain. Original valid arcs are retained or zero-depth identity-resolved. Explicitly documented incorrect FDA design and native root-parent arcs are quarantined with retained valid alternative paths; their old wrong ancestor/domain sets are intentionally not certified as legitimate. Focused wide-branch source UID sets are additionally checked by pagination audits.'
+    result['unexpected_active_relation_losses']=result['edges_old_active_arc_not_preserved_or_identity_resolved']+result['entity_relations_old_active_arc_not_preserved_or_identity_resolved']-verified-verified_roots-verified_generic
+    result['descendant_identity_preservation_basis']='All original source UIDs, raw source payloads and original source endpoints/relations remain. Original valid arcs are retained or zero-depth identity-resolved. Explicitly documented incorrect FDA design, individually reviewed generic-kind design-role assertions and native root-parent arcs are quarantined with retained evidenced legal classification alternatives; their old wrong ancestor/domain sets are intentionally not certified as legitimate. Generic-kind exceptions require exact frozen source locators, full-subject definitions and consistent current canonical CLASS evidence. Focused wide-branch source UID sets are additionally checked by pagination audits.'
     zero_fields=['original_nodes_missing','original_source_payload_changed','original_active_nodes_removed',
                  'edges_original_records_missing_or_retargeted','entity_relations_original_records_missing_or_retargeted','unexpected_active_relation_losses']
     result['pass']=all(result[k]==0 for k in zero_fields) and result['all_original_task_labels_retained'] and result['mapping_changes_have_original_target_history']

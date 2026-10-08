@@ -60,10 +60,19 @@ def finalize(database,inputs):
          'source_scope':'AviList concept hierarchy selected for CUB; verified identities resolve other UIDs into that source',
          'source_views':'source_hierarchy exposes direct original declarations; legacy strict/taxonomy/membership retained'}
     policy_sha=hashlib.sha256(json.dumps(raw,sort_keys=True).encode()).hexdigest()
-    freeze={'inputs':{p.name:digest_file(p) for p in sorted(inputs.iterdir()) if p.is_file()},
+    freeze={'inputs':{str(p.relative_to(inputs)):digest_file(p) for p in sorted(inputs.rglob('*')) if p.is_file()},
             'code':{str(p.relative_to(Path(__file__).resolve().parents[1])):digest_file(p)
                     for p in sorted((Path(__file__).resolve().parents[1]/'src/fineatlas').glob('*.py'))},
             'source_graph_revision':meta['database_revision'],'policy_sha256':policy_sha}
+    root=Path(__file__).resolve().parents[1]
+    names=('build_unified_candidate.py','finalize_unified_metadata.py','rebuild_unified_repair.py',
+           'stage_browse_indexes.py','apply_browse_indexes.py',
+           'prepare_shared_role_repairs.py','prepare_annotation_scope_repairs.py',
+           'prepare_living_domains.py','prepare_abo_furniture.py',
+           'prepare_family_inputs.py','prepare_native_design_refinements.py',
+           'prepare_engineering_grain_inputs.py','prepare_unified_role_links.py')
+    freeze['build_scripts']={str((root/'scripts'/name).relative_to(root)):digest_file(root/'scripts'/name)
+                             for name in names if (root/'scripts'/name).is_file()}
     revision=hashlib.sha256(json.dumps(freeze,sort_keys=True).encode()).hexdigest()
     baseline=json.loads((inputs/'baseline.json').read_text())
     for key,value in {'unified_reward_policies':policies,'unified_policy_definition':raw,

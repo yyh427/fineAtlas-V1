@@ -27,6 +27,7 @@ Wikipedia-derived definitions retain CC BY-SA 4.0 attribution and article URLs.
 | FoodOn | https://foodon.org/ |
 | MIMO | https://mimo-international.com/ |
 | NLM MeSH | https://www.nlm.nih.gov/databases/download/mesh.html |
+| Amazon Berkeley Objects | https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/index.html |
 
 The recorded source inventories identify Getty AAT as ODC-By 1.0 and FoodOn as
 CC BY 4.0; other upstream terms and source/version-specific conditions should
@@ -190,3 +191,40 @@ Only a short factual type statement, document URL and SHA-256 are included.
 The complete proprietary brochure is **not** a release asset. EASA and Transport
 Canada CRJ evidence is recorded for a scope review, without claiming exact
 CRJ-700 annotation identity or redistributing the full source publications.
+
+## Amazon Berkeley Objects furniture metadata trial (1.10.1)
+
+The frozen bounded trial selects **four source catalogue product configurations**
+from the first 200 records of [ABO metadata shard 0](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/listings/metadata/listings_0.json.gz).
+It adds four reviewed `CONFIGURATION_TYPE_OF` connections to existing WordNet 3.1
+furniture types. Native list-valued fields, multilingual names, catalogue paths,
+model fields and asset identifiers are retained. The source key is
+`(domain_name, item_id)`; it does not certify a worldwide manufacturer model,
+cross-marketplace product identity or serialized physical instance. No images or
+3D assets were downloaded. A read-only before/after review of the built primary
+`v1.10.1-repair-review` candidate confirmed all four complete source payloads,
+configuration roles, active typed parents, actual furniture-domain membership
+and legal root paths. Furniture configurations increased from 38 source UIDs /
+38 identity groups to 42 / 42; no worldwide manufacturer model, series or
+serialized instance was added by this trial. Full graph, reproduction and
+public installation results remain subject to their separate acceptance.
+
+The official [ABO README](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/README.md)
+and [ABO license file](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/LICENSE-CC-BY-4.0.txt)
+license the material under **Creative Commons Attribution 4.0 International**.
+Copyright: **Amazon.com**. Credit for building the dataset is retained for
+**Matthieu Guillaumin, Thomas Dideriksen, Kenan Deng, Himanshu Arora,
+Jasmine Collins and Jitendra Malik**. Attribution, source and license URIs,
+copyright, original record payloads and modification notices are retained in the
+frozen source materials, `ABO_ATTRIBUTION.txt`, database provenance and source
+catalogue. The changes are bounded metadata selection, configuration-role
+review and a reviewed WordNet type connection; native metadata fields are
+unchanged. This source license is not replaced by the code's MIT license.
+
+The actual frozen 200-record sample SHA-256 is
+`e34761896d8c32b82eb36b7380b8f2b7c5f0b522fb275a83d714a878651cf746`.
+The sample is a biased engineering trial, not an estimate of whole-source
+coverage. Three furniture-tagged records remain excluded: a sofa-tagged fabric
+swatch, a chair title/model-name scope conflict and a multilingual Queen/King
+bed configuration conflict. See [the living-domain scope and bounded trial](docs/living_domains_v1.10.1.md)
+for the four accepted source identities, exact WordNet roots and acceptance scope.

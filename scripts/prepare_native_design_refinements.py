@@ -72,7 +72,9 @@ for n in c.execute('SELECT n.uid,n.label,n.description,n.data,'+role_expression(
    for relation in c.execute("SELECT id FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','SERIES_MEMBER_OF')",(v,)):
     new.append({'op':'withdraw_typed','uid':v,'relation_id':relation[0],'source':'Independent generic category definitions','uri':uri,'proof':{'basis':'GENERIC_CATEGORY_IS_NOT_A_NAMED_DESIGN_TERMINAL','license':'Original declaration retained'}})
   current=kind(u)
- if current=='CLASS' and named and (declared or family) and allows_model_extraction(raw,{'node_kind':current}):
+ profile=c.execute('SELECT * FROM node_profiles WHERE uid=?',(u,)).fetchone()
+ canonical_profile={**(dict(profile) if profile else {}),'node_kind':current}
+ if current=='CLASS' and named and (declared or family) and allows_model_extraction(raw,canonical_profile):
   # Named ship-class families take precedence over construction of their
   # members. Explicit individual histories remain outside model extraction.
   decision,reason=nominal_role_decision({'definition':statement},{})
