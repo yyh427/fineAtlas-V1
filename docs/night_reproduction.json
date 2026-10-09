@@ -1,0 +1,69 @@
+{
+  "browse_cached_parents": {
+    "counts": [
+      21116,
+      21116
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_facets": {
+    "counts": [
+      19814243,
+      19814243
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_group_cache": {
+    "counts": [
+      1089635,
+      1089635
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_link_counts": {
+    "counts": [
+      1289505,
+      1289505
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_links": {
+    "counts": [
+      25529063,
+      25529063
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_nodes": {
+    "counts": [
+      12400273,
+      12400273
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "browse_preferences": {
+    "counts": [
+      107753,
+      107753
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "metadata": {
+    "counts": [
+      95,
+      95
+    ],
+    "different_rows": 0,
+    "pass": true
+  },
+  "view_statistics_without_runtime": {
+    "pass": true
+  }
+}

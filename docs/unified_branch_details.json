@@ -1,0 +1,1952 @@
+[
+  {
+    "parent": "hierarchy-type:aircraft-4-engine-1",
+    "node": {
+      "uid": "hierarchy-type:aircraft-4-engine-1",
+      "label": "reciprocating-engine single-engine fixed-wing aircraft",
+      "domain": "aircraft",
+      "domains": "[\"aircraft\"]",
+      "source": "FAA native aircraft reference fields",
+      "rank": "class",
+      "description": "A fixed-wing aircraft with one engine. Propulsion uses the native reciprocating-engine engine type.",
+      "data": {
+        "aircraft_code": "4",
+        "basis": "OBSERVED_PROFESSIONAL_STRUCTURE_PROPULSION_INTERSECTION",
+        "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+        "engine_code": "1",
+        "license": "Original source attribution and terms retained; derived factual classification"
+      },
+      "layer": "v1.7-generality-review",
+      "visibility": "ACTIVE",
+      "component_id": 12619570,
+      "wordnet_reachable": 1,
+      "wordnet_depth": 12,
+      "edge": {},
+      "aliases": [
+        "reciprocating-engine single-engine fixed-wing aircraft",
+        "reciprocating-engine single-engine fixed-wing aircraft"
+      ],
+      "source_domain": "aircraft",
+      "node_kind": "CLASS",
+      "attributes": {
+        "classification_axis": "structure_and_propulsion",
+        "hierarchy_definition": "A fixed-wing aircraft with one engine. Propulsion uses the native reciprocating-engine engine type.",
+        "native_rank": "class",
+        "role_evidence_id": "usability:0c853d0bd5b8447c896a2075e64a66775115a6096acc8bc34488db04d4239188",
+        "role_status": "VERIFIED",
+        "semantic_grain": "professional_type",
+        "source_role": "class"
+      },
+      "identity_evidence_id": "usability:0c853d0bd5b8447c896a2075e64a66775115a6096acc8bc34488db04d4239188",
+      "source_rank": "class",
+      "native_rank": "class",
+      "source_role": "class",
+      "normalized_role": "CLASS",
+      "normalized_rank": null,
+      "rank_status": "UNSPECIFIED",
+      "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+      "role_status": "VERIFIED",
+      "aliases_truncated": false,
+      "source_label": "reciprocating-engine single-engine fixed-wing aircraft",
+      "label_language": "en",
+      "label_source": "FAA native aircraft reference fields",
+      "label_evidence_id": "",
+      "label_fallback": false,
+      "entity_reachable": false,
+      "typed_depth": null,
+      "root_reachable": true,
+      "root_depth": 12,
+      "typed_root_reachable": false,
+      "relation_view": "unified",
+      "root_uid": "wordnet31:00001740-n"
+    },
+    "full": {
+      "status": "OK",
+      "scope": {
+        "parent": "hierarchy-type:aircraft-4-engine-1",
+        "components": [
+          12619570
+        ],
+        "domain": null
+      },
+      "relation_view": "unified",
+      "relations": [
+        {
+          "role": "CLASS",
+          "relation": "IS_A",
+          "concepts": 3,
+          "source_arcs": 3,
+          "full_direct_concepts": 3,
+          "default_presented_concepts": 3
+        },
+        {
+          "role": "MODEL",
+          "relation": "DESIGN_TYPE_OF",
+          "concepts": 61283,
+          "source_arcs": 61329,
+          "full_direct_concepts": 61283,
+          "default_presented_concepts": 64
+        }
+      ],
+      "default_node_kind": "CLASS",
+      "source_arcs_describe_preserved_full_graph": true,
+      "include_coarse": true,
+      "counts_overlap_across_relations_or_roots": true,
+      "directory_groups_are_graph_nodes": false
+    },
+    "default": {
+      "status": "OK",
+      "scope": {
+        "parent": "hierarchy-type:aircraft-4-engine-1",
+        "components": [
+          12619570
+        ],
+        "domain": null
+      },
+      "relation_view": "unified",
+      "relations": [
+        {
+          "role": "CLASS",
+          "relation": "IS_A",
+          "concepts": 3,
+          "source_arcs": 3,
+          "full_direct_concepts": 3,
+          "default_presented_concepts": 3
+        },
+        {
+          "role": "MODEL",
+          "relation": "DESIGN_TYPE_OF",
+          "concepts": 64,
+          "source_arcs": 61329,
+          "full_direct_concepts": 61283,
+          "default_presented_concepts": 64
+        }
+      ],
+      "default_node_kind": "CLASS",
+      "source_arcs_describe_preserved_full_graph": true,
+      "include_coarse": false,
+      "counts_overlap_across_relations_or_roots": true,
+      "directory_groups_are_graph_nodes": false
+    },
+    "first_page": {
+      "status": "OK",
+      "items": [
+        {
+          "uid": "authority-refinement:single-piston-land",
+          "label": "land reciprocating-engine single-engine fixed-wing aircraft",
+          "domain": "aircraft",
+          "domains": "[\"aircraft\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "reciprocating-engine single-engine fixed-wing aircraft; FAA Aircraft Category Code 1 (land).",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+            "field": "AC-CAT",
+            "no_lifting_to_entire_model": false,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:aircraft-4-engine-1",
+            "source_url": "https://registry.faa.gov/database/ardata.pdf",
+            "value": "1"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620395,
+          "edge": {},
+          "aliases": [
+            "land reciprocating-engine single-engine fixed-wing aircraft",
+            "land reciprocating-engine single-engine fixed-wing aircraft"
+          ],
+          "source_domain": "aircraft",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "physical_structure",
+            "hierarchy_definition": "reciprocating-engine single-engine fixed-wing aircraft; FAA Aircraft Category Code 1 (land).",
+            "native_rank": "class",
+            "role_evidence_id": "usability:6d87c2d0296efc570a23d76c352d4a7b7fce748b6e36696918818eb1a7811274",
+            "role_status": "VERIFIED",
+            "semantic_grain": "professional_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:6d87c2d0296efc570a23d76c352d4a7b7fce748b6e36696918818eb1a7811274",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "land reciprocating-engine single-engine fixed-wing aircraft",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:single-piston-land",
+              "source_parent_uid": "hierarchy-type:aircraft-4-engine-1",
+              "edge": {
+                "id": 9693502,
+                "child_uid": "authority-refinement:single-piston-land",
+                "parent_uid": "hierarchy-type:aircraft-4-engine-1",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:6d87c2d0296efc570a23d76c352d4a7b7fce748b6e36696918818eb1a7811274\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+                    "field": "AC-CAT",
+                    "no_lifting_to_entire_model": false,
+                    "scope": "hierarchy-type:aircraft-4-engine-1",
+                    "source_url": "https://registry.faa.gov/database/ardata.pdf",
+                    "value": "1",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "physical_structure"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620395,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:single-piston-sea",
+          "label": "sea reciprocating-engine single-engine fixed-wing aircraft",
+          "domain": "aircraft",
+          "domains": "[\"aircraft\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "reciprocating-engine single-engine fixed-wing aircraft; FAA Aircraft Category Code 2 (sea).",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+            "field": "AC-CAT",
+            "no_lifting_to_entire_model": false,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:aircraft-4-engine-1",
+            "source_url": "https://registry.faa.gov/database/ardata.pdf",
+            "value": "2"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620396,
+          "edge": {},
+          "aliases": [
+            "sea reciprocating-engine single-engine fixed-wing aircraft",
+            "sea reciprocating-engine single-engine fixed-wing aircraft"
+          ],
+          "source_domain": "aircraft",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "physical_structure",
+            "hierarchy_definition": "reciprocating-engine single-engine fixed-wing aircraft; FAA Aircraft Category Code 2 (sea).",
+            "native_rank": "class",
+            "role_evidence_id": "usability:2b062083f24fd3f04ac3cbac9ff975c00b5a143651cc894bc18e2cdea5640743",
+            "role_status": "VERIFIED",
+            "semantic_grain": "professional_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:2b062083f24fd3f04ac3cbac9ff975c00b5a143651cc894bc18e2cdea5640743",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "sea reciprocating-engine single-engine fixed-wing aircraft",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:single-piston-sea",
+              "source_parent_uid": "hierarchy-type:aircraft-4-engine-1",
+              "edge": {
+                "id": 9693503,
+                "child_uid": "authority-refinement:single-piston-sea",
+                "parent_uid": "hierarchy-type:aircraft-4-engine-1",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:2b062083f24fd3f04ac3cbac9ff975c00b5a143651cc894bc18e2cdea5640743\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+                    "field": "AC-CAT",
+                    "no_lifting_to_entire_model": false,
+                    "scope": "hierarchy-type:aircraft-4-engine-1",
+                    "source_url": "https://registry.faa.gov/database/ardata.pdf",
+                    "value": "2",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "physical_structure"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620396,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:single-piston-amphibian",
+          "label": "amphibian reciprocating-engine single-engine fixed-wing aircraft",
+          "domain": "aircraft",
+          "domains": "[\"aircraft\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "reciprocating-engine single-engine fixed-wing aircraft; FAA Aircraft Category Code 3 (amphibian).",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+            "field": "AC-CAT",
+            "no_lifting_to_entire_model": false,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:aircraft-4-engine-1",
+            "source_url": "https://registry.faa.gov/database/ardata.pdf",
+            "value": "3"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620397,
+          "edge": {},
+          "aliases": [
+            "amphibian reciprocating-engine single-engine fixed-wing aircraft",
+            "amphibian reciprocating-engine single-engine fixed-wing aircraft"
+          ],
+          "source_domain": "aircraft",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "physical_structure",
+            "hierarchy_definition": "reciprocating-engine single-engine fixed-wing aircraft; FAA Aircraft Category Code 3 (amphibian).",
+            "native_rank": "class",
+            "role_evidence_id": "usability:5fd4b5ce667358962863650ef61b8cd0993a58c185ce0e8c4afe8fb427a60dab",
+            "role_status": "VERIFIED",
+            "semantic_grain": "professional_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:5fd4b5ce667358962863650ef61b8cd0993a58c185ce0e8c4afe8fb427a60dab",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "amphibian reciprocating-engine single-engine fixed-wing aircraft",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:single-piston-amphibian",
+              "source_parent_uid": "hierarchy-type:aircraft-4-engine-1",
+              "edge": {
+                "id": 9693504,
+                "child_uid": "authority-refinement:single-piston-amphibian",
+                "parent_uid": "hierarchy-type:aircraft-4-engine-1",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:5fd4b5ce667358962863650ef61b8cd0993a58c185ce0e8c4afe8fb427a60dab\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "075c2e4c4f48860c6e77e44964a291c96fc4735a566e717dff5f416be2bc86fd",
+                    "field": "AC-CAT",
+                    "no_lifting_to_entire_model": false,
+                    "scope": "hierarchy-type:aircraft-4-engine-1",
+                    "source_url": "https://registry.faa.gov/database/ardata.pdf",
+                    "value": "3",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "physical_structure"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620397,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null,
+      "relation_view": "unified",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "scope": {
+        "parent": "hierarchy-type:aircraft-4-engine-1",
+        "components": [
+          12619570
+        ],
+        "domain": null
+      },
+      "node_kind": "CLASS",
+      "filters": {},
+      "direct_only": true,
+      "identity_deduplicated": true,
+      "grouping_is_classification": false,
+      "coarse_source_connections_retained": true,
+      "include_coarse": false,
+      "preferred_routes_have_source_witnesses": true
+    },
+    "manufacturer_groups": {
+      "status": "OK",
+      "items": [
+        {
+          "value": "AEROMERE",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "AEROMERE"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "AEROSPATIALE",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "AEROSPATIALE"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "ANSALDO",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "ANSALDO"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "ANTONOV",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "ANTONOV"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "BEDE",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "BEDE"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "BEECH",
+          "concepts": 3,
+          "filters": {
+            "manufacturer": "BEECH"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "BELLANCA",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "BELLANCA"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "BOEING",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "BOEING"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "CALLAIR",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "CALLAIR"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "CESSNA",
+          "concepts": 9,
+          "filters": {
+            "manufacturer": "CESSNA"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "CONSOLIDATED VULTEE",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "CONSOLIDATED VULTEE"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "CURTISS",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "CURTISS"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "DORNIER",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "DORNIER"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "DOUGLAS",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "DOUGLAS"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "FAIRCHILD",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "FAIRCHILD"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "FLETCHER",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "FLETCHER"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "FOCKE WULF",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "FOCKE WULF"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "FOKKER",
+          "concepts": 3,
+          "filters": {
+            "manufacturer": "FOKKER"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "INTERSTATE",
+          "concepts": 2,
+          "filters": {
+            "manufacturer": "INTERSTATE"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "LAKE",
+          "concepts": 1,
+          "filters": {
+            "manufacturer": "LAKE"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        }
+      ],
+      "has_more": true,
+      "next_cursor": "eyJhZnRlciI6ICJMQUtFIiwgImNvbnRleHQiOiB7ImFwaV9jb250cmFjdCI6ICIxLjkuMHJjMSIsICJhcmdzIjogW3siY29tcG9uZW50cyI6IFsxMjYxOTU3MF0sICJkb21haW4iOiBudWxsLCAicGFyZW50IjogImhpZXJhcmNoeS10eXBlOmFpcmNyYWZ0LTQtZW5naW5lLTEifSwgbnVsbCwgbnVsbCwgW10sIFsibWFudWZhY3R1cmVyIiwgZmFsc2VdXSwgIm1ldGhvZCI6ICJicm93c2VfZ3JvdXBzIiwgInJldmlzaW9uIjogIjEzMjVhZjc5MzIzZTc3MjcwNjUwMDc1ZjAxYmYyMmQzNGJiZjJmOWEwNzJmMjJjZGM2NTEwMTllNjE1ZjViNzciLCAicm9vdCI6ICJ3b3JkbmV0MzE6MDAwMDE3NDAtbiIsICJ2aWV3IjogInVuaWZpZWQiLCAidmlzaWJpbGl0eSI6ICJ3b3JkbmV0In19",
+      "relation_view": "unified",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "group_by": "manufacturer",
+      "source_values_only": true,
+      "count_index_used": false,
+      "missing_values_remain_browsable_without_filter": true
+    },
+    "catalogue_grouping_is_classification": false
+  },
+  {
+    "parent": "hierarchy-type:car-gasoline",
+    "node": {
+      "uid": "hierarchy-type:car-gasoline",
+      "label": "gasoline-powered car",
+      "domain": "cars",
+      "domains": "[\"cars\"]",
+      "source": "EPA retained powertrain fields",
+      "rank": "class",
+      "description": "A car configuration whose documented powertrain is gasoline.",
+      "data": {
+        "basis": "NATIVE_CONFIGURATION_POWERTRAIN_TYPE",
+        "license": "Original source attribution and terms retained; derived factual classification",
+        "powertrain": "gasoline"
+      },
+      "layer": "v1.7-generality-review",
+      "visibility": "ACTIVE",
+      "component_id": 12619901,
+      "wordnet_reachable": 1,
+      "wordnet_depth": 11,
+      "edge": {},
+      "aliases": [
+        "gasoline-powered car",
+        "gasoline-powered car"
+      ],
+      "source_domain": "cars",
+      "node_kind": "CLASS",
+      "attributes": {
+        "classification_axis": "propulsion",
+        "hierarchy_definition": "A car configuration whose documented powertrain is gasoline.",
+        "native_rank": "class",
+        "role_evidence_id": "usability:7efc85546de41790b2072b642d2a8be2aef6a043b427784e99b1b6f0f44810b0",
+        "role_status": "VERIFIED",
+        "semantic_grain": "professional_type",
+        "source_role": "class"
+      },
+      "identity_evidence_id": "usability:7efc85546de41790b2072b642d2a8be2aef6a043b427784e99b1b6f0f44810b0",
+      "source_rank": "class",
+      "native_rank": "class",
+      "source_role": "class",
+      "normalized_role": "CLASS",
+      "normalized_rank": null,
+      "rank_status": "UNSPECIFIED",
+      "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+      "role_status": "VERIFIED",
+      "aliases_truncated": false,
+      "source_label": "gasoline-powered car",
+      "label_language": "en",
+      "label_source": "EPA retained powertrain fields",
+      "label_evidence_id": "",
+      "label_fallback": false,
+      "entity_reachable": false,
+      "typed_depth": null,
+      "root_reachable": true,
+      "root_depth": 11,
+      "typed_root_reachable": false,
+      "relation_view": "unified",
+      "root_uid": "wordnet31:00001740-n"
+    },
+    "full": {
+      "status": "OK",
+      "scope": {
+        "parent": "hierarchy-type:car-gasoline",
+        "components": [
+          12619901
+        ],
+        "domain": null
+      },
+      "relation_view": "unified",
+      "relations": [
+        {
+          "role": "CLASS",
+          "relation": "IS_A",
+          "concepts": 7,
+          "source_arcs": 7,
+          "full_direct_concepts": 7,
+          "default_presented_concepts": 7
+        },
+        {
+          "role": "CONFIGURATION",
+          "relation": "CONFIGURATION_TYPE_OF",
+          "concepts": 23553,
+          "source_arcs": 23554,
+          "full_direct_concepts": 23553,
+          "default_presented_concepts": 632
+        }
+      ],
+      "default_node_kind": "CLASS",
+      "source_arcs_describe_preserved_full_graph": true,
+      "include_coarse": true,
+      "counts_overlap_across_relations_or_roots": true,
+      "directory_groups_are_graph_nodes": false
+    },
+    "default": {
+      "status": "OK",
+      "scope": {
+        "parent": "hierarchy-type:car-gasoline",
+        "components": [
+          12619901
+        ],
+        "domain": null
+      },
+      "relation_view": "unified",
+      "relations": [
+        {
+          "role": "CLASS",
+          "relation": "IS_A",
+          "concepts": 7,
+          "source_arcs": 7,
+          "full_direct_concepts": 7,
+          "default_presented_concepts": 7
+        },
+        {
+          "role": "CONFIGURATION",
+          "relation": "CONFIGURATION_TYPE_OF",
+          "concepts": 632,
+          "source_arcs": 23554,
+          "full_direct_concepts": 23553,
+          "default_presented_concepts": 632
+        }
+      ],
+      "default_node_kind": "CLASS",
+      "source_arcs_describe_preserved_full_graph": true,
+      "include_coarse": false,
+      "counts_overlap_across_relations_or_roots": true,
+      "directory_groups_are_graph_nodes": false
+    },
+    "first_page": {
+      "status": "OK",
+      "items": [
+        {
+          "uid": "authority-refinement:gasoline-epa-compact",
+          "label": "EPA compact gasoline car",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Compact Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category 100–109 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Compact Cars"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620398,
+          "edge": {},
+          "aliases": [
+            "EPA compact gasoline car",
+            "EPA compact gasoline car"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Compact Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category 100–109 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:b8852f9a86f94b6b07e03b39390bf4e865111fb3877c25e1d30f9f59c5852643",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:b8852f9a86f94b6b07e03b39390bf4e865111fb3877c25e1d30f9f59c5852643",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA compact gasoline car",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-compact",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693505,
+                "child_uid": "authority-refinement:gasoline-epa-compact",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:b8852f9a86f94b6b07e03b39390bf4e865111fb3877c25e1d30f9f59c5852643\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Compact Cars",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620398,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:gasoline-epa-large",
+          "label": "EPA large gasoline car",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Large Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category >=120 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Large Cars"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620399,
+          "edge": {},
+          "aliases": [
+            "EPA large gasoline car",
+            "EPA large gasoline car"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Large Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category >=120 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:d7a9443944b7967f8331fc129537f69a19237d3f9245138d440e3d01a03e1b85",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:d7a9443944b7967f8331fc129537f69a19237d3f9245138d440e3d01a03e1b85",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA large gasoline car",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-large",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693506,
+                "child_uid": "authority-refinement:gasoline-epa-large",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:d7a9443944b7967f8331fc129537f69a19237d3f9245138d440e3d01a03e1b85\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Large Cars",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620399,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:gasoline-epa-midsize",
+          "label": "EPA midsize gasoline car",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Midsize Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category 110–119 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Midsize Cars"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620400,
+          "edge": {},
+          "aliases": [
+            "EPA midsize gasoline car",
+            "EPA midsize gasoline car"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Midsize Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category 110–119 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:97ace0db3fdf8ff19566ea68366aa627fd4e8ffa34937b3098bc4a9b77c64585",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:97ace0db3fdf8ff19566ea68366aa627fd4e8ffa34937b3098bc4a9b77c64585",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA midsize gasoline car",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-midsize",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693507,
+                "child_uid": "authority-refinement:gasoline-epa-midsize",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:97ace0db3fdf8ff19566ea68366aa627fd4e8ffa34937b3098bc4a9b77c64585\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Midsize Cars",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620400,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:gasoline-epa-midsize-wagon",
+          "label": "EPA midsize gasoline station wagon",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Midsize Station Wagons in the EPA native vehicle record; EPA passenger-plus-luggage volume category 130–159 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Midsize Station Wagons"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620401,
+          "edge": {},
+          "aliases": [
+            "EPA midsize gasoline station wagon",
+            "EPA midsize gasoline station wagon"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Midsize Station Wagons in the EPA native vehicle record; EPA passenger-plus-luggage volume category 130–159 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:583545bf51f5e9341f219148a91770fa36a1adf2835b39dae7a85a8fae62a8c2",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:583545bf51f5e9341f219148a91770fa36a1adf2835b39dae7a85a8fae62a8c2",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA midsize gasoline station wagon",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-midsize-wagon",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693508,
+                "child_uid": "authority-refinement:gasoline-epa-midsize-wagon",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:583545bf51f5e9341f219148a91770fa36a1adf2835b39dae7a85a8fae62a8c2\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Midsize Station Wagons",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620401,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:gasoline-epa-minicompact",
+          "label": "EPA minicompact gasoline car",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Minicompact Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category <85 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Minicompact Cars"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620402,
+          "edge": {},
+          "aliases": [
+            "EPA minicompact gasoline car",
+            "EPA minicompact gasoline car"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Minicompact Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category <85 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:e5ab8d4fbf808ff8fd40404e80f66007b77a7486f2d9c2c6b4e68ea282353dd2",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:e5ab8d4fbf808ff8fd40404e80f66007b77a7486f2d9c2c6b4e68ea282353dd2",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA minicompact gasoline car",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-minicompact",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693509,
+                "child_uid": "authority-refinement:gasoline-epa-minicompact",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:e5ab8d4fbf808ff8fd40404e80f66007b77a7486f2d9c2c6b4e68ea282353dd2\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Minicompact Cars",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620402,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:gasoline-epa-small-wagon",
+          "label": "EPA small gasoline station wagon",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Small Station Wagons in the EPA native vehicle record; EPA passenger-plus-luggage volume category <130 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Small Station Wagons"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620403,
+          "edge": {},
+          "aliases": [
+            "EPA small gasoline station wagon",
+            "EPA small gasoline station wagon"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Small Station Wagons in the EPA native vehicle record; EPA passenger-plus-luggage volume category <130 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:b195a2391457a731ef120a2754e92f7737b8483f62e8b9747da67fe34e9a8cc8",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:b195a2391457a731ef120a2754e92f7737b8483f62e8b9747da67fe34e9a8cc8",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA small gasoline station wagon",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-small-wagon",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693510,
+                "child_uid": "authority-refinement:gasoline-epa-small-wagon",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:b195a2391457a731ef120a2754e92f7737b8483f62e8b9747da67fe34e9a8cc8\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Small Station Wagons",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620403,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        },
+        {
+          "uid": "authority-refinement:gasoline-epa-subcompact",
+          "label": "EPA subcompact gasoline car",
+          "domain": "cars",
+          "domains": "[\"cars\"]",
+          "source": "Verified FAA/EPA native field intersection",
+          "rank": "class",
+          "description": "A gasoline car configuration classified as Subcompact Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category 85–99 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+          "data": {
+            "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+            "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+            "field": "VClass",
+            "no_lifting_to_entire_model": true,
+            "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions",
+            "scope": "hierarchy-type:car-gasoline",
+            "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+            "value": "Subcompact Cars"
+          },
+          "layer": "v1.7-generality-review",
+          "visibility": "ACTIVE",
+          "component_id": 12620404,
+          "edge": {},
+          "aliases": [
+            "EPA subcompact gasoline car",
+            "EPA subcompact gasoline car"
+          ],
+          "source_domain": "cars",
+          "node_kind": "CLASS",
+          "attributes": {
+            "classification_axis": "native_regulatory_classification",
+            "hierarchy_definition": "A gasoline car configuration classified as Subcompact Cars in the EPA native vehicle record; EPA passenger-plus-luggage volume category 85–99 cubic feet. This is a source-specific intersection, not a worldwide body-style or model definition.",
+            "native_rank": "class",
+            "role_evidence_id": "usability:217bcdb3a8ac3ee17f2769265bea8e93677ea3ff25089a5e6fa06b095e2fb491",
+            "role_status": "VERIFIED",
+            "semantic_grain": "native_regulatory_type",
+            "source_role": "class"
+          },
+          "identity_evidence_id": "usability:217bcdb3a8ac3ee17f2769265bea8e93677ea3ff25089a5e6fa06b095e2fb491",
+          "source_rank": "class",
+          "native_rank": "class",
+          "source_role": "class",
+          "normalized_role": "CLASS",
+          "normalized_rank": null,
+          "rank_status": "UNSPECIFIED",
+          "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+          "role_status": "VERIFIED",
+          "aliases_truncated": false,
+          "source_label": "EPA subcompact gasoline car",
+          "label_language": "en",
+          "label_source": "Verified FAA/EPA native field intersection",
+          "label_evidence_id": "",
+          "label_fallback": false,
+          "browse_connections": [
+            {
+              "relation": "IS_A",
+              "source": "Verified FAA/EPA native field intersection",
+              "source_child_uid": "authority-refinement:gasoline-epa-subcompact",
+              "source_parent_uid": "hierarchy-type:car-gasoline",
+              "edge": {
+                "id": 9693511,
+                "child_uid": "authority-refinement:gasoline-epa-subcompact",
+                "parent_uid": "hierarchy-type:car-gasoline",
+                "relation": "IS_A",
+                "original_relation": "IS_A",
+                "facet_family": "NATIVE_OBJECT_KIND",
+                "typed_refinement_kind": null,
+                "classification_basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                "navigation_role": "SOURCE_VALIDATED",
+                "source": "Verified FAA/EPA native field intersection",
+                "source_relation": "EVIDENCED_SUBSUMPTION",
+                "confidence": 1.0,
+                "provenance": "{\"evidence_ids\": [\"usability:217bcdb3a8ac3ee17f2769265bea8e93677ea3ff25089a5e6fa06b095e2fb491\"]}",
+                "data": {
+                  "eligible_for_final_dag": true,
+                  "admission_basis": {
+                    "basis": "EXPLICIT_SOURCE_FIELD_INTERSECTION_WITH_EXISTING_TYPE",
+                    "dictionary_sha256": "5fd3a6c0bef33459c408510dd717cbb58a7b7143929d583d9647dc33e65a915d",
+                    "field": "VClass",
+                    "no_lifting_to_entire_model": true,
+                    "scope": "hierarchy-type:car-gasoline",
+                    "source_url": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+                    "value": "Subcompact Cars",
+                    "preview_promoted_by": "Replayed literal field and baseline-record checks, followed by full graph and public regressions"
+                  },
+                  "classification_axis": "native_regulatory_classification"
+                },
+                "layer": "v1.8-hierarchy-review",
+                "status": "ACTIVE",
+                "reason": "Definition or native-field scope entails professional parent"
+              },
+              "source_arc_count": 1
+            }
+          ],
+          "identity_component": 12620404,
+          "browse_roles": [
+            "CLASS"
+          ],
+          "identity_roles": [
+            "CLASS"
+          ],
+          "identity_role_conflict": false,
+          "source_members_available": true
+        }
+      ],
+      "has_more": false,
+      "next_cursor": null,
+      "relation_view": "unified",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "scope": {
+        "parent": "hierarchy-type:car-gasoline",
+        "components": [
+          12619901
+        ],
+        "domain": null
+      },
+      "node_kind": "CLASS",
+      "filters": {},
+      "direct_only": true,
+      "identity_deduplicated": true,
+      "grouping_is_classification": false,
+      "coarse_source_connections_retained": true,
+      "include_coarse": false,
+      "preferred_routes_have_source_witnesses": true
+    },
+    "manufacturer_groups": {
+      "status": "OK",
+      "items": [
+        {
+          "value": "Audi",
+          "concepts": 18,
+          "filters": {
+            "manufacturer": "Audi"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Buick",
+          "concepts": 55,
+          "filters": {
+            "manufacturer": "Buick"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "CX Automotive",
+          "concepts": 3,
+          "filters": {
+            "manufacturer": "CX Automotive"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Chevrolet",
+          "concepts": 43,
+          "filters": {
+            "manufacturer": "Chevrolet"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Chrysler",
+          "concepts": 10,
+          "filters": {
+            "manufacturer": "Chrysler"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Dodge",
+          "concepts": 20,
+          "filters": {
+            "manufacturer": "Dodge"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Eagle",
+          "concepts": 38,
+          "filters": {
+            "manufacturer": "Eagle"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Ford",
+          "concepts": 44,
+          "filters": {
+            "manufacturer": "Ford"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Honda",
+          "concepts": 3,
+          "filters": {
+            "manufacturer": "Honda"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Import Trade Services",
+          "concepts": 2,
+          "filters": {
+            "manufacturer": "Import Trade Services"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Isuzu",
+          "concepts": 2,
+          "filters": {
+            "manufacturer": "Isuzu"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "J.K. Motors",
+          "concepts": 3,
+          "filters": {
+            "manufacturer": "J.K. Motors"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Mcevoy Motors",
+          "concepts": 3,
+          "filters": {
+            "manufacturer": "Mcevoy Motors"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Mercedes-Benz",
+          "concepts": 13,
+          "filters": {
+            "manufacturer": "Mercedes-Benz"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Mercury",
+          "concepts": 41,
+          "filters": {
+            "manufacturer": "Mercury"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Mitsubishi",
+          "concepts": 37,
+          "filters": {
+            "manufacturer": "Mitsubishi"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Nissan",
+          "concepts": 6,
+          "filters": {
+            "manufacturer": "Nissan"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Oldsmobile",
+          "concepts": 49,
+          "filters": {
+            "manufacturer": "Oldsmobile"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Peugeot",
+          "concepts": 27,
+          "filters": {
+            "manufacturer": "Peugeot"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        },
+        {
+          "value": "Plymouth",
+          "concepts": 42,
+          "filters": {
+            "manufacturer": "Plymouth"
+          },
+          "node_kind": null,
+          "relation": null,
+          "group_kind": "SOURCE_CATALOGUE_FACET",
+          "is_a": false
+        }
+      ],
+      "has_more": true,
+      "next_cursor": "eyJhZnRlciI6ICJQbHltb3V0aCIsICJjb250ZXh0IjogeyJhcGlfY29udHJhY3QiOiAiMS45LjByYzEiLCAiYXJncyI6IFt7ImNvbXBvbmVudHMiOiBbMTI2MTk5MDFdLCAiZG9tYWluIjogbnVsbCwgInBhcmVudCI6ICJoaWVyYXJjaHktdHlwZTpjYXItZ2Fzb2xpbmUifSwgbnVsbCwgbnVsbCwgW10sIFsibWFudWZhY3R1cmVyIiwgZmFsc2VdXSwgIm1ldGhvZCI6ICJicm93c2VfZ3JvdXBzIiwgInJldmlzaW9uIjogIjEzMjVhZjc5MzIzZTc3MjcwNjUwMDc1ZjAxYmYyMmQzNGJiZjJmOWEwNzJmMjJjZGM2NTEwMTllNjE1ZjViNzciLCAicm9vdCI6ICJ3b3JkbmV0MzE6MDAwMDE3NDAtbiIsICJ2aWV3IjogInVuaWZpZWQiLCAidmlzaWJpbGl0eSI6ICJ3b3JkbmV0In19",
+      "relation_view": "unified",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "group_by": "manufacturer",
+      "source_values_only": true,
+      "count_index_used": false,
+      "missing_values_remain_browsable_without_filter": true
+    },
+    "catalogue_grouping_is_classification": false
+  },
+  {
+    "parent": "geonames-feature:H.STM",
+    "node": {
+      "uid": "geonames-feature:H.STM",
+      "label": "stream",
+      "domain": "natural_geography",
+      "domains": "[\"natural_geography\"]",
+      "source": "GeoNames",
+      "rank": "class",
+      "description": "a body of running water moving to a lower level in a channel on land",
+      "data": {
+        "aliases": [],
+        "attributes": {
+          "feature_code": "H.STM"
+        },
+        "definition": "a body of running water moving to a lower level in a channel on land",
+        "domain": "natural_geography",
+        "evidence_id": "expansion:abc3f471957902d8b1bf06ac6d986cf7a75c82bb57e4f81c324a782617a5a5ac",
+        "label": "stream",
+        "node_kind": "CLASS",
+        "source": "GeoNames",
+        "source_uri": "https://www.geonames.org/ontology#H.STM",
+        "uid": "geonames-feature:H.STM"
+      },
+      "layer": "v1_geonames",
+      "visibility": "ACTIVE",
+      "component_id": 8882888,
+      "wordnet_reachable": 1,
+      "wordnet_depth": 5,
+      "edge": {},
+      "aliases": [
+        "stream"
+      ],
+      "source_domain": "natural_geography",
+      "node_kind": "CLASS",
+      "attributes": {
+        "feature_code": "H.STM"
+      },
+      "identity_evidence_id": "expansion:abc3f471957902d8b1bf06ac6d986cf7a75c82bb57e4f81c324a782617a5a5ac",
+      "source_rank": "class",
+      "native_rank": "class",
+      "source_role": "class",
+      "normalized_role": "CLASS",
+      "normalized_rank": null,
+      "rank_status": "UNSPECIFIED",
+      "rank_basis": "Native source rank; accepted identifier-grounded identity peers used only when unambiguous",
+      "role_status": "SOURCE_DECLARED",
+      "aliases_truncated": false,
+      "label_fallback": false,
+      "entity_reachable": false,
+      "typed_depth": null,
+      "root_reachable": true,
+      "root_depth": 5,
+      "typed_root_reachable": false,
+      "relation_view": "unified",
+      "root_uid": "wordnet31:00001740-n"
+    },
+    "full": {
+      "status": "OK",
+      "scope": {
+        "parent": "geonames-feature:H.STM",
+        "components": [
+          8882888
+        ],
+        "domain": null
+      },
+      "relation_view": "unified",
+      "relations": [
+        {
+          "role": "INSTANCE",
+          "relation": "INSTANCE_OF",
+          "concepts": 991798,
+          "source_arcs": 991798,
+          "full_direct_concepts": 991798,
+          "default_presented_concepts": 991798
+        }
+      ],
+      "default_node_kind": "CLASS",
+      "source_arcs_describe_preserved_full_graph": true,
+      "include_coarse": true,
+      "counts_overlap_across_relations_or_roots": true,
+      "directory_groups_are_graph_nodes": false
+    },
+    "default": {
+      "status": "OK",
+      "scope": {
+        "parent": "geonames-feature:H.STM",
+        "components": [
+          8882888
+        ],
+        "domain": null
+      },
+      "relation_view": "unified",
+      "relations": [
+        {
+          "role": "INSTANCE",
+          "relation": "INSTANCE_OF",
+          "concepts": 991798,
+          "source_arcs": 991798,
+          "full_direct_concepts": 991798,
+          "default_presented_concepts": 991798
+        }
+      ],
+      "default_node_kind": "CLASS",
+      "source_arcs_describe_preserved_full_graph": true,
+      "include_coarse": false,
+      "counts_overlap_across_relations_or_roots": true,
+      "directory_groups_are_graph_nodes": false
+    },
+    "first_page": {
+      "status": "EMPTY",
+      "items": [],
+      "has_more": false,
+      "next_cursor": null,
+      "relation_view": "unified",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "scope": {
+        "parent": "geonames-feature:H.STM",
+        "components": [
+          8882888
+        ],
+        "domain": null
+      },
+      "node_kind": "CLASS",
+      "filters": {},
+      "direct_only": true,
+      "identity_deduplicated": true,
+      "grouping_is_classification": false,
+      "coarse_source_connections_retained": true,
+      "include_coarse": false,
+      "preferred_routes_have_source_witnesses": true
+    },
+    "manufacturer_groups": {
+      "status": "NO_NATIVE_VALUES",
+      "items": [],
+      "has_more": false,
+      "next_cursor": null,
+      "relation_view": "unified",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "group_by": "manufacturer",
+      "source_values_only": true,
+      "count_index_used": false,
+      "missing_values_remain_browsable_without_filter": true
+    },
+    "catalogue_grouping_is_classification": false
+  }
+]

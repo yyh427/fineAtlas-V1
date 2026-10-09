@@ -5,6 +5,27 @@ relationship contracts and provenance. It is not released under a new blanket
 license that supersedes the upstream sources. The MIT license in `LICENSE`
 applies to the interface code only.
 
+The locally accepted formal `v1.10.1` promotes two independently built and
+comparison-accepted 1.10 repair artifacts with SDK `1.10.1` and default
+`unified` navigation. Both matching browse indexes were rebuilt. The 16-stage
+local acceptance, 105-table/schema reproduction comparison and 103 non-browse
+table source-semantic preservation checks passed; documented version/SDK
+freeze metadata changes are distinguished from unchanged source semantics. It retains the existing
+source records, licenses, native payloads and attribution; promotion does not
+grant new upstream rights or certify all source semantic assertions. The
+formal SDK/data freeze, artifact checksum and installation evidence are pinned
+separately in [unified_code.json](unified_code.json),
+[unified_data.json](unified_data.json) and the [release results](docs/unified_results.md).
+This documentation does not yet claim that the remote main/Latest switch has
+completed. Historical 1.6 and candidate sources remain available through the
+[version migration instructions](docs/migration_v1.10.1.md).
+
+The v1.8.1-hierarchy-review candidate adds source-backed professional middle
+classes and typed connections while retaining prior independent source records.
+The frozen input archive contains factual/derived records, attribution and
+checksums; downloaded manufacturer pages and images are not release assets.
+Wikipedia-derived definitions retain CC BY-SA 4.0 attribution and article URLs.
+
 | Source | Upstream information |
 |---|---|
 | WordNet 3.1 | https://wordnet.princeton.edu/license-and-commercial-use |
@@ -21,6 +42,7 @@ applies to the interface code only.
 | FoodOn | https://foodon.org/ |
 | MIMO | https://mimo-international.com/ |
 | NLM MeSH | https://www.nlm.nih.gov/databases/download/mesh.html |
+| Amazon Berkeley Objects | https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/index.html |
 
 The recorded source inventories identify Getty AAT as ODC-By 1.0 and FoodOn as
 CC BY 4.0; other upstream terms and source/version-specific conditions should
@@ -89,3 +111,137 @@ NPS waterfall types: [nps-waterfalls](https://www.nps.gov/iafl/learn/kidsyouth/u
 NOAA CMECS coastal classification: [noaa-cmecs](https://repository.library.noaa.gov/view/noaa/41982/noaa_41982_DS1.pdf).
 
 Native identifiers, factual model designations, relation types, source URLs and evidence remain attached to the imported records. Manufacturer names and trademarks remain their owners’ property. Catalog facts do not grant rights to photographs or complete source publications.
+
+## Review candidate catalog scope
+
+The v1.7.1-review candidate additionally retains 3,885 factual series/part records from Murata's C02E-16 multilayer ceramic capacitor catalogue: 12 series and 3,873 orderable part configurations. The [catalogue copy](https://dsvr.org/kompo/datasheets/GRM155F51A334ZE01D.pdf) is referenced with its retained source hash and publisher attribution; the original publication and product images are not distributed as release assets.
+
+[Garmin's product catalogue](https://www.garmin.com.sg/products/wearables/) contributes 60 model/configuration facts; the [Fitbit Charge 6 announcement](https://blog.google/products-and-platforms/devices/fitbit/fitness-tracker-charge-6/) contributes one product design. Counts include SKU variants and do not mean 61 distinct model families or complete brand coverage. Publisher copyright, trademarks and source URLs remain attached to the factual identifiers.
+
+[openFDA device classification](https://open.fda.gov/apis/device/classification/) supplies 7,094 regulatory type records, including 935 independently grounded physical type records. [openFDA UDI](https://open.fda.gov/apis/device/udi/) contributes 705 explicit manufacturer model identifiers and 260,296 sized catalog configurations from the frozen 52-partition input. The [openFDA license](https://open.fda.gov/license/) is CC0. GMDN fields are excluded from the derived records. Ambiguous version/model values remain outside model admission. Device identifiers describe catalog/packaging definitions, not serialized physical instances; regulatory assignment is preserved as `REGULATED_AS`.
+
+## Professional middle classifications
+
+[FAA aircraft reference documentation](https://registry.faa.gov/database/ardata.pdf)
+defines native aircraft, engine and engine-count codes. The candidate classifies
+94,043 retained model reference records using those fields. Structure and
+propulsion are independent dimensions; hybrid/other codes do not imply a
+conventional airframe, intended use or a serialized aircraft identity.
+
+[Environment Ontology](https://github.com/EnvironmentOntology/envo) contributes
+173 native environmental-feature classes under CC0 1.0. Retained native `is_a`
+relations support their hierarchy; part-of relations and logical restrictions
+are not converted to subclass claims. Existing biological and EUNIS versions
+retain their own native classifications.
+
+Professional hardware definitions reference [Microsoft form factors](https://learn.microsoft.com/en-us/windows-hardware/design/form-factors/form-factors),
+[Intel graphics types](https://www.intel.com/content/www/us/en/support/articles/000057824/graphics.html),
+[EIZO LCD technologies](https://www.eizo.com/library/management/cms/02.html/),
+[TP-Link switch categories](https://www.tp-link.com/us/document/12901/),
+[Samsung SSD types](https://semiconductor.samsung.com/news-events/tech-blog/your-guide-to-samsungs-wide-ranging-ssd-selection/),
+[John Deere tractor forms](https://www.deere.com.au/en/tractors/) and
+[Nintendo Switch operating forms](https://www.nintendo.com/en-ca/gaming-systems/switch/system/).
+Each derived class records its definition, axis and primary reference; only
+explicit native fields or retained definitions connect individual designs.
+
+[Apple AirPods Pro specifications](https://www.apple.com/airpods-pro/specs/) and
+[NVIDIA RTX 3090/3090 Ti specifications](https://www.nvidia.com/en-in/geforce/graphics-cards/30-series/rtx-3090-3090ti/)
+support exact product-type connections, rather than propagation to every
+product in a brand or family. Publisher copyright and trademarks remain with
+their owners.
+
+EPA fuel and hybrid fields classify individual configurations. Four retained
+EPA car-line groups use the [historical native classification rule](https://www.govinfo.gov/content/pkg/CFR-2014-title40-vol30/pdf/CFR-2014-title40-vol30-sec600-315-08.pdf)
+as regulatory navigation; car-line majority rules are not physical claims
+about every configuration's body or seat count. [USGS aquifer definitions](https://pubs.usgs.gov/ha/ha730/ch_h/H-text2.html)
+support unconsolidated/alluvial types; named, located aquifers retain INSTANCE
+roles. Per-record source URLs, native-row hashes and scope evidence are retained.
+
+The [Vertebrate Breed Ontology](https://github.com/monarch-initiative/vertebrate-breed-ontology) contributes 40,223 native ontology facts, including its classification framework, under CC BY 4.0. This count is not a count of dog breeds. Native identifiers and source-declared navigation remain distinct from strict inclusion and task-label identity.
+
+## Native type and engineering grain refinements
+
+Restored WordNet 3.1 noun types retain their native UID, gloss and hypernyms. The publisher copyright notice and disclaimer are included in [WORDNET_LICENSE.txt](docs/WORDNET_LICENSE.txt), extracted from the official WordNet 3.1 dictionary header. Wikidata entity snapshots retain their native IDs, factual declarations, retrieval source and checksums under CC0; manufacturing and design context are stored separately from source role assertions. An explicit instance declaration is not replaced by a historical model rank alone.
+
+MIMO keyword-to-Hornbostel/Sachs mappings organise observed source terms for native taxonomy browsing. These variant-dependent classification crosswalks do not merge identities or assert universal physical subtype inclusion. Only observed groups, factual mappings, source URIs and checksums are redistributed in the frozen refinements; complete upstream XML files are not release assets.
+
+Retained Wikipedia introductory definitions are attributed by article title,
+page ID and source URL in each frozen snapshot under CC BY-SA 4.0. Redirected
+articles are recorded separately and do not establish subject identity. Native
+source labels and aliases verify the subject of a definition without merging
+independent source records. Exact engine and propeller classification conditions
+retain their units and counts; only explicit inclusion between existing source
+types supplies a narrower parent.
+
+## Unified candidate primary evidence (1.10)
+
+The unified candidate fixes WordNet at **3.1**; selected upper synsets retain
+Princeton definitions, original hypernyms and attribution. An identity link
+never grants permission to replace a source record or erase its provenance.
+
+AviList **v2025b**, extended checklist dated 10 June 2026, is credited under
+**CC BY 4.0**: [official checklist](https://www.avilist.org/checklist/v2025b/),
+[version DOI](https://doi.org/10.2173/avilist.v2025b). Frozen derived species rows
+retain checklist sequence, scientific scope, shared identifiers and source SHA.
+Wikidata primary identifier, rank and defined-unit snapshots are **CC0**, with
+entity URLs, revision IDs and snapshot checksums retained.
+
+The imported OpenTree taxonomy's actual `version.txt` is **OTT 3.7draft3**;
+its host directory name is not used as the source version. Original identifiers,
+parent declarations, synthesized-tree flags and retained source rows remain.
+Source-declared uncertain placement is honest navigation, not reliable reward
+ancestry. Native taxonomy records denote organism classes only when their scope
+and role contracts support that interpretation.
+
+FAA and EPA intermediate categories use explicit retained source fields and
+source dictionaries, not aircraft/car label prefixes or benchmark class lists.
+FDA regulatory classification and GUDID model/configuration records retain
+openFDA attribution, source field distinctions and `REGULATED_AS` navigation;
+regulatory catalogue membership is not a physical subclass or design distance.
+
+One individual McLaren design-type review cites the manufacturer's 2011 North
+American brochure, page 7, hosted at
+[manufacturer brochure mirror](https://www.auto-brochures.com/makes/mclaren/McLaren_US%20MP4_2011.pdf).
+Only a short factual type statement, document URL and SHA-256 are included.
+The complete proprietary brochure is **not** a release asset. EASA and Transport
+Canada CRJ evidence is recorded for a scope review, without claiming exact
+CRJ-700 annotation identity or redistributing the full source publications.
+
+## Amazon Berkeley Objects furniture metadata trial (1.10.1)
+
+The frozen bounded trial selects **four source catalogue product configurations**
+from the first 200 records of [ABO metadata shard 0](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/listings/metadata/listings_0.json.gz).
+It adds four reviewed `CONFIGURATION_TYPE_OF` connections to existing WordNet 3.1
+furniture types. Native list-valued fields, multilingual names, catalogue paths,
+model fields and asset identifiers are retained. The source key is
+`(domain_name, item_id)`; it does not certify a worldwide manufacturer model,
+cross-marketplace product identity or serialized physical instance. No images or
+3D assets were downloaded. A read-only before/after review of the built primary
+`v1.10.1-repair-review` candidate confirmed all four complete source payloads,
+configuration roles, active typed parents, actual furniture-domain membership
+and legal root paths. Furniture configurations increased from 38 source UIDs /
+38 identity groups to 42 / 42; no worldwide manufacturer model, series or
+serialized instance was added by this trial. Full graph, reproduction and
+public installation were verified for that repair candidate. Formal 1.10.1
+keeps the four-record cohort and its role/identity limits; its new SDK/data
+freeze and actual public installation require their own acceptance receipts.
+
+The official [ABO README](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/README.md)
+and [ABO license file](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/LICENSE-CC-BY-4.0.txt)
+license the material under **Creative Commons Attribution 4.0 International**.
+Copyright: **Amazon.com**. Credit for building the dataset is retained for
+**Matthieu Guillaumin, Thomas Dideriksen, Kenan Deng, Himanshu Arora,
+Jasmine Collins and Jitendra Malik**. Attribution, source and license URIs,
+copyright, original record payloads and modification notices are retained in the
+frozen source materials, `ABO_ATTRIBUTION.txt`, database provenance and source
+catalogue. The changes are bounded metadata selection, configuration-role
+review and a reviewed WordNet type connection; native metadata fields are
+unchanged. This source license is not replaced by the code's MIT license.
+
+The actual frozen 200-record sample SHA-256 is
+`e34761896d8c32b82eb36b7380b8f2b7c5f0b522fb275a83d714a878651cf746`.
+The sample is a biased engineering trial, not an estimate of whole-source
+coverage. Three furniture-tagged records remain excluded: a sofa-tagged fabric
+swatch, a chair title/model-name scope conflict and a multilingual Queen/King
+bed configuration conflict. See [the living-domain scope and bounded trial](docs/living_domains_v1.10.1.md)
+for the four accepted source identities, exact WordNet roots and acceptance scope.

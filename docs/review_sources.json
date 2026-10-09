@@ -1,0 +1,676 @@
+[
+  {
+    "source": "EPA native base-model scope recovery",
+    "source_uri": "https://www.fueleconomy.gov/ws/rest/vehicle/32171",
+    "license": "US federal public-domain source data",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 123,
+      "new_source_uids": 0,
+      "parent_assertions": 123
+    }
+  },
+  {
+    "source": "EPA normalized native fields",
+    "source_uri": "https://www.fueleconomy.gov/ws/rest/vehicle/23178",
+    "license": "US federal public-domain data",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 105023,
+      "new_source_uids": 0,
+      "parent_assertions": 105023
+    }
+  },
+  {
+    "source": "GBIF native rank transition",
+    "source_uri": "https://api.gbif.org/v1/species/2434544",
+    "license": "GBIF backbone facts; source attribution retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 2,
+      "new_source_uids": 0,
+      "parent_assertions": 2
+    }
+  },
+  {
+    "source": "Garmin manufacturer catalogue",
+    "source_uri": "https://www.garmin.com.sg/products/wearables/cirqa-band-l-black/",
+    "license": "Publisher copyright retained; factual identifiers only; Publisher copyright retained; factual product identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 60,
+      "new_source_uids": 60,
+      "parent_assertions": 60
+    }
+  },
+  {
+    "source": "Google Fitbit manufacturer announcement",
+    "source_uri": "https://blog.google/products-and-platforms/devices/fitbit/fitness-tracker-charge-6/",
+    "license": "Publisher copyright retained; factual identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 1,
+      "new_source_uids": 1,
+      "parent_assertions": 1
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Additional exact native-field professional classification",
+    "source_uri": "https://support.apple.com/en-us/108056",
+    "license": "Original source attribution and terms retained; Original source declaration retained; Wikipedia CC BY-SA 4.0; source URL and retained snapshot attribution preserved",
+    "input_sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+    "coverage": {
+      "classes": 0,
+      "operations": 5802,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Additional exact-source professional type definitions",
+    "source_uri": "https://support.apple.com/en-us/108056",
+    "license": "Retained source attribution and terms; original factual type definitions; Wikipedia CC BY-SA 4.0; source URL and retained snapshot attribution preserved",
+    "input_sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+    "coverage": {
+      "classes": 21,
+      "operations": 21,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: EPA retained configuration fields",
+    "source_uri": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+    "license": "Original source attribution and terms retained; derived factual classification",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 0,
+      "operations": 2,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: EPA retained powertrain fields",
+    "source_uri": "https://www.fueleconomy.gov/feg/ws/index.shtml",
+    "license": "Original source attribution and terms retained; derived factual classification",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 5,
+      "operations": 25842,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Engineering shape completion contract",
+    "source_uri": "https://en.wikipedia.org/wiki/SM_U-137",
+    "license": "Prior frozen evidence, declarations and source attribution retained",
+    "input_sha256": "16aa59ae59470e031128b6d34c6a5ae4e7cd1fc6eac2c5810c9a45fb65796c41",
+    "coverage": {
+      "classes": 0,
+      "operations": 136,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Engineering subject genus completion contract",
+    "source_uri": "https://vocab.getty.edu/aat/300007513",
+    "license": "Native source attribution retained; Wikidata CC0 factual metadata; retained independent encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+    "coverage": {
+      "classes": 0,
+      "operations": 12,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Environment Ontology native is_a",
+    "source_uri": "http://purl.obolibrary.org/obo/ENVO_00000406",
+    "license": "ENVO CC0 1.0",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 173,
+      "operations": 173,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: FAA native aircraft reference fields",
+    "source_uri": "https://registry.faa.gov/database/ardata.pdf",
+    "license": "Original source attribution and terms retained; derived factual classification; Original source declaration preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 44,
+      "operations": 188142,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: FDA physical-head scope and WordNet native inclusion",
+    "source_uri": "https://open.fda.gov/apis/device/classification/",
+    "license": "Original source attribution and terms retained; derived factual classification; Original source declaration preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 288,
+      "operations": 2151,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Full engineering subject and grain evidence",
+    "source_uri": "https://www.wikidata.org/wiki/Q13586515",
+    "license": "Native source attribution retained; Wikidata CC0 factual metadata; retained independent encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "16aa59ae59470e031128b6d34c6a5ae4e7cd1fc6eac2c5810c9a45fb65796c41",
+    "coverage": {
+      "classes": 0,
+      "operations": 349,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent generic kind completion contract",
+    "source_uri": "https://www.wikidata.org/wiki/Q188886",
+    "license": "Retained independent encyclopedia definition CC BY-SA 4.0; native source attribution preserved",
+    "input_sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+    "coverage": {
+      "classes": 0,
+      "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent generic type role repair",
+    "source_uri": "https://www.wikidata.org/wiki/Q13049940",
+    "license": "CC0 Wikidata factual definition",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 3,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent individual vessel role repair",
+    "source_uri": "https://www.wikidata.org/wiki/Q655030",
+    "license": "Retained encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent legacy generic-head type refinements",
+    "source_uri": "https://en.wikipedia.org/wiki/Geely_Haoyue",
+    "license": "Original declaration retained; Wikipedia CC BY-SA 4.0; article and retained snapshot attribution preserved",
+    "input_sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+    "coverage": {
+      "classes": 0,
+      "operations": 4996,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent legacy referent and design grain definitions",
+    "source_uri": "https://en.wikipedia.org/wiki/Lynk_&_Co_06",
+    "license": "Wikipedia CC BY-SA 4.0; article and retained snapshot attribution preserved",
+    "input_sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+    "coverage": {
+      "classes": 0,
+      "operations": 899,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Independent particular geographic feature definitions",
+    "source_uri": "https://en.wikipedia.org/wiki/Botany_Sands_Aquifer",
+    "license": "Wikipedia CC BY-SA 4.0; source URL and retained snapshot attribution preserved",
+    "input_sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+    "coverage": {
+      "classes": 0,
+      "operations": 16,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Intel graphics support Article 000057824",
+    "source_uri": "https://www.intel.com/content/www/us/en/support/articles/000057824/graphics.html",
+    "license": "Publisher copyright retained; derived factual definitions only",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 2,
+      "operations": 2,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: MIMO observed native structural classification",
+    "source_uri": "http://www.mimo-db.eu/InstrumentsKeywords/6621",
+    "license": "Original MIMO source terms and attribution retained; derived classification facts; full upstream XML is not redistributed",
+    "input_sha256": "0d7cbb1cd0d7533a662d9bf9a4125114d46094bf52333334da1667f48bc80c8d",
+    "coverage": {
+      "classes": 238,
+      "operations": 3471,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Murata chip monolithic ceramic capacitor catalogue",
+    "source_uri": "https://www.murata.com/products/capacitor/ceramiccapacitor/overview/lineup",
+    "license": "Original source attribution and terms retained; derived factual classification",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 1,
+      "operations": 25,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: NVIDIA native CUDA GPU compute capability definitions",
+    "source_uri": "https://developer.nvidia.com/cuda-gpus",
+    "license": "Original source declaration preserved; Retained NVIDIA source attribution; Retained NVIDIA source attribution; factual type definition",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 1,
+      "operations": 3,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Native aircraft condition hierarchy shortcut contract",
+    "source_uri": "https://www.wikidata.org/wiki/Q126003943",
+    "license": "Native source attribution retained; Wikidata CC0 factual metadata; retained independent encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+    "coverage": {
+      "classes": 0,
+      "operations": 14,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Native engineering design grain repair",
+    "source_uri": "https://www.wikidata.org/wiki/Q101863879",
+    "license": "CC0 Wikidata factual descriptions; retained encyclopedia material CC BY-SA 4.0; native US government facts public domain",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 4079,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Primary professional definitions: deere_tracks",
+    "source_uri": "https://www.deere.com.au/en/tractors/",
+    "license": "Publisher copyright retained; original factual and logical type definitions; attribution preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 4,
+      "operations": 4,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Primary professional definitions: eizo_lcd",
+    "source_uri": "https://www.eizo.com/library/management/cms/02.html/",
+    "license": "Publisher copyright retained; original factual and logical type definitions; attribution preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 4,
+      "operations": 4,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Primary professional definitions: microsoft_forms",
+    "source_uri": "https://learn.microsoft.com/en-us/windows-hardware/design/form-factors/form-factors",
+    "license": "Publisher copyright retained; original factual and logical type definitions; attribution preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 1,
+      "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Princeton WordNet native transport hypernyms",
+    "source_uri": "https://wordnet.princeton.edu/",
+    "license": "Princeton WordNet license; attribution retained",
+    "input_sha256": "c8b4194512828d3351423c0080b78fc03c88458f4731c3747b1c140237e4268b",
+    "coverage": {
+      "classes": 0,
+      "operations": 64,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Professional class root shortcut reduction",
+    "source_uri": "https://www.geonames.org/export/codes.html",
+    "license": "Original source declarations and attribution retained",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 3,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Professional domain-root role clarification",
+    "source_uri": "https://github.com/yyh427/fineAtlas-V1",
+    "license": "FineAtlas derived scope metadata",
+    "input_sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+    "coverage": {
+      "classes": 0,
+      "operations": 2,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Rechecked independent object-kind definitions",
+    "source_uri": "https://en.wikipedia.org/wiki/Geely_Haoyue",
+    "license": "Original source attribution and terms retained; derived factual classification; Wikipedia CC BY-SA 4.0; article URL and retained snapshot attribution preserved; Wikipedia CC BY-SA 4.0; article and retained snapshot attribution preserved",
+    "input_sha256": "80d6f1c837a1e29a49aa571ed2b4ab68973aa8524f67321b484b4288b8d954e2",
+    "coverage": {
+      "classes": 0,
+      "operations": 8187,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Retained WordNet device definitions and computer hardware scope",
+    "source_uri": "https://wordnet.princeton.edu/",
+    "license": "Princeton WordNet license and existing source attribution retained; Retained source attribution",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 3,
+      "operations": 5,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Retained independent device definition",
+    "source_uri": "https://macdat.net/files/pdf/toshiba/service_manual/t3100.pdf",
+    "license": "Original source attribution and terms retained; derived factual classification",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 0,
+      "operations": 2,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Retained independent generic-head definition",
+    "source_uri": "https://en.wikipedia.org/wiki/Geely_Haoyue",
+    "license": "Original source attribution and terms retained; derived factual classification; Wikipedia CC BY-SA 4.0; article URL and retained snapshot attribution preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 0,
+      "operations": 11639,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Retained independent role definitions",
+    "source_uri": "https://www.wikidata.org/wiki/Q385642",
+    "license": "Original source attribution and terms retained; derived factual classification; Wikipedia CC BY-SA 4.0; article URL and retained snapshot attribution preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 0,
+      "operations": 1427,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Retained source professional type predicates",
+    "source_uri": "https://www.wikidata.org/wiki/Q100500386",
+    "license": "Original declaration retained; Original source attribution and terms retained; Original source declaration preserved; Retained source attribution; derived factual and logical type definition; Wikipedia CC BY-SA 4.0; article URL and retained snapshot attribution preserved",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 41,
+      "operations": 3219,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Reviewed native endpoint relation repair",
+    "source_uri": "https://www.wikidata.org",
+    "license": "Original source assertion retained",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 4,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Reviewed professional leaf design grain",
+    "source_uri": "https://en.wikipedia.org/wiki/LG_G_Pad_8.3",
+    "license": "CC0 Wikidata facts; retained encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 12,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Reviewed radar system definition",
+    "source_uri": "https://en.wikipedia.org/wiki/Erieye",
+    "license": "Retained encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Reviewed radar system semantic boundary",
+    "source_uri": "https://en.wikipedia.org/wiki/Erieye",
+    "license": "Retained encyclopedia definition CC BY-SA 4.0",
+    "input_sha256": "054e077c03199db7e86d424cfb6610aaf7ee12a34f3f3816f64b9bf00d9adbeb",
+    "coverage": {
+      "classes": 0,
+      "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Reviewed related native engineering grain",
+    "source_uri": "https://www.wikidata.org/wiki/Q106340242",
+    "license": "CC0 Wikidata factual descriptions",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 90,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Reviewed remaining engineering source grain",
+    "source_uri": "https://www.wikidata.org/wiki/Q16562996",
+    "license": "CC0 Wikidata factual descriptions; retained encyclopedia definitions CC BY-SA 4.0",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 48,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Source admission retained after lexical-parent review",
+    "source_uri": "https://en.wikipedia.org/wiki/MG_Cyberster",
+    "license": "Original source assertion and terms retained",
+    "input_sha256": "80d6f1c837a1e29a49aa571ed2b4ab68973aa8524f67321b484b4288b8d954e2",
+    "coverage": {
+      "classes": 0,
+      "operations": 1637,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Source engineering grain and relation repair",
+    "source_uri": "https://www.wikidata.org/wiki/Q102105612",
+    "license": "Original source attribution retained; Original source terms and attribution retained",
+    "input_sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+    "coverage": {
+      "classes": 0,
+      "operations": 6254,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: Verified isolated native design identity",
+    "source_uri": "https://www.wikidata.org/wiki/Q29453992",
+    "license": "Wikidata CC0; FAA public domain",
+    "input_sha256": "3394d003668815156b025bb214ba675b6d95d1677d9d1ea57c55ebc87f031794",
+    "coverage": {
+      "classes": 0,
+      "operations": 1,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Hierarchy refinement: WFO botanical rank semantics",
+    "source_uri": "https://www.iapt-taxon.org/nomen/pages/main/art_4.html",
+    "license": "Original source attribution and terms retained; derived factual classification",
+    "input_sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+    "coverage": {
+      "classes": 0,
+      "operations": 20,
+      "source_statement_retained": true
+    }
+  },
+  {
+    "source": "Independent native product-family definition",
+    "source_uri": "https://www.wikidata.org/wiki/Q1000739",
+    "license": "CC0 Wikidata facts; independent Wikipedia factual statement attribution retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 8461,
+      "new_source_uids": 0,
+      "parent_assertions": 8461
+    }
+  },
+  {
+    "source": "Murata C02E-16 catalogue",
+    "source_uri": "https://dsvr.org/kompo/datasheets/GRM155F51A334ZE01D.pdf",
+    "license": "Publisher copyright retained; factual identifiers only; original document not redistributed",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 3885,
+      "new_source_uids": 3885,
+      "parent_assertions": 3885
+    }
+  },
+  {
+    "source": "Native task category and RHS botanical scope",
+    "source_uri": "https://www.rhs.org.uk/plants/alstroemeria",
+    "license": "Publisher copyright retained; factual names and scope only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 2,
+      "new_source_uids": 2,
+      "parent_assertions": 2
+    }
+  },
+  {
+    "source": "Publisher-scoped aircraft design declarations",
+    "source_uri": "https://www.aircraft.airbus.com/en/customer-care/fleet-wide-care/airport-operations-and-aircraft-characteristics/aircraft-characteristics",
+    "license": "Publisher copyright retained; factual design identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 22,
+      "new_source_uids": 0,
+      "parent_assertions": 22
+    }
+  },
+  {
+    "source": "RHS cultivar profile",
+    "source_uri": "https://www.rhs.org.uk/plants/96238/dahlia-bishop-of-llandaff-p/details",
+    "license": "Publisher copyright retained; factual botanical identifiers only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 2,
+      "new_source_uids": 0,
+      "parent_assertions": 2
+    }
+  },
+  {
+    "source": "Reviewed primary manufacturer/government model scope",
+    "source_uri": "https://www.amgeneral.com/hummer-breakoff/",
+    "license": "Publisher copyright retained; factual source identifiers and membership only",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 10,
+      "new_source_uids": 0,
+      "parent_assertions": 10
+    }
+  },
+  {
+    "source": "Vertebrate Breed Ontology",
+    "source_uri": "http://purl.obolibrary.org/obo/NCBITaxon_1",
+    "license": "CC-BY-4.0",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 40223,
+      "new_source_uids": 20112,
+      "parent_assertions": 21372
+    }
+  },
+  {
+    "source": "Wikidata",
+    "source_uri": "https://www.wikidata.org",
+    "license": "CC0",
+    "input_sha256": "9ed0687cb7e0a713744ce7fe8c1b34892ef95a4ea49d7bf58f61d94d024d6aab",
+    "coverage": {
+      "fetched_batches": 1001,
+      "matched_entities": 50034,
+      "name_assertions": 69892
+    }
+  },
+  {
+    "source": "Wikidata native dump metadata",
+    "source_uri": "https://www.wikidata.org/wiki/Wikidata:Database_download",
+    "license": "CC0",
+    "input_sha256": "9eee3ca3c4cb4daf2657c2cdae22d0361603c33c5c1d55f14cda53d3169e26ef",
+    "coverage": {
+      "CONFLICT_REVIEW": 489,
+      "SOURCE_DECLARED": 3317930,
+      "description_uids": 3059532,
+      "records": 3364343,
+      "recovered_label_uids": 6,
+      "role": "metadata and taxon-rank annotations only; no ISA claims"
+    }
+  },
+  {
+    "source": "openFDA GUDID manufacturer-reported model",
+    "source_uri": "https://api.fda.gov/device/udi.json?search=public_device_record_key:7d5fb7d4-0566-43b0-a29e-45a90dd4a410",
+    "license": "CC0; no GMDN fields used or retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 705,
+      "new_source_uids": 705,
+      "parent_assertions": 833
+    }
+  },
+  {
+    "source": "openFDA GUDID sized catalog configuration",
+    "source_uri": "https://api.fda.gov/device/udi.json?search=public_device_record_key:74c79867-c20b-48c5-adf4-1f136168ea92",
+    "license": "CC0; no GMDN fields used or retained",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 260296,
+      "new_source_uids": 260296,
+      "parent_assertions": 399715
+    }
+  },
+  {
+    "source": "openFDA device classification",
+    "source_uri": "https://api.fda.gov/device/classification.json?search=product_code:BRT",
+    "license": "CC0",
+    "input_sha256": "a7cd4d5e157281f10ba0714b2ae611bea7bd651b09f782af17f4cab6cde81258",
+    "coverage": {
+      "facts": 7094,
+      "new_source_uids": 7094,
+      "parent_assertions": 8964
+    }
+  }
+]

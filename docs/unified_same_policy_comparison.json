@@ -1,0 +1,145 @@
+{
+  "cub200": {
+    "pairs": 19900,
+    "statuses": {
+      "APPLICABLE": 7770,
+      "COARSE_COMMON_ANCESTOR_ONLY": 8340,
+      "ENDPOINT_NOT_APPLICABLE": 3790
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:01505702-n",
+        "v4root:bird",
+        "ott:81461"
+      ],
+      "source_scope": "avilist",
+      "requirement": "species"
+    },
+    "annotation_review_labels": [
+      "101",
+      "103",
+      "105",
+      "110",
+      "126",
+      "130",
+      "134",
+      "141",
+      "146",
+      "17",
+      "171",
+      "182",
+      "196",
+      "44",
+      "62",
+      "70",
+      "74",
+      "83",
+      "91",
+      "92"
+    ],
+    "revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "fgvc_aircraft": {
+    "pairs": 4950,
+    "statuses": {
+      "APPLICABLE": 3028,
+      "ENDPOINT_NOT_APPLICABLE": 1295,
+      "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
+      "COARSE_COMMON_ANCESTOR_ONLY": 212
+    },
+    "configuration": {
+      "policy": "design",
+      "coarse_roots": [
+        "wordnet31:02689427-n"
+      ],
+      "requirement": "model_design"
+    },
+    "annotation_review_labels": [],
+    "revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "flowers102": {
+    "pairs": 5151,
+    "statuses": {
+      "APPLICABLE": 1077,
+      "ENDPOINT_NOT_APPLICABLE": 3071,
+      "COARSE_COMMON_ANCESTOR_ONLY": 1003
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:00017402-n"
+      ],
+      "requirement": "species"
+    },
+    "annotation_review_labels": [],
+    "revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "pets37": {
+    "pairs": 666,
+    "statuses": {
+      "APPLICABLE": 638,
+      "COARSE_COMMON_ANCESTOR_ONLY": 28
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:00015568-n"
+      ],
+      "requirement": "hierarchy"
+    },
+    "annotation_review_labels": [],
+    "revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "stanford_dogs": {
+    "pairs": 7140,
+    "statuses": {
+      "COARSE_COMMON_ANCESTOR_ONLY": 6423,
+      "APPLICABLE": 717
+    },
+    "configuration": {
+      "policy": "classification",
+      "coarse_roots": [
+        "wordnet31:02086723-n"
+      ],
+      "requirement": "hierarchy"
+    },
+    "annotation_review_labels": [],
+    "revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  },
+  "stanford_cars": {
+    "pairs": 19110,
+    "statuses": {
+      "COARSE_COMMON_ANCESTOR_ONLY": 16336,
+      "IDENTITY_LINEAGE_ROLE_CONFLICT": 2639,
+      "APPLICABLE": 135
+    },
+    "configuration": {
+      "policy": "configuration",
+      "coarse_roots": [
+        "wordnet31:02961779-n"
+      ],
+      "requirement": "configuration"
+    },
+    "annotation_review_labels": [],
+    "revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+    "view": "unified",
+    "policy_definition": "Exact same typed source/grain/floor rules; snapshot target/identity/edge differences remain observable",
+    "scientific_or_visual_reward_calibration": false
+  }
+}

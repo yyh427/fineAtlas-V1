@@ -1,0 +1,72 @@
+{
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-000",
+      "bytes": 1073741824,
+      "sha256": "4f9850742699d0056a0f3d091cfbf92fea14d072a4544247e0f5fad1a3df44a6",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-001",
+      "bytes": 1073741824,
+      "sha256": "3e0129f768b2fdad81bdf7c8ecead4a213e63a6bc296be645951e297adc0d9b6",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-002",
+      "bytes": 1073741824,
+      "sha256": "4961673f3b04b0427a6f9eaca6144040d7a0c6d46cbadede6f80c4acc3f593ae",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-003",
+      "bytes": 1073741824,
+      "sha256": "f89c535e2b305950b03e8671e3e9d2b7a2e136f01f2d7154eadd69ae409fca22",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-004",
+      "bytes": 1073741824,
+      "sha256": "a266a6c4116901853d12542edddf1a47061f6eb5f74ef17e3c37957ed6b892f4",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-005",
+      "bytes": 59391179,
+      "sha256": "9e9c26083172ff2188a1ec653414f3ef1cb7020fa58d84fa4721d251e28992c8",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "review_data.json",
+      "bytes": 1821,
+      "sha256": "62d5bfd5aad67d7842438d01c370c733105009c0ba806d9effd9e35eb28e2bd9",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.browse.sqlite.zst.part-000",
+      "bytes": 997905152,
+      "sha256": "87a85785533a72dc6334cdc9cfd287c55469922ce13ea856e6a7fa217b6d2679",
+      "present": true,
+      "pass": true
+    },
+    {
+      "name": "night_browse_data.json",
+      "bytes": 1094,
+      "sha256": "2d9a7cfe66d06619931861185499283fb997fe2a09917fa13897f663bb3edb27",
+      "present": true,
+      "pass": true
+    }
+  ],
+  "isDraft": false,
+  "isPrerelease": true,
+  "tag": "v1.9.0-night-review",
+  "target": "e0ccfb8f10b0a188dd4934af006fcf4ad27585af"
+}

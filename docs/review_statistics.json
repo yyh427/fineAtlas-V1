@@ -1,0 +1,325 @@
+{
+  "release": "v1.8.1-hierarchy-review",
+  "database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
+  "source_uid_count": 12654569,
+  "visibility": {
+    "ACTIVE": 12400273,
+    "PRUNED_WORDNET": 15,
+    "SOURCE_ONLY": 254281
+  },
+  "active_roles": {
+    "ATTRIBUTE": 49,
+    "BIOLOGICAL_VARIANT": 41883,
+    "CLASS": 8385606,
+    "CONFIGURATION": 319290,
+    "DATASET_CATEGORY": 594,
+    "INSTANCE": 3401724,
+    "MODEL": 165186,
+    "MODEL_FAMILY": 5140,
+    "ORGANIZATION": 80792,
+    "UNKNOWN": 9
+  },
+  "canonical_portals": 91,
+  "compatible_portals": 93,
+  "views": {
+    "strict": {
+      "class_root_groups": 5035169,
+      "class_root_source_uids": 5038252,
+      "class_groups_total": 8631988,
+      "arcs": 5307712,
+      "provenance_rows": 5312561,
+      "cycle_arcs": 0,
+      "weak_components": 3333314,
+      "unrooted_weak_components": 3333313,
+      "unrooted_frontier_groups": 3333380,
+      "max_root_shortest_depth": 40,
+      "typed_terminal_root_uids": 3655185
+    },
+    "taxonomy": {
+      "class_root_groups": 8397147,
+      "class_root_source_uids": 8361103,
+      "class_groups_total": 8882706,
+      "arcs": 8427009,
+      "provenance_rows": 8655432,
+      "cycle_arcs": 0,
+      "weak_components": 477015,
+      "unrooted_weak_components": 477014,
+      "unrooted_frontier_groups": 477042,
+      "max_root_shortest_depth": 86,
+      "typed_terminal_root_uids": 3857621
+    },
+    "membership": {
+      "class_root_groups": 1,
+      "class_root_source_uids": 1,
+      "class_groups_total": 8632582,
+      "arcs": 13765,
+      "provenance_rows": 13765,
+      "cycle_arcs": 0,
+      "weak_components": 8618877,
+      "unrooted_weak_components": 8618876,
+      "unrooted_frontier_groups": 8618909,
+      "max_root_shortest_depth": 0,
+      "typed_terminal_root_uids": 0
+    }
+  },
+  "focused_task_counts": {
+    "strict": {
+      "labels": 755,
+      "root_path": 567,
+      "hierarchy_usable": 567,
+      "strict_classification_usable": 269
+    },
+    "taxonomy": {
+      "labels": 755,
+      "root_path": 754,
+      "hierarchy_usable": 754,
+      "strict_classification_usable": 0
+    },
+    "membership": {
+      "labels": 755,
+      "root_path": 0,
+      "hierarchy_usable": 0,
+      "strict_classification_usable": 0
+    }
+  },
+  "metric_definitions": {
+    "source_uid_count": "Independent source representations, including classes, designs, configurations and instances; not unique real-world classes.",
+    "class_groups_total": "Identity groups with roles admitted to each view, including conceptual model/configuration groups.",
+    "class_root_source_uids": "Source UIDs in CLASS/MODEL/MODEL_FAMILY/CONFIGURATION roles with a pure selected-view classification root path.",
+    "typed_terminal_root_uids": "Role-compatible explicit terminal connections; not strict IS_A count.",
+    "depth": "Maximum shortest rooted classification distance; identity links cost zero.",
+    "domain_scope": "Native-root descendant membership can include a legitimate unrooted global branch. Domain counts overlap."
+  },
+  "hierarchy_cohort": {
+    "total_records": 391790,
+    "cohorts": [
+      {
+        "file": "hierarchy_facts.jsonl",
+        "records": 232661,
+        "sha256": "2f9dbf09814408d521f2ebe0382463463996f2504fc14fb2f54d9f2977f7ea43",
+        "operations": {
+          "class": 567,
+          "role": 1443,
+          "withdraw_typed": 100,
+          "split_identity": 1,
+          "link": 133581,
+          "withdraw_edge": 96969
+        }
+      },
+      {
+        "file": "hierarchy_extensions.jsonl",
+        "records": 11736,
+        "sha256": "ddb24539a426cd4739cc54303c1c941cd4e0a0679507436ad9b40726cf493f53",
+        "operations": {
+          "class": 21,
+          "link": 9354,
+          "role": 907,
+          "withdraw_edge": 1423,
+          "portal_roots": 2,
+          "withdraw_typed": 29
+        }
+      },
+      {
+        "file": "hierarchy_contract_repairs.jsonl",
+        "records": 9824,
+        "sha256": "80d6f1c837a1e29a49aa571ed2b4ab68973aa8524f67321b484b4288b8d954e2",
+        "operations": {
+          "withdraw_typed": 4424,
+          "link": 2796,
+          "withdraw_edge": 967,
+          "restore_edge": 1637
+        }
+      },
+      {
+        "file": "hierarchy_role_repairs.jsonl",
+        "records": 10495,
+        "sha256": "52e85e81fab85cd3571707f39ab3528391671233a485bde1d2eaa1b2ab1fa9bc",
+        "operations": {
+          "role": 4224,
+          "withdraw_edge": 3152,
+          "link": 3115,
+          "withdraw_typed": 4
+        }
+      },
+      {
+        "file": "hierarchy_semantic_repairs.jsonl",
+        "records": 1,
+        "sha256": "054e077c03199db7e86d424cfb6610aaf7ee12a34f3f3816f64b9bf00d9adbeb",
+        "operations": {
+          "withdraw_typed": 1
+        }
+      },
+      {
+        "file": "hierarchy_identity_role_repairs.jsonl",
+        "records": 1,
+        "sha256": "3394d003668815156b025bb214ba675b6d95d1677d9d1ea57c55ebc87f031794",
+        "operations": {
+          "role": 1
+        }
+      },
+      {
+        "file": "hierarchy_type_repairs.jsonl",
+        "records": 64,
+        "sha256": "c8b4194512828d3351423c0080b78fc03c88458f4731c3747b1c140237e4268b",
+        "operations": {
+          "activate_native_type": 64
+        }
+      },
+      {
+        "file": "hierarchy_shape_repairs.jsonl",
+        "records": 102151,
+        "sha256": "50080f85b460d0748cec6279c5ac36b8c1d552032571dc42bacd2d3a6c37403d",
+        "operations": {
+          "source_review": 118,
+          "role": 18494,
+          "link": 45825,
+          "withdraw_typed": 2226,
+          "withdraw_edge": 35488
+        }
+      },
+      {
+        "file": "hierarchy_structure_repairs.jsonl",
+        "records": 3471,
+        "sha256": "0d7cbb1cd0d7533a662d9bf9a4125114d46094bf52333334da1667f48bc80c8d",
+        "operations": {
+          "link": 1668,
+          "withdraw_edge": 1565,
+          "class": 238
+        }
+      },
+      {
+        "file": "hierarchy_shape_completion.jsonl",
+        "records": 411,
+        "sha256": "39df0679c4d2c4ebc89cf9120aba52bee88836f119aba6855398487994f32cc8",
+        "operations": {
+          "role": 126,
+          "link": 123,
+          "withdraw_edge": 120,
+          "withdraw_frozen_link": 42
+        }
+      },
+      {
+        "file": "hierarchy_subject_repairs.jsonl",
+        "records": 20490,
+        "sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+        "operations": {
+          "source_review": 85,
+          "role": 18625,
+          "link": 1020,
+          "withdraw_typed": 19,
+          "withdraw_edge": 564,
+          "withdraw_frozen_link": 177
+        }
+      },
+      {
+        "file": "hierarchy_admission_reviews.jsonl",
+        "records": 485,
+        "sha256": "16aa59ae59470e031128b6d34c6a5ae4e7cd1fc6eac2c5810c9a45fb65796c41",
+        "operations": {
+          "role": 41,
+          "source_review": 94,
+          "link": 34,
+          "withdraw_edge": 181,
+          "withdraw_frozen_link": 135
+        }
+      }
+    ],
+    "unique_class_uids": 826,
+    "new_classes_by_domain": {
+      "aircraft": 44,
+      "medical_devices": 288,
+      "cars": 9,
+      "mountain_ranges": 2,
+      "mountains": 14,
+      "rivers": 4,
+      "lakes": 66,
+      "islands": 15,
+      "beaches": 6,
+      "valleys": 19,
+      "volcanoes": 11,
+      "glaciers": 12,
+      "clouds": 24,
+      "ceramic_capacitors": 1,
+      "computer_monitors": 6,
+      "television_sets": 3,
+      "cameras": 2,
+      "digital_cameras": 2,
+      "camera_lenses": 2,
+      "network_switches": 3,
+      "network_routers": 3,
+      "solid_state_drives": 6,
+      "integrated_circuits": 1,
+      "semiconductor_diodes": 4,
+      "microprocessors": 2,
+      "printers": 1,
+      "desktop_computers": 1,
+      "laptops": 1,
+      "single_board_computers": 1,
+      "headphones": 1,
+      "earbuds": 2,
+      "fitness_trackers": 2,
+      "wearable_computers": 1,
+      "game_consoles": 2,
+      "tractors": 4,
+      "tablets": 3,
+      "computer_hardware": 3,
+      "gpus": 3,
+      "smartwatches": 3,
+      "loudspeakers": 1,
+      "aquifers": 1,
+      "surgical_instruments": 4,
+      "habitat_complexes": 2,
+      "deserts": 1,
+      "graphics_cards": 2,
+      "musical_instruments": 238
+    },
+    "engineering_role_repair": {
+      "role_uids": 25411
+    },
+    "native_type_restorations": 64,
+    "source_only_reviews": 275,
+    "native_instrument_classification_groups": 238,
+    "engineering_shape": {
+      "source_representations": 19040,
+      "final_grains": {
+        "UNKNOWN": 275,
+        "MODEL": 15381,
+        "MODEL_FAMILY": 3214,
+        "INSTANCE": 169,
+        "CLASS": 1
+      },
+      "source_review_records": 275,
+      "root_width_counting": "Generic layers count only admitted CLASS-to-CLASS inclusion; named designs and source-classification groups are separate."
+    },
+    "role_uids": 25411,
+    "source_review_uids": 275,
+    "new_CLASS_source_uids": 826,
+    "final_roles": {
+      "CLASS": 30,
+      "MODEL": 21094,
+      "MODEL_FAMILY": 3832,
+      "INSTANCE": 180,
+      "UNKNOWN": 275
+    },
+    "inputs_folder": "inputs-delivery-final5",
+    "subject_completion": {
+      "additional_decisions": 20490,
+      "prior_shape_sha256": "50080f85b460d0748cec6279c5ac36b8c1d552032571dc42bacd2d3a6c37403d",
+      "changed_role_uids": 194,
+      "superseded_generated_links": 163,
+      "sha256": "445722dd8f47c96603d543c84846da7255f912211e86006627a9919dcc4a1b93",
+      "condition_shortcut_withdrawals": 14
+    },
+    "condition_shortcut_withdrawals": 14,
+    "admission_review_completion": {
+      "additional_decisions": 485,
+      "prior_shape_sha256": "50080f85b460d0748cec6279c5ac36b8c1d552032571dc42bacd2d3a6c37403d",
+      "changed_role_uids": 135,
+      "superseded_generated_links": 135,
+      "sha256": "16aa59ae59470e031128b6d34c6a5ae4e7cd1fc6eac2c5810c9a45fb65796c41"
+    },
+    "counting_boundary": "Cohort role totals count unique source UIDs with the latest frozen role/source-review decision; they are not database-wide role totals or distinct real objects."
+  },
+  "ordinary_CLASS_layers_file": "review_hierarchy.csv",
+  "professional_CLASS_definitions_file": "review_middle_classes.csv"
+}

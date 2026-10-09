@@ -1,1078 +1,793 @@
 [
   {
-    "canonical_root_uid": "wordnet31:09382700-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "mountains",
-    "entry_uid": "fineatlas-domain:mountains",
-    "label": "mountains",
+    "domain": "agricultural_habitats",
+    "entry_uid": "fineatlas-domain:agricultural_habitats",
     "root_uids": [
-      "wikidata:Q8502",
-      "wordnet31:09382700-n"
+      "eunis2012:I"
     ],
-    "uid": "fineatlas-domain:mountains"
+    "description": "EEA habitat classification entry with versioned source codes."
   },
   {
-    "canonical_root_uid": "wordnet31:09434308-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "rivers",
-    "entry_uid": "fineatlas-domain:rivers",
-    "label": "rivers and streams",
+    "domain": "aircraft",
+    "entry_uid": "fineatlas-domain:aircraft",
     "root_uids": [
-      "eunis2012:C2",
-      "wikidata:Q4022",
-      "wordnet31:09434308-n",
-      "wordnet31:09471510-n"
+      "wordnet31:02689427-n"
     ],
-    "uid": "fineatlas-domain:rivers"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09351810-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "lakes",
-    "entry_uid": "fineatlas-domain:lakes",
-    "label": "lakes and standing-water habitats",
+    "domain": "animals",
+    "entry_uid": "fineatlas-domain:animals",
     "root_uids": [
-      "eunis2012:C1",
-      "wikidata:Q23397",
-      "wordnet31:09351810-n"
+      "ott:691846",
+      "wordnet31:00015568-n"
     ],
-    "uid": "fineatlas-domain:lakes"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09498422-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "waterfalls",
-    "entry_uid": "fineatlas-domain:waterfalls",
-    "label": "waterfalls",
+    "domain": "aquifers",
+    "entry_uid": "fineatlas-domain:aquifers",
     "root_uids": [
-      "wikidata:Q34038",
-      "wordnet31:09498422-n"
+      "wordnet31:09224876-n"
     ],
-    "uid": "fineatlas-domain:waterfalls"
+    "description": "Groundwater-bearing geological formations and their reviewed hydrological types"
   },
   {
-    "canonical_root_uid": "wordnet31:09495727-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "volcanoes",
-    "entry_uid": "fineatlas-domain:volcanoes",
-    "label": "volcanoes",
+    "domain": "archaea",
+    "entry_uid": "fineatlas-domain:archaea",
     "root_uids": [
-      "wikidata:Q8072",
-      "wordnet31:09495727-n"
+      "ott:996421"
     ],
-    "uid": "fineatlas-domain:volcanoes"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09312237-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "glaciers",
-    "entry_uid": "fineatlas-domain:glaciers",
-    "label": "glaciers",
+    "domain": "artificial_habitats",
+    "entry_uid": "fineatlas-domain:artificial_habitats",
     "root_uids": [
-      "wikidata:Q35666",
-      "wordnet31:09312237-n"
+      "eunis2012:J"
     ],
-    "uid": "fineatlas-domain:glaciers"
+    "description": "EEA habitat classification entry with versioned source codes."
   },
   {
-    "canonical_root_uid": "wikidata:Q7946",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "minerals",
-    "entry_uid": "fineatlas-domain:minerals",
-    "label": "minerals",
+    "domain": "bacteria",
+    "entry_uid": "fineatlas-domain:bacteria",
     "root_uids": [
-      "wikidata:Q7946",
-      "wordnet31:14686753-n"
+      "ott:844192",
+      "wordnet31:01351171-n"
     ],
-    "uid": "fineatlas-domain:minerals"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09270316-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
+    "domain": "beaches",
+    "entry_uid": "fineatlas-domain:beaches",
+    "root_uids": [
+      "wikidata:Q40080",
+      "wordnet31:09240137-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "birds",
+    "entry_uid": "fineatlas-domain:birds",
+    "root_uids": [
+      "ott:81461",
+      "wordnet31:01505702-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "bridges",
+    "entry_uid": "fineatlas-domain:bridges",
+    "root_uids": [
+      "wikidata:Q12280",
+      "wordnet31:02901994-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "buildings",
+    "entry_uid": "fineatlas-domain:buildings",
+    "root_uids": [
+      "wikidata:Q41176",
+      "wordnet31:02916498-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "camera_bodies",
+    "entry_uid": "fineatlas-domain:camera_bodies",
+    "root_uids": [
+      "aat:300022636",
+      "wordnet31:02946154-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "camera_lenses",
+    "entry_uid": "fineatlas-domain:camera_lenses",
+    "root_uids": [
+      "wikidata:Q192234",
+      "wordnet31:02946696-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "cameras",
+    "entry_uid": "fineatlas-domain:cameras",
+    "root_uids": [
+      "wikidata:Q15328"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "cars",
+    "entry_uid": "fineatlas-domain:cars",
+    "root_uids": [
+      "wordnet31:02961779-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "ceramic_capacitors",
+    "entry_uid": "fineatlas-domain:ceramic_capacitors",
+    "root_uids": [
+      "wikidata:Q337701"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "clothing",
+    "entry_uid": "fineatlas-domain:clothing",
+    "root_uids": [
+      "wikidata:Q11460",
+      "wordnet31:03055525-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
     "domain": "clouds",
     "entry_uid": "fineatlas-domain:clouds",
-    "label": "clouds",
     "root_uids": [
       "wikidata:Q8074",
       "wordnet31:09270316-n"
     ],
-    "uid": "fineatlas-domain:clouds"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09306921-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
+    "domain": "coastal_habitats",
+    "entry_uid": "fineatlas-domain:coastal_habitats",
+    "root_uids": [
+      "eunis2012:B",
+      "eunis2021:N"
+    ],
+    "description": "EEA habitat classification entry with versioned source codes."
+  },
+  {
+    "domain": "computer_hardware",
+    "entry_uid": "fineatlas-domain:computer_hardware",
+    "root_uids": [
+      "wikidata:Q3966",
+      "wikidata:Q183484",
+      "wikidata:Q487343",
+      "wikidata:Q5290",
+      "wikidata:Q5297"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "computer_monitors",
+    "entry_uid": "fineatlas-domain:computer_monitors",
+    "root_uids": [
+      "wikidata:Q5290",
+      "wordnet31:03089261-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "computers",
+    "entry_uid": "fineatlas-domain:computers",
+    "root_uids": [
+      "wikidata:Q68",
+      "wordnet31:03086983-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "deserts",
+    "entry_uid": "fineatlas-domain:deserts",
+    "root_uids": [
+      "wikidata:Q8514",
+      "wordnet31:08522594-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "desktop_computers",
+    "entry_uid": "fineatlas-domain:desktop_computers",
+    "root_uids": [
+      "wikidata:Q56155"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "digital_cameras",
+    "entry_uid": "fineatlas-domain:digital_cameras",
+    "root_uids": [
+      "wikidata:Q62927",
+      "wordnet31:03200746-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "dishes",
+    "entry_uid": "fineatlas-domain:dishes",
+    "root_uids": [
+      "wikidata:Q746549",
+      "wordnet31:07572999-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "earbuds",
+    "entry_uid": "fineatlas-domain:earbuds",
+    "root_uids": [
+      "wikidata:Q50184015"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "electronic_components",
+    "entry_uid": "fineatlas-domain:electronic_components",
+    "root_uids": [
+      "wikidata:Q11653"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "electronic_devices",
+    "entry_uid": "fineatlas-domain:electronic_devices",
+    "root_uids": [
+      "wikidata:Q2858615",
+      "wordnet31:03282682-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "electronic_equipment",
+    "entry_uid": "fineatlas-domain:electronic_equipment",
+    "root_uids": [
+      "wordnet31:03283159-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "fitness_trackers",
+    "entry_uid": "fineatlas-domain:fitness_trackers",
+    "root_uids": [
+      "wikidata:Q16001686"
+    ],
+    "description": "Activity/fitness tracker object type and source-grounded named designs/configurations; not asserted to be a subtype of wearable computer"
+  },
+  {
+    "domain": "food_products",
+    "entry_uid": "fineatlas-domain:food_products",
+    "root_uids": [
+      "foodon:FOODON_00001002"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "forest_habitats",
+    "entry_uid": "fineatlas-domain:forest_habitats",
+    "root_uids": [
+      "eunis2012:G",
+      "eunis2021:T"
+    ],
+    "description": "EEA habitat classification entry with versioned source codes."
+  },
+  {
     "domain": "forests",
     "entry_uid": "fineatlas-domain:forests",
-    "label": "forests",
     "root_uids": [
       "eunis2012:G",
       "eunis2021:T",
       "wikidata:Q4421",
       "wordnet31:09306921-n"
     ],
-    "uid": "fineatlas-domain:forests"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09240137-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "beaches",
-    "entry_uid": "fineatlas-domain:beaches",
-    "label": "beaches",
+    "domain": "freshwater_habitats",
+    "entry_uid": "fineatlas-domain:freshwater_habitats",
     "root_uids": [
-      "wikidata:Q40080",
-      "wordnet31:09240137-n"
+      "eunis2012:C"
     ],
-    "uid": "fineatlas-domain:beaches"
+    "description": "EEA habitat classification entry with versioned source codes."
   },
   {
-    "canonical_root_uid": "wordnet31:08522594-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "deserts",
-    "entry_uid": "fineatlas-domain:deserts",
-    "label": "deserts",
-    "root_uids": [
-      "wikidata:Q8514",
-      "wordnet31:08522594-n"
-    ],
-    "uid": "fineatlas-domain:deserts"
-  },
-  {
-    "canonical_root_uid": "wordnet31:09339360-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "islands",
-    "entry_uid": "fineatlas-domain:islands",
-    "label": "islands",
-    "root_uids": [
-      "wikidata:Q23442",
-      "wordnet31:09339360-n"
-    ],
-    "uid": "fineatlas-domain:islands"
-  },
-  {
-    "canonical_root_uid": "wordnet31:09491734-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "valleys",
-    "entry_uid": "fineatlas-domain:valleys",
-    "label": "valleys",
-    "root_uids": [
-      "wikidata:Q39816",
-      "wordnet31:09491734-n"
-    ],
-    "uid": "fineatlas-domain:valleys"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03282682-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "electronic_devices",
-    "entry_uid": "fineatlas-domain:electronic_devices",
-    "label": "electronic devices",
-    "root_uids": [
-      "wikidata:Q2858615",
-      "wordnet31:03282682-n"
-    ],
-    "uid": "fineatlas-domain:electronic_devices"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03086983-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "computers",
-    "entry_uid": "fineatlas-domain:computers",
-    "label": "computers",
-    "root_uids": [
-      "wikidata:Q68",
-      "wordnet31:03086983-n"
-    ],
-    "uid": "fineatlas-domain:computers"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q22645",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "smartphones",
-    "entry_uid": "fineatlas-domain:smartphones",
-    "label": "smartphones",
-    "root_uids": [
-      "wikidata:Q22645"
-    ],
-    "uid": "fineatlas-domain:smartphones"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03648120-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "laptops",
-    "entry_uid": "fineatlas-domain:laptops",
-    "label": "laptops",
-    "root_uids": [
-      "wikidata:Q3962",
-      "wordnet31:03648120-n"
-    ],
-    "uid": "fineatlas-domain:laptops"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03200746-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "digital_cameras",
-    "entry_uid": "fineatlas-domain:digital_cameras",
-    "label": "digital cameras",
-    "root_uids": [
-      "wikidata:Q62927",
-      "wordnet31:03200746-n"
-    ],
-    "uid": "fineatlas-domain:digital_cameras"
-  },
-  {
-    "canonical_root_uid": "wordnet31:02946696-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "camera_lenses",
-    "entry_uid": "fineatlas-domain:camera_lenses",
-    "label": "camera lenses",
-    "root_uids": [
-      "wikidata:Q192234",
-      "wordnet31:02946696-n"
-    ],
-    "uid": "fineatlas-domain:camera_lenses"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04413042-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "television_sets",
-    "entry_uid": "fineatlas-domain:television_sets",
-    "label": "television sets",
-    "root_uids": [
-      "wikidata:Q8075",
-      "wordnet31:04413042-n"
-    ],
-    "uid": "fineatlas-domain:television_sets"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03089261-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "computer_monitors",
-    "entry_uid": "fineatlas-domain:computer_monitors",
-    "label": "computer monitors",
-    "root_uids": [
-      "wikidata:Q5290",
-      "wordnet31:03089261-n"
-    ],
-    "uid": "fineatlas-domain:computer_monitors"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04121938-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "network_routers",
-    "entry_uid": "fineatlas-domain:network_routers",
-    "label": "network routers",
-    "root_uids": [
-      "wikidata:Q5318",
-      "wordnet31:04121938-n"
-    ],
-    "uid": "fineatlas-domain:network_routers"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03765845-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "microprocessors",
-    "entry_uid": "fineatlas-domain:microprocessors",
-    "label": "microprocessors",
-    "root_uids": [
-      "wikidata:Q5297",
-      "wordnet31:03765845-n"
-    ],
-    "uid": "fineatlas-domain:microprocessors"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03582259-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "integrated_circuits",
-    "entry_uid": "fineatlas-domain:integrated_circuits",
-    "label": "integrated circuits",
-    "root_uids": [
-      "wikidata:Q80831",
-      "wordnet31:03582259-n"
-    ],
-    "uid": "fineatlas-domain:integrated_circuits"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03207444-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "semiconductor_diodes",
-    "entry_uid": "fineatlas-domain:semiconductor_diodes",
-    "label": "semiconductor diodes",
-    "root_uids": [
-      "wikidata:Q1929430",
-      "wordnet31:03207444-n"
-    ],
-    "uid": "fineatlas-domain:semiconductor_diodes"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q337701",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "ceramic_capacitors",
-    "entry_uid": "fineatlas-domain:ceramic_capacitors",
-    "label": "ceramic capacitors",
-    "root_uids": [
-      "wikidata:Q337701"
-    ],
-    "uid": "fineatlas-domain:ceramic_capacitors"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03410635-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "furniture",
-    "entry_uid": "fineatlas-domain:furniture",
-    "label": "furniture",
-    "root_uids": [
-      "wikidata:Q14745",
-      "wordnet31:03410635-n"
-    ],
-    "uid": "fineatlas-domain:furniture"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03055525-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "clothing",
-    "entry_uid": "fineatlas-domain:clothing",
-    "label": "clothing",
-    "root_uids": [
-      "wikidata:Q11460",
-      "wordnet31:03055525-n"
-    ],
-    "uid": "fineatlas-domain:clothing"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03494245-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "hand_tools",
-    "entry_uid": "fineatlas-domain:hand_tools",
-    "label": "hand tools",
-    "root_uids": [
-      "wikidata:Q2578402",
-      "wordnet31:03494245-n"
-    ],
-    "uid": "fineatlas-domain:hand_tools"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04003842-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "power_tools",
-    "entry_uid": "fineatlas-domain:power_tools",
-    "label": "power tools",
-    "root_uids": [
-      "wikidata:Q1327701",
-      "wordnet31:04003842-n"
-    ],
-    "uid": "fineatlas-domain:power_tools"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03806455-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "musical_instruments",
-    "entry_uid": "fineatlas-domain:musical_instruments",
-    "label": "musical instruments",
-    "root_uids": [
-      "wikidata:Q34379",
-      "wordnet31:03806455-n"
-    ],
-    "uid": "fineatlas-domain:musical_instruments"
-  },
-  {
-    "canonical_root_uid": "wordnet31:02916498-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "buildings",
-    "entry_uid": "fineatlas-domain:buildings",
-    "label": "buildings",
-    "root_uids": [
-      "wikidata:Q41176",
-      "wordnet31:02916498-n"
-    ],
-    "uid": "fineatlas-domain:buildings"
-  },
-  {
-    "canonical_root_uid": "wordnet31:02901994-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "bridges",
-    "entry_uid": "fineatlas-domain:bridges",
-    "label": "bridges",
-    "root_uids": [
-      "wikidata:Q12280",
-      "wordnet31:02901994-n"
-    ],
-    "uid": "fineatlas-domain:bridges"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q6554101",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "medical_devices",
-    "entry_uid": "fineatlas-domain:medical_devices",
-    "label": "medical devices",
-    "root_uids": [
-      "wikidata:Q6554101"
-    ],
-    "uid": "fineatlas-domain:medical_devices"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04371632-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "surgical_instruments",
-    "entry_uid": "fineatlas-domain:surgical_instruments",
-    "label": "surgical instruments",
-    "root_uids": [
-      "wikidata:Q1074814",
-      "wordnet31:04371632-n"
-    ],
-    "uid": "fineatlas-domain:surgical_instruments"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04292284-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "sports_equipment",
-    "entry_uid": "fineatlas-domain:sports_equipment",
-    "label": "sports equipment",
-    "root_uids": [
-      "wordnet31:04292284-n"
-    ],
-    "uid": "fineatlas-domain:sports_equipment"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04201332-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "ships",
-    "entry_uid": "fineatlas-domain:ships",
-    "label": "ships",
-    "root_uids": [
-      "wikidata:Q11446",
-      "wordnet31:04201332-n"
-    ],
-    "uid": "fineatlas-domain:ships"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03690149-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "locomotives",
-    "entry_uid": "fineatlas-domain:locomotives",
-    "label": "locomotives",
-    "root_uids": [
-      "wikidata:Q93301",
-      "wordnet31:03690149-n"
-    ],
-    "uid": "fineatlas-domain:locomotives"
-  },
-  {
-    "canonical_root_uid": "wordnet31:04472736-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "tractors",
-    "entry_uid": "fineatlas-domain:tractors",
-    "label": "tractors",
-    "root_uids": [
-      "wikidata:Q39495",
-      "wordnet31:04472736-n"
-    ],
-    "uid": "fineatlas-domain:tractors"
-  },
-  {
-    "canonical_root_uid": "foodon:FOODON_00001002",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "food_products",
-    "entry_uid": "fineatlas-domain:food_products",
-    "label": "food products",
-    "root_uids": [
-      "foodon:FOODON_00001002"
-    ],
-    "uid": "fineatlas-domain:food_products"
-  },
-  {
-    "canonical_root_uid": "wordnet31:07572999-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "dishes",
-    "entry_uid": "fineatlas-domain:dishes",
-    "label": "dishes",
-    "root_uids": [
-      "wordnet31:07572999-n"
-    ],
-    "uid": "fineatlas-domain:dishes"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03283159-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "electronic_equipment",
-    "entry_uid": "fineatlas-domain:electronic_equipment",
-    "label": "electronic equipment",
-    "root_uids": [
-      "wordnet31:03283159-n"
-    ],
-    "uid": "fineatlas-domain:electronic_equipment"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q2858615",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "source_electronic_devices",
-    "entry_uid": "fineatlas-domain:source_electronic_devices",
-    "label": "source electronic devices",
-    "root_uids": [
-      "wikidata:Q2858615"
-    ],
-    "uid": "fineatlas-domain:source_electronic_devices"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q11653",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "electronic_components",
-    "entry_uid": "fineatlas-domain:electronic_components",
-    "label": "electronic components",
-    "root_uids": [
-      "wikidata:Q11653"
-    ],
-    "uid": "fineatlas-domain:electronic_components"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q175805",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "source_semiconductor_devices",
-    "entry_uid": "fineatlas-domain:source_semiconductor_devices",
-    "label": "source semiconductor devices",
-    "root_uids": [
-      "wikidata:Q175805"
-    ],
-    "uid": "fineatlas-domain:source_semiconductor_devices"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q80831",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "source_integrated_circuits",
-    "entry_uid": "fineatlas-domain:source_integrated_circuits",
-    "label": "source integrated circuits",
-    "root_uids": [
-      "wikidata:Q80831"
-    ],
-    "uid": "fineatlas-domain:source_integrated_circuits"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q1929430",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "source_semiconductor_diodes",
-    "entry_uid": "fineatlas-domain:source_semiconductor_diodes",
-    "label": "source semiconductor diodes",
-    "root_uids": [
-      "wikidata:Q1929430"
-    ],
-    "uid": "fineatlas-domain:source_semiconductor_diodes"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03533443-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "home_appliances",
-    "entry_uid": "fineatlas-domain:home_appliances",
-    "label": "home appliances",
-    "root_uids": [
-      "wikidata:Q212920",
-      "wordnet31:03533443-n"
-    ],
-    "uid": "fineatlas-domain:home_appliances"
-  },
-  {
-    "canonical_root_uid": "wordnet31:02946154-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "camera_bodies",
-    "entry_uid": "fineatlas-domain:camera_bodies",
-    "label": "camera bodies",
-    "root_uids": [
-      "aat:300022636",
-      "wordnet31:02946154-n"
-    ],
-    "uid": "fineatlas-domain:camera_bodies"
-  },
-  {
-    "canonical_root_uid": "wordnet31:03266479-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "headphones",
-    "entry_uid": "fineatlas-domain:headphones",
-    "label": "headphones",
-    "root_uids": [
-      "wikidata:Q186819",
-      "wordnet31:03266479-n"
-    ],
-    "uid": "fineatlas-domain:headphones"
-  },
-  {
-    "canonical_root_uid": "wordnet31:14720954-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "rocks",
-    "entry_uid": "fineatlas-domain:rocks",
-    "label": "rocks",
-    "root_uids": [
-      "wikidata:Q8063",
-      "wordnet31:14720954-n"
-    ],
-    "uid": "fineatlas-domain:rocks"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q46831",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "mountain_ranges",
-    "entry_uid": "fineatlas-domain:mountain_ranges",
-    "label": "mountain ranges and mountain groups",
-    "root_uids": [
-      "geonames-feature:T.MTS",
-      "wikidata:Q46831"
-    ],
-    "uid": "fineatlas-domain:mountain_ranges"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q155972",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "tablets",
-    "entry_uid": "fineatlas-domain:tablets",
-    "label": "tablets",
-    "root_uids": [
-      "wikidata:Q155972"
-    ],
-    "uid": "fineatlas-domain:tablets"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q4308",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "graphics_cards",
-    "entry_uid": "fineatlas-domain:graphics_cards",
-    "label": "graphics cards",
-    "root_uids": [
-      "wikidata:Q4308"
-    ],
-    "uid": "fineatlas-domain:graphics_cards"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q183484",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "gpus",
-    "entry_uid": "fineatlas-domain:gpus",
-    "label": "gpus",
-    "root_uids": [
-      "wikidata:Q183484"
-    ],
-    "uid": "fineatlas-domain:gpus"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q3966",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "computer_hardware",
-    "entry_uid": "fineatlas-domain:computer_hardware",
-    "label": "computer hardware",
-    "root_uids": [
-      "wikidata:Q183484",
-      "wikidata:Q3966",
-      "wikidata:Q487343",
-      "wikidata:Q5290",
-      "wikidata:Q5297"
-    ],
-    "uid": "fineatlas-domain:computer_hardware"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q5362345",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "smartwatches",
-    "entry_uid": "fineatlas-domain:smartwatches",
-    "label": "smartwatches",
-    "root_uids": [
-      "wikidata:Q5362345"
-    ],
-    "uid": "fineatlas-domain:smartwatches"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q50184015",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "earbuds",
-    "entry_uid": "fineatlas-domain:earbuds",
-    "label": "earbuds and in-ear headphones",
-    "root_uids": [
-      "apple-model:c0f86089ceef6af4bd3e",
-      "samsung-family:galaxy-buds",
-      "wikidata:Q50184015"
-    ],
-    "uid": "fineatlas-domain:earbuds"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q487343",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "solid_state_drives",
-    "entry_uid": "fineatlas-domain:solid_state_drives",
-    "label": "solid state drives",
-    "root_uids": [
-      "wikidata:Q487343"
-    ],
-    "uid": "fineatlas-domain:solid_state_drives"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q173350",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "pcbs",
-    "entry_uid": "fineatlas-domain:pcbs",
-    "label": "pcbs",
-    "root_uids": [
-      "wikidata:Q173350"
-    ],
-    "uid": "fineatlas-domain:pcbs"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q39546",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "tools",
-    "entry_uid": "fineatlas-domain:tools",
-    "label": "tools",
-    "root_uids": [
-      "wikidata:Q39546",
-      "wordnet31:04459089-n"
-    ],
-    "uid": "fineatlas-domain:tools"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q746549",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "food_dishes",
-    "entry_uid": "fineatlas-domain:food_dishes",
-    "label": "food dishes",
-    "root_uids": [
-      "wikidata:Q746549"
-    ],
-    "uid": "fineatlas-domain:food_dishes"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q15328",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "cameras",
-    "entry_uid": "fineatlas-domain:cameras",
-    "label": "cameras",
-    "root_uids": [
-      "wikidata:Q15328"
-    ],
-    "uid": "fineatlas-domain:cameras"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q56155",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "desktop_computers",
-    "entry_uid": "fineatlas-domain:desktop_computers",
-    "label": "desktop computers",
-    "root_uids": [
-      "wikidata:Q56155"
-    ],
-    "uid": "fineatlas-domain:desktop_computers"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q8076",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "game_consoles",
-    "entry_uid": "fineatlas-domain:game_consoles",
-    "label": "game consoles",
-    "root_uids": [
-      "wikidata:Q8076"
-    ],
-    "uid": "fineatlas-domain:game_consoles"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q1334829",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "wearable_computers",
-    "entry_uid": "fineatlas-domain:wearable_computers",
-    "label": "wearable computers",
-    "root_uids": [
-      "wikidata:Q1334829"
-    ],
-    "uid": "fineatlas-domain:wearable_computers"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q4503",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "network_switches",
-    "entry_uid": "fineatlas-domain:network_switches",
-    "label": "network switches",
-    "root_uids": [
-      "wikidata:Q4503"
-    ],
-    "uid": "fineatlas-domain:network_switches"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q175805",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "semiconductor_devices",
-    "entry_uid": "fineatlas-domain:semiconductor_devices",
-    "label": "semiconductor devices",
-    "root_uids": [
-      "wikidata:Q175805"
-    ],
-    "uid": "fineatlas-domain:semiconductor_devices"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q944780",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "single_board_computers",
-    "entry_uid": "fineatlas-domain:single_board_computers",
-    "label": "single board computers",
-    "root_uids": [
-      "wikidata:Q944780"
-    ],
-    "uid": "fineatlas-domain:single_board_computers"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q570",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "loudspeakers",
-    "entry_uid": "fineatlas-domain:loudspeakers",
-    "label": "loudspeakers",
-    "root_uids": [
-      "wikidata:Q570"
-    ],
-    "uid": "fineatlas-domain:loudspeakers"
-  },
-  {
-    "canonical_root_uid": "wikidata:Q82",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "printers",
-    "entry_uid": "fineatlas-domain:printers",
-    "label": "printers",
-    "root_uids": [
-      "wikidata:Q82"
-    ],
-    "uid": "fineatlas-domain:printers"
-  },
-  {
-    "canonical_root_uid": "wordnet31:00015568-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "animals",
-    "entry_uid": "fineatlas-domain:animals",
-    "label": "animals",
-    "root_uids": [
-      "ott:691846",
-      "wordnet31:00015568-n"
-    ],
-    "uid": "fineatlas-domain:animals"
-  },
-  {
-    "canonical_root_uid": "wordnet31:01505702-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "birds",
-    "entry_uid": "fineatlas-domain:birds",
-    "label": "birds",
-    "root_uids": [
-      "ott:81461",
-      "wordnet31:01505702-n"
-    ],
-    "uid": "fineatlas-domain:birds"
-  },
-  {
-    "canonical_root_uid": "wordnet31:00017402-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "plants",
-    "entry_uid": "fineatlas-domain:plants",
-    "label": "plants",
-    "root_uids": [
-      "wfo:wfo-4100001250",
-      "wordnet31:00017402-n"
-    ],
-    "uid": "fineatlas-domain:plants"
-  },
-  {
-    "canonical_root_uid": "wordnet31:13013628-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
     "domain": "fungi",
     "entry_uid": "fineatlas-domain:fungi",
-    "label": "fungi",
     "root_uids": [
       "ott:352914",
       "wordnet31:13013628-n"
     ],
-    "uid": "fineatlas-domain:fungi"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:01351171-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "bacteria",
-    "entry_uid": "fineatlas-domain:bacteria",
-    "label": "bacteria",
+    "domain": "furniture",
+    "entry_uid": "fineatlas-domain:furniture",
     "root_uids": [
-      "ott:844192",
-      "wordnet31:01351171-n"
+      "wikidata:Q14745",
+      "wordnet31:03410635-n"
     ],
-    "uid": "fineatlas-domain:bacteria"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "ott:996421",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "archaea",
-    "entry_uid": "fineatlas-domain:archaea",
-    "label": "archaea",
+    "domain": "game_consoles",
+    "entry_uid": "fineatlas-domain:game_consoles",
     "root_uids": [
-      "ott:996421"
+      "wikidata:Q8076"
     ],
-    "uid": "fineatlas-domain:archaea"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:02961779-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "cars",
-    "entry_uid": "fineatlas-domain:cars",
-    "label": "cars",
+    "domain": "glaciers",
+    "entry_uid": "fineatlas-domain:glaciers",
     "root_uids": [
-      "wordnet31:02961779-n"
+      "wikidata:Q35666",
+      "wordnet31:09312237-n"
     ],
-    "uid": "fineatlas-domain:cars"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:02689427-n",
-    "description": "One domain entry collects independently identified, root-connected source scopes.",
-    "domain": "aircraft",
-    "entry_uid": "fineatlas-domain:aircraft",
-    "label": "aircraft",
+    "domain": "gpus",
+    "entry_uid": "fineatlas-domain:gpus",
     "root_uids": [
-      "wordnet31:02689427-n"
+      "wikidata:Q183484"
     ],
-    "uid": "fineatlas-domain:aircraft"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:08598111-n",
-    "description": "EEA habitat classification entry with versioned source codes.",
+    "domain": "graphics_cards",
+    "entry_uid": "fineatlas-domain:graphics_cards",
+    "root_uids": [
+      "wikidata:Q4308"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "grasslands",
+    "entry_uid": "fineatlas-domain:grasslands",
+    "root_uids": [
+      "eunis2012:E",
+      "eunis2021:R"
+    ],
+    "description": "EEA habitat classification entry with versioned source codes."
+  },
+  {
+    "domain": "habitat_complexes",
+    "entry_uid": "fineatlas-domain:habitat_complexes",
+    "root_uids": [
+      "eunis2012:X"
+    ],
+    "description": "EEA habitat classification entry with versioned source codes."
+  },
+  {
     "domain": "habitats",
     "entry_uid": "fineatlas-domain:habitats",
-    "label": "habitats",
     "root_uids": [
       "wordnet31:08598111-n"
     ],
-    "uid": "fineatlas-domain:habitats"
+    "description": "EEA habitat classification entry with versioned source codes."
   },
   {
-    "canonical_root_uid": "eunis2012:A",
-    "description": "EEA habitat classification entry with versioned source codes.",
+    "domain": "hand_tools",
+    "entry_uid": "fineatlas-domain:hand_tools",
+    "root_uids": [
+      "wikidata:Q2578402",
+      "wordnet31:03494245-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "headphones",
+    "entry_uid": "fineatlas-domain:headphones",
+    "root_uids": [
+      "wikidata:Q186819",
+      "wordnet31:03266479-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "home_appliances",
+    "entry_uid": "fineatlas-domain:home_appliances",
+    "root_uids": [
+      "wikidata:Q212920",
+      "wordnet31:03533443-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "integrated_circuits",
+    "entry_uid": "fineatlas-domain:integrated_circuits",
+    "root_uids": [
+      "wikidata:Q80831",
+      "wordnet31:03582259-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "islands",
+    "entry_uid": "fineatlas-domain:islands",
+    "root_uids": [
+      "wikidata:Q23442",
+      "wordnet31:09339360-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "lakes",
+    "entry_uid": "fineatlas-domain:lakes",
+    "root_uids": [
+      "eunis2012:C1",
+      "wikidata:Q23397",
+      "wordnet31:09351810-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "laptops",
+    "entry_uid": "fineatlas-domain:laptops",
+    "root_uids": [
+      "wikidata:Q3962",
+      "wordnet31:03648120-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "locomotives",
+    "entry_uid": "fineatlas-domain:locomotives",
+    "root_uids": [
+      "wikidata:Q93301",
+      "wordnet31:03690149-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "loudspeakers",
+    "entry_uid": "fineatlas-domain:loudspeakers",
+    "root_uids": [
+      "wikidata:Q570"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
     "domain": "marine_habitats",
     "entry_uid": "fineatlas-domain:marine_habitats",
-    "label": "marine habitats",
     "root_uids": [
       "eunis2012:A"
     ],
-    "uid": "fineatlas-domain:marine_habitats"
+    "description": "EEA habitat classification entry with versioned source codes."
   },
   {
-    "canonical_root_uid": "eunis2012:B",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "coastal_habitats",
-    "entry_uid": "fineatlas-domain:coastal_habitats",
-    "label": "coastal habitats",
+    "domain": "medical_devices",
+    "entry_uid": "fineatlas-domain:medical_devices",
     "root_uids": [
-      "eunis2012:B",
-      "eunis2021:N"
+      "wikidata:Q6554101"
     ],
-    "uid": "fineatlas-domain:coastal_habitats"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "eunis2012:C",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "freshwater_habitats",
-    "entry_uid": "fineatlas-domain:freshwater_habitats",
-    "label": "freshwater habitats",
+    "domain": "microprocessors",
+    "entry_uid": "fineatlas-domain:microprocessors",
     "root_uids": [
-      "eunis2012:C"
+      "wikidata:Q5297",
+      "wordnet31:03765845-n"
     ],
-    "uid": "fineatlas-domain:freshwater_habitats"
+    "description": "One domain entry collects independently identified, root-connected source scopes."
   },
   {
-    "canonical_root_uid": "wordnet31:09501020-n",
-    "description": "EEA habitat classification entry with versioned source codes.",
+    "domain": "minerals",
+    "entry_uid": "fineatlas-domain:minerals",
+    "root_uids": [
+      "wikidata:Q7946",
+      "wordnet31:14686753-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "mountain_ranges",
+    "entry_uid": "fineatlas-domain:mountain_ranges",
+    "root_uids": [
+      "geonames-feature:T.MTS",
+      "wikidata:Q46831"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "mountains",
+    "entry_uid": "fineatlas-domain:mountains",
+    "root_uids": [
+      "wikidata:Q8502",
+      "wordnet31:09382700-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "musical_instruments",
+    "entry_uid": "fineatlas-domain:musical_instruments",
+    "root_uids": [
+      "wikidata:Q34379",
+      "wordnet31:03806455-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "network_routers",
+    "entry_uid": "fineatlas-domain:network_routers",
+    "root_uids": [
+      "wikidata:Q5318",
+      "wordnet31:04121938-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "network_switches",
+    "entry_uid": "fineatlas-domain:network_switches",
+    "root_uids": [
+      "wikidata:Q4503"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "pcbs",
+    "entry_uid": "fineatlas-domain:pcbs",
+    "root_uids": [
+      "wikidata:Q173350"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "plants",
+    "entry_uid": "fineatlas-domain:plants",
+    "root_uids": [
+      "wfo:wfo-4100001250",
+      "wordnet31:00017402-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "power_tools",
+    "entry_uid": "fineatlas-domain:power_tools",
+    "root_uids": [
+      "wikidata:Q1327701",
+      "wordnet31:04003842-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "printers",
+    "entry_uid": "fineatlas-domain:printers",
+    "root_uids": [
+      "wikidata:Q82"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "rivers",
+    "entry_uid": "fineatlas-domain:rivers",
+    "root_uids": [
+      "eunis2012:C2",
+      "wikidata:Q4022",
+      "wordnet31:09434308-n",
+      "wordnet31:09471510-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "rocks",
+    "entry_uid": "fineatlas-domain:rocks",
+    "root_uids": [
+      "wikidata:Q8063",
+      "wordnet31:14720954-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "scrub_and_tundra",
+    "entry_uid": "fineatlas-domain:scrub_and_tundra",
+    "root_uids": [
+      "eunis2012:F",
+      "eunis2021:S"
+    ],
+    "description": "EEA habitat classification entry with versioned source codes."
+  },
+  {
+    "domain": "semiconductor_devices",
+    "entry_uid": "fineatlas-domain:semiconductor_devices",
+    "root_uids": [
+      "wikidata:Q175805"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "semiconductor_diodes",
+    "entry_uid": "fineatlas-domain:semiconductor_diodes",
+    "root_uids": [
+      "wikidata:Q1929430",
+      "wordnet31:03207444-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "ships",
+    "entry_uid": "fineatlas-domain:ships",
+    "root_uids": [
+      "wikidata:Q11446",
+      "wordnet31:04201332-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "single_board_computers",
+    "entry_uid": "fineatlas-domain:single_board_computers",
+    "root_uids": [
+      "wikidata:Q944780"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "smartphones",
+    "entry_uid": "fineatlas-domain:smartphones",
+    "root_uids": [
+      "wikidata:Q22645"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "smartwatches",
+    "entry_uid": "fineatlas-domain:smartwatches",
+    "root_uids": [
+      "wikidata:Q5362345"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "solid_state_drives",
+    "entry_uid": "fineatlas-domain:solid_state_drives",
+    "root_uids": [
+      "wikidata:Q487343"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "source_electronic_devices",
+    "entry_uid": "fineatlas-domain:source_electronic_devices",
+    "root_uids": [
+      "wikidata:Q2858615"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "source_integrated_circuits",
+    "entry_uid": "fineatlas-domain:source_integrated_circuits",
+    "root_uids": [
+      "wikidata:Q80831"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "source_semiconductor_diodes",
+    "entry_uid": "fineatlas-domain:source_semiconductor_diodes",
+    "root_uids": [
+      "wikidata:Q1929430"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "sparse_vegetation_habitats",
+    "entry_uid": "fineatlas-domain:sparse_vegetation_habitats",
+    "root_uids": [
+      "eunis2012:H",
+      "eunis2021:U"
+    ],
+    "description": "EEA habitat classification entry with versioned source codes."
+  },
+  {
+    "domain": "sports_equipment",
+    "entry_uid": "fineatlas-domain:sports_equipment",
+    "root_uids": [
+      "wordnet31:04292284-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "surgical_instruments",
+    "entry_uid": "fineatlas-domain:surgical_instruments",
+    "root_uids": [
+      "wikidata:Q1074814",
+      "wordnet31:04371632-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "tablets",
+    "entry_uid": "fineatlas-domain:tablets",
+    "root_uids": [
+      "wikidata:Q155972"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "television_sets",
+    "entry_uid": "fineatlas-domain:television_sets",
+    "root_uids": [
+      "wikidata:Q8075",
+      "wordnet31:04413042-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "tools",
+    "entry_uid": "fineatlas-domain:tools",
+    "root_uids": [
+      "wikidata:Q39546",
+      "wordnet31:04459089-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "tractors",
+    "entry_uid": "fineatlas-domain:tractors",
+    "root_uids": [
+      "wikidata:Q39495",
+      "wordnet31:04472736-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "valleys",
+    "entry_uid": "fineatlas-domain:valleys",
+    "root_uids": [
+      "wikidata:Q39816",
+      "wordnet31:09491734-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "volcanoes",
+    "entry_uid": "fineatlas-domain:volcanoes",
+    "root_uids": [
+      "wikidata:Q8072",
+      "wordnet31:09495727-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "waterfalls",
+    "entry_uid": "fineatlas-domain:waterfalls",
+    "root_uids": [
+      "wikidata:Q34038",
+      "wordnet31:09498422-n"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
+    "domain": "wearable_computers",
+    "entry_uid": "fineatlas-domain:wearable_computers",
+    "root_uids": [
+      "wikidata:Q1334829"
+    ],
+    "description": "One domain entry collects independently identified, root-connected source scopes."
+  },
+  {
     "domain": "wetlands",
     "entry_uid": "fineatlas-domain:wetlands",
-    "label": "wetlands and wetland habitats",
     "root_uids": [
       "eunis2012:D",
       "eunis2021:Q",
       "wordnet31:09501020-n"
     ],
-    "uid": "fineatlas-domain:wetlands"
-  },
-  {
-    "canonical_root_uid": "eunis2012:E",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "grasslands",
-    "entry_uid": "fineatlas-domain:grasslands",
-    "label": "grasslands",
-    "root_uids": [
-      "eunis2012:E",
-      "eunis2021:R"
-    ],
-    "uid": "fineatlas-domain:grasslands"
-  },
-  {
-    "canonical_root_uid": "eunis2012:F",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "scrub_and_tundra",
-    "entry_uid": "fineatlas-domain:scrub_and_tundra",
-    "label": "scrub and tundra",
-    "root_uids": [
-      "eunis2012:F",
-      "eunis2021:S"
-    ],
-    "uid": "fineatlas-domain:scrub_and_tundra"
-  },
-  {
-    "canonical_root_uid": "eunis2012:G",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "forest_habitats",
-    "entry_uid": "fineatlas-domain:forest_habitats",
-    "label": "forest habitats",
-    "root_uids": [
-      "eunis2012:G",
-      "eunis2021:T"
-    ],
-    "uid": "fineatlas-domain:forest_habitats"
-  },
-  {
-    "canonical_root_uid": "eunis2012:H",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "sparse_vegetation_habitats",
-    "entry_uid": "fineatlas-domain:sparse_vegetation_habitats",
-    "label": "sparse vegetation habitats",
-    "root_uids": [
-      "eunis2012:H",
-      "eunis2021:U"
-    ],
-    "uid": "fineatlas-domain:sparse_vegetation_habitats"
-  },
-  {
-    "canonical_root_uid": "eunis2012:I",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "agricultural_habitats",
-    "entry_uid": "fineatlas-domain:agricultural_habitats",
-    "label": "agricultural habitats",
-    "root_uids": [
-      "eunis2012:I"
-    ],
-    "uid": "fineatlas-domain:agricultural_habitats"
-  },
-  {
-    "canonical_root_uid": "eunis2012:J",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "artificial_habitats",
-    "entry_uid": "fineatlas-domain:artificial_habitats",
-    "label": "artificial habitats",
-    "root_uids": [
-      "eunis2012:J"
-    ],
-    "uid": "fineatlas-domain:artificial_habitats"
-  },
-  {
-    "canonical_root_uid": "eunis2012:X",
-    "description": "EEA habitat classification entry with versioned source codes.",
-    "domain": "habitat_complexes",
-    "entry_uid": "fineatlas-domain:habitat_complexes",
-    "label": "habitat complexes",
-    "root_uids": [
-      "eunis2012:X"
-    ],
-    "uid": "fineatlas-domain:habitat_complexes"
-  },
-  {
-    "canonical_root_uid": "wordnet31:09224876-n",
-    "description": "Groundwater-bearing geological formations and their reviewed hydrological types",
-    "domain": "aquifers",
-    "entry_uid": "fineatlas-domain:aquifers",
-    "label": "aquifers",
-    "root_uids": [
-      "wordnet31:09224876-n"
-    ],
-    "uid": "fineatlas-domain:aquifers"
+    "description": "EEA habitat classification entry with versioned source codes."
   }
 ]

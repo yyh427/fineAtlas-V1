@@ -1,0 +1,49 @@
+{
+  "public_name": "FineAtlas V1",
+  "release": "v1.9.0-night-review",
+  "graph_version": "V1",
+  "candidate": true,
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.9.0-night-review",
+  "database": {
+    "name": "fineatlas.sqlite",
+    "bytes": 63136358400,
+    "sha256": "36fda1fc8bd9fe0ebbb0e6320797eb7293e6d8c4cc8f83b01f25f14c4b664cff"
+  },
+  "assets": [
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-000",
+      "bytes": 1073741824,
+      "sha256": "4f9850742699d0056a0f3d091cfbf92fea14d072a4544247e0f5fad1a3df44a6"
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-001",
+      "bytes": 1073741824,
+      "sha256": "3e0129f768b2fdad81bdf7c8ecead4a213e63a6bc296be645951e297adc0d9b6"
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-002",
+      "bytes": 1073741824,
+      "sha256": "4961673f3b04b0427a6f9eaca6144040d7a0c6d46cbadede6f80c4acc3f593ae"
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-003",
+      "bytes": 1073741824,
+      "sha256": "f89c535e2b305950b03e8671e3e9d2b7a2e136f01f2d7154eadd69ae409fca22"
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-004",
+      "bytes": 1073741824,
+      "sha256": "a266a6c4116901853d12542edddf1a47061f6eb5f74ef17e3c37957ed6b892f4"
+    },
+    {
+      "name": "fineatlas-v1.9.0-night-review.sqlite.zst.part-005",
+      "bytes": 59391179,
+      "sha256": "9e9c26083172ff2188a1ec653414f3ef1cb7020fa58d84fa4721d251e28992c8"
+    }
+  ],
+  "database_build_version": "v1.9.0-night-review",
+  "database_revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
+  "artifact_kind": "single",
+  "source_revision": "fd5dfb79f85e91050980fc245f2221af293bc19d05049d1e1bce3cbec52e37ca",
+  "source_graph_changed": false
+}

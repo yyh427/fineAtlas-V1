@@ -1,0 +1,27 @@
+{
+  "public_name": "FineAtlas V1",
+  "release": "v1.9.0-night-review",
+  "graph_version": "V1",
+  "candidate": true,
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.9.0-night-review",
+  "database": {
+    "name": "fineatlas-browse.sqlite",
+    "bytes": 8604495872,
+    "sha256": "0ecd456a40fee1549fff221c657aaf4df6fd46cc9a9483406b9fd15382315cb3"
+  },
+  "assets": [
+    {
+      "name": "fineatlas-v1.9.0-night-review.browse.sqlite.zst.part-000",
+      "bytes": 997905152,
+      "sha256": "87a85785533a72dc6334cdc9cfd287c55469922ce13ea856e6a7fa217b6d2679"
+    }
+  ],
+  "database_build_version": "v1.9.0-night-review",
+  "database_revision": "77470e568044a920fafd97ccdbfd7cefe977aac6aa704654e0b1f26048f7a74a",
+  "artifact_kind": "browse-index",
+  "source_revision": "fd5dfb79f85e91050980fc245f2221af293bc19d05049d1e1bce3cbec52e37ca",
+  "source_graph_changed": false,
+  "baseline_manifest": "docs/night_baseline_data.json",
+  "baseline_release": "v1.8.1-hierarchy-review",
+  "baseline_database_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929"
+}

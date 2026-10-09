@@ -1,0 +1,28 @@
+{
+  "candidate_kind": "immutable source database plus independently built readonly browse index",
+  "baseline_source_sha256": "d65e74d50785fe54bbfd04a91a7e818a27b766e8b038b18cdce5b2f48c6f9929",
+  "core_source_records": "Exactly the same original immutable file; no copy, replacement or source mutation is performed by the overlay constructor",
+  "original_label_records": 755,
+  "view_label_checks": 2265,
+  "all_original_native_core_tables_and_identity_partition_retained": true,
+  "all_active_source_uid_component_and_source_fields_match": true,
+  "active_source_uids": 12400273,
+  "all_admitted_original_source_arcs_present": true,
+  "all_indexed_arcs_have_legal_original_source_records": true,
+  "source_arc_contracts": {
+    "edge_invalid_records": 0,
+    "entity_invalid_records": 0,
+    "strict_edge_missing_source_arcs": 0,
+    "strict_entity_missing_source_arcs": 0,
+    "taxonomy_edge_missing_source_arcs": 0,
+    "taxonomy_entity_missing_source_arcs": 0,
+    "membership_edge_missing_source_arcs": 0,
+    "membership_entity_missing_source_arcs": 0
+  },
+  "all_default_omitted_display_arcs_replaced_by_surviving_original_paths": true,
+  "preferred_arcs_three_views": 107753,
+  "affected_view_parent_pairs": 3070,
+  "complete_descendant_identity_sets_preserved_for_all_affected_parents": true,
+  "set_preservation_proof": "The source graph and identity partition are the unchanged immutable baseline. Every admitted original source arc is present in the index; every indexed arc has a legal original record. Every default-hidden arc expands into a surviving endpoint-identical original path, with no preference dependency cycle. Thus full and preferred transitive descendant identity sets coincide for every affected parent. Largest branches additionally have complete enumerated direct identity sets and stable page digests.",
+  "single_file_core_comparison": "Pending until the separate single-file application commits; this proof refers specifically to the complete readonly overlay candidate"
+}
