@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Frozen 755-label/56,917-pair matrix and independent SQL graph witnesses."""
 from __future__ import annotations
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
 import argparse
 from collections import Counter, deque
 import csv
@@ -11,7 +15,11 @@ import sqlite3
 import sys
 import time
 ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT/'src'))
+if '--installed-sdk' not in sys.argv:
+    sys.path.insert(0,str(ROOT/'src'))
+else:
+    import fineatlas
+    assert Path(fineatlas.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()) and 'site-packages' in Path(fineatlas.__file__).parts, 'Use the installed SDK'
 from fineatlas import FineAtlas
 
 DATASETS={'cub200':200,'fgvc_aircraft':100,'flowers102':102,'pets37':37,'stanford_dogs':120,'stanford_cars':196}
@@ -24,7 +32,7 @@ ROLES={'classification':{'CLASS','BIOLOGICAL_VARIANT'},'design':{'CLASS','MODEL'
 
 
 class IndependentGraph:
-    """Read admitted source arcs via browse index; no reward implementation calls."""
+    """Traverse real source arcs independently; compare cached roles separately."""
     def __init__(self,c,policy,scope,boundaries):
         self.c,self.policy,self.scope=c,policy,scope
         self.boundaries={self.node(u)['component_id'] for u in boundaries}
@@ -108,6 +116,11 @@ def run(database,inputs,out,baseline=False):
     old=json.loads((inputs/'legacy_policies.json').read_text());new=json.loads((inputs/'reviewed_policies.json').read_text())
     modes=[('legacy','legacy',old,'world'),('reviewed_old_floors','reviewed_paths',old,'world'),('reviewed_new_floors','reviewed_paths',new,'world')]
     if not baseline:modes.append(('source_native','reviewed_paths',new,'source_native'))
+    resolution_path=inputs/'reviewed_resolution_policies.json'
+    if resolution_path.exists():
+        resolved=json.loads(resolution_path.read_text())
+        modes.append(('reviewed_rank_floors','reviewed_paths',resolved,'world'))
+        if not baseline:modes.append(('source_native_rank_floors','reviewed_paths',resolved,'source_native'))
     summary={}
     with FineAtlas(database,relation_view='unified') as tree:
         for name,mode,configs,target_scope in modes:
@@ -174,4 +187,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('database','inputs','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--baseline',action='store_true')
+    p.add_argument('--installed-sdk',action='store_true')
     a=p.parse_args();run(a.database,a.inputs,a.output,a.baseline)

@@ -84,11 +84,13 @@ def install(root: Path, metadata: dict) -> Path:
     downloads = root / 'downloads'
     downloads.mkdir(exist_ok=True)
     assets = []
+    asset_proofs = []
     for item in metadata['assets']:
         if Path(item['name']).name != item['name']:
             raise ValueError('Invalid asset filename')
         path = downloads / item['name']
-        download(metadata['base_url'] + '/' + item['name'], path, item)
+        disposition=download(metadata['base_url'] + '/' + item['name'], path, item)
+        asset_proofs.append(disposition or {'fresh_download':False,'network_request':False,'disposition':'UNKNOWN'})
         assets.append(path)
     compressed = downloads / 'fineatlas.sqlite.zst'
     with compressed.open('wb') as target:
@@ -119,6 +121,13 @@ def install(root: Path, metadata: dict) -> Path:
             process.terminate()
         process.wait()
     compressed.unlink()
+    proof={'schema':'FINEATLAS_PUBLIC_DOWNLOAD_PROOF_V1','authenticated':False,
+           'database':str(database.resolve()),'artifact_stamp':[database.stat().st_size,database.stat().st_mtime_ns,database.stat().st_ino],
+           'fresh_download':bool(asset_proofs) and all(row.get('fresh_download') is True and row.get('network_request') is True for row in asset_proofs),
+           'asset_proofs':asset_proofs,'database_sha256':h.hexdigest(),'database_bytes':total,
+           'database_revision':metadata.get('database_revision'),'release':metadata.get('release'),
+           'public_download_urls':[metadata['base_url']+'/'+item['name'] for item in metadata['assets']]}
+    (root/'public_download_proof.json').write_text(json.dumps(proof,indent=2)+'\n')
     write_receipt(root,metadata)
     print(f'Verified {database}', flush=True)
     return database

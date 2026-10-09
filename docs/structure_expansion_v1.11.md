@@ -14,6 +14,8 @@
 
 旧接口默认 `admission_mode='legacy'`，旧策略冻结于 `unified_reward_policies`。`reviewed_paths` 显式要求合法任务边界路径，只隔离不安全的祖先分支；不能借别的路径绕过未确认端点、非法关键关系或不兼容来源。返回实际路径、来源证据、关系及排除原因。统一根可达、任务边界可达和任务路径有效分别报告。
 
+默认审阅策略使用 `native-taxonomic-rank-floors-v2`：CUB 的固定 AviList 目级及更高真实父链、Flowers 的固定 WFO 目级及更高真实父链作为粗层门槛，共 299 个有原始 UID 和证据的门槛。科、属及合法的更细共同祖先单独统计。原 `reviewed_reward_policies_v1` 和 `unified_reward_policies` 完整保留，报告分别列旧策略、旧门槛审阅路径和新级别门槛；规则增益不计为新增知识。
+
 新的返回分辨率为 `FINE_VALID`、`COARSE_VALID`、`UNCERTAIN`、`NOT_APPLICABLE`。粗层共同祖先可以有效存在，层次奖励距离仍为 `null`。不得用零或最大惩罚替代无效值。
 
 Pets/Dogs 的任务边界均为 animal，以保留真实野生犬科标签。细层比较采用共同的家犬、家猫粗门槛及其上级；组织分组不作为生物距离。旧各域不同门槛的结果和 animal-only 敏感性结果单列，不当作新增品种知识。
@@ -48,7 +50,7 @@ FCI namespace 的精确冻结值以 `source_organization_group_scope` 元数据�
 
 ## 生物范围
 
-2,491 个 WordNet 明确科学词义获得唯一原生物种级别佐证，只修复级别，不合并身份或自动确认数据集范围。29 个词义命中多个不同 WFO 物种 UID，保留 `MULTI_SPECIES_SCOPE_REVIEW`；该级别审核不能通过其他表示继承绕过，普通层次导航继续保留。
+原先 2,491 个单个科学名称命中的 WordNet 词义逐个检查完整定义；其中 9 个实际描述多个栽培品种或杂交集合，撤销单一物种级别并保留 `WHOLE_DEFINITION_SCOPE_REVIEW`。剩余 2,482 个只修复科学级别，不合并身份或自动确认数据集范围。另有 29 个词义命中多个不同 WFO 物种 UID，保留 `MULTI_SPECIES_SCOPE_REVIEW`。合计 38 个范围待审项不能通过其他表示继承级别，原始 UID、定义及普通导航继续保留。
 
 Flowers 的现代来源父链和 plant 任务边界、sweet pea 的混合来源父链，以及 CUB 历史名称/现代拆分/宽标签逐项记录。camellia、anthurium 等缺少作者唯一物种范围的映射保持待审，作者原生标签仍可按审定属或更宽范围查询。没有为提高覆盖率制造中间分类或选择多数物种。
 
@@ -72,3 +74,15 @@ TMPDIR=CANDIDATE/tmp PYTHONHASHSEED=0 python -B scripts/build_structure_candidat
 ```
 
 `build_complete.json` 仅说明构建完成。必须另外执行独立原始 SQL 来源保留、全图无环与角色合同、全领域入口/分页、完整标签及类别对、生活领域真实落库/导出、逻辑复现比较、安装和公开下载复验。对完整未公开的冻结输入仅有哈希时，不能声称公众可无输入重建；本轮发布清单说明实际公开的输入及来源约束。
+
+## 全领域来源范围合同
+
+冻结输入逐个保留原始声明定位、完整来源主体、字段含义、角色范围和修改历史；适配器不通过名称末词、标题提及、品牌或兼容字段推断类型。8.1 万条范围不成立或证据不够的旧声明隔离待审；其中 13,799 条转换后的原生设计父声明仍全部待审，保留原来源而不冒充设计血缘。实际实施数量由正式候选的独立 SQL 验收报告给出。
+
+冻结 v6 包含 12,896 条有完整主体与父类型范围证据的方向关系，210 条 Apple 官方商业产品线成员关系，以及 26 个来源目录、5,809 个保留自身 UID 的目录成员。来源目录不是新普通类别或世界设计系列：NVIDIA 兼容设备目录含完整多 GPU 系统，Canon/Intel 目录也不能自动当设计父链。`browse_domain(...)["source_directories"]` 返回目录及关系类型；`source_groups` 的组织分类与来源目录明确区分。255 个自身 family 范围不够的替代类型连接全部撤回，不能借另一祖先分支绕行。
+
+构建安全入口要求 `structure_protected_paths.json` 固定生产库和封存来源检查点的绝对位置与 SHA-256；候选必须是独立 inode，生产库路径、硬链接或伪造 CLI baseline 均拒绝。`python -O` 和 `PYTHONOPTIMIZE` 不能用于构建或验收。外部独立构建回执绑定唯一 build ID、全部阶段、代码/输入清单及哈希；复现检查逐个比较实际表库存，只排除 SQLite 明确标识的 FTS 重复内容和有记录的运行时阶段数据。
+
+`build_complete.json` 后仍需 `accept_structure_candidate.py local` 完整检查；公开下载安装证据必须包含真实下载 URL、文件 SHA、实际安装 SDK 和完整公共查询/导出复验报告。局部通过仅允许上传明确标记的预发布候选，不允许推荐稳定版本。
+
+交付工具的独立小库拒绝回归见 [发布凭据检查](structure_current_delivery_guard_validation.json)、[保护路径和缓存检查](structure_current_build_safety_validation.json)及[完整复现比较检查](structure_compare_reproductions_fix_validation.json)。这些是工具回归，不能替代正式大库验收或真实公网下载。公开下载回执区分真实 HTTP(S) 网络传输、断点续传及缓存恢复；缓存、`file://` 和仅解压本地分片均不能声称本轮重新公开下载。安装 SDK 检查必须绑定同一个下载文件路径、文件状态和整库 SHA。

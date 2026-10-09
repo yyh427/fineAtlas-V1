@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "schema_only_original_baseline_inspection": true,
+  "full_candidate_comparison_not_run": true,
+  "baseline_actual_tables": 112,
+  "baseline_excluded_content_tables": {
+    "browse_build_stages": "EXPLICIT_MEASURED_RUNTIME_STAGE",
+    "usability_stages": "EXPLICIT_MEASURED_RUNTIME_STAGE",
+    "alias_search": "SQLITE_FTS_VIRTUAL_FTS5",
+    "alias_search_config": "SQLITE_FTS_SHADOW_OF:alias_search",
+    "alias_search_data": "SQLITE_FTS_SHADOW_OF:alias_search",
+    "alias_search_docsize": "SQLITE_FTS_SHADOW_OF:alias_search",
+    "alias_search_idx": "SQLITE_FTS_SHADOW_OF:alias_search"
+  },
+  "baseline_compared_content_count": 105,
+  "tests_passed": 11,
+  "optimization_hardlinks_symlinks_and_output_aliases_rejected": true,
+  "ordinary_prefix_and_nonfts_virtual_contents_compared": true,
+  "files_sha256": {
+    "scripts/compare_reproductions.py": "53b8dd4e2541dacb19054dfb599d1f3c53917be759006e3e86b0adeede46f71b",
+    "tests/test_compare_reproductions.py": "ba1aed93d50d7285b08a979025cbdf8e9c866ed031e19aeeab4cbcd1c4061cee"
+  }
+}

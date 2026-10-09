@@ -911,6 +911,7 @@ class ConsistentAtlas(SingleAtlas):
             "roots": self.domain_roots(name),
             "children": self.domain_children(name, limit),
             "instances": self.domain_instances(name, limit),
+            "source_directories": self.source_directories(name, limit),
             "relation_view": self.relation_view,
             "scope_semantics": "Native roots and accepted hierarchy/typed descendants; roots are navigation scope, not new IS_A wrappers",
         }

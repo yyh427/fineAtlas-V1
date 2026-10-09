@@ -6,6 +6,10 @@ source UID/content fields are hashed explicitly. Component changes are expected
 identity decisions and are audited separately, never asserted to be raw facts.
 """
 from __future__ import annotations
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
 import argparse
 import hashlib
 import json
@@ -28,13 +32,16 @@ def run(baseline,candidate,output,reference=None):
     output.parent.mkdir(parents=True,exist_ok=True)
     base=sqlite3.connect(baseline.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)
     c=sqlite3.connect(candidate.resolve().as_uri()+'?mode=ro&immutable=1',uri=True) if candidate else None
-    tables=[r[0] for r in base.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('nodes','source_nodes','source_edges','source_bridges','source_entity_relations')")]
+    tables=[r[0] for r in base.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('nodes','evidence','source_nodes','source_edges','source_bridges','source_entity_relations')")]
     saved=json.loads(reference.read_text()) if reference else None
     results={}
     for table in tables:
         columns=[r[1] for r in base.execute('PRAGMA table_info("'+table+'")') if not (table=='nodes' and r[1]=='component_id')]
         max_rowid=base.execute('SELECT max(rowid) FROM "'+table+'"').fetchone()[0]
-        left=saved['tables'][table]['baseline'] if saved else digest_rows(base,table,columns,max_rowid)
+        frozen=saved.get('tables',{}).get(table) if saved else None
+        if frozen and (frozen['columns']!=columns or frozen['max_baseline_rowid']!=max_rowid):
+            raise ValueError('Original source reference schema/row bound changed: '+table)
+        left=frozen['baseline'] if frozen else digest_rows(base,table,columns,max_rowid)
         right=digest_rows(c,table,columns,max_rowid) if c else None
         results[table]={'columns':columns,'max_baseline_rowid':max_rowid,'baseline':left,'candidate':right,
                         'pass':right is None or (left['sha256']==right['sha256'] and left['rows']==right['rows'])}

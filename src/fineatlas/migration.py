@@ -156,7 +156,7 @@ class Migration:
                 eid,
                 source,
                 uri,
-                payload.get("retrieved_utc", "2026-10-05"),
+                payload.get("retrieved_utc", getattr(self, 'legacy_evidence_fallback', None)),
                 claim,
                 raw,
                 hashlib.sha256(raw.encode()).hexdigest(),

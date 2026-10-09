@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "cases": {
+    "fully_formed_synthetic_positive_control": {
+      "status": "PASS",
+      "actual_fresh_network_claimed": false,
+      "purpose": "Positive file/hash/path/schema controls only, not a genuine public download receipt"
+    },
+    "wrong_public_release": {
+      "status": "REJECTED",
+      "reason": "Public artifact binding mismatch: release"
+    },
+    "boolean_only_public_receipt": {
+      "status": "REJECTED",
+      "reason": "Complete public verification evidence files required"
+    },
+    "truncated_matrix_only_legacy": {
+      "status": "REJECTED",
+      "reason": "Public matrix must match every frozen mode and canonical dataset"
+    },
+    "wrong_canonical_dataset_key": {
+      "status": "REJECTED",
+      "reason": "Public matrix must match every frozen mode and canonical dataset"
+    },
+    "matrix_changed_counts": {
+      "status": "REJECTED",
+      "reason": "Public matrix must match every frozen mode and canonical dataset"
+    },
+    "sdk_same_revision_different_file_sha": {
+      "status": "REJECTED",
+      "reason": "Actual matching installed-SDK report required"
+    },
+    "sdk_runs_different_actual_file": {
+      "status": "REJECTED",
+      "reason": "Installed SDK must check the actual unchanged downloaded file"
+    },
+    "cached_assets_cannot_be_public_fresh": {
+      "status": "REJECTED",
+      "reason": "Actual fresh per-asset public network download required"
+    },
+    "file_uri_cannot_be_public_network": {
+      "status": "REJECTED",
+      "reason": "Actual fresh per-asset public network download required"
+    },
+    "actual_file_modified_during_verification": {
+      "status": "REJECTED",
+      "reason": "Public downloaded artifact changed during verification"
+    },
+    "dynamic_inventory_positive_control": {
+      "status": "PASS",
+      "actual_count": 3,
+      "old_105_constant_required": false
+    },
+    "wrong_declared_comparison_count": {
+      "status": "REJECTED",
+      "reason": "Compared actual table inventories differ"
+    },
+    "missing_ordinary_table_content": {
+      "status": "REJECTED",
+      "reason": "Complete compared/excluded table accounting required"
+    },
+    "actual_artifact_cli_O": {
+      "status": "REJECTED",
+      "exit_code": 1,
+      "reason": "Explicit optimization gate executed"
+    }
+  },
+  "public_candidate_accepted": false,
+  "production_or_candidate_writes": 0,
+  "source_hashes": {
+    "scripts/structure_acceptance_contract.py": "3bb5745b899b88604ab92fbce4b3fd721073687f391da5473f3fe806c04dad26",
+    "scripts/audit_structure_artifact.py": "410dc7efd796481db35f93fd1cfe3ef250de88c4a16a5570460d9a7c78fe070a",
+    "scripts/promote_structure_stable.py": "da6acb78b0f32784c8bdb8aefd8fd583b0d22c432d7399774b0ac96b1dccebc2"
+  }
+}

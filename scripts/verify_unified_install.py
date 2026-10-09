@@ -5,7 +5,11 @@ Run download_single first: its streamed extraction checks the full file SHA and
 size. This command avoids another redundant 64 GB scan, then independently
 checks frozen code, graph/index/default-view consistency and actual queries.
 """
-import argparse,collections,hashlib,json,pathlib,sys
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
+import argparse,collections,hashlib,json,pathlib,sys,datetime
 import fineatlas
 from fineatlas import FineAtlas
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -136,7 +140,7 @@ def main():
      totals['labels']+=1;totals['stored_identity_claim_verified']+=t['stored_identity_claim_verified'];totals['identity_verified']+=t['identity_verified']
      totals['root_reachable']+=state['root_reachable'];totals['path_state_consistent']+=1;totals['hierarchy_admitted']+=t['task_admission']['usable']
    actual={k:totals[k] for k in x};assert actual==x,(view,actual,x);labels[view]=actual
- result={'all_pass':True,'release':m['release'],'database_revision':m['database_revision'],'database_sha256':m['database']['sha256'],
+ result={'database':str(a.database.resolve()),'artifact_stamp':[a.database.stat().st_size,a.database.stat().st_mtime_ns,a.database.stat().st_ino],'all_pass':True,'installed_sdk':True,'ended_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'release':m['release'],'database_revision':m['database_revision'],'database_sha256':m['database']['sha256'],
   'full_hash_verification_stage':'Completed download_single streamed SHA-256/size/exact-revision verification; byte-identical receipt required',
   'default_view':'unified','matching_embedded_browse_index':True,**installed,
   'domains':domain_checks,'labels':labels,'pairs':pairs,'unresolved_source_evidence_is_not_certified_by_this_install_test':True,'images_or_models_run':False}

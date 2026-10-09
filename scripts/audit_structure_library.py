@@ -8,6 +8,10 @@ scientific certification. This script never modifies either input database.
 """
 from __future__ import annotations
 
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
+
 import argparse
 from collections import Counter, defaultdict
 import gzip
@@ -19,7 +23,11 @@ import sqlite3
 import sys
 import time
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+if '--installed-sdk' not in sys.argv:
+    sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+else:
+    import fineatlas
+    assert Path(fineatlas.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()) and 'site-packages' in Path(fineatlas.__file__).parts, 'Use the installed SDK'
 from fineatlas import FineAtlas
 
 TYPE_ROLES = {'CLASS','BIOLOGICAL_VARIANT'}
@@ -360,6 +368,7 @@ def audit(baseline,database,inventory,output):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('baseline','database','inventory','output'):parser.add_argument('--'+name,type=Path,required=True)
+    parser.add_argument('--installed-sdk',action='store_true')
     args=parser.parse_args();result=audit(args.baseline,args.database,args.inventory,args.output)
     if not result['pass']:raise SystemExit(1)
 

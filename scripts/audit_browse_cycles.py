@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Kahn-check the complete indexed hierarchy, including typed design/configuration links."""
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
 from array import array
 from collections import deque
 import argparse

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Check staged finer-route witnesses against immutable original source records."""
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
 import argparse
 import json
 from pathlib import Path

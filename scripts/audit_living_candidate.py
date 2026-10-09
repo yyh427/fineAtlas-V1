@@ -6,6 +6,10 @@ The four old hashes are frozen 1.10.1 preservation evidence, not type rules.
 """
 from __future__ import annotations
 
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
+
 import argparse
 from collections import Counter, defaultdict, deque
 import copy
@@ -20,7 +24,11 @@ import tempfile
 import time
 from urllib.parse import quote
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+if '--installed-sdk' not in sys.argv:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+else:
+    import fineatlas
+    assert Path(fineatlas.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()) and 'site-packages' in Path(fineatlas.__file__).parts, 'Use the installed SDK'
 
 VIEWS = ('strict', 'taxonomy', 'unified')
 DOMAINS = ('furniture', 'lighting', 'bags_and_luggage',
@@ -551,6 +559,7 @@ def main():
     parser.add_argument('--inputs', type=Path)
     parser.add_argument('--output', type=Path)
     parser.add_argument('--self-test', action='store_true')
+    parser.add_argument('--installed-sdk', action='store_true')
     args = parser.parse_args()
     if args.self_test:
         self_test();return 0

@@ -64,5 +64,31 @@ class SourceGroupsTest(unittest.TestCase):
     def test_old_database_has_explicit_unavailable_result(self):
         self.assertEqual(self.tree.source_groups_page()['status'], 'SOURCE_GROUPS_NOT_AVAILABLE')
 
+    def test_native_catalog_kind_preserves_members_without_type_distance(self):
+        self.build()
+        self.assertEqual(self.tree.source_groups_page('registry',1)['items'][0]['group_kind'],
+                         'SOURCE_ORGANIZATION_GROUP')
+        self.tree.close()
+        with sqlite3.connect(self.path) as c:
+            c.execute('UPDATE source_groups SET proof=? WHERE group_uid=?',
+                      (json.dumps({'kind':'SOURCE_NATIVE_CATALOG_DIRECTORY','navigation_domains':['fixture']}),'group:0'))
+            c.execute("UPDATE source_group_members SET relation='CATALOG_ENTRY' WHERE group_uid='group:0'")
+            c.execute("UPDATE source_group_members SET status='SOURCE_DECLARED' WHERE group_uid='group:0' AND status='ACTIVE'")
+            c.execute('INSERT OR REPLACE INTO metadata VALUES(?,?)',
+                      ('domain_roots',json.dumps([{'domain':'fixture','uid':'type:root','root_uids':['type:root']}])))
+        self.tree=FineAtlas(self.path)
+        group=self.tree.source_groups_page('registry',1)['items'][0]
+        self.assertEqual(group['group_kind'],'SOURCE_NATIVE_CATALOG_DIRECTORY')
+        self.assertFalse(group['classification_distance_applicable'])
+        directories=self.tree.source_directories('fixture')
+        self.assertEqual([x['group_uid'] for x in directories],['group:0'])
+        self.assertFalse(directories[0]['is_a'])
+        self.assertEqual(self.tree.source_directories('unknown'),[])
+        members=self.tree.source_group_members_page('group:0',10)
+        self.assertEqual({x['uid'] for x in members['items']},{'type:river','geo:1'})
+        self.assertTrue(all(x['group_kind']=='SOURCE_NATIVE_CATALOG_DIRECTORY'
+                            and x['group_membership']['relation']=='CATALOG_ENTRY'
+                            and x['is_a'] is False for x in members['items']))
+
 if __name__ == '__main__':
     unittest.main()

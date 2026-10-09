@@ -50,6 +50,11 @@ def corroborated_species_rank(record, native_records):
     """
     if record.get('source') != 'wordnet31':
         return None
+    # Deferred import keeps the frozen R2 replay independent, while future
+    # source preparation rejects quantified groups before proposing a rank.
+    from .structure_biology_scope import whole_scope_review
+    if whole_scope_review(record.get('description', '')):
+        return None
     if re.search(r'\b(any|all) (?:\w+ )?plants?\b.*\bgenus\b',
                  record.get('description', ''), re.I):
         return None
