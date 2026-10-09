@@ -4,15 +4,15 @@
   "distinct_source_files": true,
   "artifacts": {
     "primary": {
-      "release": "v1.10.1-repair-review",
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
-      "browse_index_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "release": "v1.10.1",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "browse_index_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "ready_flags": {
         "unified_ready": true,
         "usability_indexes_ready": true,
         "browse_indexes_ready": true
       },
-      "sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391",
+      "sha256": "804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5",
       "bytes_scanned": 68495904768,
       "integrity_check": [
         "ok"
@@ -21,15 +21,15 @@
       "pass": true
     },
     "reproduction": {
-      "release": "v1.10.1-repair-review",
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
-      "browse_index_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "release": "v1.10.1",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+      "browse_index_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "ready_flags": {
         "unified_ready": true,
         "usability_indexes_ready": true,
         "browse_indexes_ready": true
       },
-      "sha256": "aedd134e80b870f607b58624ef9545be40f5389b616ca69f277ad94481d24047",
+      "sha256": "62c1fa39b232702f803b0f5cd8c9f76bd574efaa439d072aed627b4e8774c0d8",
       "bytes_scanned": 68495904768,
       "integrity_check": [
         "ok"

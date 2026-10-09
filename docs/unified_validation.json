@@ -1,8 +1,8 @@
 {
   "schema": "FINEATLAS_UNIFIED_ACCEPTANCE_V1",
-  "release": "v1.10.1-repair-review",
-  "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
-  "database_sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391",
+  "release": "v1.10.1",
+  "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
+  "database_sha256": "804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5",
   "domain_inventory": {
     "agricultural_habitats": [
       "eunis2012:I"
@@ -428,7 +428,7 @@
         "COARSE_COMMON_ANCESTOR_ONLY": 8835,
         "ENDPOINT_NOT_APPLICABLE": 2880
       },
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": "avilist",
@@ -448,7 +448,7 @@
         "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
         "COARSE_COMMON_ANCESTOR_ONLY": 212
       },
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "relation_view": "unified",
       "policy": "design",
       "source_scope": null,
@@ -467,7 +467,7 @@
         "ENDPOINT_NOT_APPLICABLE": 3071,
         "COARSE_COMMON_ANCESTOR_ONLY": 1003
       },
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": null,
@@ -485,7 +485,7 @@
         "APPLICABLE": 638,
         "COARSE_COMMON_ANCESTOR_ONLY": 28
       },
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": null,
@@ -503,7 +503,7 @@
         "COARSE_COMMON_ANCESTOR_ONLY": 6423,
         "APPLICABLE": 717
       },
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "relation_view": "unified",
       "policy": "classification",
       "source_scope": null,
@@ -522,7 +522,7 @@
         "IDENTITY_LINEAGE_ROLE_CONFLICT": 2639,
         "APPLICABLE": 135
       },
-      "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+      "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
       "relation_view": "unified",
       "policy": "configuration",
       "source_scope": null,
@@ -570,7 +570,7 @@
       "processed_vertices": 3694556,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 10.812918452546,
+      "seconds": 7.504163824021816,
       "default_preferred_graph_acyclic": true
     },
     "strict": {
@@ -579,7 +579,7 @@
       "processed_vertices": 9030783,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 18.643646894954145,
+      "seconds": 14.930110345594585,
       "default_preferred_graph_acyclic": true
     },
     "taxonomy": {
@@ -588,7 +588,7 @@
       "processed_vertices": 12262943,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 29.78780054114759,
+      "seconds": 19.870444051921368,
       "default_preferred_graph_acyclic": true
     },
     "unified": {
@@ -597,7 +597,7 @@
       "processed_vertices": 12262864,
       "cyclic_or_cycle_dependent_vertices": 0,
       "acyclic": true,
-      "seconds": 30.048456418327987,
+      "seconds": 19.639324471354485,
       "default_preferred_graph_acyclic": true
     }
   },
@@ -619,7 +619,7 @@
     "source_record_endpoint_relation_role_and_view_checks": "All indexed records; original evidence IDs retained",
     "new_semantic_relations": 0,
     "new_semantic_nodes": 0,
-    "seconds": 248.56244448758662
+    "seconds": 263.4889355227351
   },
   "real_cli_calls": 14,
   "unrooted_active_classification_source_records": 4170,

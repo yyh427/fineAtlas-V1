@@ -1,31 +1,30 @@
 {
-  "current_candidate": {
-    "release": "v1.10.1-repair-review",
-    "sdk_version": "1.10.1rc1",
-    "code_tag": "v1.10.1-repair-code.1",
+  "formal_release": {
+    "release": "v1.10.1",
+    "sdk_version": "1.10.1",
+    "code_tag": "v1.10.1",
     "database": {
       "name": "fineatlas.sqlite",
       "bytes": 68495904768,
-      "sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391"
+      "sha256": "804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5"
     },
-    "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+    "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
     "default_relation_view": "unified",
     "domains": 95,
     "built": true,
     "local_acceptance_pass": true,
-    "published": true,
-    "public_download_verified": true,
-    "code_commit": "b36616f66bec48a7e47f576739efe88df3b466f6",
-    "release_url": "https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1-repair-review"
+    "published": false,
+    "public_download_verified": false,
+    "default_main_switched": false
   },
   "previous_candidate": {
-    "release": "v1.10.0-unified-review",
-    "sha256": "c8db664711255202d51ed571d60df66fe5b4315e879c1d509a5dd935bb3ee019",
+    "release": "v1.10.1-repair-review",
     "preserved": true
   },
-  "production": {
+  "previous_formal": {
     "release": "v1.6.0",
     "preserved": true,
-    "replaced": false
-  }
+    "default_replaced": false
+  },
+  "all_older_releases_preserved": true
 }

@@ -1,50 +1,50 @@
 {
   "public_name": "FineAtlas V1",
-  "release": "v1.10.1-repair-review",
+  "release": "v1.10.1",
   "graph_version": "V1",
-  "candidate": true,
-  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.10.1-repair-review",
+  "candidate": false,
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.10.1",
   "database": {
     "name": "fineatlas.sqlite",
     "bytes": 68495904768,
-    "sha256": "62a9190f1330091d84b7259a7ef2865a6ee1d098d860159b6ebec30db5fd5391"
+    "sha256": "804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5"
   },
   "assets": [
     {
-      "name": "fineatlas-v1.10.1-repair-review.sqlite.zst.part-000",
+      "name": "fineatlas-v1.10.1.sqlite.zst.part-000",
       "bytes": 1073741824,
-      "sha256": "5956592f42e92c3bebb9671d33037a0e1cec911411d7b9f90a6312c57cb064c3"
+      "sha256": "683f5079cbcc1071cc989a0b53893d272a62db8f4303daa4f178f31069d19461"
     },
     {
-      "name": "fineatlas-v1.10.1-repair-review.sqlite.zst.part-001",
+      "name": "fineatlas-v1.10.1.sqlite.zst.part-001",
       "bytes": 1073741824,
       "sha256": "6ac8f00112ab7ca952a4c23d3477bf8ccef4e19f3e301447775b9d478154a49c"
     },
     {
-      "name": "fineatlas-v1.10.1-repair-review.sqlite.zst.part-002",
+      "name": "fineatlas-v1.10.1.sqlite.zst.part-002",
       "bytes": 1073741824,
       "sha256": "0e7cfd8a9c24588b2b507a29232e8ab4b1efcec693ba346244b2e3e2c1eb2f7c"
     },
     {
-      "name": "fineatlas-v1.10.1-repair-review.sqlite.zst.part-003",
+      "name": "fineatlas-v1.10.1.sqlite.zst.part-003",
       "bytes": 1073741824,
-      "sha256": "db88b3f6742e4ac8d2b630a598cadd9e238573295f34b83557f9f6c710dea1b0"
+      "sha256": "daed4c62954e5b3a389283f02f56ff1631b91bd1063a0c3b57abf5705ad2f749"
     },
     {
-      "name": "fineatlas-v1.10.1-repair-review.sqlite.zst.part-004",
+      "name": "fineatlas-v1.10.1.sqlite.zst.part-004",
       "bytes": 1073741824,
-      "sha256": "6f875c6e9288e35a25878a7e6afcf235d9fc42847705e25352656b50189ccb58"
+      "sha256": "373b7f87ac5f175850f1238d91fd9f8a323016a8e5019cdc7b7c9897e6a8439b"
     },
     {
-      "name": "fineatlas-v1.10.1-repair-review.sqlite.zst.part-005",
-      "bytes": 436240257,
-      "sha256": "b06eb373ce804c8e509638e8650db9dc85050545d6ed030dbcc9ac7f09eac75e"
+      "name": "fineatlas-v1.10.1.sqlite.zst.part-005",
+      "bytes": 448284350,
+      "sha256": "0981c21b539256e4249c5b16a45c7a815f9d75f3fc4c1410ce031d869ecacd89"
     }
   ],
-  "database_build_version": "v1.10.1-repair-review",
-  "database_revision": "da98222833499cf1bb84ff2f64376e5a4fb0594786e04a29694d5bb86c4b7492",
+  "database_build_version": "v1.10.1",
+  "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
   "artifact_kind": "single",
-  "source_revision": "4ccc41a9f8e7afeeef8f92a4643a511a000d52b2e9c2da316475f621b69a3c9d",
+  "source_revision": "b768895adab143765fda7270240fbd6654168f72aef15e0026a796e5902e0726",
   "source_graph_changed": true,
   "default_relation_view": "unified",
   "supported_relation_views": [
@@ -53,7 +53,7 @@
     "membership",
     "unified"
   ],
-  "sdk_version": "1.10.1rc1",
+  "sdk_version": "1.10.1",
   "domain_count": 95,
   "domain_inventory": {
     "agricultural_habitats": [
@@ -410,8 +410,9 @@
       "wordnet31:09501020-n"
     ]
   },
-  "release_code_tag": "v1.10.1-repair-code.1",
+  "release_code_tag": "v1.10.1",
   "frozen_sdk_manifest_asset": "frozen_metadata.json",
   "full_source_semantic_certification": false,
-  "production_replacement_ready": false
+  "semantic_graph_unchanged_from_review_candidate": true,
+  "stable_api_and_navigation_acceptance_pass": true
 }

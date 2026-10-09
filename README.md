@@ -1,26 +1,37 @@
 # FineAtlas V1
 
-FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及命名实例的本地 SQLite 图数据库。本分支的 SDK 是 `1.10.1rc1`，统一候选为 `v1.10.1-repair-review`，查询视图固定为 `unified`。候选与正式版本分开发布，不覆盖旧库。
+FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及命名实例的本地 SQLite 图数据库。本地正式版为 `v1.10.1`，SDK `1.10.1`，默认查询视图为 `unified`。原 `v1.6.0` 和所有候选继续保留，可独立安装与回退。
 
-## 固定代码和数据
+**本地验收已通过，公网发布待验证：** 正式版已完成两源独立提升、匹配浏览索引重建、105张逻辑表／模式比较、103张非浏览表的来源语义保留检查和16阶段完整本地验收。本地283项单元测试通过。本文的默认安装流程仍是待发布的目标流程；正式公网安装、代码CI及GitHub main／Latest切换继续为PENDING，取得实际发布凭据后更新。
 
-加载／核验代码固定到 `v1.10.1-repair-code.1`，见 [unified_code.json](unified_code.json)。代码标签与数据清单分别固定可安装代码和精确数据库；候选的冻结构建清单记录 SDK、构建脚本及全部来源输入的 SHA-256。
+## 默认下载与使用
+
+需要 Python 3.10+ 和解压工具 `zstd`（Linux 可用 `apt install zstd`，macOS 可用 `brew install zstd`）。查询使用 Python 标准库和 SQLite，不需要 GPU、API key 或数据库服务器。
+
+图数据库约68.5GB；分片和临时解压还需空间，建议数据盘预留90GB以上。正式文件大小以清单的 `database.bytes` 为准。升级时为新版本选择新目录，保留旧库。
 
 四个生活入口和家具目录配置的范围说明见 [生活领域](docs/living_domains_v1.10.1.md)。
 
-候选清单为 [unified_data.json](unified_data.json)，包含分发附件、完整数据库 SHA-256、图修订、默认视图和索引版本。最终核验结果、代码版本及未确认项见 [统一层次结果](docs/unified_results.md)。不要将 PyPI 中其他版本的 SDK、旧数据库或 `v1.9` 浏览索引与本候选混用。
+正式默认流程不需要指定 Git 分支、下载清单或查询视图：
 
 ```bash
-# 在本候选对应的 GitHub tag / commit 中执行
+git clone https://github.com/yyh427/fineAtlas-V1.git
+cd fineAtlas-V1
+python3 -m venv .venv
+. .venv/bin/activate
 python3 -m pip install .
-python3 scripts/download_single.py --manifest unified_data.json \
-  --output-dir /path/to/fineatlas-unified
-fineatlas --data-dir /path/to/fineatlas-unified --relation-view unified stats
+python3 scripts/download_single.py --output-dir ./data
+fineatlas --data-dir ./data stats
+python3 scripts/check_installation.py --data-dir ./data
+python3 scripts/verify_unified_install.py \
+  --database ./data/fineatlas.sqlite --output ./verification
 ```
 
-下载器检查每个附件和完整数据库的大小、SHA-256、默认视图及图／浏览索引修订；拒绝覆盖已有不同哈希的库。需要 Python 3.10+、SQLite 和解压工具 `zstd`，查询不需要 GPU、API key 或数据库服务。
+预期 `stats` 显示数据版本 `v1.10.1` 和默认视图 `unified`；SDK `1.10.1` 由安装检查核验。下载器默认读取当前代码的正式 [unified_data.json](unified_data.json)，逐片与流式解压核对大小、SHA-256、版本和修订，拒绝覆盖不同哈希的已有库。安装检查使用实际已安装 SDK，核对数据收据、图／浏览索引与代码，再运行代表查询；完整安装复验对照当前正式验收快照。
 
-旧正式版使用 [single_download.json](single_download.json) 单独下载。历史 `v1.8.1` 和 `v1.9` 清单与报告继续保留，它们不代表本候选的验收结果。
+精确 SDK 标签／commit 见 [unified_code.json](unified_code.json)，数据清单独立固定数据库和附件。正式版从已验收修复候选独立提升并重新冻结，不能把候选数据库与正式版代码混装。结果与限制见 [统一层次结果](docs/unified_results.md)。
+
+需要旧版本时，显式指定 [v1.6.0 清单](legacy_single_download_v1.6.0.json) 并使用另一数据目录；候选也必须显式选择其清单。完整旧代码／数据安装、从 1.6 迁移和回退步骤见 [版本迁移](docs/migration_v1.10.1.md)。旧版本和候选都不因正式发布而删除。
 
 ## 视图和关系
 
@@ -28,12 +39,14 @@ fineatlas --data-dir /path/to/fineatlas-unified --relation-view unified stats
 
 | 视图 | 意义 |
 |---|---|
-| `unified` | 本候选的默认视图：选定 WordNet 骨架、原生类型／生物分类及分角色导航 |
+| `unified` | `v1.10.1` 的默认视图：选定 WordNet 骨架、原生类型／生物分类及分角色导航 |
 | `strict` | 当前角色合同下准入的严格 `IS_A`；明确指定以兼容旧查询 |
 | `taxonomy` | 原有原生分类视图，保留 `TAXONOMIC_PARENT`、`NATIVE_CLASSIFICATION_PARENT` |
 | `membership` | 独立来源成员视图，通常需要指定原生局部根 |
 
 `SAME_CONCEPT` 解析经核验的等价来源表示，成本为零，不增加分类深度。`IS_A` 表示普通类型包含；生物或专业来源父级保留原始关系语义。`DESIGN_TYPE_OF`、`NATIVE_DESIGN_PARENT`、`SERIES_MEMBER_OF`、`CONFIGURATION_OF`、`INSTANCE_OF` 分别导航设计、系列、配置和实例。`REGULATED_AS` 是监管目录导航，不参与分类／设计距离奖励。目录、制造商、年份和其他属性分组不会转成 `IS_A`。
+
+从 1.6 升级时，默认 `unified` 是有意变化。需要严格关系查询可显式加 `--relation-view strict`，或在 Python 中传 `relation_view='strict'`。要完整复现 1.6 的旧输出，还应固定 1.6 代码与旧数据库；新库的显式 `strict` 不承诺逐字复现所有旧结果。
 
 允许合理多父关系。入口 `fineatlas-domain:<domain>` 是导航目录，不作为普通类别进入分类 DAG。`source_hierarchy()` 可查看保留的原始来源声明，包含未准入的记录及处置状态。
 
@@ -42,8 +55,7 @@ fineatlas --data-dir /path/to/fineatlas-unified --relation-view unified stats
 ```python
 from fineatlas import FineAtlas
 
-with FineAtlas('/path/to/fineatlas-unified/fineatlas.sqlite',
-               relation_view='unified') as tree:
+with FineAtlas('/path/to/fineatlas-unified/fineatlas.sqlite') as tree:
     print(tree.metadata['release'], tree.metadata['database_revision'])
     print(tree.domains())
     print(tree.browse_children_page('aircraft', limit=20))
@@ -80,6 +92,8 @@ python3 scripts/export_text_training.py \
 LCA 返回明确关系策略下全部最低公共祖先身份组。距离为经有信息量 LCA 的最小向上边数之和；身份步为零。不使用所有关系的无向最短路。只有领域大类等过宽共同祖先、身份／粒度未确认、祖先身份组角色冲突或视图不适用时，不制造最大错误距离。跨领域通用 UID 查询没有校准为分类错误奖励。
 
 不同数据集的策略和覆盖率见最终结果报告。合法路径不代表该类全部类别对适合训练，也不代表实际识别能力已经验证。
+
+当前保留的限制包括 CUB **15** 个注释范围 REVIEW、CRJ-700 已验证来源层次但世界精确身份仍 REVIEW；Cars **19,110** 对中只有 **135** 对适用于层次奖励。仍有 **4,180** 个未接入导航来源 UID，对应 **2,976** 个身份组，以及 **283** 个身份角色冲突组。身份确认、根可达和奖励 `applicable` 分开检查；不适用的层次项跳过并保留类别正确性奖励。
 
 ## 重建、验收和恢复
 

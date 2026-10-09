@@ -2,25 +2,25 @@
   {
     "before": {
       "view": "taxonomy",
-      "snapshot": "retained-local-source/fineatlas-unified.sqlite",
+      "snapshot": "<local-workspace>/v1_generality_finalize_20261006.LxJa4t/unified_20261008/fineatlas-unified.sqlite",
       "parent": "hierarchy-type:aircraft-4-engine-1",
       "kind": "MODEL",
       "filters": {
         "source": "faa"
       },
-      "cold_connection_seconds": 0.009268608875572681,
-      "warm_median_seconds": 0.0038073481991887093,
+      "cold_connection_seconds": 1.0279728379100561,
+      "warm_median_seconds": 0.00573929725214839,
       "warm_samples_seconds": [
-        0.0041245147585868835,
-        0.0038355467841029167,
-        0.003777110017836094,
-        0.003932049497961998,
-        0.0038705747574567795,
-        0.003844674676656723,
-        0.0037647439166903496,
-        0.0037696436047554016,
-        0.003779149614274502,
-        0.0037732142955064774
+        0.012526377104222775,
+        0.0059050582349300385,
+        0.005744917318224907,
+        0.005750085227191448,
+        0.005793497897684574,
+        0.005716870538890362,
+        0.005711790174245834,
+        0.005733677186071873,
+        0.005730639211833477,
+        0.005718675442039967
       ],
       "returned_counts": [
         20,
@@ -41,25 +41,25 @@
     },
     "after": {
       "view": "unified",
-      "snapshot": "<local-workspace>/fineatlas-primary.sqlite",
+      "snapshot": "<local-workspace>/v1_generality_finalize_20261006.kUd5FW/release_v1.10.1_20261009_012738/fineatlas-primary.sqlite",
       "parent": "hierarchy-type:aircraft-4-engine-1",
       "kind": "MODEL",
       "filters": {
         "source": "faa"
       },
-      "cold_connection_seconds": 0.005377288907766342,
-      "warm_median_seconds": 0.0037563121877610683,
+      "cold_connection_seconds": 0.008104653097689152,
+      "warm_median_seconds": 0.005715453065931797,
       "warm_samples_seconds": [
-        0.003765825182199478,
-        0.0037377336993813515,
-        0.003740450367331505,
-        0.003753233700990677,
-        0.003744451329112053,
-        0.003747200593352318,
-        0.0038310661911964417,
-        0.0037621064111590385,
-        0.003764432854950428,
-        0.00375939067453146
+        0.00581060815602541,
+        0.005750899203121662,
+        0.005743888206779957,
+        0.00571332685649395,
+        0.005712765268981457,
+        0.005721722729504108,
+        0.005715508013963699,
+        0.005696548148989677,
+        0.005715398117899895,
+        0.00570300780236721
       ],
       "returned_counts": [
         20,
@@ -83,25 +83,25 @@
   {
     "before": {
       "view": "taxonomy",
-      "snapshot": "retained-local-source/fineatlas-unified.sqlite",
+      "snapshot": "<local-workspace>/v1_generality_finalize_20261006.LxJa4t/unified_20261008/fineatlas-unified.sqlite",
       "parent": "hierarchy-type:car-gasoline",
       "kind": "CONFIGURATION",
       "filters": {
         "source": "epa"
       },
-      "cold_connection_seconds": 0.005539014935493469,
-      "warm_median_seconds": 0.004178689327090979,
+      "cold_connection_seconds": 0.5224422691389918,
+      "warm_median_seconds": 0.006380619015544653,
       "warm_samples_seconds": [
-        0.004285361617803574,
-        0.004206097684800625,
-        0.004173269495368004,
-        0.0041952356696128845,
-        0.004166487604379654,
-        0.0041633667424321175,
-        0.00416223332285881,
-        0.004183096811175346,
-        0.004183948040008545,
-        0.004174281843006611
+        0.01289537362754345,
+        0.006471053697168827,
+        0.006409304216504097,
+        0.006370927207171917,
+        0.006351017393171787,
+        0.006390310823917389,
+        0.006357366219162941,
+        0.006402619183063507,
+        0.006339194253087044,
+        0.006304445676505566
       ],
       "returned_counts": [
         20,
@@ -122,25 +122,25 @@
     },
     "after": {
       "view": "unified",
-      "snapshot": "<local-workspace>/fineatlas-primary.sqlite",
+      "snapshot": "<local-workspace>/v1_generality_finalize_20261006.kUd5FW/release_v1.10.1_20261009_012738/fineatlas-primary.sqlite",
       "parent": "hierarchy-type:car-gasoline",
       "kind": "CONFIGURATION",
       "filters": {
         "source": "epa"
       },
-      "cold_connection_seconds": 0.005630480125546455,
-      "warm_median_seconds": 0.004273296799510717,
+      "cold_connection_seconds": 0.008354073390364647,
+      "warm_median_seconds": 0.006341184955090284,
       "warm_samples_seconds": [
-        0.004267936572432518,
-        0.004266753792762756,
-        0.004259156994521618,
-        0.0043073780834674835,
-        0.004259882494807243,
-        0.004278657026588917,
-        0.004283072426915169,
-        0.004279682412743568,
-        0.004296270199120045,
-        0.0042587267234921455
+        0.00634949654340744,
+        0.006363983266055584,
+        0.006342701613903046,
+        0.006326009519398212,
+        0.006327453069388866,
+        0.006387453526258469,
+        0.006339668296277523,
+        0.0067515186965465546,
+        0.006337165832519531,
+        0.006337912753224373
       ],
       "returned_counts": [
         20,

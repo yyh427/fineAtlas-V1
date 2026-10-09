@@ -1,6 +1,8 @@
-# FineAtlas 1.10 公开接口
+# FineAtlas 1.10.1 公开接口
 
-本候选 `v1.10.0-unified-review` 固定 `unified`。`FineAtlas(path)` 从快照读取默认视图；旧快照保持原默认，显式传入 `relation_view` 可复现旧查询。构建未完成时拒绝暴露统一查询，外部索引的来源修订必须匹配数据库。
+正式 `v1.10.1` 的默认视图为 `unified`；两源独立提升、匹配浏览索引重建和16阶段完整本地验收已经通过。正式公网安装与远端默认版本切换仍为PENDING。`FineAtlas(path)` 从选定快照读取默认视图；旧快照保留自己的默认。`relation_view='strict'` 或 CLI `--relation-view strict` 显式选择当前角色合同的严格分类视图。完整复现1.6时固定旧代码与旧数据，见 [迁移说明](migration_v1.10.1.md)。构建未完成时拒绝暴露统一查询，外部索引的来源修订必须匹配数据库。
+
+普通正式安装流程默认选择正式清单，统计和安装验证不需要补 `--manifest`、`--expected-validation` 或 `--relation-view unified`。核验使用已经安装的SDK、下载收据及正式验收快照，具体命令见 [README](../README.md)。
 
 ## 入口、搜索和浏览
 
@@ -43,5 +45,7 @@
 `target()` 同时返回原存储的身份声明、当前核验状态、任务准入和映射待审理由。`export_training(dataset, directory)` 输出全部原始标签与全部类别对，并保留无效层次项的掩码；类别正确性奖励始终独立保留。SFT 可使用文本／原标签，RL 必须跳过不适用的层次项并报告覆盖率。
 
 `eligibility()` 和可达性不等于奖励有效性。根可达、无环、能够输出数字均不能独自证明关系语义或训练适用性。
+
+当前修复内容保留 CUB15 个注释范围REVIEW和CRJ-700精确世界身份REVIEW。Cars在configuration策略下135／19110 对适用，其他类别对保留具体原因与 `distance=null`；4180 个未接入来源UID／2976 个身份组及283 个角色冲突组也继续保留。正式版本号与默认视图切换不会自动解决这些范围、身份或视觉校准问题。
 
 节点显示的领域优先由保留的原生领域声明经 `domain_registry`／别名表解析。旧扩展 profile 的领域提示有冲突时，公开 `domain` 使用原生声明，`profile_domain` 保留旧提示，`source_domain` 保留原始字段。领域成员资格仍由同一视图的合法分类／导航范围决定，不把一个显示字段当成分类边或奖励依据。

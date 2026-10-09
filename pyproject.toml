@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fineatlas-tree"
-version = "1.10.1rc1"
+version = "1.10.1"
 description = "Portable, read-only Python and CLI access to the FineAtlas classification graph"
 requires-python = ">=3.10"
 dependencies = []

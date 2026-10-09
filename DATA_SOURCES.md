@@ -5,6 +5,21 @@ relationship contracts and provenance. It is not released under a new blanket
 license that supersedes the upstream sources. The MIT license in `LICENSE`
 applies to the interface code only.
 
+The locally accepted formal `v1.10.1` promotes two independently built and
+comparison-accepted 1.10 repair artifacts with SDK `1.10.1` and default
+`unified` navigation. Both matching browse indexes were rebuilt. The 16-stage
+local acceptance, 105-table/schema reproduction comparison and 103 non-browse
+table source-semantic preservation checks passed; documented version/SDK
+freeze metadata changes are distinguished from unchanged source semantics. It retains the existing
+source records, licenses, native payloads and attribution; promotion does not
+grant new upstream rights or certify all source semantic assertions. The
+formal SDK/data freeze, artifact checksum and installation evidence are pinned
+separately in [unified_code.json](unified_code.json),
+[unified_data.json](unified_data.json) and the [release results](docs/unified_results.md).
+This documentation does not yet claim that the remote main/Latest switch has
+completed. Historical 1.6 and candidate sources remain available through the
+[version migration instructions](docs/migration_v1.10.1.md).
+
 The v1.8.1-hierarchy-review candidate adds source-backed professional middle
 classes and typed connections while retaining prior independent source records.
 The frozen input archive contains factual/derived records, attribution and
@@ -207,7 +222,9 @@ configuration roles, active typed parents, actual furniture-domain membership
 and legal root paths. Furniture configurations increased from 38 source UIDs /
 38 identity groups to 42 / 42; no worldwide manufacturer model, series or
 serialized instance was added by this trial. Full graph, reproduction and
-public installation results remain subject to their separate acceptance.
+public installation were verified for that repair candidate. Formal 1.10.1
+keeps the four-record cohort and its role/identity limits; its new SDK/data
+freeze and actual public installation require their own acceptance receipts.
 
 The official [ABO README](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/README.md)
 and [ABO license file](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/LICENSE-CC-BY-4.0.txt)

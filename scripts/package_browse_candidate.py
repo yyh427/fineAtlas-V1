@@ -23,7 +23,11 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--database',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--release',default='v1.9.0-night-review')
-    p.add_argument('--kind',choices=['single','browse-index'],default='single');a=p.parse_args()
+    p.add_argument('--kind',choices=['single','browse-index'],default='single')
+    p.add_argument('--stable',action='store_true',help='Package a stable release after complete acceptance')
+    a=p.parse_args()
+    if a.stable and (a.release != 'v'+sdk_version or any(marker in sdk_version for marker in ('rc','a','b','dev'))):
+        raise ValueError('Stable release must match a stable SDK version exactly')
     with sqlite3.connect(a.database.resolve().as_uri()+'?mode=ro&immutable=1',uri=True) as c:
         metadata={r[0]:json.loads(r[1]) for r in c.execute('SELECT key,value FROM metadata')}
         if not metadata.get('browse_indexes_ready') or metadata['release']!=a.release:
@@ -53,7 +57,7 @@ def main():
     if process.wait()!=0:raise RuntimeError('Decompression failed')
     expected=digest(a.database)
     if h.hexdigest()!=expected or size!=a.database.stat().st_size:raise ValueError('Compressed roundtrip differs from candidate')
-    manifest={'public_name':'FineAtlas V1','release':a.release,'graph_version':'V1','candidate':True,
+    manifest={'public_name':'FineAtlas V1','release':a.release,'graph_version':'V1','candidate':not a.stable,
               'base_url':f'https://github.com/yyh427/fineAtlas-V1/releases/download/{a.release}',
               'database':{'name':'fineatlas-browse.sqlite' if a.kind=='browse-index' else 'fineatlas.sqlite','bytes':size,'sha256':expected},'assets':parts,
               'database_build_version':a.release,'database_revision':metadata['database_revision'],

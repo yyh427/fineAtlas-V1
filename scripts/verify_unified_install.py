@@ -6,9 +6,45 @@ size. This command avoids another redundant 64 GB scan, then independently
 checks frozen code, graph/index/default-view consistency and actual queries.
 """
 import argparse,collections,hashlib,json,pathlib,sys
-sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]/'src'))
 import fineatlas
 from fineatlas import FineAtlas
+ROOT=pathlib.Path(__file__).resolve().parents[1]
+
+
+def validate_runtime_install(metadata, manifest, sdk):
+ """Bind the actual installed SDK to the exact release, view and graph caches."""
+ assert sdk.__version__ == manifest.get('sdk_version'), 'Installed SDK version differs from release manifest'
+ assert metadata.get('schema') == 'FINEATLAS_SINGLE_DB_V1', 'Unsupported installed database schema'
+ assert metadata.get('release') == manifest.get('release'), 'Database release differs from manifest'
+ assert metadata.get('database_revision') == manifest.get('database_revision'), 'Database revision differs from manifest'
+ assert metadata.get('default_relation_view') == manifest.get('default_relation_view') == 'unified', 'Default view differs from manifest'
+ assert set(metadata.get('supported_relation_views',[])) == set(manifest.get('supported_relation_views',[])) == {'strict','taxonomy','membership','unified'}, 'Supported views differ'
+ assert all(metadata.get(k) is True for k in ['unified_ready','usability_indexes_ready','browse_indexes_ready']), 'Graph/caches are incomplete'
+ assert metadata.get('browse_index_revision') == metadata['database_revision'], 'Stale browse index'
+ source=pathlib.Path(sdk.__file__).resolve().parent
+ code=metadata.get('unified_frozen_build_manifest',{}).get('code',{})
+ assert code and 'src/fineatlas/__init__.py' in code, 'Missing frozen SDK manifest'
+ for name,digest in code.items():
+  relative=pathlib.Path(name)
+  assert relative.parts[:2] == ('src','fineatlas') and len(relative.parts) == 3, 'Invalid frozen SDK path'
+  assert hashlib.sha256((source/relative.name).read_bytes()).hexdigest() == digest, 'Installed SDK does not match frozen database: '+name
+ return {'sdk_version':sdk.__version__,'sdk_module':str(source),'frozen_sdk_files_checked':len(code)}
+
+
+def validate_installed_sdk(sdk, prefix=sys.prefix):
+ source=pathlib.Path(sdk.__file__).resolve()
+ assert source.is_relative_to(pathlib.Path(prefix).resolve()) and 'site-packages' in source.parts, 'Use the pip-installed SDK in the active environment, not checkout/src'
+ return source
+
+
+def validate_install_receipt(database, manifest):
+ receipt=database.parent/'single_database.json'
+ assert receipt.exists() and json.loads(receipt.read_text()) == manifest, 'Use the completed verified installer and its actual receipt'
+ assert database.stat().st_size == manifest['database']['bytes'], 'Installed database size differs from manifest'
+ for suffix in ('-wal','-journal'):
+  sidecar=pathlib.Path(str(database)+suffix)
+  assert not sidecar.exists() or sidecar.stat().st_size == 0, 'Installed database has a live SQLite sidecar'
+
 def validate_acceptance_revision(expected, manifest):
  """A release name and aggregate counts cannot identify the accepted snapshot."""
  accepted=expected.get('database_revision');published=manifest.get('database_revision')
@@ -55,20 +91,18 @@ def validate_domain_inventory(domains, expected, manifest):
 
 def main():
  p=argparse.ArgumentParser(description=__doc__)
- for name in ('database','manifest','expected-validation','output'):p.add_argument('--'+name,type=pathlib.Path,required=True)
+ for name in ('database','output'):p.add_argument('--'+name,type=pathlib.Path,required=True)
+ p.add_argument('--manifest',type=pathlib.Path,default=ROOT/'unified_data.json')
+ p.add_argument('--expected-validation',type=pathlib.Path,default=ROOT/'docs/unified_validation.json')
  a=p.parse_args();m=json.loads(a.manifest.read_text());expected=json.loads(a.expected_validation.read_text())
  validate_acceptance_revision(expected,m)
+ validate_installed_sdk(fineatlas)
  a.output.mkdir(parents=True,exist_ok=True)
- receipt=a.database.parent/'single_database.json'
- assert receipt.exists() and json.loads(receipt.read_text())==m,'Use the completed verified installer and its actual receipt'
- assert a.database.stat().st_size==m['database']['bytes']
+ validate_install_receipt(a.database,m)
  with FineAtlas(a.database) as tree:
   assert tree.relation_view=='unified' and tree._revision==m['database_revision']
   meta=tree.metadata
-  assert all(meta[k] for k in ['unified_ready','usability_indexes_ready','browse_indexes_ready'])
-  assert meta['browse_index_revision']==tree._revision
-  code=meta['unified_frozen_build_manifest']['code'];source=pathlib.Path(fineatlas.__file__).resolve().parent
-  for name,digest in code.items():assert hashlib.sha256((source/pathlib.Path(name).name).read_bytes()).hexdigest()==digest,name
+  installed=validate_runtime_install(meta,m,fineatlas)
   domains=tree.domains();validate_domain_inventory(domains,expected,m)
   domain_checks=[]
   for d in domains:
@@ -100,7 +134,7 @@ def main():
    actual={k:totals[k] for k in x};assert actual==x,(view,actual,x);labels[view]=actual
  result={'all_pass':True,'release':m['release'],'database_revision':m['database_revision'],'database_sha256':m['database']['sha256'],
   'full_hash_verification_stage':'Completed download_single streamed SHA-256/size/exact-revision verification; byte-identical receipt required',
-  'default_view':'unified','matching_embedded_browse_index':True,'sdk_module':str(source),'frozen_sdk_files_checked':len(code),
+  'default_view':'unified','matching_embedded_browse_index':True,**installed,
   'domains':domain_checks,'labels':labels,'pairs':pairs,'unresolved_source_evidence_is_not_certified_by_this_install_test':True,'images_or_models_run':False}
  (a.output/'external_validation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
  print(json.dumps({'all_pass':True,'domains':len(domain_checks),'labels_per_view':{v:x['labels'] for v,x in labels.items()},'pairs':sum(x['pairs'] for x in pairs.values())}))
