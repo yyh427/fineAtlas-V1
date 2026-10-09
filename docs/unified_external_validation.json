@@ -1,7 +1,348 @@
 {
-  "all_pass": false,
-  "status": "PENDING_ACTUAL_DEFAULT_MAIN_PUBLIC_DOWNLOAD",
+  "all_pass": true,
+  "status": "ACTUAL_DEFAULT_MAIN_PUBLIC_INSTALL_VERIFIED",
+  "verified_utc": "2026-10-09T04:28:15.528712+00:00",
+  "started_utc": "2026-10-09T03:32:12.977304+00:00",
+  "ended_utc": "2026-10-09T04:27:34.195054+00:00",
   "release": "v1.10.1",
+  "sdk_version": "1.10.1",
+  "code_tag": "v1.10.1",
+  "code_commit": "9d72814b68066654569f09a085ba27f9a73630b0",
+  "default_main_commit": "d3c892f89ea0321b866700286a578023ab3c7fa6",
+  "latest_release_url": "https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1",
+  "database_sha256": "804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5",
   "database_revision": "1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77",
-  "database_sha256": "804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5"
+  "database_bytes": 68495904768,
+  "ordinary_default_main_clone": true,
+  "explicit_download_manifest": false,
+  "download_authentication": "none",
+  "fresh_virtual_environment": true,
+  "actual_installed_sdk_verified": true,
+  "frozen_sdk_files_checked": 20,
+  "default_view": "unified",
+  "matching_embedded_browse_index": true,
+  "domains": 95,
+  "labels": {
+    "strict": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 752,
+      "root_reachable": 752,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 752
+    },
+    "taxonomy": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 752,
+      "root_reachable": 755,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 755
+    },
+    "unified": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 737,
+      "root_reachable": 755,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 755
+    },
+    "membership": {
+      "labels": 755,
+      "stored_identity_claim_verified": 752,
+      "identity_verified": 752,
+      "root_reachable": 0,
+      "path_state_consistent": 755,
+      "hierarchy_admitted": 0
+    }
+  },
+  "pairs": {
+    "cub200": {
+      "pairs": 19900,
+      "pair_statuses": {
+        "APPLICABLE": 8185,
+        "COARSE_COMMON_ANCESTOR_ONLY": 8835,
+        "ENDPOINT_NOT_APPLICABLE": 2880
+      },
+      "equal_published_validation": true
+    },
+    "fgvc_aircraft": {
+      "pairs": 4950,
+      "pair_statuses": {
+        "APPLICABLE": 3028,
+        "ENDPOINT_NOT_APPLICABLE": 1295,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 415,
+        "COARSE_COMMON_ANCESTOR_ONLY": 212
+      },
+      "equal_published_validation": true
+    },
+    "flowers102": {
+      "pairs": 5151,
+      "pair_statuses": {
+        "APPLICABLE": 1077,
+        "ENDPOINT_NOT_APPLICABLE": 3071,
+        "COARSE_COMMON_ANCESTOR_ONLY": 1003
+      },
+      "equal_published_validation": true
+    },
+    "pets37": {
+      "pairs": 666,
+      "pair_statuses": {
+        "APPLICABLE": 638,
+        "COARSE_COMMON_ANCESTOR_ONLY": 28
+      },
+      "equal_published_validation": true
+    },
+    "stanford_dogs": {
+      "pairs": 7140,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 6423,
+        "APPLICABLE": 717
+      },
+      "equal_published_validation": true
+    },
+    "stanford_cars": {
+      "pairs": 19110,
+      "pair_statuses": {
+        "COARSE_COMMON_ANCESTOR_ONLY": 16336,
+        "IDENTITY_LINEAGE_ROLE_CONFLICT": 2639,
+        "APPLICABLE": 135
+      },
+      "equal_published_validation": true
+    }
+  },
+  "public_tests": {
+    "tests": 283,
+    "seconds": 121.711,
+    "log_sha256": "de768cbe9e491a174bd8cd068865a5ee51260125c4af8f6c5c73620ea4b17d00"
+  },
+  "ci": [
+    {
+      "commit": "9d72814b68066654569f09a085ba27f9a73630b0",
+      "url": "https://github.com/yyh427/fineAtlas-V1/actions/runs/37877275471",
+      "pass": true,
+      "matrix": [
+        {
+          "name": "contracts (3.10)",
+          "pass": true
+        },
+        {
+          "name": "contracts (3.12)",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "commit": "9d72814b68066654569f09a085ba27f9a73630b0",
+      "url": "https://github.com/yyh427/fineAtlas-V1/actions/runs/37877184779",
+      "pass": true,
+      "matrix": [
+        {
+          "name": "contracts (3.10)",
+          "pass": true
+        },
+        {
+          "name": "contracts (3.12)",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "commit": "d3c892f89ea0321b866700286a578023ab3c7fa6",
+      "url": "https://github.com/yyh427/fineAtlas-V1/actions/runs/37879689603",
+      "pass": true,
+      "matrix": [
+        {
+          "name": "contracts (3.12)",
+          "pass": true
+        },
+        {
+          "name": "contracts (3.10)",
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "steps": {
+    "default-main-clone": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T03:32:12.977690+00:00",
+      "ended_utc": "2026-10-09T03:32:15.808184+00:00"
+    },
+    "fresh-venv": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T03:32:19.311449+00:00",
+      "ended_utc": "2026-10-09T03:32:23.318608+00:00"
+    },
+    "install-public-sdk": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T03:32:23.322636+00:00",
+      "ended_utc": "2026-10-09T03:32:29.891430+00:00"
+    },
+    "public-code-tests": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T03:32:29.895614+00:00",
+      "ended_utc": "2026-10-09T03:34:31.887451+00:00"
+    },
+    "default-database-download": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T03:34:31.904594+00:00",
+      "ended_utc": "2026-10-09T04:11:51.200800+00:00"
+    },
+    "default-cli-stats": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T04:11:51.205313+00:00",
+      "ended_utc": "2026-10-09T04:11:51.349827+00:00"
+    },
+    "check-installation": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T04:11:51.354009+00:00",
+      "ended_utc": "2026-10-09T04:11:51.556210+00:00"
+    },
+    "public-install-api-verification": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T04:11:51.561007+00:00",
+      "ended_utc": "2026-10-09T04:12:08.492529+00:00"
+    },
+    "public-full-regression": {
+      "pass": true,
+      "exit_code": 0,
+      "started_utc": "2026-10-09T04:12:08.498945+00:00",
+      "ended_utc": "2026-10-09T04:27:34.179868+00:00"
+    }
+  },
+  "full_regression": {
+    "all_pass": true,
+    "jobs": {
+      "domains": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+        "started_utc": "2026-10-09T04:14:44.033033+00:00",
+        "ended_utc": "2026-10-09T04:15:09.366101+00:00"
+      },
+      "structure": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+        "started_utc": "2026-10-09T04:14:44.045021+00:00",
+        "ended_utc": "2026-10-09T04:17:10.095892+00:00"
+      },
+      "labels": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+        "started_utc": "2026-10-09T04:14:44.045091+00:00",
+        "ended_utc": "2026-10-09T04:15:29.226747+00:00"
+      },
+      "preservation": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+        "started_utc": "2026-10-09T04:14:44.045160+00:00",
+        "ended_utc": "2026-10-09T04:16:12.292416+00:00"
+      },
+      "nonfocus": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "294e2b3143d9c995b3c4d4489862673e192efff8fa8cddbad8c872d8af41a055",
+        "started_utc": "2026-10-09T04:15:09.408147+00:00",
+        "ended_utc": "2026-10-09T04:15:18.956030+00:00"
+      },
+      "browse": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "cc099e2158b238c7a13146ee4a7bc755e1e4bf49bda8859fc68f78fd88077870",
+        "started_utc": "2026-10-09T04:15:19.003987+00:00",
+        "ended_utc": "2026-10-09T04:15:38.935329+00:00"
+      },
+      "contracts": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "57d1617390eb5ede5c6e4644bec09abd10e2ba6fc65f6d122115e4f3bbf54126",
+        "started_utc": "2026-10-09T04:15:29.581014+00:00",
+        "ended_utc": "2026-10-09T04:19:31.764564+00:00"
+      },
+      "cycles": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "37192b42691a9de35f9856af7ba8440a192ffe93c44972941c7b7a38dd08041c",
+        "started_utc": "2026-10-09T04:15:38.969412+00:00",
+        "ended_utc": "2026-10-09T04:16:42.600006+00:00"
+      },
+      "witnesses": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "c75585413579878c6fe92c39acdef0560f657fd14e5e732d24af70f12283403c",
+        "started_utc": "2026-10-09T04:16:12.332958+00:00",
+        "ended_utc": "2026-10-09T04:16:38.624831+00:00"
+      },
+      "cli": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "0c5dcb768188c78deacaf5fae84fc0e9607ebf360a12099450220da655ecd1c8",
+        "started_utc": "2026-10-09T04:16:38.660085+00:00",
+        "ended_utc": "2026-10-09T04:16:40.339323+00:00"
+      },
+      "same-policy": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "68bf9883406e49bcf1198a01765b33774fc13fa6a734eabf162a8b793bd0e55e",
+        "started_utc": "2026-10-09T04:16:40.375100+00:00",
+        "ended_utc": "2026-10-09T04:16:43.766968+00:00"
+      },
+      "global-contracts": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "7d7c9c732bcc0f74c7320cf946c41ca427598569193d67ef1053d99e6f29a38d",
+        "started_utc": "2026-10-09T04:16:42.636520+00:00",
+        "ended_utc": "2026-10-09T04:27:30.647786+00:00"
+      },
+      "usability": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "d8fb7699c872181b1f14bba629155c5aa4953209a186e87a68e35e5f6031295d",
+        "started_utc": "2026-10-09T04:16:43.929544+00:00",
+        "ended_utc": "2026-10-09T04:17:19.193259+00:00"
+      },
+      "living-focused": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "3725b89a5c4b67bd9bec8b66a2f14d07c090eec4d45e79e3ef5e049572d1728d",
+        "started_utc": "2026-10-09T04:17:10.135811+00:00",
+        "ended_utc": "2026-10-09T04:17:10.422934+00:00"
+      },
+      "repair-focus": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "167b22146e61323ba6006d1752c23714745ef07f2c646645233bd03fbee19580",
+        "started_utc": "2026-10-09T04:17:10.457797+00:00",
+        "ended_utc": "2026-10-09T04:17:13.101676+00:00"
+      },
+      "self-reward": {
+        "pass": true,
+        "exit_code": 0,
+        "script_sha256": "7b74b1c869be27c022bba595791e4b1044dd48a0b3c6aeb3cdc5ee5fe22ce7bb",
+        "started_utc": "2026-10-09T04:27:30.690895+00:00",
+        "ended_utc": "2026-10-09T04:27:31.938574+00:00"
+      }
+    },
+    "candidate_unchanged": true,
+    "inputs_unchanged": true
+  },
+  "evidence_sha256": {
+    "public_status": "862d1090a1433f65d6b3d633871ba304bf3345052f6a7208d3108405fe914823",
+    "acceptance_receipt": "0ed6f3c60a0aa1918c4b345de49b7dbf39663a399edbc32eeb6a0bd4ef5b552e",
+    "installed_api": "cc51ca5ef874419d13297e20fa7b66f7cc489f83c0d17d9342089152658e0a72"
+  },
+  "full_source_semantic_certification": false,
+  "visual_training_or_accuracy_certified": false
 }

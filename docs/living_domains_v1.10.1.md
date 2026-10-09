@@ -1,6 +1,6 @@
 # 1.10.1 生活领域入口与家具元数据试接
 
-正式1.10.1沿用已验证修复内容：**4 个浏览入口、9 个既有 WordNet 3.1 接入点，以及 4 条 ABO 来源商品配置**。原 `v1.10.1-repair-review` 已完成独立构建、完整验收和实际公开复验。正式版已完成两源独立提升、匹配浏览索引重建和16阶段完整本地验收，生活入口与4条ABO配置的范围、身份角色及分页检查已通过。正式公网安装与GitHub默认版本切换仍为PENDING；正式数据库的代码、SHA和revision以 [unified_data.json](../unified_data.json)、[unified_code.json](../unified_code.json)及 [正式结果](unified_results.md)为准。
+正式1.10.1沿用已验证修复内容：**4 个浏览入口、9 个既有 WordNet 3.1 接入点，以及 4 条 ABO 来源商品配置**。原 `v1.10.1-repair-review` 已完成独立构建、完整验收和实际公开复验。正式版已完成两源独立提升、匹配浏览索引重建和16阶段完整本地验收，生活入口与4条ABO配置的范围、身份角色及分页检查已通过。[正式Release](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1)已公开，main／Latest与CI通过，默认全新安装的283项测试通过；实际已安装SDK的95域、755标签四视图和56,917对API复验已通过；九步默认公网流程与完整16阶段回归均实际PASS（2026-10-09 04:27:32 UTC结束）；正式数据库的代码、SHA和revision以 [unified_data.json](../unified_data.json)、[unified_code.json](../unified_code.json)及 [正式结果](unified_results.md)为准。
 
 ## 四个浏览入口
 
@@ -91,7 +91,7 @@ ABO 官方 [README](https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/R
 
 聚焦验收核对原91个规范域及全部旧别名、9个既有WordNet接入点、163条接入规则对应关系、上述完整WordNet来源范围、公开CLASS分页和4条配置的角色、原记录及合法根路径。四入口采用追加ID，保留原规范范围及原始域声明。
 
-正式版重新冻结得到独立revision和SHA；本页不把历史候选校验值当作正式附件校验。正式本地验收已核验四视图、缓存与版本、SDK接口、非重点回归及独立提升一致性；无凭据公开下载和全新安装仍待独立发布复验，不由本地PASS替代。对应快照和结果见 [unified_results.md](unified_results.md)。
+正式版重新冻结得到独立revision和SHA；本页不把历史候选校验值当作正式附件校验。正式本地验收已核验四视图、缓存与版本、SDK接口、非重点回归及独立提升一致性；无凭据完整下载、全新安装与实际已安装SDK API均已取得独立PASS；九步默认公网流程及完整16阶段回归也已独立取得PASS，不由本地或安装抽查替代。对应快照和结果见 [unified_results.md](unified_results.md)。
 
 正式库默认 `unified`，无需在构造时指定视图。使用 `domain()` 和 `domain_page()` 浏览入口；选用其他视图时明确传 `relation_view`。
 

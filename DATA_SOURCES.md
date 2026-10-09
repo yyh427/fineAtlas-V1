@@ -16,8 +16,15 @@ grant new upstream rights or certify all source semantic assertions. The
 formal SDK/data freeze, artifact checksum and installation evidence are pinned
 separately in [unified_code.json](unified_code.json),
 [unified_data.json](unified_data.json) and the [release results](docs/unified_results.md).
-This documentation does not yet claim that the remote main/Latest switch has
-completed. Historical 1.6 and candidate sources remain available through the
+The [formal v1.10.1 release](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1)
+is public and marked Latest, and main now selects the formal default. Python
+3.10/3.12 CI and an ordinary main clone with a fresh environment, installed SDK
+and 283 tests passed. Default anonymous download and full database SHA/size, default stats,
+installation checks and the installed-SDK API verification all passed.
+The nine-step default public workflow and the complete 16-stage public
+regression also passed. The full regression ended at 2026-10-09 04:27:32 UTC.
+This was measured on an ordinary default main checkout, with no explicit
+download manifest or view override; publication alone was not its evidence. Historical 1.6 and candidate sources remain available through the
 [version migration instructions](docs/migration_v1.10.1.md).
 
 The v1.8.1-hierarchy-review candidate adds source-backed professional middle

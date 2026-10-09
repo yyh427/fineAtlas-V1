@@ -1,18 +1,18 @@
 # 1.10.1 正式版的构建、验收与恢复
 
-本地正式 `v1.10.1` 已构建并通过16阶段验收，SDK `1.10.1`，默认视图 `unified`，WordNet 3.1。精确代码标签、数据库修订与文件校验值分别见 [unified_code.json](../unified_code.json)、[unified_data.json](../unified_data.json)。两源独立提升及来源语义保留检查已通过；正式公网安装与GitHub main／Latest切换仍为PENDING。原1.6和所有候选继续保留。
+本地正式 `v1.10.1` 已构建并通过16阶段验收，SDK `1.10.1`，默认视图 `unified`，WordNet 3.1。精确代码标签、数据库修订与文件校验值分别见 [unified_code.json](../unified_code.json)、[unified_data.json](../unified_data.json)。两源独立提升及来源语义保留检查已通过；[正式Release](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1)已公开并设为Latest，main已更新，Python3.10／3.12 CI和普通默认安装的283项测试通过。正式默认下载整库哈希、默认stats、安装检查和已安装SDK API均通过；九步默认公网流程及完整16阶段回归已实际PASS，全图于2026-10-09 04:27:32 UTC结束。原1.6和所有候选继续保留。
 
 普通用户按 [README 默认流程](../README.md) 安装和下载，不需要执行重建。迁移和旧版本回退见 [migration_v1.10.1.md](migration_v1.10.1.md)。
 
 ## 候选内容与正式提升
 
-`v1.10.1-repair-review` 的修复图、完整本地验收和实际公网复验已经保留。正式版从受保护候选的独立副本提升，以正式SDK重新冻结代码/版本元数据和匹配的浏览索引，并为新文件生成独立SHA、修订及分发清单。正式提升已完成独立复现和全部16阶段本地回归；压缩roundtrip及真正公开安装复验按各自凭据确认，当前不宣称公网通过。不能只把候选清单中的版本名或candidate标记改掉。
+`v1.10.1-repair-review` 的修复图、完整本地验收和实际公网复验已经保留。正式版从受保护候选的独立副本提升，以正式SDK重新冻结代码/版本元数据和匹配的浏览索引，并为新文件生成独立SHA、修订及分发清单。正式提升已完成独立复现和全部16阶段本地回归；压缩roundtrip、无认证默认下载、全新安装API及完整16阶段公网回归也均有实际PASS凭据。不能只把候选清单中的版本名或candidate标记改掉。
 
 当前正式附件的精确复现步骤见 [stable_promotion_recipe.md](stable_promotion_recipe.md)。两次提升分别使用此前独立构建的repair primary与repair reproduction；二者已经完成精确文件绑定、105个逻辑表和模式比较，原primary还有完整16阶段实际公网验收。不能从同一份primary复制两次就称为独立源复现。
 
 提升保留原源语义图的历史namespace、`unified_source_graph_revision`、类型合同、策略、WordNet使用记录、源／身份记录及原构建阶段指纹；不重新运行来源迁移或重写其历史。正式SDK／版本元数据重新冻结，随后只重建并嵌入匹配的新浏览索引，两份正式输出再独立比较和验收。源输入、SDK或原配方存在超出许可范围的变化时，该提升脚本拒绝复用，需要完整源重建。
 
-从v1.8.1全基线直接以stable版本执行full rebuild，可能产生不同的源图namespace、冻结元数据、父修订和最终revision；即使部分语义内容相同，也不能宣称得到当前正式附件的精确revision。精确复现必须使用上面的两源提升配方及其原输入／验收凭据。正式两源提升、匹配浏览索引重建及两份输出105张逻辑表／模式比较已通过；103张非浏览表的来源语义保留检查通过，允许的版本／SDK冻结元数据变化单独列明，浏览派生表另行核验。完整16阶段本地receipt于2026-10-09 02:42:52 UTC结束，全部实际exit0且语义PASS。正式公网安装与main／Latest发布状态仍为PENDING。
+从v1.8.1全基线直接以stable版本执行full rebuild，可能产生不同的源图namespace、冻结元数据、父修订和最终revision；即使部分语义内容相同，也不能宣称得到当前正式附件的精确revision。精确复现必须使用上面的两源提升配方及其原输入／验收凭据。正式两源提升、匹配浏览索引重建及两份输出105张逻辑表／模式比较已通过；103张非浏览表的来源语义保留检查通过，允许的版本／SDK冻结元数据变化单独列明，浏览派生表另行核验。完整16阶段本地receipt于2026-10-09 02:42:52 UTC结束，全部实际exit0且语义PASS。正式main／Latest发布已完成；六分片与完整数据库无认证默认下载SHA通过，默认stats、安装检查与已安装SDK API复验均通过；16阶段完整公网回归也已实际PASS（2026-10-09 04:27:32 UTC结束）。
 
 此过程不增加源范围、不重写来源UID、原生payload和任务标签，也不把CUB15／CRJ世界身份REVIEW、4180个无根UID／2976身份组、283角色冲突组或Cars135／19110可用类别对宣称解决。正式验收的精确结果与实际代码引用见 [unified_results.md](unified_results.md) 和对应验收快照。
 
@@ -80,7 +80,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 
 ## 发布与恢复
 
-压缩后完整roundtrip与SHA检查通过，才上传分块附件。历史候选保持独立prerelease；正式1.10.1经授权发布后采用新的正式Release、匹配代码与默认清单，并将默认main／Latest指向正式版。切换前必须完成分支和代码CI、源内容保留与正式promotion验收；切换后普通无分支clone、无manifest下载、默认stats和已安装SDK检查都要实际复验。旧1.6和候选附件、标签和数据不删除、不覆盖。
+压缩后完整roundtrip与SHA检查通过，才上传分块附件。历史候选保持独立prerelease；正式1.10.1已发布新的正式Release、匹配代码与默认清单，main／Latest已指向正式版。切换前必须完成分支和代码CI、源内容保留与正式promotion验收；切换后普通无分支clone、无manifest下载、默认stats和已安装SDK检查都要实际复验。旧1.6和候选附件、标签和数据不删除、不覆盖。
 
 公开复验真正重新下载附件，使用固定可执行代码在全新环境中核对完整SHA、修订、全部入口、标签、类别对、分页及导出。报告中的16阶段runner不自行做live下载；发布/下载器/全新安装步骤有独立凭据。全部旧源关系和身份的独立科学语义认证，以及全部注释范围和视觉奖励校准，仍是明确范围外说明，不能随正式版本号自动声明完成。
 

@@ -1,6 +1,6 @@
 # FineAtlas 1.10.1 公开接口
 
-正式 `v1.10.1` 的默认视图为 `unified`；两源独立提升、匹配浏览索引重建和16阶段完整本地验收已经通过。正式公网安装与远端默认版本切换仍为PENDING。`FineAtlas(path)` 从选定快照读取默认视图；旧快照保留自己的默认。`relation_view='strict'` 或 CLI `--relation-view strict` 显式选择当前角色合同的严格分类视图。完整复现1.6时固定旧代码与旧数据，见 [迁移说明](migration_v1.10.1.md)。构建未完成时拒绝暴露统一查询，外部索引的来源修订必须匹配数据库。
+正式 `v1.10.1` 的默认视图为 `unified`；两源独立提升、匹配浏览索引重建和16阶段完整本地验收已经通过。[正式Release](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1)、main／Latest切换和Python3.10／3.12 CI已完成，普通默认clone、全新环境安装及283项测试通过；默认整库下载哈希、stats、安装检查及正式已安装SDK API均通过；九步默认公网流程及完整16阶段回归已实际PASS，全图于2026-10-09 04:27:32 UTC结束。`FineAtlas(path)` 从选定快照读取默认视图；旧快照保留自己的默认。`relation_view='strict'` 或 CLI `--relation-view strict` 显式选择当前角色合同的严格分类视图。完整复现1.6时固定旧代码与旧数据，见 [迁移说明](migration_v1.10.1.md)。构建未完成时拒绝暴露统一查询，外部索引的来源修订必须匹配数据库。
 
 普通正式安装流程默认选择正式清单，统计和安装验证不需要补 `--manifest`、`--expected-validation` 或 `--relation-view unified`。核验使用已经安装的SDK、下载收据及正式验收快照，具体命令见 [README](../README.md)。
 

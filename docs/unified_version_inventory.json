@@ -13,9 +13,12 @@
     "domains": 95,
     "built": true,
     "local_acceptance_pass": true,
-    "published": false,
-    "public_download_verified": false,
-    "default_main_switched": false
+    "published": true,
+    "public_download_verified": true,
+    "default_main_switched": true,
+    "code_commit": "9d72814b68066654569f09a085ba27f9a73630b0",
+    "default_main_commit": "d3c892f89ea0321b866700286a578023ab3c7fa6",
+    "release_url": "https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1"
   },
   "previous_candidate": {
     "release": "v1.10.1-repair-review",
@@ -24,7 +27,7 @@
   "previous_formal": {
     "release": "v1.6.0",
     "preserved": true,
-    "default_replaced": false
+    "default_replaced": true
   },
   "all_older_releases_preserved": true
 }
