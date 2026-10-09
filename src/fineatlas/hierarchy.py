@@ -14,6 +14,10 @@ LINK_ROLES['NATIVE_CLASSIFICATION_PARENT']=({'CLASS'},{'CLASS'})
 LINK_ROLES['TAXONOMIC_PARENT']=({'CLASS','BIOLOGICAL_VARIANT'},{'CLASS','BIOLOGICAL_VARIANT'})
 LINK_ROLES['NATIVE_DESIGN_PARENT']=({'MODEL','MODEL_FAMILY'},{'MODEL','MODEL_FAMILY'})
 LINK_ROLES['CONFIGURATION_OF']=({'CONFIGURATION'},{'MODEL','MODEL_FAMILY','CONFIGURATION'})
+LINK_ROLES['DEPICTS_TYPE']=({'DATASET_CATEGORY'},{'CLASS','BIOLOGICAL_VARIANT'})
+LINK_ROLES['HAS_ATTRIBUTE']=(
+    {'CLASS','BIOLOGICAL_VARIANT','DATASET_CATEGORY','MODEL','MODEL_FAMILY','CONFIGURATION'},
+    {'ATTRIBUTE'})
 
 def validate_link_roles(relation, child_role, parent_role):
     roles=LINK_ROLES.get(relation)
@@ -124,7 +128,8 @@ def review_version(inputs):
     path = Path(inputs)/'review_release.json'
     if path.exists():
         value = json.loads(path.read_text())['version']
-        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review', 'v1.10.0-unified-review', 'v1.10.1-repair-review'}:
+        if value not in {'v1.8.0-hierarchy-review', 'v1.8.1-hierarchy-review', 'v1.10.0-unified-review', 'v1.10.1-repair-review',
+                         'v1.11.0-structure-review', 'v1.11.0rc1', 'v1.11.0'}:
             raise ValueError('Unsupported hierarchy candidate version')
         return value
     return VERSION if (Path(inputs)/'hierarchy_facts.jsonl').exists() else 'v1.7.1-review'
@@ -432,6 +437,6 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
         licenses=sorted({r['proof'].get('license','Original source terms and attribution retained') for r in rows})
         c.execute('INSERT OR REPLACE INTO source_catalogs VALUES (?,?,?,?,?)',('Hierarchy refinement: '+source,rows[0]['uri'],'; '.join(licenses),hashlib.sha256(path.read_bytes()).hexdigest(),json.dumps({'operations':len(rows),'classes':sum(r['op']=='class' for r in rows),'source_statement_retained':True},sort_keys=True)))
     prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair','hierarchy_type_repairs.jsonl':'hierarchy_type_repair','hierarchy_shape_repairs.jsonl':'hierarchy_shape_repair','hierarchy_structure_repairs.jsonl':'hierarchy_structure_repair','hierarchy_shape_completion.jsonl':'hierarchy_shape_completion','hierarchy_subject_repairs.jsonl':'hierarchy_subject_repair','hierarchy_admission_reviews.jsonl':'hierarchy_admission_review',
-            **UNIFIED_INPUT_PREFIXES}[input_name]
+            **UNIFIED_INPUT_PREFIXES, 'structure_biology_links.jsonl':'structure_biology_links', 'structure_engineering_operations.jsonl':'structure_engineering_operations', 'structure_breeds_links.jsonl':'structure_breeds_links'}[input_name]
     m.meta('release',review_version(m.inputs));m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
     return dict(counts)

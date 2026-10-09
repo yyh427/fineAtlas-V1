@@ -12,6 +12,7 @@ FACETS = frozenset({
     "source", "manufacturer", "native_model", "base_model", "year",
     "aircraft_type", "engine_type", "vehicle_class", "country", "admin1",
     "series", "catalogue",
+    "brand", "color", "material", "native_product_type", "organization_group",
 })
 
 

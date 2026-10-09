@@ -22,7 +22,11 @@ def validate_runtime_install(metadata, manifest, sdk):
  assert all(metadata.get(k) is True for k in ['unified_ready','usability_indexes_ready','browse_indexes_ready']), 'Graph/caches are incomplete'
  assert metadata.get('browse_index_revision') == metadata['database_revision'], 'Stale browse index'
  source=pathlib.Path(sdk.__file__).resolve().parent
- code=metadata.get('unified_frozen_build_manifest',{}).get('code',{})
+ freeze_key='structure_frozen_build_manifest' if 'structure_frozen_build_manifest' in metadata else 'unified_frozen_build_manifest'
+ frozen_code=metadata.get(freeze_key,{}).get('code',{})
+ code={name:digest for name,digest in frozen_code.items() if name.startswith('src/fineatlas/')}
+ if freeze_key=='structure_frozen_build_manifest':
+  assert {pathlib.Path(name).name for name in code}=={p.name for p in source.glob('*.py')}, 'Installed SDK inventory differs from frozen structure build'
  assert code and 'src/fineatlas/__init__.py' in code, 'Missing frozen SDK manifest'
  for name,digest in code.items():
   relative=pathlib.Path(name)

@@ -76,6 +76,34 @@ class Migration:
           reason TEXT NOT NULL,new_relation TEXT,evidence TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS source_catalogs(source TEXT PRIMARY KEY,source_uri TEXT NOT NULL,
           license TEXT NOT NULL,input_sha256 TEXT NOT NULL,coverage TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS dataset_scope_targets(
+          dataset TEXT NOT NULL,class_id TEXT NOT NULL,namespace TEXT NOT NULL,
+          source_version TEXT NOT NULL,source_uid TEXT NOT NULL,role TEXT NOT NULL,
+          decision_status TEXT NOT NULL,proof TEXT NOT NULL,label TEXT NOT NULL,
+          PRIMARY KEY(dataset,class_id,namespace,source_version)) WITHOUT ROWID;
+        CREATE TABLE IF NOT EXISTS dataset_mapping_history(
+          id TEXT PRIMARY KEY,dataset TEXT NOT NULL,class_id TEXT NOT NULL,
+          namespace TEXT NOT NULL,source_version TEXT NOT NULL,
+          before_record TEXT NOT NULL,after_record TEXT NOT NULL,
+          evidence_id TEXT NOT NULL,decision TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS source_field_values(
+          uid TEXT NOT NULL,field TEXT NOT NULL,value TEXT NOT NULL,
+          source TEXT NOT NULL,evidence_id TEXT NOT NULL,
+          PRIMARY KEY(uid,field,value,source)) WITHOUT ROWID;
+        CREATE INDEX IF NOT EXISTS source_field_values_lookup
+          ON source_field_values(field,value,uid);
+        CREATE TABLE IF NOT EXISTS source_groups(
+          group_uid TEXT PRIMARY KEY,namespace TEXT NOT NULL,
+          source_version TEXT NOT NULL,source_group_id TEXT NOT NULL,
+          label TEXT NOT NULL,parent_group_uid TEXT,
+          source_uri TEXT NOT NULL,proof TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS source_group_members(
+          group_uid TEXT NOT NULL,member_uid TEXT NOT NULL,
+          source_member_id TEXT NOT NULL,relation TEXT NOT NULL,
+          status TEXT NOT NULL,proof TEXT NOT NULL,
+          PRIMARY KEY(group_uid,member_uid)) WITHOUT ROWID;
+        CREATE INDEX IF NOT EXISTS source_group_members_by_uid
+          ON source_group_members(member_uid,group_uid,status);
         CREATE TABLE IF NOT EXISTS domain_registry(domain_id INTEGER PRIMARY KEY,canonical_name TEXT UNIQUE NOT NULL,
           entry_uid TEXT NOT NULL,label TEXT NOT NULL,root_uids TEXT NOT NULL,description TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS domain_aliases(alias TEXT PRIMARY KEY,domain_id INTEGER NOT NULL,

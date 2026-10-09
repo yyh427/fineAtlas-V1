@@ -2,4 +2,4 @@
 from .api import FineAtlas
 
 __all__ = ['FineAtlas']
-__version__ = '1.10.1'
+__version__ = '1.11.0rc1'

@@ -147,7 +147,11 @@ def verify_revision(database,manifest):
             raise RuntimeError('Snapshot supported views differ from the release manifest')
         sdk = runtime_sdk(manifest)
         source = Path(sdk.__file__).resolve().parent
-        code = meta.get('unified_frozen_build_manifest',{}).get('code',{})
+        freeze_key = 'structure_frozen_build_manifest' if 'structure_frozen_build_manifest' in meta else 'unified_frozen_build_manifest'
+        frozen_code = meta.get(freeze_key,{}).get('code',{})
+        code = {name:value for name,value in frozen_code.items() if name.startswith('src/fineatlas/')}
+        if freeze_key == 'structure_frozen_build_manifest' and {Path(name).name for name in code} != {p.name for p in source.glob('*.py')}:
+            raise RuntimeError('Installed SDK inventory differs from frozen structure build')
         if not code or 'src/fineatlas/__init__.py' not in code:
             raise RuntimeError('Snapshot has no frozen SDK manifest')
         for name, expected in code.items():

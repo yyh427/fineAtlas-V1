@@ -74,6 +74,27 @@ def main() -> None:
     p = sub.add_parser("target")
     p.add_argument("dataset")
     p.add_argument("class_id")
+    for command in ('task-path','reward-pair','export-training'):
+        p=sub.add_parser(command)
+        p.add_argument('dataset')
+        if command=='task-path':p.add_argument('class_id')
+        elif command=='reward-pair':
+            p.add_argument('left');p.add_argument('right')
+        else:p.add_argument('output')
+        p.add_argument('--admission-mode',choices=['legacy','reviewed_paths'],default='legacy')
+        p.add_argument('--target-scope',choices=['world','source_native'],default='world')
+        p.add_argument('--source-namespace')
+        p.add_argument('--source-version')
+        p.add_argument('--task-boundary',action='append',default=[])
+    for command in ('source-groups-page','source-group-members-page','export-source-groups'):
+        p=sub.add_parser(command)
+        if command=='source-group-members-page':p.add_argument('group_uid')
+        else:
+            p.add_argument('--namespace');p.add_argument('--source-version')
+        if command=='export-source-groups':p.add_argument('output')
+        else:
+            p.add_argument('--limit',type=int,default=20);p.add_argument('--cursor')
+        if command=='source-group-members-page':p.add_argument('--domain')
     p = sub.add_parser("browse-domain")
     p.add_argument("name")
     p.add_argument("--limit", type=int, default=20)
@@ -216,6 +237,22 @@ def main() -> None:
             result = graph.equivalents(args.uid)
         elif args.command == "target":
             result = graph.target(args.dataset, args.class_id)
+        elif args.command in ('task-path','reward-pair','export-training'):
+            options={'admission_mode':args.admission_mode,'target_scope':args.target_scope,
+                     'source_namespace':args.source_namespace,'source_version':args.source_version,
+                     'task_boundary_roots':args.task_boundary}
+            if args.command=='export-training':
+                result=graph.export_training(args.dataset,args.output,**options)
+            elif args.command=='task-path':
+                result=graph.task_path(args.dataset,args.class_id,**options)
+            else:
+                result=graph.relation_reward_index(args.dataset,**options).query(args.left,args.right)
+        elif args.command=='source-groups-page':
+            result=graph.source_groups_page(args.namespace,args.limit,source_version=args.source_version,cursor=args.cursor)
+        elif args.command=='source-group-members-page':
+            result=graph.source_group_members_page(args.group_uid,args.limit,domain=args.domain,cursor=args.cursor)
+        elif args.command=='export-source-groups':
+            result=graph.export_source_groups(args.output,namespace=args.namespace,source_version=args.source_version)
         elif args.command == "browse-domain":
             result = graph.browse_domain(args.name, args.limit)
         elif args.command == "browse-summary":
