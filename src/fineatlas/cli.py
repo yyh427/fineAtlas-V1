@@ -158,11 +158,11 @@ def main() -> None:
     p = sub.add_parser("lca")
     p.add_argument("left")
     p.add_argument("right")
-    p.add_argument('--policy',choices=['classification','design','configuration'])
+    p.add_argument('--policy',choices=['classification','design','configuration','configuration_types'])
     p = sub.add_parser("distance")
     p.add_argument("left")
     p.add_argument("right")
-    p.add_argument('--policy',choices=['classification','design','configuration'])
+    p.add_argument('--policy',choices=['classification','design','configuration','configuration_types'])
     p.add_argument(
         "--direction",
         choices=["upward", "downward", "undirected", "common_ancestor"],

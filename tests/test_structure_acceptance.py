@@ -56,6 +56,21 @@ class AcceptanceBindingTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'evidence files'):
             contract.validate_public_evidence(row,row,self.root/'public.json')
 
+    def test_supplemental_audit_cannot_use_fixture_or_partial_source_cohort(self):
+        fields=contract.SUPPLEMENTAL_AUDITS['biology-version-scope']['fields']
+        expected={key:1 for key in fields};expected['input_sha256']='actual-frozen-input'
+        expected['all_200_original_targets_checked']=200
+        expected['native_public_paths_checked']=302
+        report={**expected,'pass':True,'public_api_checked':True,'revision':'accepted'}
+        contract.validate_supplemental_report('biology-version-scope',report,expected,'accepted')
+        for key,value in [('public_api_checked',False),('native_public_paths_checked',12),
+                          ('revision','other'),('input_sha256','other-source')]:
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                contract.validate_supplemental_report('biology-version-scope',
+                    {**report,key:value},expected,'accepted')
+        with self.assertRaises(ValueError):
+            contract.validate_supplemental_report('arbitrary-claim',report,expected,'accepted')
+
     def test_completed_receipt_requires_every_job(self):
         with self.assertRaises(ValueError):contract.validate_completed_acceptance({'complete':True,'all_pass':True})
 

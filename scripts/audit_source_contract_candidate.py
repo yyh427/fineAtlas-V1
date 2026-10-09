@@ -20,6 +20,7 @@ from pathlib import Path
 import re
 import sqlite3
 import time
+from urllib.parse import urlsplit
 
 REVIEW_STATUS='SOURCE_SCOPE_REVIEW'
 NATIVE_RELATIONS={'NATIVE_DESIGN_PARENT','REGULATED_AS'}
@@ -141,15 +142,90 @@ def own_literal_scope(statement,label,genus,parent_definition,role=None):
     return errors
 
 
-def ledger_matches(con,table,row,input_sha):
-    for change in con.execute("SELECT * FROM usability_changes WHERE stage='source_semantic_contract' AND object_type=? AND object_id=?",(table,str(row['id']))):
+def ledger_matches(con,table,row,input_sha,*,ledger_index=None,required_prior_status=None):
+    changes = (ledger_index.get((table,str(row['id'])),()) if ledger_index is not None else con.execute("SELECT * FROM usability_changes WHERE stage='source_semantic_contract' AND object_type=? AND object_id=?",(table,str(row['id']))))
+    for change in changes:
         prior=json.loads(change['before_json']);proof=json.loads(change['evidence']);after=json.loads(change['after_json'])
+        if required_prior_status is not None and (prior.get('status')!=required_prior_status or prior.get('reason')!=dict(row).get('reason')):
+            continue
         if assertion_sha(prior)==assertion_sha(row) and proof.get('basis')=='UNREVIEWED_LEXICAL_PARENT_SCOPE' and proof.get('candidate_input_sha256')==input_sha and after.get('status')==REVIEW_STATUS:
             return True
     return False
 
 
-def protection_errors(record,independent_expectations=()):
+def prior_disposition_errors(con,table,matches,prior_entry,input_sha,*,ledger_index=None):
+    """Preserve prior terminal history, and require exactly the active withdrawals.
+
+    Original duplicate assertions are identified by content and multiplicity;
+    numeric row IDs are used only to join each actual candidate change ledger.
+    A nonactive current status never substitutes for an exact frozen prior state.
+    """
+    if prior_entry is None:return ['MISSING_EXACT_FROZEN_PRIOR_STATUS_DISTRIBUTION']
+    expected=Counter();active=Counter();errors=[]
+    for item in prior_entry.get('prior_status_reason_distribution',()):
+        status,reason,count=item.get('status'),item.get('reason'),item.get('count')
+        if not isinstance(status,str) or not status or not isinstance(count,int) or isinstance(count,bool) or count<1:
+            return ['INVALID_FROZEN_PRIOR_STATUS_DISTRIBUTION']
+        expected[(REVIEW_STATUS if status=='ACTIVE' else status,reason)]+=count
+        if status=='ACTIVE':active[reason]+=count
+    if sum(expected.values())!=prior_entry.get('multiplicity') or len(matches)!=prior_entry.get('multiplicity'):
+        errors.append('FROZEN_PRIOR_STATUS_MULTIPLICITY_DIFFERS')
+    actual=Counter((row['status'],dict(row).get('reason')) for row in matches)
+    if actual!=expected:errors.append('FROZEN_PRIOR_STATUS_REASON_DISTRIBUTION_DIFFERS')
+    observed_active_withdrawals=Counter()
+    for row in matches:
+        if row['status']==REVIEW_STATUS and ledger_matches(con,table,row,input_sha,ledger_index=ledger_index,required_prior_status='ACTIVE'):
+            observed_active_withdrawals[dict(row).get('reason')]+=1
+    if observed_active_withdrawals!=active:
+        errors.append('EXACT_ORIGINALLY_ACTIVE_SCOPE_CHANGE_LEDGER_DISTRIBUTION_DIFFERS')
+        # Retain actionable existing error identifiers for actual missing ledgers.
+        for row in matches:
+            if row['status']==REVIEW_STATUS and active[dict(row).get('reason')] and not ledger_matches(con,table,row,input_sha,ledger_index=ledger_index,required_prior_status='ACTIVE'):
+                errors.append('MISSING_EXACT_SOURCE_SCOPE_CHANGE_LEDGER:'+str(row['id']))
+    return errors
+
+
+def additional_primary_protection_errors(record,case):
+    """Match exact independently frozen manufacturer whole-part evidence."""
+    child,parent=record['child_source_record'],record['parent_source_record']
+    raw=json.loads(child['data']);sr=raw.get('source_record',{});proof=case.get('proof',{});primary=proof.get('primary_datasheet',{});errors=[]
+    if (case.get('uid')!=child['uid'] or case.get('parent')!=parent['uid'] or case.get('table')!=record['table']
+        or case.get('locator')!=record['locator'] or case.get('disposition')!='PROTECTED_PRIMARY_SCOPE_SUPPORTED'
+        or case.get('manual_proof_sha256')!=sha(json.dumps(proof,sort_keys=True))):errors.append('ADDITIONAL_PRIMARY_PROTECTION_CASE_OR_PROOF_MISMATCH')
+    for key,value in [('source_record_uid',child['uid']),('native_record_sha256',sha(child['data'])),
+                      ('reviewed_parent_uid',parent['uid']),('parent_native_record_sha256',sha(parent['data'])),
+                      ('parent_definition_sha256',sha(parent['description'])),('source_catalog_snapshot_sha256',raw.get('source_sha256')),
+                      ('native_part_number',sr.get('P1001')),('native_document_id',str(sr.get('P1000'))),
+                      ('native_circuit_configuration',sr.get('T8270')),('native_catalog_row_url_preserved',sr.get('url'))]:
+        if value is None or proof.get(key)!=value:errors.append('ADDITIONAL_PRIMARY_SCOPE_BINDING_MISMATCH:'+key)
+    if (primary.get('document_product_header')!=sr.get('P1001') or primary.get('document_number')!=str(sr.get('P1000'))
+        or primary.get('parts_table_circuit_configuration')!='Single' or sr.get('T8270')!='Single'
+        or primary.get('publisher')!='Vishay Semiconductors'
+        or str(primary.get('document_class_title','')).lstrip('_') not in ('Small Signal Fast Switching Diode','Small Signal Switching Diodes, High Voltage')):
+        errors.append('OFFICIAL_DATASHEET_FULL_SUBJECT_CIRCUIT_OR_CLASS_SCOPE_DIFFERS')
+    request=urlsplit(primary.get('request_uri',''));final=urlsplit(primary.get('final_uri',''))
+    if (request.scheme!='https' or request.hostname not in ('www.vishay.com','vishay.com') or request.path!='/doc'
+        or request.query!=str(sr.get('P1000')) or final.scheme!='https' or final.hostname not in ('www.vishay.com','vishay.com')
+        or not final.path.startswith('/docs/'+str(sr.get('P1000'))+'/') or not final.path.endswith('.pdf')
+        or primary.get('http_status')!=200):errors.append('OFFICIAL_DATASHEET_PUBLISHER_DOCUMENT_ID_OR_FETCH_NOT_BOUND')
+    if any(not re.fullmatch(r'[0-9a-f]{64}',str(primary.get(key,''))) for key in ('pdf_sha256','extracted_text_sha256')):
+        errors.append('OFFICIAL_DATASHEET_SNAPSHOT_HASH_MISSING')
+    if not primary.get('retrieved_utc') or not primary.get('revision') or primary.get('primary_source_text_only') is not True:
+        errors.append('OFFICIAL_DATASHEET_VERSION_OR_SOURCE_RECORD_MISSING')
+    fields=primary.get('field_locators',{})
+    for key in ('product_header','class_title','circuit_configuration'):
+        field=fields.get(key,{})
+        if field.get('page')!=1 or not isinstance(field.get('line'),int) or isinstance(field.get('line'),bool) or field['line']<1:
+            errors.append('OFFICIAL_DATASHEET_FIELD_LOCATOR_MISSING:'+key)
+    if fields.get('circuit_configuration',{}).get('section')!='PARTS TABLE' or fields.get('circuit_configuration',{}).get('column')!='CIRCUIT CONFIGURATION':
+        errors.append('SINGLE_CIRCUIT_NOT_LOCATED_IN_WHOLE_PART_TABLE')
+    if (proof.get('individual_semantic_review') is not True or proof.get('source_scope_entails_parent') is not True
+        or proof.get('identity_assertion') is not False or proof.get('synthetic_adapter_description_used_as_scope_evidence') is not False
+        or not proof.get('scope_observation')):errors.append('ADDITIONAL_PRIMARY_PROTECTION_MISSTATES_ITS_SCOPE')
+    return errors
+
+
+def protection_errors(record,independent_expectations=(),additional_cases=()):
     child,parent=record['child_source_record'],record['parent_source_record'];raw=json.loads(child['data']);sr=raw.get('source_record',{});proof=record.get('independent_native_scope_witness') or {};errors=[]
     if child['source']!='Vishay native parametric catalog':
         expected=next((r for r in independent_expectations if r.get('uid')==child['uid'] and r.get('parent')==parent['uid'] and r.get('disposition')=='PROTECTED_PRIMARY_SCOPE_SUPPORTED'),None)
@@ -161,7 +237,11 @@ def protection_errors(record,independent_expectations=()):
             if proof.get(key)!=value:errors.append('INDEPENDENT_PRIMARY_SOURCE_SCOPE_WITNESS_MISMATCH:'+key)
         if proof.get('source_scope_entails_parent') is not True or proof.get('identity_assertion') is not False:errors.append('PRIMARY_SCOPE_PROTECTION_MISSTATES_DIRECTIONAL_TYPE_AS_IDENTITY')
         return errors
-    if (raw.get('source_id')!='vishay-switching' or sr.get('T8270')!='Single' or sr.get('url')!='/diodes/switching/'
+    additional=next((case for case in additional_cases if case.get('uid')==child['uid'] and case.get('parent')==parent['uid']),None)
+    if sr.get('url')!='/diodes/switching/':
+        if additional is None:errors.append('PROTECTED_NATIVE_CATALOG_ROUTE_REQUIRES_EXACT_PRIMARY_SCOPE_REVIEW')
+        else:errors.extend(additional_primary_protection_errors(record,additional))
+    if (raw.get('source_id')!='vishay-switching' or sr.get('T8270')!='Single'
         or not sr.get('P1001') or child['uid']!='vishay-part:'+str(sr['P1001']).lower()
         or raw.get('parent_uid')!=parent['uid'] or parent['uid']!='vishay-type:small-signal-switching-diode'
         or 'small-signal switching diode' not in parent['description'].casefold()):errors.append('PROTECTED_NATIVE_PART_AND_PARENT_WHOLE_BODY_SCOPE_MISMATCH')
@@ -206,6 +286,13 @@ def audit(database,inputs,output):
     membership_inventory={r['uid']:r for r in expectations.get('publisher_membership_inventory',{}).get('rows',[])}
     con=connect(database);failures=[];counts=Counter();records=[]
     metadata={r[0]:json.loads(r[1]) for r in con.execute('SELECT * FROM metadata')};revision=metadata.get('database_revision')
+    # Scan the actual immutable change ledger once; preserve every duplicate
+    # locator and validate its original content below. This is an independent
+    # read-only acceleration, not a builder-produced acceptance cache.
+    ledger_index=defaultdict(list)
+    for change in con.execute("SELECT * FROM usability_changes WHERE stage='source_semantic_contract'"):
+        ledger_index[(change['object_type'],change['object_id'])].append(change)
+    print('ACTUAL SOURCE LEDGER INDEXED',sum(map(len,ledger_index.values())),flush=True)
     if expectations.get('candidate_payload_sha256') and expectations['candidate_payload_sha256']!=payload_sha:failures.append({'check':'INDEPENDENT_EXPECTATIONS_REFER_TO_DIFFERENT_SOURCE_PAYLOAD'})
     if any(metadata.get(k) is not True for k in ('unified_ready','usability_indexes_ready','browse_indexes_ready')):failures.append({'check':'DATABASE_NOT_FULLY_READY'})
     if not revision or metadata.get('browse_index_revision')!=revision:failures.append({'check':'CACHE_REVISION_MISMATCH'})
@@ -215,6 +302,43 @@ def audit(database,inputs,output):
         if freeze.get('code',{}).get('scripts/audit_source_contract_candidate.py')!=sha(Path(__file__).read_bytes()):failures.append({'check':'AUDITOR_CODE_DIFFERS_FROM_FROZEN_CODE'})
     for path in (source,operations_path):
         if frozen_inputs.get(str(path.relative_to(inputs)))!=sha(path.read_bytes()):failures.append({'check':'INPUT_NOT_BOUND_TO_ACCEPTED_DATABASE_REVISION','file':path.name})
+    prior_path=inputs/'source_contract_prior_status_distributions.json.gz'
+    if not prior_path.is_file():prior_path=inputs/'source_contract_prior_status_distributions.json'
+    prior_entries={};prior_counts=Counter()
+    if not prior_path.is_file():failures.append({'check':'MISSING_INDEPENDENT_FROZEN_PRIOR_SOURCE_STATUS_INVENTORY'})
+    else:
+        prior_asset=prior_path.read_bytes()
+        if frozen_inputs.get(prior_path.name)!=sha(prior_asset):failures.append({'check':'PRIOR_SOURCE_STATUSES_NOT_BOUND_TO_DATABASE_REVISION'})
+        prior=json.loads(gzip.decompress(prior_asset) if prior_path.suffix=='.gz' else prior_asset)
+        if (prior.get('schema')!='FINEATLAS_INDEPENDENT_PRIOR_SOURCE_DISPOSITIONS_V1'
+            or prior.get('source_contract_payload_sha256')!=payload_sha
+            or not re.fullmatch(r'[0-9a-f]{64}',str(prior.get('source_checkpoint_sha256','')))):
+            failures.append({'check':'PRIOR_SOURCE_STATUSES_REFER_TO_DIFFERENT_OR_UNGROUNDED_SOURCE_CHECKPOINT'})
+        for item in prior.get('entries',[]):
+            key=(item.get('table'),item.get('locator',{}).get('content_sha256'))
+            if key in prior_entries:failures.append({'check':'DUPLICATE_PRIOR_SOURCE_STATUS_LOCATOR','key':key})
+            prior_entries[key]=item
+            for part in item.get('prior_status_reason_distribution',[]):
+                count=part.get('count')
+                if not isinstance(count,int) or isinstance(count,bool) or count<1:
+                    failures.append({'check':'INVALID_PRIOR_SOURCE_STATUS_COUNT','key':key});continue
+                prior_counts[part.get('status')]+=count
+        requested={(r['table'],r['locator']['content_sha256']) for r in payload['quarantines']}
+        if (set(prior_entries)!=requested or prior.get('counts',{}).get('locators')!=len(prior_entries)
+            or prior.get('counts',{}).get('original_source_rows')!=sum(prior_counts.values())
+            or prior.get('counts',{}).get('prior_status_counts')!=dict(prior_counts)):
+            failures.append({'check':'COMPLETE_PRIOR_SOURCE_STATUS_COHORT_OR_COUNTS_DIFFER'})
+    additional_path=inputs/'source_contract_additional_protection_witnesses.json';additional_cases=[]
+    if additional_path.is_file():
+        if frozen_inputs.get(additional_path.name)!=sha(additional_path.read_bytes()):failures.append({'check':'ADDITIONAL_PRIMARY_PROTECTIONS_NOT_BOUND_TO_DATABASE_REVISION'})
+        additional=json.loads(additional_path.read_text());additional_cases=additional.get('cases',[])
+        if (additional.get('schema')!='FINEATLAS_INDEPENDENT_ADDITIONAL_PROTECTIONS_V1'
+            or additional.get('source_contract_payload_sha256')!=payload_sha or additional.get('count')!=len(additional_cases)):
+            failures.append({'check':'ADDITIONAL_PRIMARY_PROTECTIONS_REFER_TO_DIFFERENT_SOURCE_PAYLOAD'})
+        original_protected={(r['table'],r['locator']['content_sha256']) for r in payload['protected']}
+        extra_keys=[(r.get('table'),r.get('locator',{}).get('content_sha256')) for r in additional_cases]
+        if len(set(extra_keys))!=len(extra_keys) or not set(extra_keys)<=original_protected:
+            failures.append({'check':'ADDITIONAL_PRIMARY_PROTECTION_LOCATOR_COHORT_DIFFERS'})
     role_operations=payload.get('role_operations',[])
     if role_operations:
         roles_path=inputs/'structure_source_contracts_roles.jsonl'
@@ -294,22 +418,29 @@ def audit(database,inputs,output):
                 frozen=record[field];current=node(con,frozen['uid'])
                 if not current or sha(frozen['data'])!=record[hash_key] or any(current.get(k)!=frozen.get(k) for k in RAW_FIELDS):errors.append('ORIGINAL_SOURCE_RECORD_SCOPE_OR_PAYLOAD_DRIFT:'+frozen['uid'])
             if disposition=='PROTECTED':
-                errors.extend(protection_errors(record,expectations['cases']))
+                errors.extend(protection_errors(record,expectations['cases'],additional_cases))
                 current_child=node(con,record['child_source_record']['uid']);current_parent=node(con,record['parent_source_record']['uid'])
                 if not current_child or not current_parent or current_parent['node_kind']!='CLASS' or ROLE_RELATIONS.get(current_child['node_kind'])!=record['original_source_assertion']['relation']:errors.append('PROTECTED_ASSERTION_RELATION_DOES_NOT_MATCH_CORRECTED_SUBJECT_GRAIN')
             if key not in seen:
                 seen.add(key)
                 try:matches=locate(con,table,locator)
                 except ValueError as exc:errors.append(str(exc));matches=[]
+                if disposition=='QUARANTINED':
+                    prior_entry=prior_entries.get((table,locator['content_sha256']))
+                    if prior_entry is not None and (prior_entry.get('locator')!=locator or prior_entry.get('multiplicity')!=locator['source_assertion_multiplicity']):
+                        errors.append('FROZEN_PRIOR_ASSERTION_LOCATOR_DIFFERS_FROM_QUARANTINE')
+                    errors.extend(prior_disposition_errors(con,table,matches,prior_entry,input_sha,ledger_index=ledger_index))
                 for row in matches:
                     counts[disposition+'_source_rows']+=1
                     if disposition=='QUARANTINED':
-                        if row['status']!=REVIEW_STATUS:errors.append('QUARANTINED_ASSERTION_REMAINS_ACTIVE_OR_HAS_UNEXPECTED_DISPOSITION:'+str(row['id']))
-                        elif not ledger_matches(con,table,row,input_sha):errors.append('MISSING_EXACT_SOURCE_SCOPE_CHANGE_LEDGER:'+str(row['id']))
+                        if row['status']==REVIEW_STATUS:counts['source_scope_review_current_rows']+=1
+                        else:counts['existing_terminal_source_rows_preserved']+=1
                     elif row['status']!=record['original_source_assertion']['status']:errors.append('PROTECTED_NATIVE_ASSERTION_STATUS_CHANGED:'+str(row['id']))
             if errors:failures.append({'check':'EXACT_SOURCE_DISPOSITION','disposition':disposition,'locator':locator,'errors':errors})
             if number%10000==0:print(disposition,number,flush=True)
     if operations!=[{'op':'link',**r} for r in payload['repairs']]:failures.append({'check':'FROZEN_OPERATIONS_DIFFER_FROM_REPAIRS'})
+    counts['frozen_originally_active_source_rows']=prior_counts['ACTIVE']
+    counts['frozen_preexisting_terminal_source_rows']=sum(n for status,n in prior_counts.items() if status!='ACTIVE')
     withheld_count=payload.get('summary',{}).get('alternate_claim_type_routes_withheld_for_family_scope',0)
     withheld_checks=[]
     if withheld_count:
@@ -389,6 +520,20 @@ def audit(database,inputs,output):
             if expected.get('expected_role') and (not current or current['node_kind']!=expected['expected_role']):errors.append('INDEPENDENT_ROLE_GRAIN_EXPECTATION_DIFFERS')
             expected_checks.append({'uid':expected['uid'],'origin':expected['origin'],'expected':expected['disposition'],'matching_new_claims':len(matched),'errors':errors})
             if errors:failures.append({'check':'FROZEN_SEMANTIC_CASE',**expected_checks[-1]})
+    protected_by_key={(r['table'],r['locator']['content_sha256']):r for r in payload['protected']}
+    for expected in additional_cases:
+        record=protected_by_key.get((expected.get('table'),expected.get('locator',{}).get('content_sha256')));errors=[]
+        if record is None:errors.append('ADDITIONAL_PROTECTION_NOT_IN_EXACT_ORIGINAL_PROTECTED_COHORT')
+        else:
+            errors.extend(additional_primary_protection_errors(record,expected))
+            current=node(con,expected['uid'])
+            if not current or current['node_kind']!=expected.get('expected_role'):errors.append('ADDITIONAL_PROTECTION_SOURCE_ROLE_SCOPE_CHANGED')
+            try:matches=locate(con,record['table'],record['locator'])
+            except ValueError as exc:errors.append(str(exc));matches=[]
+            if not matches or any(row['status']!='ACTIVE' for row in matches):errors.append('ADDITIONAL_PRIMARY_PROTECTION_NOT_PRESERVED_ACTIVE')
+        expected_checks.append({'uid':expected.get('uid'),'origin':expected.get('origin'),'expected':expected.get('disposition'),
+                                'additional_primary_scope_case':True,'errors':errors})
+        if errors:failures.append({'check':'FROZEN_ADDITIONAL_PRIMARY_SCOPE_CASE',**expected_checks[-1]})
     native=[];native_path=inputs/'source_contract_native_preservation.json'
     if not native_path.is_file():native_path=inputs/'source_contract_native_preservation.json.gz'
     if not native_path.is_file():failures.append({'check':'MISSING_INDEPENDENT_FROZEN_NATIVE_PRESERVATION_INVENTORY'})
@@ -408,7 +553,9 @@ def audit(database,inputs,output):
             except ValueError as exc:errors.append(str(exc));matches=[];observed=getattr(exc,'observed_count',None)
             reviewed=(claim['table'],locator['content_sha256']) in native_review_hashes
             if reviewed:
-                if any(row['status']!=REVIEW_STATUS or not ledger_matches(con,claim['table'],row,input_sha) for row in matches):errors.append('NATIVE_SCOPE_WITHDRAWAL_LACKS_ITS_EXACT_FROZEN_CHANGE_LEDGER')
+                prior_entry=prior_entries.get((claim['table'],locator['content_sha256']))
+                if prior_disposition_errors(con,claim['table'],matches,prior_entry,input_sha,ledger_index=ledger_index):
+                    errors.append('NATIVE_SCOPE_WITHDRAWAL_LACKS_ITS_EXACT_FROZEN_PRIOR_STATE_AND_CHANGE_LEDGER')
             elif any(row['status']!='ACTIVE' for row in matches):errors.append('ORIGINAL_NATIVE_ASSERTION_RETIRED_WITHOUT_FROZEN_SCOPE_REVIEW')
             native.append({k:locator[k] for k in ('subject_uid','object_uid','relation','source','content_sha256')}|
                           {'original_multiplicity':locator['source_assertion_multiplicity'],'candidate_multiplicity':len(matches) if observed is None else observed,
@@ -434,6 +581,7 @@ def audit(database,inputs,output):
     save(output/'withheld_family_alternate_routes.json',withheld_checks)
     summary={'pass':not failures,'database':str(database),'database_revision':revision,'input_sha256':input_sha,'payload_sha256':payload_sha,
              'counts':dict(counts),'semantic_sample_groups':len(groups),'semantic_samples':len(samples),'frozen_expected_cases':len(expected_checks),
+             'original_frozen_expected_cases':len(expectations.get('cases',[])),'additional_primary_scope_cases':len(additional_cases),
              'native_preservation_cases':len(native),'native_preservation_pass':all(r['preserved'] for r in native),
              'native_catalogue_groups':len(catalogue_groups),'native_catalogue_members':len(catalogue_checks),'native_catalogue_full_cohort':len(retained),
              'withheld_endpoint_scope_alternate_routes_checked':len(withheld_checks),

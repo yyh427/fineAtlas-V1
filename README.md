@@ -5,7 +5,7 @@ FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及
 
 ## 结构修复候选
 
-`repair/v1.11-structure-expansion-20261009` 正在构建 1.11 候选；验收与公开下载尚未闭环前，默认推荐仍为上述 1.10.1。候选必须使用匹配 SDK 和显式候选下载清单。新身份/原生标签/路径策略及生活领域接入范围见 [结构迁移](docs/structure_expansion_v1.11.md) 与 [来源](docs/structure_sources_v1.11.md)。最终交付报告将列出真实产物哈希、比较结果和公开复验链接。
+`repair/v1.11-coverage-closure-20261009` 正在集成并构建 1.11 候选；验收与公开下载尚未闭环前，默认推荐仍为上述 1.10.1。候选必须使用匹配 SDK 和显式候选下载清单。新身份/原生标签/路径策略及生活领域接入范围见 [结构迁移](docs/structure_expansion_v1.11.md) 与 [来源](docs/structure_sources_v1.11.md)。最终交付报告将列出真实产物哈希、比较结果和公开复验链接。
 
 ## 默认下载与使用
 

@@ -26,9 +26,11 @@ DATASETS={'cub200':200,'fgvc_aircraft':100,'flowers102':102,'pets37':37,'stanfor
 RELATIONS={'classification':{'IS_A','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT'},
            'design':{'IS_A','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT','DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','SERIES_MEMBER_OF'},
            'configuration':{'IS_A','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT','DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','SERIES_MEMBER_OF','CONFIGURATION_OF'},
+           'configuration_types':{'IS_A','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT','DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','SERIES_MEMBER_OF','CONFIGURATION_OF','CONFIGURATION_TYPE_OF'},
            'annotation':{'DEPICTS_TYPE','IS_A','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT'}}
 ROLES={'classification':{'CLASS','BIOLOGICAL_VARIANT'},'design':{'CLASS','MODEL','MODEL_FAMILY'},
-       'configuration':{'CLASS','MODEL','MODEL_FAMILY','CONFIGURATION'},'annotation':{'DATASET_CATEGORY','CLASS','BIOLOGICAL_VARIANT'}}
+       'configuration':{'CLASS','MODEL','MODEL_FAMILY','CONFIGURATION'},
+       'configuration_types':{'CLASS','MODEL','MODEL_FAMILY','CONFIGURATION'},'annotation':{'DATASET_CATEGORY','CLASS','BIOLOGICAL_VARIANT'}}
 
 
 class IndependentGraph:
@@ -111,6 +113,19 @@ class IndependentGraph:
         return arcs
 
 
+
+def independent_informative_lcas(graph, lowest, config, root_uid):
+    """Judge resolution from source roles and policy inputs, not SDK flags."""
+    blocked={graph.node(root_uid)['component_id']}
+    for uid in config.get('coarse_roots',()):
+        blocked.update(graph.closure(uid))
+    coarse_roles=set(config.get('coarse_lca_roles',()))
+    return {comp for comp in lowest
+            if comp not in blocked
+            and not any(row['rank'] in {'domain_root','domain_entry','portal'}
+                        or row['role'] in coarse_roles for row in graph.component(comp))}
+
+
 def run(database,inputs,out,baseline=False):
     out.mkdir(parents=True,exist_ok=True)
     old=json.loads((inputs/'legacy_policies.json').read_text());new=json.loads((inputs/'reviewed_policies.json').read_text())
@@ -132,8 +147,8 @@ def run(database,inputs,out,baseline=False):
                     if target_scope=='source_native':
                         if 'source_native' not in config:continue
                         config=config['source_native']
-                    options={k:v for k,v in config.items() if k in {'policy','requirement','source_scope','coarse_roots'}}
-                    boundary=new[ds]['task_boundary_roots']
+                    options={k:v for k,v in config.items() if k in {'policy','requirement','source_scope','coarse_roots','coarse_lca_roles'}}
+                    boundary=config.get('task_boundary_roots',new[ds]['task_boundary_roots'])
                     index=tree.relation_reward_index(ds,admission_mode=mode,target_scope=target_scope,
                             task_boundary_roots=boundary if mode=='reviewed_paths' else (),**options)
                     assert len(index.labels)==expected,(ds,len(index.labels))
@@ -167,19 +182,25 @@ def run(database,inputs,out,baseline=False):
                             higher=set().union(*(graph.next(x)&common for x in common)) if common else set()
                             lowest=common-higher
                             assert {x['component_id'] for x in lcas}==lowest,(ds,pair['left'],pair['right'],'independent LCA mismatch')
+                            informative=independent_informative_lcas(graph,lowest,config,tree.root_uid)
+                            if lowest:
+                                expected_status='APPLICABLE' if informative else 'COARSE_COMMON_ANCESTOR_ONLY'
+                                assert pair['status']==expected_status,(ds,pair['left'],pair['right'],'independent resolution mismatch')
+                                assert {p['component_id'] for p in pair['selected_paths']}==(informative or lowest),(
+                                    ds,pair['left'],pair['right'],'incomplete selected LCA witnesses')
                             if pair['applicable']:
                                 # Verify each exported path from real source statements, with identity cost zero.
                                 for selected in pair['selected_paths']:
                                     lc=selected['component_id'];la=graph.validate_path(selected['left']['path']);lb=graph.validate_path(selected['right']['path'])
                                     assert (la,lb)==(aa[lc],bb[lc]),(ds,selected)
-                                distance=min(aa[x['component_id']]+bb[x['component_id']] for x in lcas if x['component_id'] in {s['component_id'] for s in pair['selected_paths']})
+                                distance=min(aa[comp]+bb[comp] for comp in informative)
                                 assert pair['distance']==distance,(ds,pair)
                         writer.writerow([ds,pair['left'],pair['right'],pair['status'],resolution,pair['distance'],json.dumps([x['uid'] for x in lcas]),json.dumps([rank_by_identity[x['component_id']] for x in lcas])])
                     assert counts['pairs']==expected*(expected-1)//2
                     (out/(name+'-'+ds+'-labels.json')).write_text(json.dumps(labels,ensure_ascii=False,indent=2)+'\n')
                     totals[ds]={'counts':dict(counts),'lca_rank_distribution':dict(lca_ranks),'lca_uid_distribution':dict(lca_labels)}
                     print(name,ds,dict(counts),flush=True)
-            summary[name]={'datasets':totals,'seconds':time.monotonic()-started}
+            summary[name]={'datasets':totals,'database':str(database.resolve()),'database_revision':tree._revision,'seconds':time.monotonic()-started}
             (out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
     return summary
 

@@ -57,7 +57,7 @@ def main():
         filename=f'{index:02d}-{case[0]}.json';(a.output/filename).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n')
         commands.append(shlex.join(cmd));records.append({'command':cmd,'output':filename,'exit_code':result.returncode,'seconds':time.monotonic()-start})
     (a.output/'commands.sh').write_text('#!/usr/bin/env bash\nset -euo pipefail\n'+ '\n'.join(commands)+'\n')
-    (a.output/'summary.json').write_text(json.dumps({'all_pass':True,'real_cli_calls':len(records),'records':records},indent=2)+'\n')
+    (a.output/'summary.json').write_text(json.dumps({'all_pass':True,'database':str(Path(a.database).resolve()),'database_revision':tree._revision,'real_cli_calls':len(records),'records':records},indent=2)+'\n')
     print('REAL CLI JSON CALLS PASS',len(records),flush=True)
 
 

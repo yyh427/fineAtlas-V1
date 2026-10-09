@@ -265,8 +265,16 @@ def audit(database, inputs):
         repaired_ids = {r['class_id'] for r in scope['cub_repairs']} | {r['before']['class_id'] for r in historical['repairs']}
         remaining = {r['class_id'] for r in scope['cub_unresolved']} - repaired_ids
         actual_remaining = {r[0] for r in c.execute("SELECT class_id FROM dataset_mapping_checks WHERE dataset='cub200' AND status='ANNOTATION_SCOPE_REVIEW'")}
-        checks.add('remaining_cub_reviews', len(remaining) == 15 and actual_remaining == remaining,
-                   expected_count=15, actual_count=len(actual_remaining), expected_class_ids=sorted(remaining),
+        original_unresolved=set(remaining)
+        delta_path=Path(inputs)/'cub_annotation_version_scope.json'
+        if delta_path.exists():
+            delta=json.loads(delta_path.read_text())
+            if delta.get('schema')!='FINEATLAS_CUB_ANNOTATION_VERSION_SCOPE_V1':
+                raise ValueError('Unknown mandatory CUB temporal scope contract')
+            remaining |= {case['class_id'] for case in delta['mapping_reviews']}
+        checks.add('remaining_cub_reviews', len(original_unresolved) == 15 and actual_remaining == remaining,
+                   expected_count=len(remaining), original_unresolved_count=len(original_unresolved),
+                   actual_count=len(actual_remaining), expected_class_ids=sorted(remaining),
                    actual_class_ids=sorted(actual_remaining))
         for class_id in sorted(remaining):
             target = tree.target('cub200', class_id)

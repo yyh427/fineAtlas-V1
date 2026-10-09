@@ -28,6 +28,11 @@ from .semantics import (
 )
 
 
+def _language_tag_key(language):
+    """Match source locale spellings without changing stored language history."""
+    return language.replace("_", "-").lower()
+
+
 class ConsistentAtlas(SingleAtlas):
     def __init__(
         self, path, view="wordnet", relation_view=None, *, root=None, language="en"
@@ -213,8 +218,13 @@ class ConsistentAtlas(SingleAtlas):
             name = self.con.execute(
                 """SELECT name,language,source,evidence_id FROM node_names
                 WHERE uid=?
-                ORDER BY (language=?) DESC,(language='en') DESC,(language='mul') DESC,(language='und') DESC,preferred DESC,source,name LIMIT 1""",
-                (result["uid"], self.language),
+                ORDER BY (language=?) DESC,
+                         (lower(replace(language,'_','-'))=?) DESC,
+                         (lower(language)='en') DESC,(lower(language)='mul') DESC,
+                         (lower(language)='und') DESC,
+                         preferred DESC,source,name LIMIT 1""",
+                (result["uid"], self.language,
+                 _language_tag_key(self.language) if self.language is not None else ""),
             ).fetchone()
             if name:
                 result["source_label"] = result["label"]
@@ -234,8 +244,8 @@ class ConsistentAtlas(SingleAtlas):
             sql = "SELECT name,language,source,evidence_id,preferred FROM node_names WHERE uid=?"
             args = [uid]
             if language:
-                sql += " AND language=?"
-                args.append(language)
+                sql += " AND lower(replace(language,'_','-'))=?"
+                args.append(_language_tag_key(language))
             values = [
                 dict(r)
                 for r in self.con.execute(
@@ -243,7 +253,7 @@ class ConsistentAtlas(SingleAtlas):
                     [*args, limit + 1],
                 )
             ]
-        if language in (None, "und"):
+        if language is None or _language_tag_key(language) == "und":
             columns = {r[1] for r in self.con.execute("PRAGMA table_info(aliases)")}
             name = (
                 "raw_alias"
@@ -1468,7 +1478,8 @@ class ConsistentAtlas(SingleAtlas):
                               blocked_ancestors=(), coarse_roots=(), review_policy=None,
                               max_nodes=10000, source_scope=None, requirement=None,
                               admission_mode='legacy', task_boundary_roots=(),
-                              target_scope='world', source_namespace=None, source_version=None):
+                              target_scope='world', source_namespace=None, source_version=None,
+                              coarse_lca_roles=()):
         """Prepare a frozen, typed, bounded batch index for text tree rewards.
 
         Applicable results are structurally screened, not scientific validation.
@@ -1484,7 +1495,8 @@ class ConsistentAtlas(SingleAtlas):
             config=reviewed.get('source_native',{})
         elif reviewed:
             config={**config, **{k:v for k,v in reviewed.items() if k != 'source_native'}}
-        if review_policy is None and config and policy is None and not coarse_roots and source_scope is None and requirement is None:
+        if review_policy is None and config and policy is None and not coarse_roots and source_scope is None and requirement is None and not coarse_lca_roles:
+            coarse_lca_roles=config.get('coarse_lca_roles',())
             policy=config.get('policy');coarse_roots=config.get('coarse_roots',())
             source_scope=config.get('source_scope');requirement=config.get('requirement')
         if review_policy is None and admission_mode == 'reviewed_paths':
@@ -1497,7 +1509,8 @@ class ConsistentAtlas(SingleAtlas):
                                    max_nodes=max_nodes, source_scope=source_scope,
                                    requirement=requirement, admission_mode=admission_mode,
                                    task_boundary_roots=task_boundary_roots, target_scope=target_scope,
-                                   source_namespace=source_namespace,source_version=source_version)
+                                   source_namespace=source_namespace,source_version=source_version,
+                                   coarse_lca_roles=coarse_lca_roles)
 
     def export_training(self, dataset, directory, *, max_nodes=10000, admission_mode='legacy',
                         task_boundary_roots=(), **reward_options):
@@ -1529,6 +1542,7 @@ class ConsistentAtlas(SingleAtlas):
                 'pair_statuses':dict(counts),'database_revision':self._revision,
                 'relation_view':self.relation_view,'policy':index.policy,
                 'source_scope':index.source_scope,'requirement':index.requirement,
+                'coarse_lca_roles':list(index.coarse_lca_roles),
                 'admission_mode':index.admission_mode,'task_boundary_roots':list(index.task_boundary_roots),
                 'target_scope':index.target_scope,'source_namespace':index.source_namespace,'source_version':index.source_version,
                 'nonapplicable_distance':None,'category_reward_preserved':True,

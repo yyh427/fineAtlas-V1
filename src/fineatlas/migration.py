@@ -72,6 +72,8 @@ class Migration:
           PRIMARY KEY(uid,name,language,source)) WITHOUT ROWID;
         CREATE TABLE IF NOT EXISTS usability_changes(id INTEGER PRIMARY KEY,stage TEXT NOT NULL,
           object_type TEXT NOT NULL,object_id TEXT NOT NULL,before_json TEXT NOT NULL,after_json TEXT NOT NULL,evidence TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS usability_changes_locator
+          ON usability_changes(object_id,object_type,stage,id);
         CREATE TABLE IF NOT EXISTS relation_rechecks(edge_id INTEGER PRIMARY KEY,decision TEXT NOT NULL,
           reason TEXT NOT NULL,new_relation TEXT,evidence TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS source_catalogs(source TEXT PRIMARY KEY,source_uri TEXT NOT NULL,

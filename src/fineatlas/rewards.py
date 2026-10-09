@@ -33,6 +33,12 @@ POLICIES = {
                                 'NATIVE_CLASSIFICATION_PARENT')),
     },
 }
+# Explicit opt-in: a source configuration may have a grounded physical type
+# without a confirmed model/family parent. Historical configuration stays frozen.
+POLICIES['configuration_types'] = {
+    'roles': POLICIES['configuration']['roles'],
+    'relations': POLICIES['configuration']['relations'] | frozenset(('CONFIGURATION_TYPE_OF',)),
+}
 DATASET_POLICIES = {
     'cub200': 'classification', 'flowers102': 'classification',
     'pets37': 'classification', 'stanford_dogs': 'classification',
@@ -59,7 +65,8 @@ class RelationRewardIndex:
     def __init__(self, atlas, dataset, *, policy=None, excluded_labels=None,
                  blocked_ancestors=(), coarse_roots=(), review_policy=None, max_nodes=10000,
                  uids=None, source_scope=None, requirement=None, admission_mode='legacy',
-                 task_boundary_roots=(), target_scope='world', source_namespace=None, source_version=None):
+                 task_boundary_roots=(), target_scope='world', source_namespace=None, source_version=None,
+                 coarse_lca_roles=()):
         if admission_mode not in ('legacy', 'reviewed_paths'):
             raise ValueError('Select legacy or reviewed_paths admission mode')
         self.admission_mode = admission_mode
@@ -72,7 +79,7 @@ class RelationRewardIndex:
             raise ValueError('max_nodes must be a positive integer')
         self.review_policy_sha256 = None
         if review_policy is not None:
-            if excluded_labels is not None or blocked_ancestors or coarse_roots or policy is not None or source_scope is not None or requirement is not None or task_boundary_roots:
+            if excluded_labels is not None or blocked_ancestors or coarse_roots or policy is not None or source_scope is not None or requirement is not None or task_boundary_roots or coarse_lca_roles:
                 raise ValueError('A frozen review policy cannot be combined with policy overrides')
             raw = Path(review_policy).read_bytes()
             review = json.loads(raw)
@@ -86,15 +93,21 @@ class RelationRewardIndex:
             excluded_labels = config.get('excluded_labels', {})
             blocked_ancestors = config.get('blocked_ancestors', ())
             coarse_roots = config.get('coarse_roots', ())
+            coarse_lca_roles = config.get('coarse_lca_roles', ())
             source_scope = config.get('source_scope')
             requirement = config.get('requirement')
             task_boundary_roots = config.get('task_boundary_roots', ())
             self.review_policy_sha256 = hashlib.sha256(raw).hexdigest()
         policy = policy or DATASET_POLICIES.get(dataset)
         if policy not in POLICIES:
-            raise ValueError('Select classification, design, configuration or annotation policy')
+            raise ValueError('Select a supported relation policy: ' + ', '.join(sorted(POLICIES)))
         if policy == 'annotation' and (target_scope != 'source_native' or admission_mode != 'reviewed_paths'):
             raise ValueError('Annotation projection requires reviewed_paths and source_native scope')
+        if isinstance(coarse_lca_roles,str) or not set(coarse_lca_roles)<=POLICIES[policy]['roles']:
+            raise ValueError('Coarse LCA roles must be explicit admitted roles')
+        if coarse_lca_roles and admission_mode!='reviewed_paths':
+            raise ValueError('Role resolution floors require reviewed_paths')
+        self.coarse_lca_roles = tuple(sorted(set(coarse_lca_roles)))
         self.dataset, self.policy = dataset, policy
         self.relation_view, self.revision = atlas.relation_view, atlas._revision
         self.root_uid = atlas.root_uid
@@ -462,7 +475,9 @@ class RelationRewardIndex:
         informative = [c for c in lowest if not (
                            bool(self._component_ranks[c] & COARSE_RANKS) if self.admission_mode == 'reviewed_paths'
                            else self._nodes[c]['rank'] in COARSE_RANKS)
-                       and c not in self._blocked_components]
+                       and c not in self._blocked_components
+                       and not (self.admission_mode=='reviewed_paths'
+                                and set(self._identity_roles[c]) & set(self.coarse_lca_roles))]
         if self.admission_mode == 'reviewed_paths':
             base['selected_paths'] = [
                 {'component_id':c, 'left':{'uid':self._paths[left][c]['uid'],

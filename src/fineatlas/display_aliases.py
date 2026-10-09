@@ -1,12 +1,15 @@
 """Editorial navigation names have no identity or taxonomy effect."""
 from __future__ import annotations
 from collections import Counter
+from pathlib import Path
 import json
 from ._text import norm
 
 
-def apply_display_domain_aliases(m):
-    payload=json.loads((m.inputs/'display_domain_aliases.json').read_text())
+def apply_display_domain_aliases(m, *, input_name="display_domain_aliases.json"):
+    if input_name != Path(input_name).name:
+        raise ValueError('Display-name input must be an explicit local filename')
+    payload=json.loads((m.inputs/input_name).read_text())
     if payload['schema']!='FINEATLAS_NAVIGATION_NAMES_V1':
         raise ValueError('Unsupported display-name input')
     counts=Counter()

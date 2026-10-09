@@ -111,7 +111,7 @@ def path_errors(con,result,uid):
     return errors
 
 
-def withdrawal_evidence(con,before_path):
+def withdrawal_evidence(con,before_path, *, baseline_con=None, ledger_index=None):
     """A retired old witness needs its exact source adjudication ledger entry."""
     reasons=[]
     for step in before_path.get('path',[]):
@@ -123,12 +123,21 @@ def withdrawal_evidence(con,before_path):
         columns=('left_uid','right_uid') if storage=='bridges' else (('subject_uid','object_uid') if storage=='entity_relations' else ('child_uid','parent_uid'))
         endpoints={step['uid'],step['parent_uid']}
         if {row[columns[0]],row[columns[1]]}!=endpoints or row['relation']!=relation:continue
-        ledgers=con.execute('SELECT stage,object_type,object_id,before_json,after_json,evidence '
-                            'FROM usability_changes WHERE object_id=? ORDER BY id',(str(edge['id']),))
+        ledgers=(ledger_index.get(str(edge['id']),[]) if ledger_index is not None else
+                 con.execute('SELECT stage,object_type,object_id,before_json,after_json,evidence '
+                             'FROM usability_changes WHERE object_id=? ORDER BY id',(str(edge['id']),)))
         for ledger in ledgers:
             prior=json.loads(ledger['before_json']);proof=json.loads(ledger['evidence'])
             if prior.get(columns[0])!=row[columns[0]] or prior.get(columns[1])!=row[columns[1]] or prior.get('relation')!=relation:
                 continue
+            if baseline_con is not None:
+                original=baseline_con.execute('SELECT * FROM '+storage+' WHERE id=?',(edge['id'],)).fetchone()
+                if (not original or ledger['object_type'] not in (storage,storage.rstrip('s'))
+                        or any(prior.get(k)!=v for k,v in dict(original).items() if k!='id')):
+                    continue
+                amended=json.loads(ledger['after_json'])
+                if amended.get('status')!=row['status']:
+                    continue
             if not isinstance(proof,dict) or not proof.get('basis'):continue
             reasons.append({'storage':storage,'record_id':row['id'],'new_status':row['status'],
                             'stage':ledger['stage'],'basis':proof['basis'],
@@ -148,12 +157,12 @@ def role_change_evidence(con,uid,old_role,new_role):
     return {'uid':uid,'old_role':old_role,'new_role':new_role,'evidence_id':row['evidence_id'],'basis':payload['basis']}
 
 
-def classify_sample(con,before,after,old_role,new_role,uid):
+def classify_sample(con,before,after,old_role,new_role,uid, *, ledger_index=None):
     old_ok=before['status'] in ('ROOT','CONNECTED');new_ok=after['status'] in ('ROOT','CONNECTED')
     role_proof=role_change_evidence(con,uid,old_role,new_role) if old_role!=new_role else None
     if old_role!=new_role and role_proof is None:return 'UNKNOWN_ROLE_REGRESSION',[]
     if old_ok and not new_ok:
-        proofs=withdrawal_evidence(con,before)
+        proofs=withdrawal_evidence(con,before,ledger_index=ledger_index)
         if proofs or role_proof:return 'EXPLAINED_REVIEW_WITHDRAWAL',proofs+([role_proof] if role_proof else [])
         return 'UNKNOWN_REACHABILITY_REGRESSION',[]
     if not old_ok and new_ok:return 'ROOT_PATH_GAIN',[]
@@ -210,6 +219,9 @@ def audit(baseline,database,inventory,output):
     def progress(phase,**values):
         phases[phase]=values;write(output/'progress.json',{'phases':phases,'seconds':time.monotonic()-started})
         print(phase,values,flush=True)
+    ledger_index=defaultdict(list)
+    for row in after.execute('SELECT stage,object_type,object_id,before_json,after_json,evidence FROM usability_changes ORDER BY id'):
+        ledger_index[row['object_id']].append(dict(row))
     old_census=census(before);progress('baseline_census',conflicts=len(old_census['active_role_conflicts']))
     new_census=census(after);progress('candidate_census',conflicts=len(new_census['active_role_conflicts']))
     for table,count in new_census['active_source_dangling'].items():
@@ -268,15 +280,31 @@ def audit(baseline,database,inventory,output):
                 continue
             errors=path_errors(after,apath,uid)
             if state.get('root_reachable')!=(apath['status'] in ('ROOT','CONNECTED')):errors.append({'reason':'PUBLIC_PATH_STATE_INCONSISTENT'})
-            classification,evidence=classify_sample(after,bpath,apath,bn['audit_role'],an['audit_role'],uid)
+            classification,evidence=classify_sample(after,bpath,apath,bn['audit_role'],an['audit_role'],uid,ledger_index=ledger_index)
             if not preserved:errors.append({'reason':'NATIVE_SOURCE_CONTENT_CHANGED'})
             if classification.startswith('UNKNOWN_'):errors.append({'reason':classification})
             rows=after.execute("SELECT role FROM domain_members WHERE domain_id=? AND view='unified' AND uid=?",(sample['domain_id'],uid)).fetchall()
             still_member=any(row['role']==an['audit_role'] for row in rows)
             # Membership loss requires an exact adjudicated old path witness,
             # not an arbitrary listing of engineering source namespaces.
-            if not still_member and not (classification=='EXPLAINED_REVIEW_WITHDRAWAL' or evidence):
-                errors.append({'reason':'UNEXPLAINED_DOMAIN_MEMBERSHIP_LOSS'})
+            domain_path=None;domain_withdrawals=[]
+            if not still_member:
+                original_domain=before.execute('SELECT root_uids FROM domain_registry WHERE domain_id=?',
+                                               (sample['domain_id'],)).fetchone()
+                if original_domain:
+                    domain_path=old.path_result(uid,anchors=json.loads(original_domain['root_uids']))
+                    baseline_path_errors=path_errors(before,domain_path,uid)
+                    if domain_path['status'] in ('ROOT','CONNECTED') and not baseline_path_errors:
+                        domain_withdrawals=withdrawal_evidence(after,domain_path,
+                            baseline_con=before,ledger_index=ledger_index)
+                    else:
+                        errors.append({'reason':'INVALID_BASELINE_DOMAIN_WITNESS',
+                                       'status':domain_path['status'],'errors':baseline_path_errors})
+                if domain_withdrawals:
+                    if classification not in ('EXPLAINED_REVIEW_WITHDRAWAL','EVIDENCED_ROLE_CHANGE'):
+                        classification='EXPLAINED_DOMAIN_MEMBERSHIP_WITHDRAWAL'
+                else:
+                    errors.append({'reason':'UNEXPLAINED_DOMAIN_MEMBERSHIP_LOSS'})
             name_search=None
             if still_member:
                 domain=next(r['canonical_name'] for r in domains if r['domain_id']==sample['domain_id'])
@@ -292,6 +320,7 @@ def audit(baseline,database,inventory,output):
                     'before_role':bn['audit_role'],'after_role':an['audit_role'],'before_status':bpath['status'],
                     'after_status':apath['status'],'change_classification':classification,'review_evidence':evidence,
                     'current_domain_member':still_member,'path_errors':errors,
+                    'baseline_domain_path':domain_path,'domain_withdrawal_evidence':domain_withdrawals,
                     'scoped_name_search':name_search,
                     'path_relations':[s['edge']['relation'] for s in apath['path']]}
             samples.append(record)
@@ -348,7 +377,7 @@ def audit(baseline,database,inventory,output):
         write(output/'wide_branches.json',wide)
     before.close();after.close()
     summary={'schema':'FINEATLAS_INDEPENDENT_STRUCTURE_LIBRARY_AUDIT_V1','pass':not failures,
-             'baseline':str(baseline),'database':str(database),'inventory_sha256':hashlib.sha256(Path(inventory).read_bytes()).hexdigest(),
+             'baseline':str(baseline),'database':str(database),'database_revision':tree._revision,'inventory_sha256':hashlib.sha256(Path(inventory).read_bytes()).hexdigest(),
              'domain_entries':len(domains),'baseline_domain_entries':frozen['domain_count'],
              'portal_role_pages':len(portals),'domain_aliases_checked':len(aliases),
              'chinese_domain_aliases_checked':sum(r['language']=='zh' for r in aliases),

@@ -88,6 +88,33 @@ class LibraryAuditTest(unittest.TestCase):
         self.assertEqual(kind,'EXPLAINED_REVIEW_WITHDRAWAL')
         self.assertFalse(proof[0]['scientific_identity_is_now_confirmed'])
 
+    def test_domain_withdrawal_requires_complete_old_row_and_current_status(self):
+        original=dict(self.con.execute('SELECT * FROM edges WHERE id=1').fetchone())
+        baseline=sqlite3.connect(':memory:');baseline.row_factory=sqlite3.Row
+        baseline.executescript('CREATE TABLE edges(id INTEGER,child_uid TEXT,parent_uid TEXT,relation TEXT,status TEXT,source TEXT);')
+        baseline.execute('INSERT INTO edges VALUES(?,?,?,?,?,?)',tuple(original.values()))
+        self.con.execute("UPDATE edges SET status='REVIEW' WHERE id=1")
+        amended={**original,'status':'REVIEW'}
+        self.con.execute('INSERT INTO usability_changes VALUES(1,?,?,?,?,?,?)',(
+            'scope_review','edges','1',json.dumps(original),json.dumps(amended),
+            json.dumps({'basis':'The original full subject is not the domain type'})))
+        rows=[dict(x) for x in self.con.execute('SELECT * FROM usability_changes')]
+        self.assertEqual(len(AUDIT.withdrawal_evidence(self.con,self.path(),
+            baseline_con=baseline,ledger_index={'1':rows})),1)
+        # An exact-endpoint ledger for a different source must not waive loss.
+        wrong={**original,'source':'other source'}
+        rows[0]['before_json']=json.dumps(wrong)
+        self.assertEqual(AUDIT.withdrawal_evidence(self.con,self.path(),
+            baseline_con=baseline,ledger_index={'1':rows}),[])
+        rows[0]['before_json']=json.dumps(original)
+        rows[0]['after_json']=json.dumps({**amended,'status':'ACTIVE'})
+        self.assertEqual(AUDIT.withdrawal_evidence(self.con,self.path(),
+            baseline_con=baseline,ledger_index={'1':rows}),[])
+        rows[0]['after_json']=json.dumps(amended);rows[0]['object_type']='entity_relations'
+        self.assertEqual(AUDIT.withdrawal_evidence(self.con,self.path(),
+            baseline_con=baseline,ledger_index={'1':rows}),[])
+        baseline.close()
+
     def test_identity_step_requires_active_exact_source_bridge(self):
         self.con.execute('INSERT INTO bridges VALUES(1,?,?,?,?)',('child','root','SAME_CONCEPT','ACTIVE'))
         path=self.path(relation='SAME_CONCEPT')

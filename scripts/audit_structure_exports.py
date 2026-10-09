@@ -43,10 +43,10 @@ def audit(database, inputs, matrix, output):
                 for dataset,entry in accepted[name]['datasets'].items():
                     config=policies[dataset]
                     if scope=='source_native':config=config['source_native']
-                    options={k:v for k,v in config.items() if k in {'policy','requirement','source_scope','coarse_roots'}}
+                    options={k:v for k,v in config.items() if k in {'policy','requirement','source_scope','coarse_roots','coarse_lca_roles'}}
                     directory=output/name/dataset
                     result=tree.export_training(dataset,directory,admission_mode=admission,
-                        task_boundary_roots=new[dataset]['task_boundary_roots'] if admission=='reviewed_paths' else (),
+                        task_boundary_roots=config.get('task_boundary_roots',new[dataset]['task_boundary_roots']) if admission=='reviewed_paths' else (),
                         target_scope=scope,**options)
                     checked_labels=json.loads((matrix/(name+'-'+dataset+'-labels.json')).read_text())
                     by_id={r['class_id']:r for r in checked_labels}
@@ -78,7 +78,7 @@ def audit(database, inputs, matrix, output):
                     print('EXPORT PASS',name,dataset,len(seen),sum(statuses.values()),flush=True)
                 assert next(records,None) is None,'Independent matrix has unconsumed rows'
             results[name]['seconds']=time.monotonic()-start
-    final={'pass':True,'database_revision':tree._revision,'modes':results,
+    final={'pass':True,'database':str(database.resolve()),'database_revision':tree._revision,'modes':results,
            'invalid_distances_remain_null':True,'all_dataset_labels_preserved':True}
     (output/'summary.json').write_text(json.dumps(final,indent=2)+'\n')
     return final

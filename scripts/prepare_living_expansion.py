@@ -128,48 +128,51 @@ def prepare(database, archive, rules_path, output, license_path, readme):
     return manifest
 
 
-def apply_living_expansion(m):
-    records = m.inputs / "living_catalogue_records.jsonl"
+def apply_living_expansion(m, *, input_prefix="living_catalogue", metadata_key="living_catalogue_expansion"):
+    if not input_prefix or not input_prefix.replace("_", "").isalnum() or not metadata_key:
+        raise ValueError("Explicit catalogue batch namespace required")
+    records = m.inputs / (input_prefix + "_records.jsonl")
     if not records.exists():
         return {"status": "not_requested"}
-    manifest = json.loads((m.inputs / "living_catalogue_manifest.json").read_text())
+    manifest = json.loads((m.inputs / (input_prefix + "_manifest.json")).read_text())
     if digest_file(records) != manifest["records_sha256"]:
         raise ValueError("Frozen catalogue batch checksum differs")
     counts = Counter()
-    for line in records.open(encoding="utf-8"):
-        row = json.loads(line)
-        proof = row["proof"]
-        native = proof["native_record"]
-        if listing_uid(native) != row["uid"] or hashlib.sha256(canonical_record(native)).hexdigest() != proof["source_record_sha256"]:
-            raise ValueError("Source configuration identity or payload changed")
-        for uid, expected in proof["parents"].items():
-            parent = m.c.execute("SELECT data,description FROM nodes WHERE uid=?", (uid,)).fetchone()
-            if not parent or hashlib.sha256(parent["data"].encode()).hexdigest() != expected["native_record_sha256"] or parent["description"] != expected["definition"]:
-                raise ValueError("Frozen parent type scope changed")
-        existing = m.c.execute("SELECT data FROM nodes WHERE uid=?", (row["uid"],)).fetchone()
-        if existing and json.loads(existing[0]).get("source_record_sha256") != proof["source_record_sha256"]:
-            raise ValueError("Existing catalogue source UID differs")
-        added = m.add_node(row["uid"], row["label"], "CONFIGURATION", row["domain"],
-                           row["source"], row["uri"], proof, "Source catalogue configuration; worldwide model identity unconfirmed")
-        counts["new_source_configurations"] += added
-        evidence = m.evidence(row["source"], row["uri"], proof, "SOURCE_CONFIGURATION_TYPE")
-        for uid in row["parent_uids"]:
-            m.typed(row["uid"], uid, "CONFIGURATION_TYPE_OF", proof, row["source"], row["uri"])
-            counts["configuration_type_links"] += 1
-        for value in native.get("item_name", []):
-            if isinstance(value, dict) and isinstance(value.get("value"), str):
-                language = value.get("language_tag", "und").replace("_", "-")
-                m.alias(row["uid"], value["value"], row["source"], language, False, evidence)
-        fields = {"catalogue": row["catalogue_paths"],
-                  "native_product_type": [proof["reviewed_native_product_type"]]}
-        for source_key, key in [("brand", "brand"), ("color", "color"), ("material", "material"), ("model_number", "native_model")]:
-            fields[key] = sorted({x["value"] for x in native.get(source_key, [])
-                                  if isinstance(x, dict) and isinstance(x.get("value"), str)})
-        for field, values in fields.items():
-            for value in values:
-                m.c.execute("INSERT OR IGNORE INTO source_field_values VALUES(?,?,?,?,?)",
-                            (row["uid"], field, value, row["source"], evidence))
-        counts["domain_" + row["domain"]] += 1
+    with records.open(encoding="utf-8") as record_stream:
+        for line in record_stream:
+            row = json.loads(line)
+            proof = row["proof"]
+            native = proof["native_record"]
+            if listing_uid(native) != row["uid"] or hashlib.sha256(canonical_record(native)).hexdigest() != proof["source_record_sha256"]:
+                raise ValueError("Source configuration identity or payload changed")
+            for uid, expected in proof["parents"].items():
+                parent = m.c.execute("SELECT data,description FROM nodes WHERE uid=?", (uid,)).fetchone()
+                if not parent or hashlib.sha256(parent["data"].encode()).hexdigest() != expected["native_record_sha256"] or parent["description"] != expected["definition"]:
+                    raise ValueError("Frozen parent type scope changed")
+            existing = m.c.execute("SELECT data FROM nodes WHERE uid=?", (row["uid"],)).fetchone()
+            if existing and json.loads(existing[0]).get("source_record_sha256") != proof["source_record_sha256"]:
+                raise ValueError("Existing catalogue source UID differs")
+            added = m.add_node(row["uid"], row["label"], "CONFIGURATION", row["domain"],
+                               row["source"], row["uri"], proof, "Source catalogue configuration; worldwide model identity unconfirmed")
+            counts["new_source_configurations"] += added
+            evidence = m.evidence(row["source"], row["uri"], proof, "SOURCE_CONFIGURATION_TYPE")
+            for uid in row["parent_uids"]:
+                m.typed(row["uid"], uid, "CONFIGURATION_TYPE_OF", proof, row["source"], row["uri"])
+                counts["configuration_type_links"] += 1
+            for value in native.get("item_name", []):
+                if isinstance(value, dict) and isinstance(value.get("value"), str):
+                    language = value.get("language_tag", "und").replace("_", "-")
+                    m.alias(row["uid"], value["value"], row["source"], language, False, evidence)
+            fields = {"catalogue": row["catalogue_paths"],
+                      "native_product_type": [proof["reviewed_native_product_type"]]}
+            for source_key, key in [("brand", "brand"), ("color", "color"), ("material", "material"), ("model_number", "native_model")]:
+                fields[key] = sorted({x["value"] for x in native.get(source_key, [])
+                                      if isinstance(x, dict) and isinstance(x.get("value"), str)})
+            for field, values in fields.items():
+                for value in values:
+                    m.c.execute("INSERT OR IGNORE INTO source_field_values VALUES(?,?,?,?,?)",
+                                (row["uid"], field, value, row["source"], evidence))
+            counts["domain_" + row["domain"]] += 1
     for preserved in manifest.get('existing_source_fields', []):
         uid=preserved['uid'];native=preserved['native_record']
         if listing_uid(native)!=uid or hashlib.sha256(canonical_record(native)).hexdigest()!=preserved['record_sha256']:
@@ -188,10 +191,15 @@ def apply_living_expansion(m):
             for value in values:
                 m.c.execute('INSERT OR IGNORE INTO source_field_values VALUES(?,?,?,?,?)',(uid,field,value,SOURCE,evidence))
         counts['existing_configurations_field_indexed']+=1
+    prior_catalog = m.c.execute("SELECT * FROM source_catalogs WHERE source=?", (SOURCE,)).fetchone()
+    if prior_catalog and json.loads(prior_catalog[4]) != manifest:
+        m.change("source_catalogue_batches", "source_catalog", SOURCE, dict(prior_catalog),
+                 manifest, {"input_prefix": input_prefix, "source_archive_unchanged": prior_catalog[3] == manifest["archive_sha256"],
+                            "previous_batch_metadata_preserved": True})
     m.c.execute("INSERT OR REPLACE INTO source_catalogs VALUES(?,?,?,?,?)",
                 (SOURCE, SOURCE_URI, "CC BY 4.0; Amazon.com; attribution in frozen source README",
                  manifest["archive_sha256"], json.dumps(manifest, ensure_ascii=False)))
-    m.meta("living_catalogue_expansion", manifest)
+    m.meta(metadata_key, manifest)
     m.c.commit()
     return dict(counts)
 

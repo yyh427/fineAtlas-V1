@@ -70,6 +70,13 @@ def run_local(a):
                          '--output',a.output/(name+'-freeze.json'))
                      for name,db in [('primary',a.database),('reproduction',a.reproduction)]],
     }
+    from structure_acceptance_contract import (SUPPLEMENTAL_AUDITS, validate_supplemental_report,
+                                                frozen_supplemental_expectations)
+    independent_expected=frozen_supplemental_expectations(a.inputs,fingerprints)
+    supplemental={name:spec for name,spec in SUPPLEMENTAL_AUDITS.items() if (a.inputs/spec['input']).exists()}
+    for name,spec in supplemental.items():
+        jobs['contracts'].append(command(spec['script'],'--database',a.database,'--inputs',a.inputs,
+                                        '--output',a.output/name))
     def execute(name,commands):
         print('START ACCEPTANCE',name,flush=True);start=time.monotonic()
         result={'started_utc':utc(),'commands':commands,'pass':False,'exit_code':None}
@@ -117,6 +124,12 @@ def run_local(a):
         receipt['database_sha256']=artifacts['primary']['sha256']
         receipt['database_revision']=artifacts['primary']['database_revision']
         receipt['release']=artifacts['primary']['release']
+        receipt['supplemental_audits']={}
+        for name,spec in supplemental.items():
+            report_path=a.output/name/spec['report'];report=read(report_path)
+            expected=independent_expected[name]
+            validate_supplemental_report(name,report,expected,receipt['database_revision'])
+            receipt['supplemental_audits'][name]={'path':str(report_path),'sha256':file_sha256(report_path),'expected':expected}
         matrix=read(a.output/'matrix/summary.json')
         receipt['matrix_expected_counts']={name:{dataset:row['counts'] for dataset,row in mode['datasets'].items()} for name,mode in matrix.items()}
         receipt['local_matrix_report_sha256']=file_sha256(a.output/'matrix/summary.json')

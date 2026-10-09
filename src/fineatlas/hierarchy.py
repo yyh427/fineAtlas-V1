@@ -107,6 +107,9 @@ VERSION = 'v1.8.0-hierarchy-review'
 LAYER = 'v1.8-hierarchy-review'
 
 UNIFIED_INPUT_PREFIXES={
+    'structure_biology_identity_scope_facts.jsonl':'structure_biology_identity_scope',
+    'structure_cars_author_scope_operations.jsonl':'structure_cars_author_scope',
+    'structure_vehicle_source_scope_operations.jsonl':'structure_vehicle_source_scope_operations',
     'unified_field_refinements.jsonl':'unified_field',
     'unified_role_links.jsonl':'unified_role_navigation',
     'unified_classification_projection.jsonl':'unified_classification_projection',
@@ -437,6 +440,6 @@ def apply_refinements(migration, input_name='hierarchy_facts.jsonl'):
         licenses=sorted({r['proof'].get('license','Original source terms and attribution retained') for r in rows})
         c.execute('INSERT OR REPLACE INTO source_catalogs VALUES (?,?,?,?,?)',('Hierarchy refinement: '+source,rows[0]['uri'],'; '.join(licenses),hashlib.sha256(path.read_bytes()).hexdigest(),json.dumps({'operations':len(rows),'classes':sum(r['op']=='class' for r in rows),'source_statement_retained':True},sort_keys=True)))
     prefix={'hierarchy_facts.jsonl':'hierarchy','hierarchy_extensions.jsonl':'hierarchy_extension','hierarchy_contract_repairs.jsonl':'hierarchy_contract_repair','hierarchy_role_repairs.jsonl':'hierarchy_role_repair','hierarchy_semantic_repairs.jsonl':'hierarchy_semantic_repair','hierarchy_identity_role_repairs.jsonl':'hierarchy_identity_role_repair','hierarchy_type_repairs.jsonl':'hierarchy_type_repair','hierarchy_shape_repairs.jsonl':'hierarchy_shape_repair','hierarchy_structure_repairs.jsonl':'hierarchy_structure_repair','hierarchy_shape_completion.jsonl':'hierarchy_shape_completion','hierarchy_subject_repairs.jsonl':'hierarchy_subject_repair','hierarchy_admission_reviews.jsonl':'hierarchy_admission_review',
-            **UNIFIED_INPUT_PREFIXES, 'structure_biology_links.jsonl':'structure_biology_links', 'structure_engineering_operations.jsonl':'structure_engineering_operations', 'structure_breeds_links.jsonl':'structure_breeds_links', 'structure_source_contracts_operations.jsonl':'structure_source_contracts_operations'}[input_name]
+            **UNIFIED_INPUT_PREFIXES, 'structure_biology_links.jsonl':'structure_biology_links', 'structure_engineering_operations.jsonl':'structure_engineering_operations', 'structure_breeds_links.jsonl':'structure_breeds_links', 'structure_source_contracts_operations.jsonl':'structure_source_contracts_operations', 'structure_vehicle_source_scope_operations.jsonl':'structure_vehicle_source_scope_operations', 'structure_biology_identity_scope_facts.jsonl':'structure_biology_identity_scope', 'structure_cars_author_scope_operations.jsonl':'structure_cars_author_scope'}[input_name]
     m.meta('release',review_version(m.inputs));m.meta(prefix+'_revision',hashlib.sha256(path.read_bytes()).hexdigest());m.meta(prefix+'_refinement_counts',dict(counts));c.commit()
     return dict(counts)

@@ -148,13 +148,19 @@ def audit_record(c, expected, *, views=VIEWS):
     for name in native.get('item_name', []):
         if not isinstance(name, dict) or not isinstance(name.get('value'), str) or not name['value'].strip():
             continue
-        language = (name.get('language_tag') or 'und').replace('_', '-')
-        require(c.execute('SELECT 1 FROM node_names WHERE uid=? AND name=? AND language=?',
+        # Source language_tag remains byte-for-byte in native_record; its
+        # index may use the interoperable underscore/hyphen spelling.
+        language = (name.get('language_tag') or 'und').replace('_', '-').lower()
+        require(c.execute("SELECT 1 FROM node_names WHERE uid=? AND name=? "
+                          "AND lower(replace(language,'_','-'))=?",
                           (uid, name['value'], language)).fetchone() is not None,
                 'source_name_language_preserved')
-        require(c.execute('SELECT 1 FROM aliases WHERE uid=? AND raw_alias=?',
-                          (uid, name['value'])).fetchone() is not None,
-                'raw_source_alias_searchable')
+        # Different literal names can have one normalized lookup key. The raw
+        # spelling above and actual public queries below must both survive.
+        normalized = ' '.join(re.sub(r'[\W_]+', ' ', name['value'].lower()).split())
+        require(c.execute('SELECT 1 FROM aliases WHERE uid=? AND alias=?',
+                          (uid, normalized)).fetchone() is not None,
+                'source_alias_lookup_key_preserved')
     field_rows = c.execute('SELECT * FROM source_field_values WHERE uid=?', (uid,)).fetchall()
     fields = {(r['field'], r['value']) for r in field_rows if r['value']}
     require(native_fields(native) <= fields, 'all_native_source_fields_preserved')
@@ -323,7 +329,7 @@ def self_test():
       CREATE TABLE edges(id PRIMARY KEY,child_uid,parent_uid,relation,status);
       CREATE TABLE bridges(left_uid,right_uid,status,relation);
       CREATE TABLE node_names(uid,name,language);
-      CREATE TABLE aliases(uid,raw_alias);
+      CREATE TABLE aliases(uid,raw_alias,alias);
       CREATE TABLE source_field_values(uid,field,value,source,evidence_id);
       CREATE TABLE browse_facets(uid,facet,value);
       CREATE TABLE domain_registry(domain_id,canonical_name,root_uids);
@@ -341,7 +347,7 @@ def self_test():
                canonical({'is_class_inclusion': False})))
     c.execute('INSERT INTO evidence VALUES(?,?,?)', ('proof', canonical(proof), sha(proof)))
     c.execute('INSERT INTO node_names VALUES(?,?,?)', (uid, native['item_name'][0]['value'], 'en-US'))
-    c.execute('INSERT INTO aliases VALUES(?,?)', (uid, native['item_name'][0]['value']))
+    c.execute('INSERT INTO aliases VALUES(?,?,?)', (uid, native['item_name'][0]['value'], 'two seater loveseat chair'))
     for field, value in native_fields(native):
         c.execute('INSERT INTO source_field_values VALUES(?,?,?,?,?)', (uid, field, value, 'source', 'proof'))
         c.execute('INSERT INTO browse_facets VALUES(?,?,?)', (uid, field, value))
@@ -354,7 +360,9 @@ def self_test():
     assert not audit_record(c, expected)
     mutations = [
         ('delete domain member', "DELETE FROM domain_members WHERE view='unified'", 'domain_members:unified'),
-        ('missing alias', 'DELETE FROM aliases', 'raw_source_alias_searchable'),
+        ('missing alias', 'DELETE FROM aliases', 'source_alias_lookup_key_preserved'),
+        ('missing raw name', 'DELETE FROM node_names', 'source_name_language_preserved'),
+        ('wrong source locale region', "UPDATE node_names SET language='en-GB'", 'source_name_language_preserved'),
         ('missing source field', "DELETE FROM source_field_values WHERE field='brand'", 'all_native_source_fields_preserved'),
         ('brand relabelled manufacturer', "UPDATE source_field_values SET field='manufacturer' WHERE field='brand'", 'no_fabricated_or_relabelled_source_fields'),
         ('missing facet', "DELETE FROM browse_facets WHERE facet='brand'", 'native_facet_indexed'),
@@ -389,6 +397,27 @@ def run(database, inputs, output):
     errors, stages = [], {}
     if file_sha(input_file) != manifest['records_sha256']:
         raise ValueError('Frozen living input SHA differs from its source manifest')
+    batches = {input_file.name: file_sha(input_file)}
+    if inputs.is_dir():
+        extension_file = inputs / 'living_catalogue_extension_records.jsonl'
+        if extension_file.exists():
+            extension_manifest = json.loads((inputs/'living_catalogue_extension_manifest.json').read_text())
+            if file_sha(extension_file) != extension_manifest['records_sha256']:
+                raise ValueError('Frozen extension batch checksum differs')
+            if extension_manifest['archive_sha256'] != manifest['archive_sha256']:
+                raise ValueError('Extension and original batches must retain the same frozen archive')
+            with extension_file.open() as stream:
+                rows.extend(json.loads(line) for line in stream)
+            batches[extension_file.name] = file_sha(extension_file)
+    domains = sorted(set(DOMAINS) | {row['domain'] for row in rows})
+    chinese_names = dict(CHINESE)
+    display_file = input_file.parent / 'display_domain_extension_aliases.json'
+    if display_file.exists():
+        display = json.loads(display_file.read_text())
+        for row in display['domains']:
+            chinese_names[row['domain']] = row['aliases'][0]
+    if set(domains) - set(chinese_names):
+        raise ValueError('Every expanded domain needs a frozen Chinese navigation name')
     c = sqlite3.connect(database.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     c.row_factory = sqlite3.Row;c.execute('PRAGMA query_only=ON')
     metadata = {r[0]: json.loads(r[1]) for r in c.execute('SELECT key,value FROM metadata')}
@@ -435,7 +464,13 @@ def run(database, inputs, output):
             print('SQL checked', index, 'errors', len(errors), flush=True)
     stages['all_source_sql_seconds'] = time.monotonic() - start
     boundary_paths = []
-    for domain in DOMAINS:
+    boundary_scope_memos = {}
+    def source_scope_path(domain, view, parent, roots):
+        key=(domain,view,parent)
+        if key not in boundary_scope_memos:
+            boundary_scope_memos[key]=native_boundary_path(c,parent,roots,view)
+        return boundary_scope_memos[key]
+    for domain in domains:
         registry = c.execute('SELECT * FROM domain_registry WHERE canonical_name=?', (domain,)).fetchone()
         if not registry:
             errors.append({'check': 'domain_registered', 'domain': domain});continue
@@ -443,12 +478,20 @@ def run(database, inputs, output):
         parents = sorted({p for r in expected.values() if r['domain'] == domain for p in r['parent_uids']})
         for view in VIEWS:
             for parent in parents:
-                path = native_boundary_path(c, parent, roots, view)
+                path = source_scope_path(domain, view, parent, roots)
                 if path is None:
                     errors.append({'check': 'native_domain_boundary_path', 'domain': domain, 'view': view, 'parent': parent})
                 boundary_paths.append({'domain': domain, 'view': view, 'parent': parent,
                                        'roots': sorted(roots), 'source_path': path})
     (output / 'native_boundary_paths.json').write_text(json.dumps(boundary_paths, ensure_ascii=False, indent=2) + '\n')
+    raw_name_checks = []
+    raw_name_uids = set(OLD_HASHES)
+    for uid, row in expected.items():
+        for name in row['proof']['native_record'].get('item_name', []):
+            if isinstance(name, dict) and isinstance(name.get('value'), str) and name['value'].strip():
+                raw_alias=c.execute('SELECT 1 FROM aliases WHERE uid=? AND raw_alias=?',(uid,name['value'])).fetchone()
+                if not raw_alias:
+                    raw_name_uids.add(uid)
     samples = []
     types = defaultdict(list)
     for row in rows:
@@ -460,6 +503,25 @@ def run(database, inputs, output):
     print('START public SDK names/paths/domains/pagination/exports', flush=True)
     for view in VIEWS:
         with FineAtlas(database, relation_view=view) as atlas:
+            for uid in sorted(raw_name_uids):
+                row=expected[uid]
+                for name in row['proof']['native_record'].get('item_name', []):
+                    if not isinstance(name,dict) or not isinstance(name.get('value'),str) or not name['value'].strip():
+                        continue
+                    try:
+                        found,pages=collect_pages(lambda limit,cursor: atlas.search_page(
+                            name['value'], limit=limit,cursor=cursor,domain=row['domain'],
+                            node_kind='CONFIGURATION',exact=True),limit=17)
+                        assert uid in {n['uid'] for n in found}, 'raw source name omitted source identity'
+                        source_language=name.get('language_tag') or 'und'
+                        for spelling in {source_language,source_language.replace('_','-')}:
+                            names=atlas.aliases(uid,language=spelling,limit=1000)
+                            assert any(x['name']==name['value'] for x in names), 'source locale filter omitted raw name'
+                        raw_name_checks.append({'view':view,'uid':uid,'source_name':name['value'],
+                                                'source_language_tag':source_language,'exact_pages':pages})
+                    except Exception as error:
+                        errors.append({'check':'public_full_raw_name_and_locale','view':view,'uid':uid,
+                                       'source_name':name['value'],'error':repr(error)})
             for row in samples:
                 then = time.monotonic()
                 try:
@@ -478,12 +540,12 @@ def run(database, inputs, output):
                     errors.append({'check': 'public_exact_path_browse', 'uid': row['uid'], 'view': view,
                                    'error': repr(error)})
                 timings.append(time.monotonic() - then)
-            for domain in DOMAINS:
+            for domain in domains:
                 try:
                     entry = atlas.domain(domain)
-                    chinese = atlas.domain(CHINESE[domain])
+                    chinese = atlas.domain(chinese_names[domain])
                     assert entry and chinese and chinese['domain'] == domain, 'Chinese entry lookup failed'
-                    portal = atlas.browse_domain(CHINESE[domain], limit=7)
+                    portal = atlas.browse_domain(chinese_names[domain], limit=7)
                     assert portal['roots'], 'Chinese portal cannot browse real roots'
                     sql_all = {r[0] for r in c.execute('SELECT uid FROM domain_members WHERE domain_id=? AND view=? AND role=?',
                         (entry['domain_id'], view, 'CONFIGURATION'))}
@@ -492,11 +554,16 @@ def run(database, inputs, output):
                         domain, limit=limit, cursor=cursor, node_kind='CONFIGURATION'), limit=size)
                     assert {n['uid'] for n in nodes} == sql_all, 'domain keyset/SQL inventory mismatch'
                     assert pages > 1, 'no multipage keyset exercise'
-                    expected_abo = {u for u, r in expected.items() if r['domain'] == domain}
+                    # Multi-domain membership follows real type paths, not the
+                    # source record's single editorial primary-domain assignment.
+                    domain_roots = set(entry['root_uids'])
+                    expected_abo = {u for u, r in expected.items() if any(
+                        source_scope_path(domain, view, parent, domain_roots) is not None
+                        for parent in r['parent_uids'])}
                     assert {u for u in sql_all if u.startswith('abo-listing:')} == expected_abo, 'domain ABO source UID inventory mismatch'
                     pagination.append({'view': view, 'domain': domain, 'source_configurations': len(expected_abo),
                                        'all_configurations': len(nodes), 'pages': pages, 'page_size': size,
-                                       'chinese_entry': CHINESE[domain]})
+                                       'chinese_entry': chinese_names[domain]})
                     path = output / (domain + '.' + view + '.configurations.jsonl')
                     then = time.monotonic()
                     result = atlas.export_domain(domain, path, page_size=47, node_kind='CONFIGURATION')
@@ -534,17 +601,18 @@ def run(database, inputs, output):
     stages['total_seconds'] = time.monotonic() - start
     memberships = dict(c.execute("SELECT view,count(*) FROM domain_members WHERE uid GLOB 'abo-listing:*' GROUP BY view"))
     result = {'status': 'PASS' if not errors else 'FAIL', 'database': str(database.resolve()),
-        'database_revision': metadata.get('database_revision'), 'input_sha256': file_sha(input_file),
+        'database_revision': metadata.get('database_revision'), 'input_sha256': file_sha(input_file), 'frozen_catalogue_batches': batches,
         'new_source_configuration_inputs': len(rows), 'protected_old_source_uids': len(OLD_HASHES),
         'deduplicated_source_configuration_total': len(expected), 'all_source_inventory': len(actual_abo),
         'new_world_models_or_ordinary_classes': 0, 'public_fixed_samples': len(samples),
         'rooted_views_checked': list(VIEWS), 'membership_view_inventory_only': memberships.get('membership', 0),
         'domain_configuration_counts': dict(Counter(r['domain'] for r in expected.values())),
-        'public_checks': len(public), 'pagination': pagination, 'exports': exported, 'errors': errors,
+        'public_checks': len(public), 'full_raw_name_locale_checks': len(raw_name_checks), 'pagination': pagination, 'exports': exported, 'errors': errors,
         'error_counts': dict(Counter(e['check'] for e in errors)), 'timings': stages,
         'public_sample_query_max_seconds': max(timings, default=0),
         'scope': 'Independent source SQL witnesses plus public SDK; no builder/adapter/internal admission function',
         'membership_limit': 'Native membership has no universal WordNet root witness; observed inventory reported without policy relaxation'}
+    (output / 'full_raw_name_locale_checks.json').write_text(json.dumps(raw_name_checks,ensure_ascii=False,indent=2)+'\n')
     (output / 'public_fixed_sample_paths.json').write_text(json.dumps(public, ensure_ascii=False, indent=2) + '\n')
     (output / 'living_candidate_acceptance.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     print(canonical({k: result[k] for k in ('status', 'deduplicated_source_configuration_total',

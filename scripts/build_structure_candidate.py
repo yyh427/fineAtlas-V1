@@ -31,6 +31,7 @@ BUILD_STAGES = ('verify_independent_copy', 'schema', 'biological_scope',
                 'engineering_scope', 'breed_sources', 'living_catalogue',
                 'navigation_names', 'biological_whole_definition_scope',
                 'candidate_evidence_dates', 'whole_subject_source_contracts',
+                'vehicle_source_scope', 'cars_author_scope', 'cub_annotation_version_scope', 'biological_identity_scope', 'coverage_portals', 'coverage_catalogue', 'coverage_names',
                 'whole_graph_recomputation', 'freeze_metadata', 'browse_staging',
                 'embed_browse_indexes')
 
@@ -122,7 +123,7 @@ def freeze_metadata(m, expected_fingerprints=None):
     revision = hashlib.sha256(json.dumps(freeze, sort_keys=True).encode()).hexdigest()
     for key, value in {'reviewed_reward_policies': resolved,
                        'reviewed_reward_policies_v1': policies,
-                       'reviewed_resolution_policy_version': 'native-taxonomic-rank-floors-v2' if resolution_path.exists() else 'v1',
+                       'reviewed_resolution_policy_version': 'native-taxonomic-rank-and-physical-type-floors-v4' if resolution_path.exists() else 'v1',
                        'structure_frozen_build_manifest': freeze,
                        'database_revision': revision, 'browse_parent_revision': revision,
                        'browse_indexes_ready': False, 'baseline_release': 'v1.10.1',
@@ -202,6 +203,24 @@ def main():
     from fineatlas.structure_source_contracts import apply_source_contracts
     stage('candidate_evidence_dates',lambda:apply_evidence_dates(m))
     stage('whole_subject_source_contracts',lambda:apply_source_contracts(m))
+    from fineatlas.structure_vehicle_source_scope import apply_vehicle_source_scope
+    stage('vehicle_source_scope', lambda: apply_vehicle_source_scope(m))
+    from fineatlas.structure_cars_author_scope import apply_structure_cars_author_scope
+    stage('cars_author_scope', lambda: apply_structure_cars_author_scope(m))
+    from fineatlas.structure_cub_version_scope import apply_cub_annotation_version_scope
+    stage('cub_annotation_version_scope', lambda: apply_cub_annotation_version_scope(m))
+    from fineatlas.structure_biology_identity_scope import apply_structure_biology_identity_scope
+    stage('biological_identity_scope', lambda: apply_structure_biology_identity_scope(m))
+    from prepare_living_domains import apply_living_inputs
+    stage('coverage_portals', lambda: apply_living_inputs(
+        m, stage_key='living_coverage_extension_application'))
+    stage('coverage_catalogue', lambda: apply_living_expansion(
+        m, input_prefix='living_catalogue_extension',
+        metadata_key='living_catalogue_extension_expansion'))
+    stage('coverage_names', lambda: apply_display_domain_aliases(
+        m, input_name='display_domain_extension_aliases.json')
+        if (m.inputs/'display_domain_extension_aliases.json').exists()
+        else {'status':'not_requested'})
     stage('whole_graph_recomputation', lambda: ram_graphs(m))
     frozen_meta = stage('freeze_metadata', lambda: freeze_metadata(m, fingerprints))
     (a.reports/'frozen_metadata.json').write_text(json.dumps(frozen_meta,indent=2)+'\n')

@@ -84,6 +84,14 @@ class SourceContractCandidateAuditTest(unittest.TestCase):
             {'uid':'foo','parent':'car','origin':'independent-fixture','disposition':'PHYSICAL_PARENT_DIRECTION_SUPPORTED','required':True,'expected_role':'MODEL'}]}))
         native_inventory=inputs/'source_contract_native_preservation.json'
         native_inventory.write_text(json.dumps({'claims':[],'original_source_rows':0,'scope':'Explicitly empty synthetic fixture native cohort'}))
+        prior_inventory=inputs/'source_contract_prior_status_distributions.json'
+        prior_inventory.write_text(json.dumps({
+            'schema':'FINEATLAS_INDEPENDENT_PRIOR_SOURCE_DISPOSITIONS_V1',
+            'source_contract_payload_sha256':AUDIT.sha(source.read_bytes()),
+            'source_checkpoint_sha256':AUDIT.sha(baseline.read_bytes()),
+            'counts':{'locators':1,'original_source_rows':2,'prior_status_counts':{'ACTIVE':2}},
+            'entries':[{'table':'entity_relations','locator':locator,'multiplicity':2,
+                        'prior_status_reason_distribution':[{'status':'ACTIVE','reason':None,'count':2}]}]}))
         input_sha=AUDIT.sha(source.read_bytes())
         con.execute("UPDATE entity_relations SET status='SOURCE_SCOPE_REVIEW'")
         for index in (7,8):
@@ -92,7 +100,7 @@ class SourceContractCandidateAuditTest(unittest.TestCase):
         con.execute('INSERT INTO entity_relations VALUES(?,?,?,?,?,?,?,?)',(9,'foo','car','DESIGN_TYPE_OF','ACTIVE',repair['source'],'new-proof',json.dumps({'admission_basis':proof})))
         metadata={'unified_ready':True,'usability_indexes_ready':True,'browse_indexes_ready':True,'database_revision':'frozen-revision',
                   'browse_index_revision':'frozen-revision','structure_frozen_build_manifest':{'inputs':{
-                      p.name:AUDIT.sha(p.read_bytes()) for p in (source,ops,expected,native_inventory)}}}
+                      p.name:AUDIT.sha(p.read_bytes()) for p in (source,ops,expected,native_inventory,prior_inventory)}}}
         con.executemany('INSERT INTO metadata VALUES(?,?)',[(k,json.dumps(v)) for k,v in metadata.items()]);con.commit()
         return con,database,inputs,locator
 
