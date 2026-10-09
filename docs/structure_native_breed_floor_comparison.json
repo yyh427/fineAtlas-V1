@@ -1,0 +1,547 @@
+{
+  "pets37": {
+    "labels": 37,
+    "pairs": 666,
+    "v1_resolution_counts": {
+      "COARSE_VALID": 614,
+      "FINE_VALID": 52
+    },
+    "v2_resolution_counts": {
+      "COARSE_VALID": 650,
+      "FINE_VALID": 16
+    },
+    "transitions": [
+      {
+        "before": "COARSE_VALID",
+        "after": "COARSE_VALID",
+        "pairs": 614
+      },
+      {
+        "before": "FINE_VALID",
+        "after": "COARSE_VALID",
+        "pairs": 36
+      },
+      {
+        "before": "FINE_VALID",
+        "after": "FINE_VALID",
+        "pairs": 16
+      }
+    ],
+    "changed_pairs": 36,
+    "v1_policy": {
+      "policy": "classification",
+      "requirement": "hierarchy",
+      "coarse_roots": [
+        "wordnet31:02086723-n",
+        "wordnet31:02124460-n"
+      ],
+      "task_boundary_roots": [
+        "wordnet31:00015568-n"
+      ]
+    },
+    "v2_policy": {
+      "policy": "classification",
+      "requirement": "hierarchy",
+      "coarse_roots": [
+        "wordnet31:02086723-n",
+        "wordnet31:02124460-n",
+        "vbo:NCBITaxon_9685",
+        "vbo:NCBITaxon_9615",
+        "vbo:VBO_0400018",
+        "vbo:VBO_0400024"
+      ],
+      "task_boundary_roots": [
+        "wordnet31:00015568-n"
+      ]
+    },
+    "labels_unchanged": true,
+    "v1_lca_histogram": [
+      {
+        "uids": [
+          "wordnet31:02086723-n"
+        ],
+        "pairs": 284
+      },
+      {
+        "uids": [
+          "wordnet31:02077948-n"
+        ],
+        "pairs": 175
+      },
+      {
+        "uids": [
+          "wordnet31:01320032-n",
+          "wordnet31:02077948-n"
+        ],
+        "pairs": 100
+      },
+      {
+        "uids": [
+          "wordnet31:00015568-n"
+        ],
+        "pairs": 28
+      },
+      {
+        "uids": [
+          "vbo:NCBITaxon_9685",
+          "vbo:VBO_0400018",
+          "wordnet31:02124272-n"
+        ],
+        "pairs": 27
+      },
+      {
+        "uids": [
+          "wordnet31:02124272-n"
+        ],
+        "pairs": 22
+      },
+      {
+        "uids": [
+          "wordnet31:02089774-n"
+        ],
+        "pairs": 11
+      },
+      {
+        "uids": [
+          "vbo:NCBITaxon_9685",
+          "vbo:VBO_0400018"
+        ],
+        "pairs": 8
+      },
+      {
+        "uids": [
+          "wordnet31:02124460-n"
+        ],
+        "pairs": 5
+      },
+      {
+        "uids": [
+          "wordnet31:02095120-n"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "vbo:NCBITaxon_9685",
+          "vbo:VBO_0400018",
+          "wordnet31:02124460-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02090203-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02114278-n"
+        ],
+        "pairs": 1
+      }
+    ],
+    "v2_lca_histogram": [
+      {
+        "uids": [
+          "wordnet31:02086723-n"
+        ],
+        "pairs": 284
+      },
+      {
+        "uids": [
+          "wordnet31:02077948-n"
+        ],
+        "pairs": 175
+      },
+      {
+        "uids": [
+          "wordnet31:01320032-n",
+          "wordnet31:02077948-n"
+        ],
+        "pairs": 100
+      },
+      {
+        "uids": [
+          "wordnet31:00015568-n"
+        ],
+        "pairs": 28
+      },
+      {
+        "uids": [
+          "vbo:NCBITaxon_9685",
+          "vbo:VBO_0400018",
+          "wordnet31:02124272-n"
+        ],
+        "pairs": 27
+      },
+      {
+        "uids": [
+          "wordnet31:02124272-n"
+        ],
+        "pairs": 22
+      },
+      {
+        "uids": [
+          "wordnet31:02089774-n"
+        ],
+        "pairs": 11
+      },
+      {
+        "uids": [
+          "vbo:NCBITaxon_9685",
+          "vbo:VBO_0400018"
+        ],
+        "pairs": 8
+      },
+      {
+        "uids": [
+          "wordnet31:02124460-n"
+        ],
+        "pairs": 5
+      },
+      {
+        "uids": [
+          "wordnet31:02095120-n"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "vbo:NCBITaxon_9685",
+          "vbo:VBO_0400018",
+          "wordnet31:02124460-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02090203-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02114278-n"
+        ],
+        "pairs": 1
+      }
+    ],
+    "native_host_scope_records": 2,
+    "data_graph_changed": false,
+    "semantic_or_visual_accuracy_certified": false
+  },
+  "stanford_dogs": {
+    "labels": 120,
+    "pairs": 7140,
+    "v1_resolution_counts": {
+      "COARSE_VALID": 6423,
+      "FINE_VALID": 717
+    },
+    "v2_resolution_counts": {
+      "COARSE_VALID": 6423,
+      "FINE_VALID": 717
+    },
+    "transitions": [
+      {
+        "before": "COARSE_VALID",
+        "after": "COARSE_VALID",
+        "pairs": 6423
+      },
+      {
+        "before": "FINE_VALID",
+        "after": "FINE_VALID",
+        "pairs": 717
+      }
+    ],
+    "changed_pairs": 0,
+    "v1_policy": {
+      "policy": "classification",
+      "requirement": "hierarchy",
+      "coarse_roots": [
+        "wordnet31:02086723-n",
+        "wordnet31:02124460-n"
+      ],
+      "task_boundary_roots": [
+        "wordnet31:00015568-n"
+      ]
+    },
+    "v2_policy": {
+      "policy": "classification",
+      "requirement": "hierarchy",
+      "coarse_roots": [
+        "wordnet31:02086723-n",
+        "wordnet31:02124460-n",
+        "vbo:NCBITaxon_9685",
+        "vbo:NCBITaxon_9615",
+        "vbo:VBO_0400018",
+        "vbo:VBO_0400024"
+      ],
+      "task_boundary_roots": [
+        "wordnet31:00015568-n"
+      ]
+    },
+    "labels_unchanged": true,
+    "v1_lca_histogram": [
+      {
+        "uids": [
+          "wordnet31:02086723-n"
+        ],
+        "pairs": 6187
+      },
+      {
+        "uids": [
+          "wordnet31:02089774-n"
+        ],
+        "pairs": 360
+      },
+      {
+        "uids": [
+          "wordnet31:02106058-n"
+        ],
+        "pairs": 134
+      },
+      {
+        "uids": [
+          "wordnet31:00015568-n"
+        ],
+        "pairs": 118
+      },
+      {
+        "uids": [
+          "wordnet31:02085998-n"
+        ],
+        "pairs": 118
+      },
+      {
+        "uids": [
+          "wordnet31:02095120-n"
+        ],
+        "pairs": 66
+      },
+      {
+        "uids": [
+          "wordnet31:02101202-n"
+        ],
+        "pairs": 52
+      },
+      {
+        "uids": [
+          "wordnet31:02090203-n"
+        ],
+        "pairs": 36
+      },
+      {
+        "uids": [
+          "wordnet31:02107175-n"
+        ],
+        "pairs": 27
+      },
+      {
+        "uids": [
+          "wordnet31:02088026-n"
+        ],
+        "pairs": 10
+      },
+      {
+        "uids": [
+          "wordnet31:02101681-n"
+        ],
+        "pairs": 6
+      },
+      {
+        "uids": [
+          "wordnet31:02103760-n"
+        ],
+        "pairs": 6
+      },
+      {
+        "uids": [
+          "wordnet31:02110072-n"
+        ],
+        "pairs": 6
+      },
+      {
+        "uids": [
+          "wordnet31:02106493-n"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "wordnet31:02114278-n"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "wikidata-v4:Q38904"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "wordnet31:02102649-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02103051-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wikidata-v4:Q37624",
+          "wordnet31:02107534-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02115478-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wikidata:Q25324"
+        ],
+        "pairs": 1
+      }
+    ],
+    "v2_lca_histogram": [
+      {
+        "uids": [
+          "wordnet31:02086723-n"
+        ],
+        "pairs": 6187
+      },
+      {
+        "uids": [
+          "wordnet31:02089774-n"
+        ],
+        "pairs": 360
+      },
+      {
+        "uids": [
+          "wordnet31:02106058-n"
+        ],
+        "pairs": 134
+      },
+      {
+        "uids": [
+          "wordnet31:00015568-n"
+        ],
+        "pairs": 118
+      },
+      {
+        "uids": [
+          "wordnet31:02085998-n"
+        ],
+        "pairs": 118
+      },
+      {
+        "uids": [
+          "wordnet31:02095120-n"
+        ],
+        "pairs": 66
+      },
+      {
+        "uids": [
+          "wordnet31:02101202-n"
+        ],
+        "pairs": 52
+      },
+      {
+        "uids": [
+          "wordnet31:02090203-n"
+        ],
+        "pairs": 36
+      },
+      {
+        "uids": [
+          "wordnet31:02107175-n"
+        ],
+        "pairs": 27
+      },
+      {
+        "uids": [
+          "wordnet31:02088026-n"
+        ],
+        "pairs": 10
+      },
+      {
+        "uids": [
+          "wordnet31:02101681-n"
+        ],
+        "pairs": 6
+      },
+      {
+        "uids": [
+          "wordnet31:02103760-n"
+        ],
+        "pairs": 6
+      },
+      {
+        "uids": [
+          "wordnet31:02110072-n"
+        ],
+        "pairs": 6
+      },
+      {
+        "uids": [
+          "wordnet31:02106493-n"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "wordnet31:02114278-n"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "wikidata-v4:Q38904"
+        ],
+        "pairs": 3
+      },
+      {
+        "uids": [
+          "wordnet31:02102649-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02103051-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wikidata-v4:Q37624",
+          "wordnet31:02107534-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wordnet31:02115478-n"
+        ],
+        "pairs": 1
+      },
+      {
+        "uids": [
+          "wikidata:Q25324"
+        ],
+        "pairs": 1
+      }
+    ],
+    "native_host_scope_records": 1,
+    "data_graph_changed": false,
+    "semantic_or_visual_accuracy_certified": false
+  }
+}

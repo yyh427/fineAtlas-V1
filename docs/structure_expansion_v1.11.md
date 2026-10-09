@@ -86,3 +86,5 @@ TMPDIR=CANDIDATE/tmp PYTHONHASHSEED=0 python -B scripts/build_structure_candidat
 `build_complete.json` 后仍需 `accept_structure_candidate.py local` 完整检查；公开下载安装证据必须包含真实下载 URL、文件 SHA、实际安装 SDK 和完整公共查询/导出复验报告。局部通过仅允许上传明确标记的预发布候选，不允许推荐稳定版本。
 
 交付工具的独立小库拒绝回归见 [发布凭据检查](structure_current_delivery_guard_validation.json)、[保护路径和缓存检查](structure_current_build_safety_validation.json)及[完整复现比较检查](structure_compare_reproductions_fix_validation.json)。这些是工具回归，不能替代正式大库验收或真实公网下载。公开下载回执区分真实 HTTP(S) 网络传输、断点续传及缓存恢复；缓存、`file://` 和仅解压本地分片均不能声称本轮重新公开下载。安装 SDK 检查必须绑定同一个下载文件路径、文件状态和整库 SHA。
+
+猫犬的细层门槛同时包含固定 VBO 2026-04-15 的通用 `Cat breed` / `Dog breed` 概念及宿主 `Felis catus` / `Canis lupus familiaris`（species/subspecies）。宿主科学身份与 WordNet 表示分开保留，不通过身份合并修正统计。在同一 1.10.1 基线和 SDK 上，原审阅门槛把 36 个猫品种对因共享宿主或通用品种概念误算为细层；修正后 Pets 16 细层、650 粗层，Dogs 717/6423 不变。这是纯规则更正，不能算新增知识；原门槛及全部 666/7140 类别对比较保留，见 [独立门槛比较](structure_native_breed_floor_comparison.json)。正式新数据的结果仍需本轮候选构建后独立验收。
