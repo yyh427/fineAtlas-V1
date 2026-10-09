@@ -1,7 +1,6 @@
 # FineAtlas V1
 
-FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及命名实例的本地 SQLite 图数据库。正式版为 `v1.10.1`，SDK `1.10.1`，默认查询视图为 `unified`。原 `v1.6.0` 和所有候选继续保留，可独立安装与回退。
-
+FineAtlas 是保留来源 UID、原生分类、产品家族／型号／配置及命名实例的本地 SQLite 图数据库。正式版为 `v1.10.1`，SDK `1.10.1`，默认查询视图为 `unified`。
 **正式发布及完整公网复验PASS：** [正式Release](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1)已公开并设为Latest，main已更新为正式默认版；[main CI](https://github.com/yyh427/fineAtlas-V1/actions/runs/37879689603)的Python3.10／3.12均通过。正式版已完成两源独立提升、匹配浏览索引重建、105张逻辑表／模式比较、103张非浏览表的来源语义保留检查和16阶段完整本地验收。普通默认main clone、全新环境安装与283项测试已实际通过；六分片无认证默认下载的SHA均通过。整库SHA／字节数、默认stats、安装检查及实际已安装SDK的95域／755标签四视图／56,917对API复验均通过，九步默认公网流程及完整16阶段回归均已实际PASS；全图回归于2026-10-09 04:27:32 UTC结束。凭据见 [实际公网复验](docs/unified_external_validation.json)。
 
 ## 默认下载与使用
