@@ -105,6 +105,12 @@ def main():
     for spec in (SPEC, FAMILY_SPEC, OWNED_SPEC):
         if input_path(spec, args.inputs, ROOT) is None:
             raise ValueError("Child requires its sealed frozen input: " + spec.name)
+    from primary_source_snapshot_delivery import REGISTRY_NAME, registry
+    from structure_regression_temporal_contract import REFERENCE
+    for name in (REGISTRY_NAME, REFERENCE):
+        if not (args.inputs / name).is_file():
+            raise ValueError('Child requires its portable frozen acceptance input: ' + name)
+    registry(args.inputs)
     fingerprints, context = start_build(args.inputs, args.reports)
     states = {}
     temp = args.database.parent / "tmp"
@@ -146,6 +152,19 @@ def main():
         if (peer.get("revision") != receipt["revision"] or args.source.samefile(peer_source)
                 or peer.get("build_id") == receipt["build_id"]):
             raise ValueError("Literal-jet delta needs two distinct complete current parent databases")
+        temporal = json.loads((args.inputs / REFERENCE).read_text())
+        reference_hash = temporal.get('completed_parent_build_sha256')
+        bound_parent = receipt if reference_hash == digest_file(args.parent_build) else peer
+        original_report = json.loads(temporal['audit_receipt_text'])
+        if (reference_hash not in (digest_file(args.parent_build),digest_file(args.peer_parent_build))
+                or temporal.get('completed_parent_build') != bound_parent
+                or temporal.get('parent_revision') != receipt['revision']
+                or original_report.get('pass') is not True or original_report.get('preflight_only') is not False
+                or original_report.get('errors') != []
+                or Path(original_report.get('database','')).resolve() != Path(bound_parent['database']).resolve()
+                or temporal.get('original_manifest_sha256') != digest_file(args.inputs / 'structure_regression_repairs.json')
+                or temporal.get('original_auditor_sha256') != digest_file(ROOT / 'scripts/audit_structure_regression_repairs.py')):
+            raise ValueError('Actual original parent SQL audit must bind one of the two completed source receipts')
         protection = protect_output(args.database, args.inputs, args.baseline, (args.source, peer_source))
         source_sha = verify_parent_byte_copy(args.source, args.database, seal)
         return {"parent_build_id": receipt["build_id"], "parent_revision": meta["database_revision"],
