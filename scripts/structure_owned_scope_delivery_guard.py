@@ -51,6 +51,23 @@ def require_owned_scope_receipt(report, database, inputs, revision, code_root):
             raise ValueError('Every nominal family direction requires its actual independent source check')
     elif value.get('verified_family_source_reviews')not in(None,[]):
         raise ValueError('Audit claims family-direction reviews outside frozen operations')
+    derivations=[op for op in operations if op.get('op')=='retain_design_reference' or
+                 op.get('proof',{}).get('owned_physical_scope_kind')=='OWNED_NOMINAL_PROTOTYPE_OR_CONVERSION_PHYSICAL_KIND']
+    if derivations:
+        name=manifest.get('source_design_derivation_review_file','');path=Path(inputs)/name
+        if not name or Path(name).name!=name or '\\'in name or not path.is_file():
+            raise ValueError('Portable independent design derivation source review is required')
+        sha=hashlib.sha256(path.read_bytes()).hexdigest()
+        with sqlite3.connect(Path(database).resolve().as_uri()+'?mode=ro&immutable=1',uri=True)as con:
+            frozen=json.loads(con.execute('SELECT value FROM metadata WHERE key="structure_frozen_build_manifest"').fetchone()[0])['inputs']
+        if sha!=manifest.get('source_design_derivation_review_sha256')or frozen.get(name)!=sha:
+            raise ValueError('Independent derivation review is not bound to the frozen database')
+        expected=sorted((op['uid'],op['parent'],op['relation'],name,sha)for op in derivations)
+        actual=sorted((row['uid'],row['parent'],row['relation'],row['file'],row['sha256'])for row in value.get('verified_design_derivation_source_reviews',[]))
+        if actual!=expected:
+            raise ValueError('Every design reference and broad derived physical kind requires its independent source check')
+    elif value.get('verified_design_derivation_source_reviews')not in(None,[]):
+        raise ValueError('Audit claims derivation reviews outside frozen operations')
     def documents(raw):
         if isinstance(raw,dict):
             if raw.get('source_kind')=='PRIMARY_MANUFACTURER_OR_REGULATOR':yield raw

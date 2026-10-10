@@ -32,6 +32,20 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         self.con.close()
         self.temp.cleanup()
 
+    def test_named_prototype_and_conversion_require_the_correct_complete_physical_base(self):
+        audit.verify_named_design_derivation('test and trials prototype of the Wing',
+                                             'Maker Wing', 'The Maker Wing is a biplane aircraft.')
+        audit.verify_named_design_derivation('transport, re-engined conversion of the M-12A',
+                                             'M-12A Carrier', 'military transport aircraft version of the M-12')
+        with self.assertRaisesRegex(ValueError,'different base'):
+            audit.verify_named_design_derivation('prototype of the Wing','Maker Other',
+                                                 'The Maker Other is an aircraft.')
+        for description in ('engine for an aircraft','scale model aircraft','fictional aircraft'):
+            with self.assertRaisesRegex(ValueError,'complete physical'):
+                audit.verify_named_design_derivation('prototype of the Wing','Maker Wing',description)
+        with self.assertRaisesRegex(ValueError,'nominal prototype'):
+            audit.verify_named_design_derivation('related to the Wing','Maker Wing','type of aircraft')
+
     def test_shared_component_and_name_do_not_prove_owned_source_identity(self):
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))
 

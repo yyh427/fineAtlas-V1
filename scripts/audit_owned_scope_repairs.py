@@ -447,6 +447,78 @@ def verify_nominal_family_source(con, inputs, manifest, op, role_overrides=None)
     return {'file':name,'sha256':digest,'uid':op['uid'],'parent':op['parent']}
 
 
+def verify_design_derivation_source(con, inputs, manifest, op, overrides=None):
+    proof = op['proof']; locator = proof.get('source_review_locator', {})
+    name = manifest.get('source_design_derivation_review_file', '')
+    if not name or Path(name).name != name or '\\' in name:
+        raise ValueError('Design derivation requires a portable independent complete source review')
+    raw = (Path(inputs) / name).read_bytes(); digest = sha(raw); source = json.loads(raw)
+    if (digest != manifest.get('source_design_derivation_review_sha256')
+            or locator != {'file':name,'sha256':digest,'uid':op['uid'],'parent':op['parent'],'relation':op['relation']}
+            or source.get('schema') != 'FINEATLAS_SEVENTH_FINAL_FOUR_NOMINAL_SOURCE_DIRECTIONS_AND_PHYSICAL_SCOPE_V1'
+            or source.get('source_revision') != manifest.get('completed_parent_revision')):
+        raise ValueError('Design derivation source approval is not bound to this snapshot and direction')
+    matches = [r for r in source['physical_reference_records'] if r['uid'] == op['uid']]
+    if len(matches) != 1:
+        raise ValueError('Exactly one complete source derivation review is required')
+    record = matches[0]; physical = op['op'] == 'link'
+    if (proof.get('design_derivation_physical_scope_review' if physical else 'design_derivation_scope_review') != record
+            or record['status'] != 'SOURCE_BROAD_PHYSICAL_KIND_SUPPORTED_NARROW_MEMBERSHIP_PENDING'
+            or record['identity_or_mapping_promotion'] is not False
+            or record['configuration_equality_assertion'] is not False
+            or record['design_purpose_not_inherited_from_operator'] is not True):
+        raise ValueError('Prototype or conversion review cannot promote identity or inherit purpose')
+    for group in ('child_source_objects', 'parent_source_objects'):
+        for item in record[group]:
+            before = item['node']; actual = row_at(con,'nodes',before['uid'],'uid')
+            if not actual or {k:v for k,v in actual.items() if k!='component_id'} != {
+                    k:v for k,v in before.items() if k!='component_id'}:
+                raise ValueError('Derivation source object changed')
+    for before in record['preserved_original_relations']:
+        if row_at(con,'entity_relations',before['id']) != before:
+            raise ValueError('Original uncertain design membership must remain preserved')
+    for before in record['parent_own_same_primary_source_bridge']:
+        if row_at(con,'bridges',before['id']) != before or before['status'] != 'ACTIVE':
+            raise ValueError('Named base design lost its grounded original source bridge')
+    own = proof['source_witnesses'][0]; source_witness(con,own)
+    base_witness = proof['supporting_source_witnesses'][0] if physical else proof['source_witnesses'][1]
+    base = source_witness(con,base_witness)
+    broad = record['proposed_broad_physical_link']
+    if (own['uid'] != op['uid'] or own['statement'] != broad['own_declared_reference']
+            or base_witness['statement'] != broad['proper_parent_full_physical_aircraft_statement']
+            or not identity_peer(con,record['parent'],base['uid'],overrides)):
+        raise ValueError('Own declaration and named complete base-aircraft scope do not bind')
+    verify_named_design_derivation(own['statement'], base['label'], base_witness['statement'])
+    if physical:
+        if (op['relation'] != 'DESIGN_TYPE_OF' or op['parent'] != broad['parent']
+                or proof.get('physical_genus') or proof.get('literal_own_aircraft_genus_asserted') is not False
+                or proof.get('no_design_purpose_inheritance') is not True
+                or proof.get('classification_axis') != 'physical_structure'
+                or proof['source_witnesses'][1]['statement'] != 'a vehicle that can fly'):
+            raise ValueError('Derived broad physical scope cannot become literal genus or narrow purpose')
+    elif (op['parent'] != record['parent'] or op['relation'] != record['proposed_relation']
+          or proof.get('basis') != 'OWNED_NOMINAL_DESIGN_PROTOTYPE_OR_ENGINE_CONVERSION_REFERENCE'
+          or proof.get('navigation_eligible') is not False or proof.get('allowed_views') != []
+          or proof.get('world_identity_assertion') is not False or proof.get('no_identity_merges') is not True):
+        raise ValueError('Design reference must remain a non-navigation source fact')
+    return {'file':name,'sha256':digest,'uid':op['uid'],'parent':op['parent'],'relation':op['relation']}
+
+
+def verify_named_design_derivation(own, base_label, base_statement):
+    match = re.search(r'\b(?:prototype of|re-engined conversion of)\s+(?:the\s+)?(.+?)\.?$', own, re.I)
+    tokens = lambda value: re.findall(r'[^\W_]+',value.casefold(),re.UNICODE)
+    if not match or not tokens(match.group(1)):
+        raise ValueError('Own source lacks a named nominal prototype or conversion')
+    named, label = tokens(match.group(1)), tokens(base_label)
+    if not any(label[i:i+len(named)] == named for i in range(len(label)-len(named)+1)):
+        raise ValueError('Prototype source names a different base design')
+    phrase = own_assertion_phrase(base_statement)
+    if (not re.search(r'\baircraft\b',phrase,re.I)
+            or re.search(r'\b(?:parts?|engine|toy|scale model|virtual|fictional|not|never)\b',phrase,re.I)
+            or re.search(r'\b(?:parts?|engine for|toy|scale model|virtual|fictional|not|never)\b',own,re.I)):
+        raise ValueError('Named base does not prove a complete physical aircraft design')
+
+
 def independently_declared_role(statement, label, scope_kind, generation_review=None):
     if scope_kind is None:
         named_instance_phrase(statement, label)
@@ -685,6 +757,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
     errors, partition_sets, routes, verified_sources = [], set(), {}, {}
     verified_purpose_sources = []
     verified_family_sources = []
+    verified_derivation_sources = []
     author_records = None
     if any(o['op'] == 'migrate_nominal_design_mapping' for o in operations):
         try:
@@ -782,6 +855,10 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     verified_family_sources.append(verify_nominal_family_source(
                         con, inputs, manifest, op, role_overrides if preflight else None))
                     phrase = own_assertion_phrase(own)
+                elif proof.get('owned_physical_scope_kind') == 'OWNED_NOMINAL_PROTOTYPE_OR_CONVERSION_PHYSICAL_KIND':
+                    verified_derivation_sources.append(verify_design_derivation_source(
+                        con, inputs, manifest, op, role_overrides if preflight else None))
+                    phrase = own
                 elif manufacturer_design:
                     phrase = manufacturer_vehicle_phrase(proof, child, parent, retained_own_statements,
                                                          primary_snapshots_dir, verified_sources)
@@ -800,7 +877,8 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
                 literal_physical_scope = (not biological_host and proof.get('owned_physical_scope_kind') not in
-                                          {'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE','OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION'})
+                                          {'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE','OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION',
+                                           'OWNED_NOMINAL_PROTOTYPE_OR_CONVERSION_PHYSICAL_KIND'})
                 words = lambda value: re.findall(r'[^\W_]+', value.casefold(), re.UNICODE)
                 if literal_physical_scope and (not isinstance(genus, str) or not words(genus)):
                     raise ValueError('Physical genus must be explicit in the whole source review')
@@ -825,7 +903,8 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     if table == 'entity_relations' and rows[0]['evidence_id'] != eid:
                         raise ValueError('Actual typed link points at a different evidence record')
                     if (proof.get('owned_physical_scope_kind') in {'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE',
-                                                                   'OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION'}
+                                                                   'OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION',
+                                                                   'OWNED_NOMINAL_PROTOTYPE_OR_CONVERSION_PHYSICAL_KIND'}
                             and json.loads(rows[0]['data']).get('classification_axis') != proof['classification_axis']):
                         raise ValueError('Actual nominal type has lost its function or purpose axis')
                     if table == 'edges':
@@ -837,6 +916,35 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     routes[op['uid']] = reaches(con, op['uid'], 'wordnet31:00001740-n')
                     if not routes[op['uid']]:
                         raise ValueError('New legal connection does not reach the physical root')
+            elif op['op'] == 'retain_design_reference':
+                verified_derivation_sources.append(verify_design_derivation_source(
+                    con, inputs, manifest, op, role_overrides if preflight else None))
+                before = op['before_assertion']
+                if (row_at(con,'entity_relations',before['id']) != before
+                        or assertion_content(before) != op['content_sha256']
+                        or before['status'] != 'SOURCE_SCOPE_REVIEW' or before['relation'] != 'NATIVE_DESIGN_PARENT'
+                        or before['object_uid'] != op['parent'] or proof['original_reference_relation'] != before):
+                    raise ValueError('Original reviewed design declaration was changed or misattributed')
+                bridge = proof['original_source_identifier_bridge']
+                if (row_at(con,'bridges',bridge['id']) != bridge or bridge['status'] != 'ACTIVE'
+                        or {bridge['left_uid'],bridge['right_uid']} != {op['uid'],before['subject_uid']}
+                        or not identity_peer(con,op['uid'],before['subject_uid'],role_overrides if preflight else None)):
+                    raise ValueError('Reference is not grounded in its own original source identity')
+                if not preflight:
+                    rows = con.execute('SELECT * FROM entity_relations WHERE subject_uid=? AND object_uid=? AND relation=? AND source=?',
+                                       (op['uid'],op['parent'],op['relation'],SOURCE)).fetchall()
+                    if len(rows) != 1 or rows[0]['status'] != 'SOURCE_DECLARED':
+                        raise ValueError('Design reference must not enter an active navigation relation')
+                    data = json.loads(rows[0]['data']); eid = 'usability:' + sha(dump(proof))
+                    if (data != {'admission_basis':proof,'allowed_views':[],'navigation_eligible':False,
+                                 'classification_axis':'design_derivation_reference'} or rows[0]['evidence_id'] != eid):
+                        raise ValueError('Actual design reference permits navigation or lost its scope evidence')
+                    evidence = row_at(con,'evidence',eid,'evidence_id')
+                    if not evidence or evidence['payload'] != dump(proof) or evidence['payload_sha256'] != sha(dump(proof)):
+                        raise ValueError('Actual retained reference evidence differs')
+                    exact_history(con,'owned_non_navigation_design_reference',op['uid'],before,
+                                  {'subject_uid':op['uid'],'object_uid':op['parent'],'relation':op['relation'],
+                                   'status':'SOURCE_DECLARED','source':SOURCE},proof)
             elif op['op'] == 'correct_role':
                 child = row_at(con, 'nodes', op['uid'], 'uid')
                 if (not child or child['visibility'] != 'ACTIVE' or op['uid'] != op['parent']
@@ -983,7 +1091,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 or type(applied.get('operation_count')) is not int or applied['operation_count'] != len(operations)
                 or applied.get('operations') != counts or applied.get('new_nodes') != 0 or applied.get('positive_identity_merges') != 0):
             errors.append({'kind': 'ACTUAL_APPLIED_METADATA_NOT_BOUND'})
-        expected_links = sum(o['op'] == 'link' for o in operations)
+        expected_links = sum(o['op'] in {'link','retain_design_reference'} for o in operations)
         actual_links = sum(con.execute('SELECT count(*) FROM ' + table + ' WHERE source=?', (SOURCE,)).fetchone()[0]
                            for table in ('edges', 'entity_relations'))
         if actual_links != expected_links:
@@ -1010,6 +1118,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
               'verified_primary_sources': verified_sources, 'identity_component_censuses': len(partition_sets),
               'verified_purpose_source_reviews': verified_purpose_sources,
               'verified_family_source_reviews': verified_family_sources,
+              'verified_design_derivation_source_reviews': verified_derivation_sources,
               'author_annotations_verified': len(author_records) if author_records else 0,
               'actual_new_link_root_reachability': routes, 'new_nodes': 0, 'positive_identity_merges': 0,
               'errors': errors}
