@@ -166,7 +166,7 @@ def owned_generic_class_scope(statement: str, label: str, source_names=()) -> bo
         return True
     # Plural intensions are universal only when followed by a defining
     # relative clause. A production series of named products is different.
-    if re.match(r"(?:an?\s+)?(?:[a-z-]+\s+){0,8}(?:instruments|aircraft|cameras|computers|devices)\s+(?:that|which)\b", predicate, re.I):
+    if copula.group(0).strip().casefold() in {'are','were'} and re.match(r"(?:an?\s+)?(?:[a-z-]+\s+){0,8}(?:instruments|aircraft|cameras|computers|devices)\s+(?:that|which)\b", predicate, re.I):
         return True
     prefix = text[:copula.start()].strip() if copula else ""
     if not re.match(r"^(?:a|an)\s+", prefix, re.I):

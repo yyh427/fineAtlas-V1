@@ -170,3 +170,34 @@ class SerialIndividualMigrationContractTest(unittest.TestCase):
         self.c.execute('INSERT INTO bridges VALUES(?,?,?,?,?,?,?)',(1,'serial','other','SAME_CONCEPT','source','ACTIVE','{}'))
         with self.assertRaisesRegex(ValueError,'identity peer'):
             self.validate()
+
+class UncertainRoleExecutionTest(unittest.TestCase):
+    def test_unknown_role_is_review_and_keeps_original_normalization_history(self):
+        from fineatlas.structure_complete_owned_type_repairs import apply_reviewed_role
+        c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row
+        c.executescript('''
+        CREATE TABLE nodes(uid TEXT,label TEXT,domain TEXT,rank TEXT,data TEXT);
+        CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT,domain TEXT,source_uri TEXT,evidence_id TEXT,attributes TEXT);
+        CREATE TABLE normalization_roles(uid TEXT PRIMARY KEY,source_role TEXT,canonical_role TEXT,status TEXT,evidence_id TEXT,source TEXT,prior_profile TEXT);
+        CREATE TABLE evidence(layer TEXT,evidence_id TEXT PRIMARY KEY,source TEXT,source_uri TEXT,retrieved_utc TEXT,claim TEXT,payload TEXT,sha256 TEXT);
+        CREATE TABLE usability_changes(stage TEXT,object_type TEXT,object_id TEXT,before_json TEXT,after_json TEXT,evidence TEXT);
+        ''')
+        c.execute('INSERT INTO nodes VALUES(?,?,?,?,?)',('ambiguous','Unnamed aircraft','aircraft','model','{}'))
+        before={'uid':'ambiguous','node_kind':'MODEL','domain':'aircraft','source_uri':'https://example.org/native','evidence_id':'original','attributes':dump({'original_scope':'preserved'})}
+        c.execute('INSERT INTO node_profiles VALUES(?,?,?,?,?,?)',tuple(before.values()))
+        norm={'uid':'ambiguous','source_role':'MODEL','canonical_role':'MODEL','status':'VERIFIED','evidence_id':'original','source':'original','prior_profile':'{}'}
+        c.execute('INSERT INTO normalization_roles VALUES(?,?,?,?,?,?,?)',tuple(norm.values()))
+        proof={'source_role':'UNKNOWN','allowed_views':[],'scope_observation':'Physical object versus nominal design unresolved.'}
+        eid='usability:'+sha(dump(proof))
+        after={**before,'node_kind':'UNKNOWN','evidence_id':eid,'attributes':dump({'original_scope':'preserved','source_role':'UNKNOWN','native_rank':'model','role_status':'REVIEW','role_evidence_id':eid,'allowed_views':[]})}
+        after_norm={**norm,'canonical_role':'UNKNOWN','status':'REVIEW','evidence_id':eid,'source':SOURCE}
+        op={'uid':'ambiguous','uri':before['source_uri'],'proof':proof,'before_profile':before,'before_normalization_role':norm,'after_profile':after,'after_normalization_role':after_norm}
+        m=Migration.__new__(Migration);m.c=c;m.legacy_evidence_fallback=None
+        apply_reviewed_role(m,op)
+        self.assertEqual(dict(c.execute('SELECT *FROM normalization_roles').fetchone()),after_norm)
+        self.assertEqual(dict(c.execute('SELECT *FROM node_profiles').fetchone()),after)
+        history=c.execute("SELECT before_json,after_json FROM usability_changes WHERE stage='complete_owned_type_repairs'").fetchone()
+        self.assertEqual(json.loads(history['before_json']),{'profile':before,'normalization_role':norm})
+        self.assertEqual(json.loads(history['after_json']),{'profile':after,'normalization_role':after_norm})
+        self.assertEqual(c.execute('SELECT payload FROM evidence').fetchone()[0],dump(proof))
+        c.close()
