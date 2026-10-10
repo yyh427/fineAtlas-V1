@@ -85,7 +85,10 @@ def validate_role(c, op, semantic_reviews):
              'MODEL_FAMILY': 'WHOLE_NOMINAL_MULTIMODEL_PROGRAMME',
              'INSTANCE': 'OWNED_NAMED_OPERATIONAL_PHYSICAL_INSTANCE',
              'UNKNOWN': 'SOURCE_NOMINAL_OR_INDIVIDUAL_GRAIN_PENDING'}
-    if target not in kinds or target == actual['role'] or p.get('source_role_scope_kind') != kinds[target]:
+    scope_kind = p.get('source_role_scope_kind')
+    kind_allowed = target in kinds and (scope_kind == kinds[target]
+        or target == 'UNKNOWN' and scope_kind == 'SOURCE_WHOLE_OBJECT_GRAIN_PENDING')
+    if not kind_allowed or target == actual['role']:
         raise ValueError('This contract only corrects independently evidenced source object grain')
     report = source_report(op, semantic_reviews, 'approved_source_role_corrections')
     records = report.get('approved_source_role_corrections', [])
@@ -95,7 +98,14 @@ def validate_role(c, op, semantic_reviews):
     new_approved = ([op['uid'], target] in report.get('approved_source_roles', []) and record is not None
         and record['node'] == p['before_node'] and record['node_profiles'] == op['before_profile']
         and record['normalization_roles'] == op['before_normalization_role'])
-    if not old_approved and not new_approved:
+    # Independent case reports may preserve SQL row lists instead of a keyed
+    # record. Check the complete actual singleton snapshots in that shape.
+    case = next((r for r in report.get('cases', []) if r.get('uid') == op['uid']), {})
+    case_approved = ([op['uid'], target] in report.get('approved_source_roles', [])
+        and case.get('before_node') == p['before_node']
+        and case.get('before_profiles') == ([op['before_profile']] if op['before_profile'] else [])
+        and case.get('before_normalization_roles') == ([op['before_normalization_role']] if op['before_normalization_role'] else []))
+    if not old_approved and not new_approved and not case_approved:
         raise ValueError('Independent source role decision does not match its exact before scope')
     review = target == 'UNKNOWN'
     expected_status = 'REVIEW' if review else 'VERIFIED'
@@ -105,6 +115,8 @@ def validate_role(c, op, semantic_reviews):
         decision = report.get('source_role_decisions', {}).get(op['uid']) or next((case for case in report.get('cases', []) if case.get('uid')==op['uid']), {})
         if decision.get('after_role_status') != 'REVIEW' or decision.get('allowed_views') != [] or decision.get('quarantine_role_grain') is not True or p.get('allowed_views') != [] or p.get('quarantine_role_grain') is not True:
             raise ValueError('Unknown source grain needs explicit independent quarantine approval')
+        if scope_kind == 'SOURCE_WHOLE_OBJECT_GRAIN_PENDING' and (not isinstance(decision.get('pending_whole_scope'), str) or not decision['pending_whole_scope'] or not decision.get('scope_reason') or p.get('scope_observation') != decision['scope_reason']):
+            raise ValueError('Whole object ambiguity needs its exact independent source decision')
     prior = op['before_profile']
     attrs = json.loads(prior['attributes']) if prior else {}
     norm = op['before_normalization_role']

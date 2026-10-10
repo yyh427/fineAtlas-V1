@@ -200,6 +200,44 @@ class NominalScopeContractTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'explicit independent quarantine'):
             self.validate()
 
+    def test_independent_case_row_inventory_binds_unknown_complete_before(self):
+        role = self.new_source_role('UNKNOWN')
+        self.semantic.pop('source_role_records')
+        decision = self.semantic.pop('source_role_decisions')['propjet']
+        self.semantic['cases'] = [dict(decision, uid='propjet',
+            before_node=role['proof']['before_node'],
+            before_profiles=[role['before_profile']], before_normalization_roles=[])]
+        self.freeze_changed_operations()
+        self.write_inputs()
+        result = apply_nominal_design_scope_repairs(self.migration())
+        self.assertEqual(result['role_changes'], 1)
+        self.assertEqual(self.c.execute("SELECT status FROM normalization_roles WHERE uid='propjet'").fetchone()[0], 'REVIEW')
+
+    def test_case_row_inventory_cannot_omit_an_existing_profile(self):
+        role = self.new_source_role('UNKNOWN')
+        self.semantic.pop('source_role_records')
+        decision = self.semantic.pop('source_role_decisions')['propjet']
+        self.semantic['cases'] = [dict(decision, uid='propjet',
+            before_node=role['proof']['before_node'], before_profiles=[],
+            before_normalization_roles=[])]
+        self.freeze_changed_operations()
+        with self.assertRaises(ValueError):
+            self.validate()
+
+    def test_whole_object_grain_pending_requires_exact_independent_decision(self):
+        role = self.new_source_role('UNKNOWN')
+        decision = self.semantic['source_role_decisions']['propjet']
+        decision.update(scope_reason='Entity and abstract configuration scopes remain unresolved.',
+                        pending_whole_scope='Independent source sense separation is required.')
+        role['proof'].update(source_role_scope_kind='SOURCE_WHOLE_OBJECT_GRAIN_PENDING',
+                             scope_observation=decision['scope_reason'])
+        self.freeze_changed_operations()
+        self.validate()
+        role['proof']['scope_observation'] = 'Nominal model versus individual.'
+        self.freeze_changed_operations()
+        with self.assertRaises(ValueError):
+            self.validate()
+
     def test_role_correction_cannot_leave_old_class_inclusion_active(self):
         self.c.execute("INSERT INTO edges(id,child_uid,parent_uid,relation,source,status,data) VALUES(8,'propjet','aircraft','IS_A','old','ACTIVE','{}')")
         self.new_source_role('MODEL')
