@@ -353,8 +353,13 @@ def verify_nominal_purpose_source(con, inputs, manifest, op, reviewed=None):
     own, parent = record['owned_complete_source_witness'], record['whole_parent_definition_witness']
     if proof.get('source_witnesses', [])[:2] != [own, parent]:
         raise ValueError('Nominal purpose does not retain the approved own and parent fields')
+    if own['uid'] != op['uid'] or parent['uid'] != op['parent']:
+        raise ValueError('Independent nominal fields belong to another endpoint')
     source_witness(con, own); source_witness(con, parent)
     before = record['original_full_active_assertion']
+    if (before['child_uid'], before['parent_uid'], before['relation'], before['status']) != (
+            op['uid'], op['parent'], 'IS_A', 'ACTIVE'):
+        raise ValueError('Nominal migration does not preserve its original active direction')
     actual = row_at(con, 'edges', before['id'])
     expected = dict(before)
     precise_review = (reviewed or {}).get(('edges', before['id']))
@@ -375,6 +380,21 @@ def verify_nominal_purpose_source(con, inputs, manifest, op, reviewed=None):
             raise ValueError('Supporting whole source design object changed')
     if proof.get('classification_axis') not in {'function', 'purpose'}:
         raise ValueError('Nominal purpose must retain its distinct classification axis')
+    conditions = proof.get('parent_conditions', [])
+    if (len(conditions) != 1 or conditions[0].get('parent_exact_span') != parent['statement']
+            or conditions[0].get('complete_parent_definition') is not True
+            or conditions[0].get('entailment_basis') != record.get('scope_reason')):
+        raise ValueError('Nominal purpose lost its complete independently reviewed parent conditions')
+    spans = proof.get('child_exact_spans', [])
+    expected_witnesses = [own] + [item['parent_owned_field'] for item in
+                                 record.get('required_supporting_source_fields', [])]
+    if [item.get('witness') for item in spans] != expected_witnesses:
+        raise ValueError('Nominal source conditions use a different own or supporting field')
+    for index, item in enumerate(spans):
+        expected_kind = ('OWN_COMPLETE_DECLARED_NOMINAL_FUNCTION_OR_PURPOSE' if index == 0 else
+                         'COMPLETE_REFERENCED_DESIGN_PHYSICAL_CONTEXT_NOT_PURPOSE_INHERITANCE')
+        if item.get('child_exact_span') != expected_witnesses[index]['statement'] or item.get('kind') != expected_kind:
+            raise ValueError('Supporting physical context cannot silently transfer family purpose')
     return {'file': filename, 'sha256': sha(raw), 'uid': op['uid'], 'parent': op['parent']}
 
 

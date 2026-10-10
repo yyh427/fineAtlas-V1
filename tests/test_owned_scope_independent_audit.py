@@ -82,6 +82,7 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         before = audit.row_at(self.con, 'edges', 1)
         case = {'uid': 'design-a', 'parent': 'source-a', 'proposed_relation': 'DESIGN_TYPE_OF',
                 'status': 'SOURCE_TYPE_SCOPE_SUPPORTED_PENDING_ACTUAL_OPERATION',
+                'scope_reason': 'Complete own design explicitly declares search-and-rescue purpose',
                 'no_identity_or_mapping_promotion': True, 'original_full_active_assertion': before,
                 'owned_complete_source_witness': witnesses[0], 'whole_parent_definition_witness': witnesses[1]}
         doc = {'schema': 'FINEATLAS_SEVENTH_CORRECTED_DESIGN_OLD_ISA_SOURCE_TYPE_SCOPE_ADJUDICATION_V1',
@@ -94,11 +95,21 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
               'source_review_locator': {'file': path.name, 'sha256': digest, 'uid': 'design-a',
                                        'parent': 'source-a', 'relation': 'DESIGN_TYPE_OF'},
               'proof': {'nominal_design_type_scope_review': case, 'source_witnesses': witnesses,
+                        'parent_conditions': [{'parent_exact_span': witnesses[1]['statement'],
+                                               'complete_parent_definition': True,
+                                               'entailment_basis': case['scope_reason']}],
+                        'child_exact_spans': [{'witness': witnesses[0], 'child_exact_span': witnesses[0]['statement'],
+                                              'kind': 'OWN_COMPLETE_DECLARED_NOMINAL_FUNCTION_OR_PURPOSE'}],
                         'classification_axis': 'purpose'}}
         audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
         self.con.execute("UPDATE edges SET status='SOURCE_SCOPE_REVIEW' WHERE id=1")
         audit.verify_nominal_purpose_source(self.con, self.root, manifest, op,
                                           {('edges', 1): {'before_assertion': before}})
+        op['proof']['parent_conditions'][0]['complete_parent_definition'] = False
+        with self.assertRaisesRegex(ValueError, 'parent conditions'):
+            audit.verify_nominal_purpose_source(self.con, self.root, manifest, op,
+                                              {('edges', 1): {'before_assertion': before}})
+        op['proof']['parent_conditions'][0]['complete_parent_definition'] = True
         with self.assertRaisesRegex(ValueError, 'exact scope review'):
             audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
         op['source_review_locator']['parent'] = 'another-scope'
