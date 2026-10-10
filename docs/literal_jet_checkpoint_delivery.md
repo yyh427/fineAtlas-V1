@@ -143,3 +143,18 @@ and blocks publication; it does not substitute local bytes or overwrite failures
 the independent actual database audit. Finalize and the stable promotion wrapper
 recheck this evidence through the same mandatory public validation chain.
 
+The final inputs also include `structure_regression_temporal_parent_reference.json`.
+This records the unchanged original SQL audit's actual PASS on the completed
+four-delta parent, its exact report text/hash, original code/input hashes and
+completed parent receipt. The final regression auditor checks every original
+source witness and relation again. Only exact frozen seventh-delta before/after
+rows plus actual later history and the independent owned-scope audit permit a
+subsequent assertion withdrawal or mapping migration. All unaffected requirements
+remain intact; no old audit report is fabricated for the final database.
+
+The new public executor retains every original job and public evidence key. Its
+regression job calls this additive temporal auditor. Local package and public
+delivery require both actual final local temporal reports, and public finalize
+requires the real downloaded-database temporal report and its nested actual
+seventh-delta evidence.
+

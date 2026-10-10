@@ -16,9 +16,16 @@ from structure_literal_jet_delivery_guard import SPEC, require_literal_jet_recei
 from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, require_primary_aircraft_receipt
 from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC, require_owned_scope_receipt
 from primary_source_snapshot_delivery import require_fresh_retrieval
+from structure_regression_temporal_contract import require_temporal_receipt
 
 
 class LiteralJetCoordinator(Coordinator):
+    def cmd(self, script, *values, python=None):
+        # Explicit additive executors keep the old frozen programs unchanged.
+        replacements = {'audit_structure_regression_repairs.py':'audit_temporal_structure_regression_repairs.py',
+                        'run_structure_public_checks.py':'run_literal_jet_public_checks.py'}
+        return super().cmd(replacements.get(script,script),*values,python=python)
+
     def __init__(self, config):
         super().__init__(config)
         self.validate_child_builds()
@@ -57,7 +64,16 @@ class LiteralJetCoordinator(Coordinator):
     def accepted(self):
         accepted = super().accepted()
         self.validate_local_fifth()
+        # A completed core receipt may precede the supplemental jobs during
+        # an interrupted local run. Packaging requires local_complete.json.
+        if (self.root / 'local_complete.json').exists():
+            self.require_local_temporal()
         return accepted
+
+    def require_local_temporal(self):
+        for name, key in (('primary','database'),('reproduction','reproduction')):
+            require_temporal_receipt(self.root / (name + '-scope-repairs.json'),
+                self.c[key],self.inputs,self.meta['database_revision'])
 
     def local(self):
         self.validate_child_builds()
@@ -104,6 +120,7 @@ class LiteralJetCoordinator(Coordinator):
 
     def package(self):
         self.validate_local_fifth()
+        self.require_local_temporal()
         super().package()
 
     def validate_public_fifth(self):
@@ -171,6 +188,11 @@ class LiteralJetCoordinator(Coordinator):
         require_fresh_retrieval(retrieval['path'],self.root / 'public/frozen/inputs',snapshots)
         if Path(report.get('primary_snapshots_dir') or '/MISSING').resolve() != snapshots.resolve():
             raise ValueError('Public auditor must use the fresh public source snapshots directory')
+        original_extension = read(self.root / 'public/checks/resume_public_extension.json')
+        temporal = original_extension.get('evidence',{}).get('regression-repairs')
+        if not temporal or digest(Path(temporal['path'])) != temporal['sha256']:
+            raise ValueError('Actual public temporal regression SQL evidence is required')
+        require_temporal_receipt(temporal['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'])
         return extension, report
 
     def validate_public_owned(self):
@@ -198,6 +220,7 @@ class LiteralJetCoordinator(Coordinator):
 
     def public(self):
         self.validate_local_fifth()
+        self.require_local_temporal()
         prior_proof = self.root / 'public/checks/public_verification.json'
         if prior_proof.exists():
             # Resume only a complete, verifiable old public run. No repeated
