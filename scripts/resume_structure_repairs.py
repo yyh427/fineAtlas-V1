@@ -38,6 +38,7 @@ if inventory_code(ROOT) != PREIMPORT_INVENTORY:
     raise ValueError("Resume implementation changed during import")
 
 STAGES = ("verify_completed_parent_copy", "grounded_regression_repairs", "grounded_oem_body_repairs",
+          "complete_subject_scope_repairs", "cars_projection_view_repairs",
           "whole_graph_recomputation", "freeze_metadata", "browse_staging",
           "embed_browse_indexes")
 
@@ -184,6 +185,10 @@ def main():
     stage("grounded_regression_repairs", lambda: apply_structure_regression_repairs(migration))
     from fineatlas.structure_oem_body_scope_repairs import apply_oem_body_scope_repairs
     stage("grounded_oem_body_repairs", lambda: apply_oem_body_scope_repairs(migration))
+    from fineatlas.structure_complete_subject_scope_repairs import apply_complete_subject_scope_repairs
+    stage("complete_subject_scope_repairs", lambda: apply_complete_subject_scope_repairs(migration))
+    from fineatlas.structure_cars_projection_view_repairs import apply_cars_projection_view_repairs
+    stage("cars_projection_view_repairs", lambda: apply_cars_projection_view_repairs(migration))
     migration.meta("structure_resume_parent", {
         "parent_revision": lineage["parent_revision"], "previous_source_stages_replayed": False,
         "repair_recipe": "resume_structure_repairs.py", "all_derived_indexes_recomputed": True,
