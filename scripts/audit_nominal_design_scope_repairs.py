@@ -492,6 +492,15 @@ def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
         errors.append({'kind': 'FROZEN_PARENT_OR_ORIGINAL_SCOPE_CHANGED', 'reason': str(exc)})
     for op in ops:
         try:
+            proof = op['proof']
+            if (op['source'] != SOURCE or not op['uri'].startswith('https://')
+                    or proof.get('kind') != 'SOURCE_REVIEWED_WHOLE_NOMINAL_DESIGN_SCOPE'
+                    or proof.get('classification_axis') != op['classification_axis']
+                    or proof.get('world_identity_assertion') is not False
+                    or proof.get('no_identity_merges') is not True
+                    or proof.get('whole_subject_scope_review') is not True
+                    or not proof.get('scope_observation') or not proof.get('license')):
+                raise ValueError('Conservative complete source scope, attribution and licensing required')
             key = op['uid'], op['parent'], op['relation']
             if key in seen:
                 raise ValueError('Duplicate source direction')
