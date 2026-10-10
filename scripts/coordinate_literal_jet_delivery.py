@@ -15,6 +15,7 @@ from structure_acceptance_contract import validate_public_evidence
 from structure_literal_jet_delivery_guard import SPEC, require_literal_jet_receipt, require_literal_jet_child_build
 from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, require_primary_aircraft_receipt
 from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC, require_owned_scope_receipt
+from primary_source_snapshot_delivery import require_fresh_retrieval
 
 
 class LiteralJetCoordinator(Coordinator):
@@ -41,6 +42,17 @@ class LiteralJetCoordinator(Coordinator):
                 Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
             require_owned_scope_receipt(self.root / (name + '-owned-scope.json'),
                 Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
+        directory = self.primary_snapshots_directory()
+        for name in ('primary','reproduction'):
+            actual = read(self.root / (name + '-primary-aircraft-family.json'))
+            if Path(actual.get('primary_snapshots_dir') or '/MISSING').resolve() != directory:
+                raise ValueError('Local primary source receipt must use configured explicit snapshots')
+
+    def primary_snapshots_directory(self):
+        value = self.c.get('primary_snapshots_directory')
+        if not value or not Path(value).is_dir():
+            raise ValueError('Explicit verified local primary_snapshots_directory is required')
+        return Path(value).resolve()
 
     def accepted(self):
         accepted = super().accepted()
@@ -61,7 +73,8 @@ class LiteralJetCoordinator(Coordinator):
             report = self.root / (name + '-primary-aircraft-family.json')
             if not report.exists():
                 self.execute(name + '-primary-aircraft-family', self.cmd(FAMILY_SPEC.auditor,
-                    '--database',self.c[key],'--inputs',self.inputs,'--output',report))
+                    '--database',self.c[key],'--inputs',self.inputs,'--output',report,
+                    '--primary-snapshots-dir',self.primary_snapshots_directory()))
             require_primary_aircraft_receipt(report,Path(self.c[key]),self.inputs,self.meta['database_revision'],ROOT)
         for name, key in (('primary','database'),('reproduction','reproduction')):
             report = self.root / (name + '-owned-scope.json')
@@ -151,6 +164,13 @@ class LiteralJetCoordinator(Coordinator):
             raise ValueError('Sixth delta adapter is absent from the actual frozen SDK inventory')
         report = require_primary_aircraft_receipt(Path(evidence['path']),database,
             self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        retrieval = extension.get('evidence',{}).get('primary-source-retrieval')
+        if not retrieval or digest(Path(retrieval['path'])) != retrieval['sha256']:
+            raise ValueError('Actual fresh official primary source retrieval evidence is required')
+        snapshots = self.root / 'public/source-snapshots'
+        require_fresh_retrieval(retrieval['path'],self.root / 'public/frozen/inputs',snapshots)
+        if Path(report.get('primary_snapshots_dir') or '/MISSING').resolve() != snapshots.resolve():
+            raise ValueError('Public auditor must use the fresh public source snapshots directory')
         return extension, report
 
     def validate_public_owned(self):
@@ -214,9 +234,17 @@ class LiteralJetCoordinator(Coordinator):
         write(self.root / 'public/checks/literal_jet_public_extension.json',extension)
         self.validate_public_fifth()
         family_report = self.root / 'public/checks/primary-aircraft-family.json'
+        snapshots = self.root / 'public/source-snapshots'
+        retrieval = self.root / 'public/checks/primary-source-retrieval.json'
+        if not retrieval.exists():
+            self.execute('public-primary-source-retrieval',self.cmd('primary_source_snapshot_delivery.py',
+                '--inputs',inputs,'--snapshots-dir',snapshots,'--output',retrieval,
+                python=self.root / 'public/venv/bin/python'))
+        require_fresh_retrieval(retrieval,inputs,snapshots)
         if not family_report.exists():
             self.execute('public-primary-aircraft-family',self.cmd(FAMILY_SPEC.auditor,
                 '--database',database,'--inputs',inputs,'--output',family_report,
+                '--primary-snapshots-dir',snapshots,
                 python=self.root / 'public/venv/bin/python'))
         require_primary_aircraft_receipt(family_report,database,inputs,self.meta['database_revision'],ROOT)
         write(self.root / 'public/checks/primary_aircraft_public_extension.json', {
@@ -226,6 +254,7 @@ class LiteralJetCoordinator(Coordinator):
             'original_public_verification_sha256':digest(prior_proof),
             'literal_jet_public_extension_sha256':digest(self.root / 'public/checks/literal_jet_public_extension.json'),
             'evidence':{'primary-aircraft-family':{'path':str(family_report),'sha256':digest(family_report)},
+                        'primary-source-retrieval':{'path':str(retrieval),'sha256':digest(retrieval)},
                         'installed-sdk-inventory':extension['evidence']['installed-sdk-inventory']}})
         self.validate_public_primary()
         owned_report = self.root / 'public/checks/owned-scope.json'

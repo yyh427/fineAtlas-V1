@@ -118,3 +118,28 @@ and stable preparation require all three independent new deltas. Neither a
 review operation nor a non-navigation source derivation reference may be counted
 as restored hierarchy coverage. Reports must distinguish lawful new connections,
 evidenced withdrawals, derived identity migration and still-pending dataset scope.
+# Portable primary source verification
+
+The final inputs must include `structure_primary_source_snapshots.json`; its
+hash is bound by the actual final database freeze. Its document IDs, official
+HTTPS URIs and body hashes must exactly match the unchanged sixth-delta facts.
+Full manufacturer PDF/HTML bytes are not added to the release input archive
+without an explicit redistribution permission.
+
+Set the delivery config `primary_snapshots_directory` to the explicit existing
+verified local source directory. Both local database audits use that directory,
+and acceptance rehashes all external files and binds every source-owned SQL
+payload document. The auditor never reads the historical absolute locator.
+
+The public action retrieves each registry document once into the new
+`delivery_root/public/source-snapshots` directory and records the actual HTTPS
+response URI, MIME, byte count, timestamp and full SHA256. It passes this explicit
+directory to the actual public SQL auditor. Reuse is allowed only with a complete
+valid retrieval receipt and unchanged actual files. A source permission failure,
+changed official response or incomplete prior attempt preserves a failure receipt
+and blocks publication; it does not substitute local bytes or overwrite failures.
+
+`primary_aircraft_public_extension.json` binds this retrieval receipt alongside
+the independent actual database audit. Finalize and the stable promotion wrapper
+recheck this evidence through the same mandatory public validation chain.
+

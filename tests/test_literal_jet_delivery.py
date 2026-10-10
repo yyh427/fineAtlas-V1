@@ -117,6 +117,17 @@ class ChildAndInstalledSdkGuards(unittest.TestCase):
 class SixthReceiptGuards(controls.OEMEvidenceGuards):
     def setUp(self):
         super().setUp(); self.spec=FAMILY_SPEC
+        import primary_source_snapshot_delivery as snapshots
+        manifest=json.loads(self.manifest.read_text()); manifest['primary_documents']={}
+        self.manifest.write_text(json.dumps(manifest)); self.value['manifest_sha256']=snapshots.digest(self.manifest)
+        registry=self.inputs/snapshots.REGISTRY_NAME
+        registry.write_text(json.dumps({'schema':snapshots.REGISTRY_SCHEMA,'documents':{}}))
+        directory=self.root/'explicit-snapshots'; directory.mkdir()
+        self.value.update(primary_snapshots_dir=str(directory),primary_snapshot_actual_hashes={},primary_source_registry_sha256=snapshots.digest(registry))
+        with sqlite3.connect(self.database) as c:
+            frozen=json.loads(c.execute('SELECT value FROM metadata WHERE key="structure_frozen_build_manifest"').fetchone()[0])
+            frozen['inputs'].update({self.manifest.name:snapshots.digest(self.manifest),snapshots.REGISTRY_NAME:snapshots.digest(registry)})
+            c.execute('UPDATE metadata SET value=? WHERE key="structure_frozen_build_manifest"',(json.dumps(frozen),))
         module=self.code/FAMILY_SPEC.module; module.parent.mkdir(parents=True,exist_ok=True)
         module.write_text("INPUT_NAME = 'renamed-oem-repairs.json'\n")
         self.value['schema']=FAMILY_SPEC.schema; self.report.write_text(json.dumps(self.value))
@@ -132,6 +143,15 @@ class SixthReceiptGuards(controls.OEMEvidenceGuards):
     def test_old_parent_without_applied_sixth_metadata_rejected(self):
         with sqlite3.connect(self.database) as c: c.execute('DELETE FROM metadata WHERE key=?',(FAMILY_SPEC.metadata_key,))
         with self.assertRaisesRegex(ValueError,'applied delta'): self.validate()
+    def test_registry_not_bound_in_actual_freeze_blocks_sixth_pass(self):
+        with sqlite3.connect(self.database) as c:
+            frozen=json.loads(c.execute('SELECT value FROM metadata WHERE key="structure_frozen_build_manifest"').fetchone()[0])
+            del frozen['inputs']['structure_primary_source_snapshots.json']
+            c.execute('UPDATE metadata SET value=? WHERE key="structure_frozen_build_manifest"',(json.dumps(frozen),))
+        with self.assertRaisesRegex(ValueError,'actual final freeze'): self.validate()
+    def test_no_explicit_actual_snapshot_directory_blocks_sixth_pass(self):
+        self.value['primary_snapshots_dir']=None; self.report.write_text(json.dumps(self.value))
+        with self.assertRaisesRegex(ValueError,'explicit directory'): self.validate()
     def test_finalize_blocks_missing_sixth_before_original_core(self):
         coordinator=delivery.LiteralJetCoordinator.__new__(delivery.LiteralJetCoordinator)
         with patch.object(coordinator,'validate_public_primary',side_effect=ValueError('missing sixth')):
