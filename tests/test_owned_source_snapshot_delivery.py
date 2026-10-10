@@ -46,6 +46,28 @@ class AdditionalSourceRetrievalTests(unittest.TestCase):
         old_receipt=primary.digest(self.first);self.assertTrue(self.success()['pass'])
         self.assertEqual((self.directory/'old.pdf').read_bytes(),self.old_bytes)
         self.assertEqual(primary.digest(self.first),old_receipt)
+    def test_dynamic_additional_documents_include_html_and_reuse_shared_source(self):
+        additions={'pdf':self.new}
+        for name,mime,raw in(('type.pdf','application/pdf',b'%PDF type'),('bmw.html','text/html',b'<html>BMW official</html>')):
+            additions[name]={'filename':name,'source_uri':'https://www.easa.europa.eu/'+name,
+                'sha256':hashlib.sha256(raw).hexdigest(),'hash_basis':'HTTP_RESPONSE_BODY_BYTES',
+                'mime_type':mime,'revision_locator':'sealed edition','redistribution_authorization':'NOT_ASSERTED_SOURCE_BYTES_NOT_PACKAGED'}
+        additions['shared']=self.old
+        (self.inputs/owned.NAME).write_text(json.dumps({'schema':primary.REGISTRY_SCHEMA,'documents':additions}))
+        bodies={self.new['source_uri']:self.new_bytes,
+            additions['type.pdf']['source_uri']:b'%PDF type',additions['bmw.html']['source_uri']:b'<html>BMW official</html>'}
+        def open_response(request,timeout):
+            uri=request.full_url;entry=next(row for row in additions.values()if row['source_uri']==uri)
+            result=io.BytesIO(bodies[uri]);result.status=200;result.headers=Message();result.headers['Content-Type']=entry['mime_type']
+            result.geturl=lambda:uri
+            return result
+        with patch.object(owned.urllib.request,'build_opener')as network:
+            network.return_value.open.side_effect=open_response
+            result=owned.retrieve_owned(self.inputs,self.directory,self.output,self.first)
+            self.assertEqual(network.return_value.open.call_count,3)
+        self.assertEqual(set(result['documents']),{'pdf','type.pdf','bmw.html'})
+        self.assertEqual((self.directory/'old.pdf').read_bytes(),self.old_bytes)
+        self.assertTrue(owned.require_owned_retrieval(self.output,self.inputs,self.directory,self.first)['pass'])
     def test_complete_second_receipt_resumes_without_any_new_request(self):
         self.success()
         with patch.object(owned.urllib.request,'build_opener')as network:
