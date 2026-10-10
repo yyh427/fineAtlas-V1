@@ -9,7 +9,10 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from resume_structure_repairs import PARENT_STAGES, validate_parent_receipt, verify_parent_byte_copy
+from resume_structure_repairs import (
+    PARENT_STAGES, validate_parent_receipt, verify_parent_byte_copy,
+    validate_resumed_parent_independence,
+)
 
 
 class CompletedParentBindingTest(unittest.TestCase):
@@ -116,6 +119,43 @@ class CompletedParentBindingTest(unittest.TestCase):
         self.integrity.write_text(json.dumps(self.row))
         with self.assertRaisesRegex(ValueError, "whole-file hash seal"):
             validate_parent_receipt(self.database, self.receipt, self.fingerprints, self.integrity)
+
+    def resumed_receipts(self, same_parent=False):
+        paths = []
+        second = self.root / "second-parent.sqlite"
+        shutil.copy2(self.database, second)
+        for index, source in enumerate((self.database, second)):
+            directory = self.root / ("resume-" + str(index))
+            directory.mkdir()
+            parent_id = "parent-0" if same_parent else "parent-" + str(index)
+            inode = [source.stat().st_dev, source.stat().st_ino]
+            lineage = {
+                "resumed_build_id": "resumed-" + str(index), "resumed_revision": "new-revision",
+                "parent_build_id": parent_id, "parent_revision": "same-source-revision",
+                "parent_source_inode": inode, "parent_database": str(source),
+            }
+            path = directory / "parent_lineage.json"
+            path.write_text(json.dumps(lineage))
+            receipt = {
+                "complete": True, "pass": True, "build_id": lineage["resumed_build_id"],
+                "revision": "new-revision", "parent_build_id": parent_id,
+                "parent_source_inode": inode,
+                "parent_lineage_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            path = directory / "build_complete.json"
+            path.write_text(json.dumps(receipt))
+            paths.append(path)
+        return paths
+
+    def test_distinct_resumes_cannot_claim_two_copies_of_one_parent_as_independent(self):
+        paths = self.resumed_receipts(same_parent=True)
+        with self.assertRaisesRegex(ValueError, "distinct independently completed parent"):
+            validate_resumed_parent_independence(*paths)
+
+    def test_two_completed_distinct_parent_inodes_and_builds_are_admitted(self):
+        result = validate_resumed_parent_independence(*self.resumed_receipts())
+        self.assertTrue(result["pass"])
+        self.assertEqual(result["parent_build_ids"], ["parent-0", "parent-1"])
 
 
 if __name__ == "__main__":
