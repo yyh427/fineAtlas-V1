@@ -77,6 +77,9 @@ def validate_literal_jet_scope_repairs(c, manifest: dict, operations: list[dict]
         bridges = c.execute('SELECT * FROM bridges WHERE left_uid=? OR right_uid=?', (op['parent'], op['parent'])).fetchall()
         if sorted(source_assertion_sha256(r)+':'+r['status'] for r in bridges) != reviewed_component['bridge_content_status_hashes']:
             raise ValueError('Physical source equivalence or scope bridge changed')
+        parent_edges = c.execute('SELECT * FROM edges WHERE child_uid=?', (op['parent'],)).fetchall()
+        if sorted(source_assertion_sha256(r)+':'+r['status'] for r in parent_edges) != reviewed_component['parent_edge_content_status_hashes']:
+            raise ValueError('Reviewed wider physical parent hierarchy changed')
         for prior in proof['prior_assertions']:
             rows = c.execute('SELECT * FROM entity_relations WHERE subject_uid=? AND object_uid=? AND relation=? AND source=?', tuple(prior[k] for k in ('subject_uid','object_uid','relation','source'))).fetchall()
             if not any(source_assertion_sha256(r) == prior['content_sha256'] and r['status'] == prior['status'] for r in rows):

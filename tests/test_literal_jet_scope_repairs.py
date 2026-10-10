@@ -15,13 +15,14 @@ class LiteralJetScopeContracts(unittest.TestCase):
         self.c.executescript('''CREATE TABLE nodes(uid TEXT PRIMARY KEY,label TEXT,data TEXT,visibility TEXT,source TEXT,rank TEXT,component_id INTEGER);
             CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT);
             CREATE TABLE entity_relations(subject_uid TEXT,object_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);
-            CREATE TABLE bridges(left_uid TEXT,right_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);''')
+            CREATE TABLE bridges(left_uid TEXT,right_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);
+            CREATE TABLE edges(child_uid TEXT,parent_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);''')
         self.statement='business jet aircraft'
         self.parent_statement='A jet aircraft (or simply jet) is an aircraft propelled by one or more jet engines. Jets are nearly always fixed-wing aircraft.'
         raws=[json.dumps({'description':self.statement}),json.dumps({'evidence_record':{'wikipedia_intro':self.parent_statement}})]
         self.c.executemany('INSERT INTO nodes VALUES(?,?,?,?,?,?,?)',[('model','Model',raws[0],'ACTIVE','publisher','model',1),('parent','jet aircraft',raws[1],'ACTIVE','publisher','',2)])
         self.c.executemany('INSERT INTO node_profiles VALUES(?,?)',[('model','MODEL'),('parent','CLASS')])
-        self.manifest={'schema':'FINEATLAS_LITERAL_JET_SCOPE_REPAIRS_V1','parent_components':{'parent':{'uids':['parent'],'bridge_content_status_hashes':[]}}}
+        self.manifest={'schema':'FINEATLAS_LITERAL_JET_SCOPE_REPAIRS_V1','parent_components':{'parent':{'uids':['parent'],'bridge_content_status_hashes':[],'parent_edge_content_status_hashes':[]}}}
         self.op={'op':'link','uid':'model','parent':'parent','relation':'DESIGN_TYPE_OF','source':SOURCE,'uri':'urn:source:model','proof':{'world_identity_assertion':False,'no_identity_merges':True,'whole_subject_scope_review':True,'scope_observation':'Own first clause and complete parent range reviewed.','native_record_sha256':sha(raws[0]),'parent_native_record_sha256':sha(raws[1]),'source_witnesses':[{'uid':'model','field':'description','statement':self.statement,'data_sha256':sha(raws[0])},{'uid':'parent','field':'wikipedia_intro','statement':self.parent_statement,'data_sha256':sha(raws[1])}],'prior_assertions':[]}}
     def tearDown(self):self.c.close()
     def test_complete_literal_scope_accepts_broader_nonfixedwing_parent(self):
@@ -56,6 +57,9 @@ class LiteralJetScopeContracts(unittest.TestCase):
     def test_added_narrow_bridge_requires_new_scope_review(self):
         self.c.execute("INSERT INTO bridges VALUES('parent','narrow','SAME_CONCEPT','publisher','ACTIVE','{}')")
         with self.assertRaisesRegex(ValueError,'scope bridge changed'):validate_literal_jet_scope_repairs(self.c,self.manifest,[self.op])
+    def test_narrow_parent_edge_requires_new_range_review(self):
+        self.c.execute("INSERT INTO edges VALUES('parent','narrow','IS_A','publisher','ACTIVE','{}')")
+        with self.assertRaisesRegex(ValueError,'parent hierarchy changed'):validate_literal_jet_scope_repairs(self.c,self.manifest,[self.op])
     def test_prior_review_must_be_retained_exactly(self):
         op=copy.deepcopy(self.op);op['proof']['prior_assertions']=[{'subject_uid':'model','object_uid':'parent','relation':'DESIGN_TYPE_OF','source':'old','status':'SOURCE_SCOPE_REVIEW','content_sha256':'0'*64}]
         with self.assertRaisesRegex(ValueError,'declaration'):validate_literal_jet_scope_repairs(self.c,self.manifest,[op])

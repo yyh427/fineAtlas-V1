@@ -89,6 +89,9 @@ def run(database, inputs, output, preflight=False):
         bridges = c.execute('SELECT * FROM bridges WHERE left_uid=? OR right_uid=?', (op['parent'],op['parent'])).fetchall()
         if peers != component['uids'] or sorted(content(r)+':'+r['status'] for r in bridges) != component['bridge_content_status_hashes']:
             errors.append({'kind': 'PARENT_IDENTITY_COMPONENT_OR_BRIDGES_CHANGED', 'uid': uid})
+        parent_edges = c.execute('SELECT * FROM edges WHERE child_uid=?', (op['parent'],)).fetchall()
+        if sorted(content(r)+':'+r['status'] for r in parent_edges) != component['parent_edge_content_status_hashes']:
+            errors.append({'kind': 'PARENT_CLASS_HIERARCHY_OR_OLD_REVIEW_CHANGED', 'uid': uid})
         for prior in proof['prior_assertions']:
             rows = c.execute('SELECT * FROM entity_relations WHERE subject_uid=? AND object_uid=? AND relation=? AND source=?', tuple(prior[k] for k in ('subject_uid','object_uid','relation','source'))).fetchall()
             if not any(content(r) == prior['content_sha256'] and r['status'] == prior['status'] for r in rows):
