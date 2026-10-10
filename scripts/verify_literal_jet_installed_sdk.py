@@ -14,7 +14,7 @@ def verify_source_inventory(package, prefix, frozen):
         raise ValueError('Actual isolated installed SDK required')
     wanted={name[len('src/fineatlas/'):]:sha for name,sha in frozen.items() if name.startswith('src/fineatlas/')}
     actual={str(path.relative_to(package)):hashlib.sha256(path.read_bytes()).hexdigest() for path in package.rglob('*.py')}
-    if actual != wanted or 'structure_literal_jet_scope_repairs.py' not in actual:
+    if actual != wanted or 'structure_literal_jet_scope_repairs.py' not in actual or 'structure_primary_aircraft_family_repairs.py' not in actual:
         raise ValueError('Actual installed SDK differs from the complete frozen source inventory')
     return actual
 

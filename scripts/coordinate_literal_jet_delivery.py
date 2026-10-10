@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extend the unchanged delivery coordinator with mandatory fifth-delta gates.
+"""Extend the unchanged delivery coordinator with mandatory fifth and sixth delta gates.
 
 Uses normal subclass extension and explicit delegation. Old local/public checks,
 receipts and exact public evidence keys remain intact. No registry changes and
@@ -13,6 +13,7 @@ from _download import digest
 from coordinate_structure_delivery import Coordinator, ROOT, lease, metadata, read, write
 from structure_acceptance_contract import validate_public_evidence
 from structure_literal_jet_delivery_guard import SPEC, require_literal_jet_receipt, require_literal_jet_child_build
+from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, require_primary_aircraft_receipt
 
 
 class LiteralJetCoordinator(Coordinator):
@@ -28,12 +29,14 @@ class LiteralJetCoordinator(Coordinator):
                 or lineage.get('previous_source_stages_replayed') is not False
                 or lineage.get('previous_repair_stages_replayed') is not False
                 or lineage.get('all_derived_indexes_recomputed') is not True):
-            raise ValueError('Actual fifth child metadata and separate parent lineage required')
+            raise ValueError('Actual aircraft child metadata and separate parent lineage required')
 
     def validate_local_fifth(self):
         self.validate_child_builds()
         for name, key in (('primary','database'),('reproduction','reproduction')):
             require_literal_jet_receipt(self.root / (name + '-literal-jet-scope.json'),
+                Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
+            require_primary_aircraft_receipt(self.root / (name + '-primary-aircraft-family.json'),
                 Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
 
     def accepted(self):
@@ -51,7 +54,19 @@ class LiteralJetCoordinator(Coordinator):
                 self.execute(name + '-literal-jet-scope', self.cmd(SPEC.auditor,
                     '--database',self.c[key],'--inputs',self.inputs,'--output',report))
             require_literal_jet_receipt(report,Path(self.c[key]),self.inputs,self.meta['database_revision'],ROOT)
+        for name, key in (('primary','database'),('reproduction','reproduction')):
+            report = self.root / (name + '-primary-aircraft-family.json')
+            if not report.exists():
+                self.execute(name + '-primary-aircraft-family', self.cmd(FAMILY_SPEC.auditor,
+                    '--database',self.c[key],'--inputs',self.inputs,'--output',report))
+            require_primary_aircraft_receipt(report,Path(self.c[key]),self.inputs,self.meta['database_revision'],ROOT)
         super().local()
+        write(self.root / 'primary_aircraft_local_extension.json', {
+            'schema':'FINEATLAS_PRIMARY_AIRCRAFT_LOCAL_EXTENSION_V1','pass':True,
+            'revision':self.meta['database_revision'],'fingerprints':self.fingerprints,
+            'evidence':{name:{'path':str(self.root / (name + '-primary-aircraft-family.json')),
+                              'sha256':digest(self.root / (name + '-primary-aircraft-family.json'))}
+                        for name in ('primary','reproduction')}})
         write(self.root / 'literal_jet_local_extension.json', {
             'schema':'FINEATLAS_LITERAL_JET_LOCAL_EXTENSION_V1','pass':True,
             'revision':self.meta['database_revision'],'fingerprints':self.fingerprints,
@@ -99,6 +114,30 @@ class LiteralJetCoordinator(Coordinator):
             raise ValueError('Actual downloaded fifth-delta inputs differ from accepted freeze')
         return extension, report
 
+    def validate_public_primary(self):
+        fifth, _ = self.validate_public_fifth()
+        extension = read(self.root / 'public/checks/primary_aircraft_public_extension.json')
+        database = self.root / 'public/data/fineatlas.sqlite'
+        if (extension.get('schema') != 'FINEATLAS_PRIMARY_AIRCRAFT_PUBLIC_EXTENSION_V1'
+                or extension.get('pass') is not True
+                or extension.get('database_revision') != fifth['database_revision']
+                or extension.get('database_sha256') != fifth['database_sha256']
+                or Path(extension.get('database','')).resolve() != database.resolve()
+                or extension.get('literal_jet_public_extension_sha256') != digest(self.root / 'public/checks/literal_jet_public_extension.json')
+                or extension.get('original_public_verification_sha256') != fifth['original_public_verification_sha256']):
+            raise ValueError('Complete actual public sixth-delta evidence is required')
+        evidence = extension.get('evidence',{}).get('primary-aircraft-family')
+        if not evidence or digest(Path(evidence['path'])) != evidence['sha256']:
+            raise ValueError('Actual public primary-aircraft family report is absent or changed')
+        sdk = extension.get('evidence',{}).get('installed-sdk-inventory')
+        if sdk != fifth['evidence']['installed-sdk-inventory']:
+            raise ValueError('Sixth delta requires the same actual complete installed SDK proof')
+        if 'src/fineatlas/structure_primary_aircraft_family_repairs.py' not in self.fingerprints['code']:
+            raise ValueError('Sixth delta adapter is absent from the actual frozen SDK inventory')
+        report = require_primary_aircraft_receipt(Path(evidence['path']),database,
+            self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        return extension, report
+
     def public(self):
         self.validate_local_fifth()
         prior_proof = self.root / 'public/checks/public_verification.json'
@@ -136,14 +175,33 @@ class LiteralJetCoordinator(Coordinator):
                         'installed-sdk-inventory':{'path':str(sdk_report),'sha256':digest(sdk_report)}}}
         write(self.root / 'public/checks/literal_jet_public_extension.json',extension)
         self.validate_public_fifth()
+        family_report = self.root / 'public/checks/primary-aircraft-family.json'
+        if not family_report.exists():
+            self.execute('public-primary-aircraft-family',self.cmd(FAMILY_SPEC.auditor,
+                '--database',database,'--inputs',inputs,'--output',family_report,
+                python=self.root / 'public/venv/bin/python'))
+        require_primary_aircraft_receipt(family_report,database,inputs,self.meta['database_revision'],ROOT)
+        write(self.root / 'public/checks/primary_aircraft_public_extension.json', {
+            'schema':'FINEATLAS_PRIMARY_AIRCRAFT_PUBLIC_EXTENSION_V1','pass':True,
+            'database':str(database.resolve()),'database_revision':accepted['database_revision'],
+            'database_sha256':accepted['database_sha256'],
+            'original_public_verification_sha256':digest(prior_proof),
+            'literal_jet_public_extension_sha256':digest(self.root / 'public/checks/literal_jet_public_extension.json'),
+            'evidence':{'primary-aircraft-family':{'path':str(family_report),'sha256':digest(family_report)},
+                        'installed-sdk-inventory':extension['evidence']['installed-sdk-inventory']}})
+        self.validate_public_primary()
 
     def finalize(self):
-        self.validate_public_fifth()
+        self.validate_public_primary()
         super().finalize()
         write(self.root / 'literal_jet_finalized_extension.json', {
             'schema':'FINEATLAS_LITERAL_JET_FINALIZED_EXTENSION_V1','pass':True,
             'database_revision':self.meta['database_revision'],
             'public_extension_sha256':digest(self.root / 'public/checks/literal_jet_public_extension.json')})
+        write(self.root / 'primary_aircraft_finalized_extension.json', {
+            'schema':'FINEATLAS_PRIMARY_AIRCRAFT_FINALIZED_EXTENSION_V1','pass':True,
+            'database_revision':self.meta['database_revision'],
+            'public_extension_sha256':digest(self.root / 'public/checks/primary_aircraft_public_extension.json')})
 
 
 if __name__ == '__main__':

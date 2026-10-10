@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append the frozen literal-jet delta to completed independent resumed parents.
+"""Append the two frozen aircraft deltas to completed independent resumed parents.
 
 No original source or prior repair stage is replayed. Preserve the original
 structure_resume_parent adjudication lineage while recording this new layer
@@ -41,7 +41,7 @@ from resume_structure_repairs import (STAGES as PARENT_STAGES,
     validate_resumed_parent_independence, verify_parent_byte_copy)
 
 STAGES = ("verify_completed_resumed_parent_copy", "literal_jet_scope_repairs",
-          "whole_graph_recomputation", "freeze_metadata", "browse_staging", "embed_browse_indexes")
+          "primary_aircraft_family_repairs", "whole_graph_recomputation", "freeze_metadata", "browse_staging", "embed_browse_indexes")
 
 
 def read_metadata(database):
@@ -100,8 +100,10 @@ def main():
     for name, path in vars(args).items():
         setattr(args, name, path.resolve())
     from structure_literal_jet_delivery_guard import SPEC, input_path
-    if input_path(SPEC, args.inputs, ROOT) is None:
-        raise ValueError("Literal-jet child requires its sealed frozen input")
+    from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC
+    for spec in (SPEC, FAMILY_SPEC):
+        if input_path(spec, args.inputs, ROOT) is None:
+            raise ValueError("Child requires its sealed frozen input: " + spec.name)
     fingerprints, context = start_build(args.inputs, args.reports)
     states = {}
     temp = args.database.parent / "tmp"
@@ -167,11 +169,23 @@ def main():
         return result
 
     stage("literal_jet_scope_repairs", apply_fifth)
+    literal_metadata = read_metadata(args.database)['literal_jet_scope_repairs']
+    from fineatlas.structure_primary_aircraft_family_repairs import apply_primary_aircraft_family_repairs
+
+    def apply_sixth():
+        result = apply_primary_aircraft_family_repairs(migration)
+        if result.get("status") != "PASS":
+            raise ValueError("Actual primary-aircraft family delta was not applied")
+        return result
+
+    stage("primary_aircraft_family_repairs", apply_sixth)
     current = read_metadata(args.database)
+    if current.get('literal_jet_scope_repairs') != literal_metadata:
+        raise ValueError('Primary-aircraft delta changed the independent literal-jet binding')
     mutable_readiness = {'usability_indexes_ready', 'unified_ready', 'browse_indexes_ready'}
     if (any(current.get(key) != value for key, value in original_metadata.items() if key not in mutable_readiness)
             or original_stages != list(migration.c.execute('SELECT * FROM usability_stages ORDER BY stage'))):
-        raise ValueError('Literal-jet repair modified prior metadata or source stage history')
+        raise ValueError('New repair stages modified prior metadata or source stage history')
     migration.meta("structure_delta_resume_parent", {
         "parent_revision": lineage["parent_revision"], "previous_source_stages_replayed": False,
         "previous_repair_stages_replayed": False, "repair_recipe": "resume_literal_jet_repairs.py",
