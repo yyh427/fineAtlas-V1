@@ -3,6 +3,7 @@ import gzip
 import importlib.util
 import json
 from pathlib import Path
+import sqlite3
 import tempfile
 import unittest
 
@@ -16,6 +17,30 @@ from fineatlas.structure_vehicle_source_scope import validate_native_configurati
 
 
 class VehicleScopeTests(unittest.TestCase):
+    def test_assertion_uses_its_evidence_and_preserves_other_endpoint_history(self):
+        with sqlite3.connect(':memory:') as c:
+            c.row_factory=sqlite3.Row
+            c.executescript('''
+                CREATE TABLE edges(child_uid,parent_uid,relation,source,status,provenance);
+                CREATE TABLE hierarchy_decisions(subject_uid,object_uid,operation,evidence_id);
+                CREATE TABLE evidence(evidence_id,payload);
+            ''')
+            for evidence_id, operation in [('old','link'),('withdrawn','withdraw_edge'),('current','link')]:
+                c.execute('INSERT INTO hierarchy_decisions VALUES(?,?,?,?)',('child','parent',operation,evidence_id))
+                c.execute('INSERT INTO evidence VALUES(?,?)',(evidence_id,json.dumps({'proof':evidence_id})))
+            c.execute('INSERT INTO edges VALUES(?,?,?,?,?,?)',
+                      ('child','parent','IS_A','new source','ACTIVE',json.dumps({'evidence_ids':['current']})))
+            rows=A.classification_assertion_rows(c,'child','parent','IS_A','new source')
+            self.assertEqual(len(rows),1)
+            self.assertEqual(json.loads(rows[0]['proof']),{'proof':'current'})
+            self.assertEqual(c.execute('SELECT count(*) FROM hierarchy_decisions').fetchone()[0],3)
+            c.execute('UPDATE edges SET provenance=?',(json.dumps({'evidence_ids':['absent']}),))
+            self.assertEqual(A.classification_assertion_rows(c,'child','parent','IS_A','new source'),[])
+            # A matching unbound proof cannot rescue the actual wrong binding.
+            c.execute('UPDATE edges SET provenance=?',(json.dumps({'evidence_ids':['old']}),))
+            wrong=A.classification_assertion_rows(c,'child','parent','IS_A','new source')
+            self.assertNotEqual(json.loads(wrong[0]['proof']),{'proof':'current'})
+
     def test_forged_configuration_scope_cannot_replay(self):
         fields={'id':'42','make':'Example','model':'Publisher truck','year':'2012','VClass':'Standard Pickup Trucks','baseModel':'Publisher truck'}
         proof={'native_fields':fields,'primary_csv_sha256':'a'*64,'no_lifting_to_entire_model':True,'world_identity_assertion':False}

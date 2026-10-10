@@ -83,6 +83,10 @@ TMPDIR=CANDIDATE/tmp PYTHONHASHSEED=0 python -B scripts/build_structure_candidat
 
 构建安全入口要求 `structure_protected_paths.json` 固定生产库和封存来源检查点的绝对位置与 SHA-256；候选必须是独立 inode，生产库路径、硬链接或伪造 CLI baseline 均拒绝。`python -O` 和 `PYTHONOPTIMIZE` 不能用于构建或验收。外部独立构建回执绑定唯一 build ID、全部阶段、代码/输入清单及哈希；复现检查逐个比较实际表库存，只排除 SQLite 明确标识的 FTS 重复内容和有记录的运行时阶段数据。
 
+发布的冻结输入保留原机器的保护登记表及其哈希。其他机器重放前应先保留这份原登记表，在新的输入副本中登记当地实际生产库和已有检查点的绝对位置、文件 SHA；不能把不存在的路径冒充已保护文件。此项运行环境绑定会形成新的输入指纹及修订，因此跨机器重放用于复现来源语义和查询结果，不承诺获得公开附件逐字节相同的 SHA。直接使用发布数据则必须核对原清单的完整文件 SHA 和精确 SDK。
+
+来源证据只绑定当前关系声明实际引用的证据 ID。同一端点的旧来源、撤回决策和其他合法来源继续保留，不能通过端点匹配混入新声明验证。生活配置必须有至少一条独立核验的域内父链；有效但位于任务边界之外的物理类型分支分别返回 `OUTSIDE_DOMAIN_BOUNDARY`。例如清洁刷同时属于 cleaning_implement 和 brush，不据此宣称所有 brush 都是清洁工具。没有合法域内分支的配置仍然验收失败。
+
 `build_complete.json` 后仍需 `accept_structure_candidate.py local` 完整检查；公开下载安装证据必须包含真实下载 URL、文件 SHA、实际安装 SDK 和完整公共查询/导出复验报告。局部通过仅允许上传明确标记的预发布候选，不允许推荐稳定版本。
 
 交付工具的独立小库拒绝回归见 [发布凭据检查](structure_current_delivery_guard_validation.json)、[保护路径和缓存检查](structure_current_build_safety_validation.json)及[完整复现比较检查](structure_compare_reproductions_fix_validation.json)。这些是工具回归，不能替代正式大库验收或真实公网下载。公开下载回执区分真实 HTTP(S) 网络传输、断点续传及缓存恢复；缓存、`file://` 和仅解压本地分片均不能声称本轮重新公开下载。安装 SDK 检查必须绑定同一个下载文件路径、文件状态和整库 SHA。

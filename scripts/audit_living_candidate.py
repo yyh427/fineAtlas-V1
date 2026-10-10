@@ -280,6 +280,16 @@ def native_boundary_path(c, uid, roots, view):
     return None
 
 
+def boundary_branch_selection(paths):
+    """Require a task route and retain valid physical types outside its boundary."""
+    selected = [{'parent': parent, 'source_path': path}
+                for parent, path in sorted(paths.items()) if path is not None]
+    excluded = [{'parent': parent, 'reason': 'OUTSIDE_DOMAIN_BOUNDARY'}
+                for parent, path in sorted(paths.items()) if path is None]
+    return {'pass': bool(selected), 'selected_paths': selected,
+            'excluded_branches': excluded}
+
+
 def collect_pages(fetch, *, limit, key='uid'):
     items, cursors, cursor, pages = [], set(), None, 0
     while True:
@@ -464,6 +474,7 @@ def run(database, inputs, output):
             print('SQL checked', index, 'errors', len(errors), flush=True)
     stages['all_source_sql_seconds'] = time.monotonic() - start
     boundary_paths = []
+    configuration_boundary_paths = []
     boundary_scope_memos = {}
     def source_scope_path(domain, view, parent, roots):
         key=(domain,view,parent)
@@ -479,11 +490,24 @@ def run(database, inputs, output):
         for view in VIEWS:
             for parent in parents:
                 path = source_scope_path(domain, view, parent, roots)
-                if path is None:
-                    errors.append({'check': 'native_domain_boundary_path', 'domain': domain, 'view': view, 'parent': parent})
                 boundary_paths.append({'domain': domain, 'view': view, 'parent': parent,
-                                       'roots': sorted(roots), 'source_path': path})
+                                       'roots': sorted(roots), 'source_path': path,
+                                       'branch_status': 'VALID_DOMAIN_PATH' if path is not None else 'OUTSIDE_DOMAIN_BOUNDARY'})
+            for row in expected.values():
+                if row['domain'] != domain:
+                    continue
+                selection = boundary_branch_selection({
+                    parent: source_scope_path(domain, view, parent, roots)
+                    for parent in row['parent_uids']})
+                configuration_boundary_paths.append({
+                    'uid': row['uid'], 'domain': domain, 'view': view, **selection})
+                if not selection['pass']:
+                    errors.append({'check': 'native_domain_boundary_path', 'domain': domain,
+                                   'view': view, 'uid': row['uid'],
+                                   'parent_uids': row['parent_uids']})
     (output / 'native_boundary_paths.json').write_text(json.dumps(boundary_paths, ensure_ascii=False, indent=2) + '\n')
+    (output / 'configuration_boundary_paths.json').write_text(
+        json.dumps(configuration_boundary_paths, ensure_ascii=False, indent=2) + '\n')
     raw_name_checks = []
     raw_name_uids = set(OLD_HASHES)
     for uid, row in expected.items():

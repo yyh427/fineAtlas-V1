@@ -40,6 +40,19 @@ def content_sha(row):
     return sha(json.dumps({k:v for k,v in dict(row).items() if k not in ('id','status','reason')},sort_keys=True))
 
 
+def classification_assertion_rows(c, uid, parent, relation, source):
+    """Bind evidence to this source assertion, retaining other decision history."""
+    return c.execute(
+        'SELECT r.*,e.payload proof FROM edges r '
+        'JOIN hierarchy_decisions h ON h.subject_uid=r.child_uid '
+        "AND h.object_uid=r.parent_uid AND h.operation='link' "
+        'AND h.evidence_id IN '
+        "(SELECT value FROM json_each(r.provenance,'$.evidence_ids')) "
+        'JOIN evidence e ON e.evidence_id=h.evidence_id '
+        'WHERE r.child_uid=? AND r.parent_uid=? AND r.relation=? AND r.source=?',
+        (uid, parent, relation, source)).fetchall()
+
+
 def canonical_role(row):
     if row['node_kind']:
         return row['node_kind']
@@ -175,7 +188,7 @@ def audit_rows(c,manifest,payload,producer,*,require_ready=True):
             parent=c.execute('SELECT description FROM nodes WHERE uid=?',(op['parent'],)).fetchone()
             if uid!='wikidata:Q154503' or op['parent']!=AIRCRAFT or canonical_role(n)!='CLASS' or json.loads(n['data']).get('wikidata_description')!='heavier-than-air aircraft that derives lift from dynamic motion through the air' or proof.get('primary_source_section','').split()[0]!='2.1.2' or not proof.get('source_scope_entails_parent') or not parent or sha(parent[0])!=proof['parent_definition_sha256']:
                 error('AERODYNE_FULL_GENERIC_CLASS_OR_PARENT_SCOPE_NOT_BOUND',uid=uid)
-            rows=c.execute('SELECT r.*,e.payload proof FROM edges r JOIN hierarchy_decisions h ON h.subject_uid=r.child_uid AND h.object_uid=r.parent_uid JOIN evidence e ON e.evidence_id=h.evidence_id WHERE r.child_uid=? AND r.parent_uid=? AND r.relation=? AND r.source=?',(uid,op['parent'],relation,op['source'])).fetchall()
+            rows=classification_assertion_rows(c,uid,op['parent'],relation,op['source'])
         else:error('UNSUPPORTED_NEW_RELATION',uid=uid);continue
         if len(rows)!=1 or rows[0]['status']!='ACTIVE' or json.loads(rows[0]['proof'])!=proof:
             error('ACTUAL_TYPE_ASSERTION_OR_EVIDENCE_DIFFER',uid=uid,relation=relation)
