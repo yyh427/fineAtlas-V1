@@ -14,7 +14,8 @@ import sqlite3
 ROOT = Path(__file__).resolve().parents[1]
 INPUT_NAME = 'structure_owned_scope_repairs.json'
 SOURCE = 'Complete owned source scope adjudication'
-REVIEW_TABLES = {'review_bridge': 'bridges', 'review_typed_relation': 'entity_relations'}
+REVIEW_TABLES = {'review_bridge': 'bridges', 'review_typed_relation': 'entity_relations',
+                 'review_class_edge': 'edges'}
 NAVIGATION_ROLES = {
     'INSTANCE_OF': ({'INSTANCE'}, {'CLASS'}),
     'IS_A': ({'CLASS'}, {'CLASS'}),
@@ -642,7 +643,9 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if not proof.get('source_native_objects_preserved'):
                     raise ValueError('Source objects must survive a scope review')
                 if not preflight:
-                    exact_history(con, 'bridge_scope_review' if table == 'bridges' else 'typed_scope_review',
+                    history_kind = {'bridges': 'bridge_scope_review', 'entity_relations': 'typed_scope_review',
+                                    'edges': 'class_scope_review'}[table]
+                    exact_history(con, history_kind,
                                   before['id'], before, {'status': 'SOURCE_SCOPE_REVIEW'}, proof)
                     for members in proof.get('source_component_uids', {}).values():
                         partition_sets.add(tuple(sorted(members)))
