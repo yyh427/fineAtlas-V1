@@ -380,6 +380,8 @@ def verify_nominal_purpose_source(con, inputs, manifest, op, reviewed=None):
             raise ValueError('Supporting whole source design object changed')
     if proof.get('classification_axis') not in {'function', 'purpose'}:
         raise ValueError('Nominal purpose must retain its distinct classification axis')
+    if proof.get('physical_genus'):
+        raise ValueError('Reviewed nominal purpose cannot claim a literal own physical genus')
     conditions = proof.get('parent_conditions', [])
     if (len(conditions) != 1 or conditions[0].get('parent_exact_span') != parent['statement']
             or conditions[0].get('complete_parent_definition') is not True
@@ -725,11 +727,13 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if not biological_host and re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
+                literal_physical_scope = (not biological_host and proof.get('owned_physical_scope_kind') !=
+                                          'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE')
                 words = lambda value: re.findall(r'[^\W_]+', value.casefold(), re.UNICODE)
-                if not biological_host and (not isinstance(genus, str) or not words(genus)):
+                if literal_physical_scope and (not isinstance(genus, str) or not words(genus)):
                     raise ValueError('Physical genus must be explicit in the whole source review')
                 declared_words, phrase_words = words(genus or ''), words(phrase)
-                if not biological_host and not any(phrase_words[i:i + len(declared_words)] == declared_words
+                if literal_physical_scope and not any(phrase_words[i:i + len(declared_words)] == declared_words
                            for i in range(len(phrase_words) - len(declared_words) + 1)):
                     raise ValueError('Declared physical genus exists only outside the own first assertion')
                 if (witnesses[0].get('table', 'nodes') == 'nodes'
