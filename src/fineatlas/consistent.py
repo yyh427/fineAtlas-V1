@@ -28,6 +28,11 @@ from .semantics import (
 )
 
 
+def _language_tag_key(language):
+    """Match source locale spellings without changing stored language history."""
+    return language.replace("_", "-").lower()
+
+
 class ConsistentAtlas(SingleAtlas):
     def __init__(
         self, path, view="wordnet", relation_view=None, *, root=None, language="en"
@@ -189,8 +194,8 @@ class ConsistentAtlas(SingleAtlas):
         if len(raw_ranks) > 1:
             result["rank_status"] = "CONFLICT_REVIEW"
             result["normalized_rank"] = None
-        if rank_assertion and rank_assertion["status"] == "CONFLICT_REVIEW":
-            result["rank_status"] = "CONFLICT_REVIEW"
+        if rank_assertion and (rank_assertion["status"] == "REVIEW" or rank_assertion["status"].endswith("_REVIEW")):
+            result["rank_status"] = rank_assertion["status"]
             result["normalized_rank"] = None
         result["rank_basis"] = (
             "Native source rank; accepted identifier-grounded identity peers used only when unambiguous"
@@ -213,8 +218,13 @@ class ConsistentAtlas(SingleAtlas):
             name = self.con.execute(
                 """SELECT name,language,source,evidence_id FROM node_names
                 WHERE uid=?
-                ORDER BY (language=?) DESC,(language='en') DESC,(language='mul') DESC,(language='und') DESC,preferred DESC,source,name LIMIT 1""",
-                (result["uid"], self.language),
+                ORDER BY (language=?) DESC,
+                         (lower(replace(language,'_','-'))=?) DESC,
+                         (lower(language)='en') DESC,(lower(language)='mul') DESC,
+                         (lower(language)='und') DESC,
+                         preferred DESC,source,name LIMIT 1""",
+                (result["uid"], self.language,
+                 _language_tag_key(self.language) if self.language is not None else ""),
             ).fetchone()
             if name:
                 result["source_label"] = result["label"]
@@ -234,8 +244,8 @@ class ConsistentAtlas(SingleAtlas):
             sql = "SELECT name,language,source,evidence_id,preferred FROM node_names WHERE uid=?"
             args = [uid]
             if language:
-                sql += " AND language=?"
-                args.append(language)
+                sql += " AND lower(replace(language,'_','-'))=?"
+                args.append(_language_tag_key(language))
             values = [
                 dict(r)
                 for r in self.con.execute(
@@ -243,7 +253,7 @@ class ConsistentAtlas(SingleAtlas):
                     [*args, limit + 1],
                 )
             ]
-        if language in (None, "und"):
+        if language is None or _language_tag_key(language) == "und":
             columns = {r[1] for r in self.con.execute("PRAGMA table_info(aliases)")}
             name = (
                 "raw_alias"
@@ -911,6 +921,7 @@ class ConsistentAtlas(SingleAtlas):
             "roots": self.domain_roots(name),
             "children": self.domain_children(name, limit),
             "instances": self.domain_instances(name, limit),
+            "source_directories": self.source_directories(name, limit),
             "relation_view": self.relation_view,
             "scope_semantics": "Native roots and accepted hierarchy/typed descendants; roots are navigation scope, not new IS_A wrappers",
         }
@@ -1465,25 +1476,44 @@ class ConsistentAtlas(SingleAtlas):
 
     def relation_reward_index(self, dataset, *, policy=None, excluded_labels=None,
                               blocked_ancestors=(), coarse_roots=(), review_policy=None,
-                              max_nodes=10000, source_scope=None, requirement=None):
+                              max_nodes=10000, source_scope=None, requirement=None,
+                              admission_mode='legacy', task_boundary_roots=(),
+                              target_scope='world', source_namespace=None, source_version=None,
+                              coarse_lca_roles=()):
         """Prepare a frozen, typed, bounded batch index for text tree rewards.
 
         Applicable results are structurally screened, not scientific validation.
         Use a reviewed label exclusion policy alongside the frozen DB revision.
+        New callers may select admission_mode='reviewed_paths' and explicit
+        task_boundary_roots. target_scope='source_native' preserves the separate
+        author-declared annotation identity; the default world scope is unchanged.
         """
         from .rewards import RelationRewardIndex
+        reviewed=self.metadata.get('reviewed_reward_policies',{}).get(dataset,{}) if admission_mode == 'reviewed_paths' else {}
         config=self.metadata.get('unified_reward_policies',{}).get(dataset,{}) if self.relation_view=='unified' else {}
-        if review_policy is None and config and policy is None and not coarse_roots and source_scope is None and requirement is None:
+        if target_scope == 'source_native':
+            config=reviewed.get('source_native',{})
+        elif reviewed:
+            config={**config, **{k:v for k,v in reviewed.items() if k != 'source_native'}}
+        if review_policy is None and config and policy is None and not coarse_roots and source_scope is None and requirement is None and not coarse_lca_roles:
+            coarse_lca_roles=config.get('coarse_lca_roles',())
             policy=config.get('policy');coarse_roots=config.get('coarse_roots',())
             source_scope=config.get('source_scope');requirement=config.get('requirement')
+        if review_policy is None and admission_mode == 'reviewed_paths':
+            if not task_boundary_roots:
+                task_boundary_roots=config.get('task_boundary_roots',())
         return RelationRewardIndex(self, dataset, policy=policy,
                                    excluded_labels=excluded_labels,
                                    blocked_ancestors=blocked_ancestors,
                                    coarse_roots=coarse_roots, review_policy=review_policy,
                                    max_nodes=max_nodes, source_scope=source_scope,
-                                   requirement=requirement)
+                                   requirement=requirement, admission_mode=admission_mode,
+                                   task_boundary_roots=task_boundary_roots, target_scope=target_scope,
+                                   source_namespace=source_namespace,source_version=source_version,
+                                   coarse_lca_roles=coarse_lca_roles)
 
-    def export_training(self, dataset, directory, *, max_nodes=10000):
+    def export_training(self, dataset, directory, *, max_nodes=10000, admission_mode='legacy',
+                        task_boundary_roots=(), **reward_options):
         """Export every original label and pair with an explicit reward mask.
 
         Invalid hierarchy terms do not remove labels or disable label accuracy.
@@ -1492,8 +1522,10 @@ class ConsistentAtlas(SingleAtlas):
         """
         from collections import Counter
         directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
-        index=self.relation_reward_index(dataset,max_nodes=max_nodes)
-        labels=self.task_labels(dataset,requirement=index.requirement)
+        index=self.relation_reward_index(dataset,max_nodes=max_nodes, admission_mode=admission_mode,
+                                         task_boundary_roots=task_boundary_roots, **reward_options)
+        labels=self.task_labels(dataset,requirement=index.requirement,target_scope=index.target_scope,
+                               source_namespace=index.source_namespace,source_version=index.source_version)
         with (directory/'labels.jsonl').open('w',encoding='utf-8') as stream:
             for label in labels:
                 checked=dict(index.labels[str(label['class_id'])])
@@ -1510,21 +1542,36 @@ class ConsistentAtlas(SingleAtlas):
                 'pair_statuses':dict(counts),'database_revision':self._revision,
                 'relation_view':self.relation_view,'policy':index.policy,
                 'source_scope':index.source_scope,'requirement':index.requirement,
+                'coarse_lca_roles':list(index.coarse_lca_roles),
+                'admission_mode':index.admission_mode,'task_boundary_roots':list(index.task_boundary_roots),
+                'target_scope':index.target_scope,'source_namespace':index.source_namespace,'source_version':index.source_version,
                 'nonapplicable_distance':None,'category_reward_preserved':True,
                 'metric':'minimum_upward_informative_lca_arc_sum',
                 'semantic_scope':'Retained evidence-backed relation policy and conservative endpoint screening; annotation/visual reward calibration is not certified'}
         (directory/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
         return result
 
-    def task_path(self,dataset,class_id,*,index=None,max_depth=256,max_nodes=10000):
+    def task_path(self,dataset,class_id,*,index=None,max_depth=256,max_nodes=10000,
+                  admission_mode='legacy', task_boundary_roots=(),target_scope='world',source_namespace=None,source_version=None):
         """Show the same typed/source lineage selected by the frozen task policy.
 
         A valid navigation path and an eligible training endpoint are distinct
         fields. Caller needs dataset/class ID, never native UID conventions.
         """
+        if index is not None and (index.dataset != dataset or index.revision != self._revision or index.relation_view != self.relation_view or index.root_uid != self.root_uid):
+            raise ValueError('Task index does not match dataset, database revision, view and root')
+        if index is None and target_scope == 'world' and self.target(dataset,class_id) is None:
+            return {'status':'UNKNOWN_LABEL','dataset':dataset,'class_id':str(class_id),'path':[]}
+        index=index or self.relation_reward_index(dataset,max_nodes=max_nodes,
+                                                  admission_mode=admission_mode,
+                                                  task_boundary_roots=task_boundary_roots,
+                                                  target_scope=target_scope,source_namespace=source_namespace,source_version=source_version)
+        if index.dataset != dataset or index.revision != self._revision or index.relation_view != self.relation_view or index.root_uid != self.root_uid:
+            raise ValueError('Task index does not match dataset, database revision, view and root')
+        if index.admission_mode == 'reviewed_paths':
+            return index.path(class_id,max_depth=max_depth)
         target=self.target(dataset,class_id)
         if not target:return {'status':'UNKNOWN_LABEL','dataset':dataset,'class_id':str(class_id),'path':[]}
-        index=index or self.relation_reward_index(dataset,max_nodes=max_nodes)
         from .rewards import POLICIES
         own=self._basic(target['target_uid']);policy=POLICIES[index.policy]
         label=index.labels[str(class_id)]
@@ -1606,11 +1653,14 @@ class ConsistentAtlas(SingleAtlas):
                 'has_more':len(rows)>limit,'identity_expanded':False,
                 'classification_admission_is_separate':True}
 
-    def _typed_relation_query(self, left, right, policy, max_nodes):
+    def _typed_relation_query(self, left, right, policy, max_nodes, *, admission_mode='legacy', task_boundary_roots=()):
         from .rewards import RelationRewardIndex,POLICIES
         if policy not in POLICIES:
             return {'status':'UNSUPPORTED_POLICY','applicable':False,'distance':None,'lcas':[],
                     'policy':policy,'relation_view':self.relation_view,'allowed_policies':sorted(POLICIES)}
+        if policy == 'annotation':
+            return {'status':'SOURCE_NATIVE_DATASET_SCOPE_REQUIRED','applicable':False,'distance':None,'lcas':[],
+                    'policy':policy,'relation_view':self.relation_view}
         if not all(isinstance(u,str) and u for u in (left,right)):
             return {'status':'INVALID_UID','applicable':False,'distance':None,'lcas':[],
                     'relation_view':self.relation_view}
@@ -1618,15 +1668,17 @@ class ConsistentAtlas(SingleAtlas):
         if 'unified_domain_rules' in self._tables:
             blocked=[r[0] for r in self.con.execute('SELECT DISTINCT wordnet_anchor_uid FROM unified_domain_rules')]
         index=RelationRewardIndex(self,'uid',uids=[left,right],policy=policy,
-                                  coarse_roots=blocked,max_nodes=max_nodes)
+                                  coarse_roots=blocked,max_nodes=max_nodes,admission_mode=admission_mode,
+                                  task_boundary_roots=task_boundary_roots)
         result=index.query(left,right)
         result['training_reward']=False
         result['reward_note']='Generic UID relations are not calibrated classification penalties; use a frozen dataset reward index'
         return result
 
-    def lca(self, left, right, *, max_nodes=100000, policy=None):
-        if self.relation_view=='unified' or policy is not None:
-            result=self._typed_relation_query(left,right,policy or 'classification',max_nodes)
+    def lca(self, left, right, *, max_nodes=100000, policy=None, admission_mode='legacy', task_boundary_roots=()):
+        if self.relation_view=='unified' or policy is not None or admission_mode != 'legacy':
+            result=self._typed_relation_query(left,right,policy or 'classification',max_nodes,
+                                             admission_mode=admission_mode,task_boundary_roots=task_boundary_roots)
             return {**result,'items':result['lcas'],
                     'status':'CONNECTED' if result['applicable'] else
                              'COMMON_ANCESTOR_INFORMATION_INSUFFICIENT' if result['status']=='COARSE_COMMON_ANCESTOR_ONLY' else result['status'],
@@ -1684,13 +1736,14 @@ class ConsistentAtlas(SingleAtlas):
             ):
                 yield child_uid
 
-    def distance(self, left, right, *, direction=None, max_nodes=100000, policy=None):
-        if self.relation_view=='unified' or policy is not None:
+    def distance(self, left, right, *, direction=None, max_nodes=100000, policy=None, admission_mode='legacy', task_boundary_roots=()):
+        if self.relation_view=='unified' or policy is not None or admission_mode != 'legacy':
             if direction not in (None,'common_ancestor'):
                 return {'status':'UNSUPPORTED_DIRECTION','distance':None,'applicable':False,
                         'relation_view':self.relation_view,
                         'reason':'Unified comparison uses upward paths through legal LCAs, not an undirected union of relation types'}
-            return self._typed_relation_query(left,right,policy or 'classification',max_nodes)
+            return self._typed_relation_query(left,right,policy or 'classification',max_nodes,
+                                              admission_mode=admission_mode,task_boundary_roots=task_boundary_roots)
         direction=direction or 'undirected'
         if direction not in ("undirected", "upward", "downward"):
             raise ValueError("Invalid distance direction")
@@ -1794,7 +1847,7 @@ class ConsistentAtlas(SingleAtlas):
             "model_design": role in ("MODEL", "MODEL_FAMILY"),
             "species": role == "CLASS"
             and normalized_rank == "species"
-            and n.get("rank_status") != "CONFLICT_REVIEW",
+            and not str(n.get("rank_status", "")).endswith("REVIEW"),
             "model": role == "MODEL",
             "configuration": role == "CONFIGURATION",
             "instance": role == "INSTANCE",
@@ -1846,7 +1899,11 @@ class ConsistentAtlas(SingleAtlas):
             "root_uid": self.root_uid,
         }
 
-    def target(self, dataset, class_id):
+    def target(self, dataset, class_id, *, target_scope='world', source_namespace=None, source_version=None):
+        if target_scope == 'source_native':
+            return self._source_native_target(dataset,class_id,source_namespace,source_version)
+        if target_scope != 'world':
+            raise ValueError('Select world or source_native target scope')
         result = super().target(dataset, class_id)
         if result:
             verified = result["decision_status"] in ("VERIFIED", "VERIFIED_ATTRIBUTE")
@@ -1903,13 +1960,64 @@ class ConsistentAtlas(SingleAtlas):
             )
         return result
 
-    def task_labels(self, dataset, requirement="hierarchy", *, usable_only=False):
+    def _source_native_target(self, dataset, class_id, source_namespace=None, source_version=None):
+        """Admit documentary label units without promoting a world mapping."""
+        if 'dataset_scope_targets' not in self._tables:
+            raise ValueError('Database has no source-native dataset scope targets')
+        sql = 'SELECT * FROM dataset_scope_targets WHERE dataset=? AND class_id=?'
+        args = [dataset,str(class_id)]
+        if source_namespace is not None:
+            sql += ' AND namespace=?'
+            args.append(source_namespace)
+        if source_version is not None:
+            sql += ' AND source_version=?'
+            args.append(source_version)
+        rows = list(self.con.execute(sql+' ORDER BY namespace,source_version',args))
+        if not rows:
+            return None
+        if len(rows) != 1:
+            raise ValueError('Ambiguous source-native namespace/version; select one frozen namespace')
+        row = dict(rows[0])
+        uid = row['source_uid']
+        own = self._basic(uid)
+        documentary = row['decision_status'] in ('SOURCE_DECLARED','VERIFIED')
+        try:
+            proof = json.loads(row.get('proof') or '{}')
+        except (TypeError,ValueError):
+            proof = None
+        documentary = bool(documentary and isinstance(proof,dict) and proof and row['namespace'] and row['source_version'] and own and
+                           own['visibility'] == 'ACTIVE' and own['node_kind'] == row['role'])
+        world = self.target(dataset,class_id)
+        result = {
+            'dataset':dataset,'class_id':str(class_id),'label':row.get('label') or (world or {}).get('label') or (own or {}).get('label') or str(class_id),
+            'target_uid':uid,'decision_status':row['decision_status'], 'target_scope':'source_native',
+            'source_namespace':row['namespace'],'source_version':row['source_version'],
+            'identity_scope':'SOURCE_NATIVE_LABEL','identity_verified':documentary,
+            'world_identity_verified':bool(world and world['identity_verified']),
+            'world_target_uid':world['target_uid'] if world else None,
+            'mapping_verified':documentary,'native_label_verified':True,
+            'mapping_kind':'SOURCE_NATIVE_DECLARATION','scope_proof':row['proof'],
+        }
+        result['task_admission'] = self.eligibility(uid,identity_verified=documentary)
+        result['native_label_admission'] = {**result['task_admission'],'usable':True,
+                                           'requirement':'native_label','admission_scope':'SOURCE_NATIVE_LABEL'}
+        return result
+
+    def task_labels(self, dataset, requirement="hierarchy", *, usable_only=False,
+                    target_scope='world',source_namespace=None,source_version=None):
         values = []
-        for row in self.con.execute(
-            "SELECT class_id FROM dataset_targets WHERE dataset=? ORDER BY length(class_id),class_id",
-            (dataset,),
-        ):
-            target = self.target(dataset, row[0])
+        if target_scope == 'source_native':
+            if 'dataset_scope_targets' not in self._tables:
+                raise ValueError('Database has no source-native dataset scope targets')
+            rows=self.con.execute('SELECT DISTINCT class_id FROM dataset_scope_targets WHERE dataset=? ORDER BY length(class_id),class_id',(dataset,))
+        elif target_scope == 'world':
+            rows=self.con.execute('SELECT class_id FROM dataset_targets WHERE dataset=? ORDER BY length(class_id),class_id',(dataset,))
+        else:
+            raise ValueError('Select world or source_native target scope')
+        for row in rows:
+            target = self.target(dataset, row[0],target_scope=target_scope,source_namespace=source_namespace,source_version=source_version)
+            if target is None:
+                continue
             target["task_admission"] = dict(target["native_label_admission"]) if requirement == "native_label" else self.eligibility(
                 target["target_uid"],
                 requirement,

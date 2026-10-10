@@ -2,6 +2,10 @@
 """All-record invariants, source inventory triage and portal role/depth census."""
 
 from __future__ import annotations
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
 import argparse
 from collections import Counter
 import gzip

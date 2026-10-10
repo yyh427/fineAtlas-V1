@@ -95,6 +95,21 @@ class DefaultInstallContracts(unittest.TestCase):
         self.sdk.__version__='1.10.1';self.sdk_file.write_text('different SDK bytes\n')
         with self.sdk_patch(),self.assertRaises(RuntimeError):downloader.verify_revision(self.database,self.manifest)
 
+    def test_structure_freeze_uses_new_sdk_inventory_and_never_old_fallback(self):
+        self.meta['structure_frozen_build_manifest']={'code':{
+            'src/fineatlas/__init__.py':hashlib.sha256(self.sdk_file.read_bytes()).hexdigest(),
+            'scripts/build_structure_candidate.py':'build-hash',
+            'configs/types.json':'configuration-hash'}}
+        self.meta['unified_frozen_build_manifest']['code']['src/fineatlas/__init__.py']='superseded-baseline-hash'
+        verifier.validate_runtime_install(self.meta,self.manifest,self.sdk)
+        extra=self.sdk_dir/'unexpected.py';extra.write_text('unfrozen code')
+        with self.assertRaisesRegex(AssertionError,'inventory differs'):
+            verifier.validate_runtime_install(self.meta,self.manifest,self.sdk)
+        extra.unlink()
+        self.meta['structure_frozen_build_manifest']['code']={}
+        with self.assertRaises(AssertionError):
+            verifier.validate_runtime_install(self.meta,self.manifest,self.sdk)
+
     def test_runtime_install_binds_actual_frozen_sdk(self):
         result=verifier.validate_runtime_install(self.meta,self.manifest,self.sdk)
         self.assertEqual(result['sdk_version'],'1.10.1')

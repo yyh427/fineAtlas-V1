@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Build derived indexes in RAM, then persist one standalone staging artifact."""
+
+if not __debug__:
+    raise RuntimeError("Optimized Python is forbidden for mandatory structural checks")
+
 import argparse
 import json
 from pathlib import Path
