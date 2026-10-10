@@ -8,7 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from structure_owned_scope_delivery_guard import require_owned_scope_receipt
+from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_owned_scope_receipt as require_owned_scope_receipt
 from structure_complete_owned_type_delivery_guard import require_complete_type_receipt
 
 ROOT=Path(__file__).resolve().parents[1]

@@ -6,7 +6,7 @@ import sqlite3
 from pathlib import Path
 
 from _download import digest
-from structure_owned_scope_delivery_guard import require_owned_scope_receipt
+from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_owned_scope_receipt as require_owned_scope_receipt
 
 SCHEMA='FINEATLAS_EXACT_LATER_BIOLOGY_IDENTITY_TRANSITIONS_V1'
 

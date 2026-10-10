@@ -58,7 +58,8 @@ class EighthSubjectTemporalContract(SubjectTemporalContract):
         self.eighth_report=self.output.with_name(self.output.stem+'-complete-type-actual.json')
 
     def run_owned_actual_audit(self):
-        super().run_owned_actual_audit()
+        from structure_eighth_owned_scope_temporal_contract import run_eighth_owned_actual_audits
+        run_eighth_owned_actual_audits(self)
         subprocess.run([sys.executable,'-B',str(ROOT/'scripts/audit_complete_owned_type_repairs.py'),
             '--database',str(self.database),'--inputs',str(self.inputs),'--output',str(self.eighth_report)],check=True)
         report=json.loads(self.eighth_report.read_bytes())
