@@ -15,6 +15,7 @@ INPUT_NAME = 'structure_owned_scope_repairs.json'
 SOURCE = 'Complete owned source scope adjudication'
 REVIEW_TABLES = {'review_bridge': 'bridges', 'review_typed_relation': 'entity_relations'}
 NAVIGATION_ROLES = {
+    'INSTANCE_OF': ({'INSTANCE'}, {'CLASS'}),
     'IS_A': ({'CLASS'}, {'CLASS'}),
     'DESIGN_TYPE_OF': ({'MODEL', 'MODEL_FAMILY'}, {'CLASS'}),
     'NATIVE_DESIGN_PARENT': ({'MODEL', 'MODEL_FAMILY'}, {'MODEL', 'MODEL_FAMILY'}),
@@ -40,7 +41,7 @@ def assertion_content(row):
 
 
 def row_at(con, table, identifier, key='id'):
-    if table not in {'nodes', 'edges', 'entity_relations', 'bridges', 'evidence', 'node_profiles'}:
+    if table not in {'nodes', 'edges', 'entity_relations', 'bridges', 'evidence', 'node_profiles', 'normalization_roles'}:
         raise ValueError('Unsafe source witness table')
     if key not in {'uid', 'id', 'evidence_id'}:
         raise ValueError('Unsafe source witness key')
@@ -208,11 +209,31 @@ def own_assertion_phrase(statement):
     # actual asserted predicate first, rather than treating those as sentences.
     copula = re.search(r'\b(?:is|was|are|were)\s+', statement, re.I)
     predicate = statement[copula.end():] if copula else statement
-    return re.split(r'[.;]\s+|\s+(?:which|that|whose|derived|based|replacing|built|designed|manufactured|produced)\b',
+    predicate = re.sub(r'^(an?\s+)proposed\s+', r'\1', predicate, flags=re.I)
+    predicate = re.sub(r'\bamateur built\b', 'amateur-built', predicate, flags=re.I)
+    # A development INTO a physical kind describes the resulting own design;
+    # a development OF another kind alone does not.
+    transformed = re.match(r'[^.]*\bdevelopment of\s+.+?\s+into\s+(an? .+)', predicate, re.I)
+    if transformed:
+        predicate = transformed[1]
+    predicate = re.sub(r'\bdesigned and built\s+(?=single|two|three|four|[a-z]+-wing)', '', predicate, flags=re.I)
+    predicate = re.sub(r'\bdesigned\s+(?=biplane|monoplane|helicopter|airplane)', '', predicate, flags=re.I)
+    apposition = re.match(r'[^,]*\baircraft(?:\s+built\s+by [^,]+)?,\s+(an? [^,]+)', predicate, re.I)
+    if apposition:
+        predicate = apposition[1]
+    return re.split(r'[.;]\s+|\s+(?:which|that|whose|derived|based|replacing|built|designed|manufactured|produced|proposed|introduced|made|from|by|used|for)\b',
                     predicate, maxsplit=1, flags=re.I)[0]
 
 
 def scoped_assertion_phrase(statement, scope_kind, label):
+    if scope_kind == 'OWNED_NAMED_INSTANCE_OF_STATED_DESIGN_KIND':
+        return named_instance_phrase(statement, label)
+    if scope_kind == 'OWNED_COMPLETE_RECONFIGURABLE_FIXED_WING':
+        phrase = own_assertion_phrase(statement)
+        match = re.search(r'\bcould fly either as a (biplane or as a parasol (?:winged )?monoplane)\b', statement, re.I)
+        if not re.search(r'\baircraft\b', phrase, re.I) or not match:
+            raise ValueError('Whole structural alternatives do not establish fixed-wing scope')
+        return re.sub(r'\bor as a parasol (?:winged )?', 'or parasol ', match[1], flags=re.I)
     if scope_kind == 'OWNED_UNIVERSAL_VARIANTS':
         match = re.search(r'(?:^|[.!?]\s+)All variants\s+(?:are|were)\s+([^.!?]+)', statement, re.I)
         if not match:
@@ -228,14 +249,30 @@ def scoped_assertion_phrase(statement, scope_kind, label):
         if not match or re.search(r'\b(?:not|never|fictional|virtual|toy|replica)\b', match[0], re.I):
             raise ValueError('Own twinjet anaphor is absent or incompatible')
         return match[0]
-    if scope_kind not in {None, 'OWNED_FIRST_SUBJECT', 'RETAINED_SOURCE_CLASS_MOTOR_VEHICLE'}:
+    if scope_kind not in {None, 'OWNED_FIRST_SUBJECT', 'RETAINED_SOURCE_CLASS_MOTOR_VEHICLE', 'OWNED_MOTOR_VEHICLE_DESIGN'}:
         raise ValueError('Unrecognized whole physical scope declaration')
     return own_assertion_phrase(statement)
 
 
-def role_valid(con, relation, left, right):
+def named_instance_phrase(statement, label):
+    member = re.search(r'\bOne of them\s*[—–-]\s*(?:the )?' + re.escape(label) + r'\s*[—–-]', statement, re.I)
+    if not member or not re.search(r'\b(?:Two|Three|Four|\d+) examples were built\.', statement[:member.start()], re.I):
+        raise ValueError('Named physical member is not explicitly identified in the whole source')
+    copula = re.search(r'\b(?:is|was)\s+', statement, re.I)
+    if not copula or copula.start() >= member.start():
+        raise ValueError('Named member has no independently stated design kind')
+    design_name = re.sub(r'^The\s+', '', statement[:copula.start()].strip(), flags=re.I)
+    words = lambda value: re.findall(r'[^\W_]+', value.casefold(), re.UNICODE)
+    if words(design_name) == words(label):
+        raise ValueError('A prototype count alone cannot turn a design into an instance')
+    return own_assertion_phrase(statement)
+
+
+def role_valid(con, relation, left, right, overrides=None):
     allowed = NAVIGATION_ROLES.get(relation)
-    return bool(allowed and node_role(con, left) in allowed[0] and node_role(con, right) in allowed[1])
+    overrides = overrides or {}
+    return bool(allowed and overrides.get(left['uid'], node_role(con, left)) in allowed[0]
+                and overrides.get(right['uid'], node_role(con, right)) in allowed[1])
 
 
 def raw_parents(con, uid):
@@ -342,6 +379,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
         errors.append({'kind': 'PRIMARY_DOCUMENT_NOT_PORTABLY_VERIFIED', 'reason': str(exc)})
     reviewed = {(REVIEW_TABLES[o['op']], o['before_assertion']['id']): o
                 for o in operations if o['op'] in REVIEW_TABLES}
+    role_overrides = {o['uid']: o['after_profile']['node_kind'] for o in operations if o['op'] == 'correct_role'}
     seen = set()
     for op in operations:
         try:
@@ -355,8 +393,18 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 raise ValueError('Complete source scope decision and attribution are required')
             for witness in proof.get('source_witnesses', []) + proof.get('retained_source_context_witnesses', []):
                 source_witness(con, witness)
-            retained_own_statements = [source_assertion_witness(con, witness, op['uid'])
-                                      for witness in proof.get('source_assertion_witnesses', [])]
+            retained_own_statements = []
+            for witness in proof.get('source_assertion_witnesses', []):
+                subject = op['uid']
+                if proof.get('owned_physical_scope_kind') == 'OWNED_MOTOR_VEHICLE_DESIGN':
+                    supporting = proof.get('supporting_class_definition', {})
+                    source_witness(con, supporting)
+                    subject = supporting['uid']
+                    if (op['parent'] != 'wordnet31:03796768-n'
+                            or witness['before'].get('parent_uid') != op['parent']
+                            or not re.search(r'\bis a motor vehicle with wheels\.?$', witness['statement'], re.I)):
+                        raise ValueError('Shared automotive class definition does not prove the broad motor-vehicle sense')
+                retained_own_statements.append(source_assertion_witness(con, witness, subject))
             for collection in ('source_nodes', 'counterexamples'):
                 for uid, before in proof.get(collection, {}).items():
                     actual = row_at(con, 'nodes', uid, 'uid')
@@ -388,17 +436,24 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if (not child or not parent or child['visibility'] != 'ACTIVE' or parent['visibility'] != 'ACTIVE'
                         or sha(child['data']) != proof['native_record_sha256']
                         or sha(parent['data']) != proof['parent_native_record_sha256']
-                        or not role_valid(con, op['relation'], child, parent)):
+                        or not role_valid(con, op['relation'], child, parent, role_overrides if preflight else None)):
                     raise ValueError('Actual grounded endpoint bytes or role grain differ')
                 if proof.get('world_identity_assertion') is not False or proof.get('no_identity_merges') is not True:
                     raise ValueError('A physical type link cannot certify an identity merge')
                 witnesses = proof['source_witnesses']
                 if len(witnesses) < 2 or not proof.get('whole_subject_scope_review'):
                     raise ValueError('Whole own subject and complete parent scope are required')
-                own = retained_own_statements[0] if retained_own_statements else witnesses[0]['statement']
+                motor_design = proof.get('owned_physical_scope_kind') == 'OWNED_MOTOR_VEHICLE_DESIGN'
+                own = retained_own_statements[0] if retained_own_statements and not motor_design else witnesses[0]['statement']
                 witness_node = row_at(con, 'nodes', witnesses[0].get('uid', child['uid']), 'uid')
                 phrase = scoped_assertion_phrase(own, proof.get('owned_physical_scope_kind'),
                                                 witness_node['label'] if witness_node else child['label'])
+                if motor_design and (not retained_own_statements
+                        or witnesses[1]['statement'] != 'a self-propelled wheeled vehicle that does not run on rails'
+                        or not re.search(r'\b(?:cars?|automobiles?|sportscars?)(?:\s+(?:model|family|series))?$', phrase.rstrip('. '), re.I)):
+                    raise ValueError('Own automotive design and broad parent scope do not close')
+                if proof.get('owned_physical_scope_kind') == 'OWNED_NAMED_INSTANCE_OF_STATED_DESIGN_KIND' and op['relation'] != 'INSTANCE_OF':
+                    raise ValueError('A named physical member cannot supply a design TYPE link')
                 if re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
@@ -431,6 +486,37 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     routes[op['uid']] = reaches(con, op['uid'], 'wordnet31:00001740-n')
                     if not routes[op['uid']]:
                         raise ValueError('New legal connection does not reach the physical root')
+            elif op['op'] == 'correct_role':
+                child = row_at(con, 'nodes', op['uid'], 'uid')
+                if (not child or child['visibility'] != 'ACTIVE' or op['uid'] != op['parent']
+                        or op['relation'] != 'ROLE_ADJUDICATION' or not proof.get('source_native_objects_preserved')
+                        or sha(child['data']) != proof['native_record_sha256']
+                        or len(proof.get('source_witnesses', [])) != 1
+                        or proof['source_witnesses'][0]['uid'] != child['uid']):
+                    raise ValueError('Role adjudication is not grounded in the preserved own object')
+                named_instance_phrase(proof['source_witnesses'][0]['statement'], child['label'])
+                before, norm = op['before_profile'], op['before_normalization_role']
+                eid = 'usability:' + sha(dump(proof))
+                attrs = json.loads(before['attributes'])
+                attrs.update(source_role=proof.get('source_role', attrs.get('source_role', 'UNSPECIFIED')),
+                             native_rank=proof.get('native_rank', attrs.get('native_rank', child['rank'])),
+                             role_status='VERIFIED', role_evidence_id=eid)
+                attrs.pop('canonical_scope_guard', None); attrs.pop('canonical_scope_evidence_id', None)
+                after = {**before, 'node_kind': 'INSTANCE', 'source_uri': op['uri'], 'evidence_id': eid, 'attributes': dump(attrs)}
+                after_norm = {**norm, 'canonical_role': 'INSTANCE', 'evidence_id': eid, 'source': SOURCE}
+                if op['after_profile'] != after or op['after_normalization_role'] != after_norm:
+                    raise ValueError('Role correction changed unrelated source profile fields')
+                for table, part in (('node_profiles', 'profile'), ('normalization_roles', 'normalization_role')):
+                    expected = op[('before_' if preflight else 'after_') + part]
+                    if row_at(con, table, op['uid'], 'uid') != expected:
+                        raise ValueError('Actual role profile or normalization history differs')
+                if not preflight:
+                    evidence = row_at(con, 'evidence', eid, 'evidence_id')
+                    if not evidence or evidence['payload'] != dump(proof) or evidence['payload_sha256'] != sha(dump(proof)):
+                        raise ValueError('New role has no actual complete source evidence')
+                    exact_history(con, 'role_scope_correction', op['uid'],
+                                  {'profile': before, 'normalization_role': norm},
+                                  {'profile': after, 'normalization_role': after_norm}, proof)
             elif op['op'] in REVIEW_TABLES:
                 table = REVIEW_TABLES[op['op']]; before = op['before_assertion']
                 actual = row_at(con, table, before['id']); expected = dict(before)
@@ -551,6 +637,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
               'added_source_links': sum(o['op'] == 'link' for o in operations),
               'reviewed_source_assertions': len(reviewed),
               'mapping_changes': sum(o['op'] in {'migrate_nominal_design_mapping', 'review_dataset_mapping'} for o in operations),
+              'role_corrections': sum(o['op'] == 'correct_role' for o in operations),
               'primary_snapshots_dir': str(Path(primary_snapshots_dir).resolve()) if primary_snapshots_dir else None,
               'verified_primary_sources': verified_sources, 'identity_component_censuses': len(partition_sets),
               'author_annotations_verified': len(author_records) if author_records else 0,

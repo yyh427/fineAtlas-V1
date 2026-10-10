@@ -57,6 +57,40 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
             audit.scoped_assertion_phrase(statement.replace('has six', 'has never had six'),
                                           'OWNED_SELF_TWINJET', 'Model family')
 
+    def test_named_member_is_an_instance_without_equating_it_with_design(self):
+        source = 'The Model EX is an early biplane built by the maker. Two examples were built. One of them—the Flyer—crossed the country.'
+        self.assertIn('biplane', audit.named_instance_phrase(source, 'Flyer'))
+        with self.assertRaisesRegex(ValueError, 'explicitly identified'):
+            audit.named_instance_phrase(source, 'Another Flyer')
+        with self.assertRaisesRegex(ValueError, 'explicitly identified'):
+            audit.named_instance_phrase(source.replace('One of them—the Flyer—', 'The prototype'), 'Flyer')
+        with self.assertRaisesRegex(ValueError, 'prototype count'):
+            audit.named_instance_phrase(source.replace('The Model EX', 'The Flyer'), 'Flyer')
+
+    def test_instance_role_is_incompatible_with_design_type_link(self):
+        self.assertTrue(audit.role_valid(self.con, 'INSTANCE_OF',
+            {'uid':'design-a','rank':'model'}, {'uid':'class','rank':''}, {'design-a':'INSTANCE'}))
+        self.assertFalse(audit.role_valid(self.con, 'DESIGN_TYPE_OF',
+            {'uid':'design-a','rank':'model'}, {'uid':'class','rank':''}, {'design-a':'INSTANCE'}))
+
+    def test_resulting_own_design_kind_does_not_inherit_predecessor_kind(self):
+        statement = 'The Model was a development of the earlier glider into a two-seat airplane.'
+        self.assertIn('airplane', audit.own_assertion_phrase(statement))
+        self.assertNotIn('glider', audit.own_assertion_phrase(statement))
+
+    def test_proposed_design_kind_survives_unbuilt_status(self):
+        statement = 'The Model was a proposed assault glider. None was built.'
+        self.assertIn('glider', audit.own_assertion_phrase(statement))
+        self.assertNotIn('not', audit.own_assertion_phrase('The Model was a prototype biplane proposed but not built.'))
+
+    def test_reconfigurable_geometry_keeps_only_common_fixed_wing_scope(self):
+        source = 'The Model was an amateur built aircraft that could fly either as a biplane or as a parasol winged monoplane.'
+        self.assertEqual(audit.scoped_assertion_phrase(source, 'OWNED_COMPLETE_RECONFIGURABLE_FIXED_WING', 'Model'),
+                         'biplane or parasol monoplane')
+        with self.assertRaisesRegex(ValueError, 'structural alternatives'):
+            audit.scoped_assertion_phrase(source.replace('could fly either', 'could never fly'),
+                                         'OWNED_COMPLETE_RECONFIGURABLE_FIXED_WING', 'Model')
+
     def test_retired_identity_claim_cannot_supply_an_own_source_witness(self):
         self.con.execute("INSERT INTO bridges VALUES(1,'design-a','source-a','SAME_CONCEPT','SOURCE_SCOPE_REVIEW')")
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))
