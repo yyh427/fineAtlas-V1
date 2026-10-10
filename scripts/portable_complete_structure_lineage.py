@@ -83,7 +83,7 @@ def require_source_parent_binding(config,name,child_path,complete):
 
 
 def package_lineage_members(config,output,accepted):
-    paths=[Path(config.get('lineage_'+name+'_build',config[name+'_build']))for name in ('primary','reproduction')]
+    paths=[Path(config[name+'_build'])for name in ('primary','reproduction')]
     actual=validate_resumed_parent_independence(*paths)
     members={};rows=[]
     for name,path in zip(('primary','reproduction'),paths):

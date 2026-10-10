@@ -17,7 +17,7 @@ def row_sha(row):
 
 
 def write_parent_snapshot(config, output, accepted):
-    inputs=Path(config['inputs']);receipt_path=Path(config.get('lineage_primary_build',config['primary_build']))
+    inputs=Path(config['inputs']);receipt_path=Path(config['primary_build'])
     complete=require_complete_type_build(receipt_path);lineage_path=receipt_path.parent/'parent_lineage.json'
     lineage=json.loads(lineage_path.read_text());parent=Path(lineage['parent_database']).resolve()
     reference=json.loads((inputs/'structure_regression_temporal_parent_reference.json').read_text())

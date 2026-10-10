@@ -5,6 +5,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import portable_complete_structure_lineage as portable
@@ -35,6 +36,23 @@ class CompletePortableLineageControls(unittest.TestCase):
     def validate(self):return portable.validate_portable_parent_independence(self.support,self.root/'builds/primary/build_complete.json',self.root/'builds/reproduction/build_complete.json',self.accepted)
     def test_closed_c933_history_verifies_without_opening_any_host_database(self):
         result=self.validate();self.assertFalse(result['physical_parent_inodes_rechecked_here']);self.assertTrue(result['immutable_historical_lineage_bytes_checked'])
+    def test_package_uses_final_six_stage_children_even_when_eight_stage_lineage_keys_exist(self):
+        config={};output=self.root/'new-package';output.mkdir()
+        for name in ('primary','reproduction'):
+            folder=self.root/'builds'/name
+            config[name+'_build']=str(folder/'build_complete.json')
+            config['lineage_'+name+'_build']=str(folder/'source-parent/build_complete.json')
+            config[name+'_parent_build']=str(folder/'source-parent/build_complete.json')
+            config['complete_type_'+name+'_parent_integrity']=str(folder/'parent_integrity.json')
+        def binding(cfg,name,path,complete):
+            self.assertEqual(Path(path),Path(config[name+'_build']))
+            return json.loads(Path(cfg[name+'_parent_build']).read_text()),json.loads(Path(cfg['complete_type_'+name+'_parent_integrity']).read_text())
+        with patch.object(portable,'validate_resumed_parent_independence',return_value=self.proof['actual_local_physical_parent_audit'])as independence,patch.object(portable,'require_source_parent_binding',side_effect=binding):
+            members=portable.package_lineage_members(config,output,self.accepted)
+        independence.assert_called_once_with(Path(config['primary_build']),Path(config['reproduction_build']))
+        self.assertEqual(members['builds/primary/build_complete.json'],Path(config['primary_build']))
+        self.assertEqual(members['builds/primary/source-parent/build_complete.json'],Path(config['lineage_primary_build']))
+
     def test_old_owned_stage_receipt_cannot_impersonate_final_child(self):
         path=self.root/'builds/primary/build_complete.json';value=json.loads(path.read_text());value['required_stages']=list(CHILD_STAGES);path.write_text(json.dumps(value))
         with self.assertRaises(ValueError):self.validate()
