@@ -1,0 +1,60 @@
+{
+  "schema": "FINEATLAS_INDEPENDENT_EXTERNAL_AUDIT_SUPPLEMENT_CODE_V1",
+  "supplement_version": "source166-class-case-v1",
+  "created_utc": "2026-10-10T21:56:54.531996+00:00",
+  "frozen_source9_input_seal_sha256": "9e88436b7989843cf56c4186c8ba2060aed53e441ea6a963e2cb32864d173f68",
+  "frozen_build_code_commit": "934ad4e2b1d53242ae28f6f619a4ed44d3c78538",
+  "original_frozen_observer_failed": true,
+  "original_frozen_input_count": 152,
+  "original_exact_eight": {
+    "external_audits/nominal-design-scope-final-plan-v1/independent_nominal_design_scope_final_interface_audit.py": "eb865c1aa61434bc176764ae0c764d2141097a297603aa363859c5986403fc98",
+    "external_audits/nominal-design-scope-final-plan-v1/run_final_nominal_design_scope_external_audit.py": "d2ffc25e9a4b657d64a9cca12aae968af76c06463c832af6dce784de8e1bef61",
+    "external_audits/nominal-design-scope-final-plan-v1/test_exact_nominal_external_plan_binding.py": "13b3af4e1287440baa160a181a107992106d8a4da58f0b9951a7eca326c63b3f",
+    "external_audits/nominal-design-scope-final-plan-v1/test_nominal_external_transition_observers.py": "a7672e8b24d262c68d37937fd4244779f6cb60e3f1170e008eb6220fdb56eb84",
+    "external_audits/nominal-formal-final-plan-v1/independent_nominal_formal_binding.py": "97cb48872c810e9b994c12b703a30edcb27e53b192c3a2ae1083140bff749a29",
+    "external_audits/nominal-formal-final-plan-v1/independent_nominal_formal_final_interface_audit.py": "8737a421353e21fc3968185b6f6bafdcaf7c24e5ac2eb7cadc19873be04ec9d1",
+    "external_audits/nominal-formal-final-plan-v1/run_final_nominal_formal_external_audit.py": "7ce3fb7300502a04f198a0a74120a8951b49516f62c665cd8f894888cf9d107f",
+    "external_audits/nominal-formal-final-plan-v1/test_independent_nominal_formal_binding.py": "f70f48a439bcaffc93e2be68016e11e4a135a765aedcb7c11e67f9079015c2ae"
+  },
+  "preserved_failure_receipts": {
+    "sealed_axis_four_schema_failure": {
+      "sha256": "9845f0f190998a8fc5721c0de444941e7836be1f23ba867c2a77d51efe3719bf"
+    },
+    "initial_military_duplicate_hash_observer_failure": {
+      "sha256": "b7180cd05ec66941cc878fea8585c5b883476e6c4b029a28924db7a93e609130"
+    }
+  },
+  "source_operation_interface_fixture": {
+    "sha256": "0f2a60c36e52fd88cf4107bae8fe053e399d81c4a7fcb18a8e3b759691d38314",
+    "fixture_only": true,
+    "actual_final_acceptance": false,
+    "operations_checked": 166,
+    "operations": {
+      "link": 89,
+      "correct_role": 26,
+      "review_class_edge": 51
+    }
+  },
+  "control_receipt": {
+    "sha256": "c3be9e91819a5ddcbc0b3b853fdb6df45b68eed74927ecb9cb9737f5052f7f49",
+    "tests": 73,
+    "fixture_only": true,
+    "actual_final_acceptance": false
+  },
+  "files": {
+    "README.txt": "5e37ab51ccf279f9cdf726921c624bedb820138bea00ce369c9818723679db9b",
+    "external_audit_supplement_binding.py": "af0fb3ed06ca8df2bbe7bc7523cea2b959851f2ab30a9905c3f1c34dafa3d49f",
+    "nominal-design-scope-final-plan-v1/independent_nominal_design_scope_final_interface_audit.py": "920ec408ff60c1362436b5b8cf2ecc2ee3e89558c4b5a79bb776602f7634d77b",
+    "nominal-design-scope-final-plan-v1/run_final_nominal_design_scope_external_audit.py": "f51948e28e49780aa33a1187651c0385ce6a9b2abda5c2f081d91c1d48324e6f",
+    "nominal-design-scope-final-plan-v1/test_complete_source_class_case_observers.py": "507b6b4e0e5dc1a24c9d603758395f33b6ade7658af5f008667d8d8b67cd2d21",
+    "nominal-design-scope-final-plan-v1/test_exact_nominal_external_plan_binding.py": "13b3af4e1287440baa160a181a107992106d8a4da58f0b9951a7eca326c63b3f",
+    "nominal-design-scope-final-plan-v1/test_nominal_external_transition_observers.py": "a7672e8b24d262c68d37937fd4244779f6cb60e3f1170e008eb6220fdb56eb84",
+    "nominal-formal-final-plan-v1/independent_nominal_formal_binding.py": "97cb48872c810e9b994c12b703a30edcb27e53b192c3a2ae1083140bff749a29",
+    "nominal-formal-final-plan-v1/independent_nominal_formal_final_interface_audit.py": "da0c4dea115a7aebcd78ccaa0698d0e608124f1a20313efefe2e42adabe0b10c",
+    "nominal-formal-final-plan-v1/run_final_nominal_formal_external_audit.py": "c2c9e4a3dbfd054623a22a38d743264f991e7986b35e4c548fc05a03e071072a",
+    "nominal-formal-final-plan-v1/test_independent_nominal_formal_binding.py": "f70f48a439bcaffc93e2be68016e11e4a135a765aedcb7c11e67f9079015c2ae",
+    "package_external_audit_supplement.py": "2bb2a3cc93560a37cd24ae0042130a4f53064c64e0547566eb66074c35c7da12",
+    "test_external_supplement_binding.py": "b28b0bc052b6e04ff12dbd2a25baa0896aa8ab3b0bbc2527a61283d63c69ed3f",
+    "verify_sealed_source_operations.py": "ef60e0d66da4b5659e14799553d751354216de6bef755efa84561b2a854f00e2"
+  }
+}
