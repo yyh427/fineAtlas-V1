@@ -177,6 +177,20 @@ def owned_motor_vehicle_design_scope(statement,label,source_names=()):
     return bool(re.search(r'\b(?:cars?|automobiles?|sportscars?)(?:\s+(?:model|family|series))?$',head,re.I))
 
 
+def owned_role_scope(statement,label):
+    """Normalize declared source grain independently of a peer's role."""
+    if owned_named_instance_genus(statement,label):return 'INSTANCE'
+    head=own_first_kind(statement,label)
+    if not head:return None
+    if re.search(r'\b(?:cultivar|grape variety)\b',head,re.I):return 'BIOLOGICAL_VARIANT'
+    if re.search(r'\bmodified example\b',head,re.I):return 'UNKNOWN'
+    if re.search(r'\b(?:prototype|trainer|target) series\b',head,re.I):return 'MODEL_FAMILY'
+    if re.search(r'\b(?:version|variant|conversion)\b|\b(?:system|transport|car) model\b|\bthird-generation\b',head,re.I):return 'MODEL'
+    if re.search(r'\btest and trials prototype\b',head,re.I):return 'MODEL'
+    if head and re.search(r'\bloitering munition\b',head,re.I)and re.search(r'\bproduced .+? by\b',statement,re.I):return 'MODEL'
+    return None
+
+
 def owned_universal_variant_genus(statement,label):
     """A reviewed whole family paragraph may declare all variants' geometry."""
     first=re.split(r'[.;]\s+(?=[A-Z])',re.sub(r'\([^()]*\)','',statement),maxsplit=1)[0]

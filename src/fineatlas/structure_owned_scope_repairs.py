@@ -21,6 +21,7 @@ from .structure_owned_scope_rules import (
     owned_named_instance_genus,
     bound_owned_source_names,
     owned_motor_vehicle_design_scope,
+    owned_role_scope,
     owned_self_twinjet_scope,
     owned_universal_variant_genus,
 )
@@ -29,13 +30,30 @@ INPUT_NAME = 'structure_owned_scope_repairs.json'
 OPERATION_NAME = 'hierarchy_owned_scope_repairs.jsonl'
 METADATA_KEY = 'owned_scope_repairs'
 SOURCE = 'Complete owned source scope adjudication'
-LINKS = {'IS_A', 'DESIGN_TYPE_OF', 'NATIVE_DESIGN_PARENT', 'INSTANCE_OF'}
-REVIEWS = {'review_bridge': 'bridges', 'review_typed_relation': 'entity_relations'}
+LINKS = {'IS_A', 'DESIGN_TYPE_OF', 'NATIVE_DESIGN_PARENT', 'INSTANCE_OF', 'TAXONOMIC_PARENT'}
+REVIEWS = {'review_bridge': 'bridges', 'review_typed_relation': 'entity_relations', 'review_class_edge': 'edges'}
 MAPPINGS = {'migrate_nominal_design_mapping', 'review_dataset_mapping'}
 
 
 def node(c, uid):
     return c.execute('SELECT n.*, '+role_expression('n', 'p')+' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?', (uid,)).fetchone()
+
+
+def owned_identity_peer(c, child, witness):
+    """Source fields belong to the own object only through actual live identity."""
+    if child == witness:return True
+    role=node(c,child)['role'];todo=[child];seen=set()
+    while todo:
+        current=todo.pop()
+        if current in seen:continue
+        seen.add(current)
+        for b in c.execute("SELECT left_uid,right_uid FROM bridges WHERE relation='SAME_CONCEPT' AND status='ACTIVE' AND (left_uid=? OR right_uid=?)",(current,current)):
+            peer=b['right_uid'] if b['left_uid']==current else b['left_uid']
+            n=node(c,peer)
+            if not n or n['role'] != role:continue
+            if peer==witness:return True
+            todo.append(peer)
+    return False
 
 
 def qualified_seamount_scope(statement, label):
@@ -51,9 +69,11 @@ def qualified_seamount_scope(statement, label):
 
 def _witness(c, w):
     table = w.get('table', 'nodes')
-    if table not in {'nodes', 'edges', 'entity_relations'}:
+    if table not in {'nodes', 'edges', 'entity_relations', 'evidence'}:
         raise ValueError('Unexpected complete source witness table')
-    r = c.execute('SELECT data FROM '+table+' WHERE '+('uid' if table == 'nodes' else 'id')+'=?', (w['uid'] if table == 'nodes' else w['id'],)).fetchone()
+    column='payload'if table=='evidence'else'data'
+    key='evidence_id'if table=='evidence'else'uid'if table=='nodes'else'id'
+    r=c.execute('SELECT '+column+' FROM '+table+' WHERE '+key+'=?',(w[key],)).fetchone()
     if not r or sha(r[0]) != w['data_sha256']:
         raise ValueError('Complete source witness changed')
     d = json.loads(r[0])
@@ -149,7 +169,9 @@ def validate_batch_cycles(c, operations, partitions):
             if a == b: raise ValueError('Hierarchy cannot link equivalent source objects')
             proposed[a].add(b); endpoints[a].add(o['uid']); endpoints[b].add(o['parent'])
     typed_retired = {o['before_assertion']['id'] for o in operations if o['op'] == 'review_typed_relation'}
+    class_retired = {o['before_assertion']['id'] for o in operations if o['op'] == 'review_class_edge'}
     cached = {}
+    role_overrides = {o['uid']:o['after_profile']['node_kind']for o in operations if o['op']=='correct_role'}
     def parents(key):
         if key in cached: return cached[key]
         if key[0] == 'split': peers = partitions[key[1]][key[2]]
@@ -158,18 +180,19 @@ def validate_batch_cycles(c, operations, partitions):
         for u in peers:
             n = node(c, u)
             if n['visibility'] != 'ACTIVE': continue
-            for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('NATIVE_DESIGN_PARENT','DESIGN_TYPE_OF','SERIES_MEMBER_OF','CONFIGURATION_OF','CONFIGURATION_TYPE_OF','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT')", (u,)):
+            for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('NATIVE_DESIGN_PARENT','DESIGN_TYPE_OF','SERIES_MEMBER_OF','CONFIGURATION_OF','CONFIGURATION_TYPE_OF','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT','INSTANCE_OF')", (u,)):
                 if r['id'] in typed_retired: continue
                 p = node(c, r['object_uid'])
                 if not p or p['visibility'] != 'ACTIVE': continue
-                try: validate_link_roles(r['relation'], n['role'], p['role'])
+                try: validate_link_roles(r['relation'], role_overrides.get(n['uid'],n['role']), role_overrides.get(p['uid'],p['role']))
                 except ValueError: continue
                 target = component(p['uid'])
                 if target != key: result.add(target)
-            if n['role'] == 'CLASS':
-                for r in c.execute("SELECT parent_uid FROM edges WHERE child_uid=? AND status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A'", (u,)):
-                    p = node(c, r[0])
-                    if p and p['visibility'] == 'ACTIVE' and p['role'] == 'CLASS' and component(p['uid']) != key: result.add(component(p['uid']))
+            if role_overrides.get(n['uid'],n['role']) == 'CLASS':
+                for r in c.execute("SELECT id,parent_uid FROM edges WHERE child_uid=? AND status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A'", (u,)):
+                    if r['id'] in class_retired:continue
+                    p = node(c, r['parent_uid'])
+                    if p and p['visibility'] == 'ACTIVE' and role_overrides.get(p['uid'],p['role']) == 'CLASS' and component(p['uid']) != key: result.add(component(p['uid']))
         cached[key] = result
         return result
     for child, ps in proposed.items():
@@ -215,7 +238,21 @@ def validate_owned_scope_repairs(c, manifest, operations):
             if o['relation'] not in LINKS or p.get('world_identity_assertion') is not False or p.get('no_identity_merges') is not True: raise ValueError('Directional genus cannot certify world identity')
             if not p.get('whole_subject_scope_review') or len(p.get('source_witnesses', [])) < 2: raise ValueError('Both own and parent scopes must be retained')
             own = p['source_witnesses'][0]
-            if o['relation'] == 'IS_A':
+            if own.get('table','nodes')=='nodes' and not owned_identity_peer(c,a['uid'],own['uid']):raise ValueError('Different-source component cannot supply an owned field without active role-compatible identity')
+            if o['relation'] == 'TAXONOMIC_PARENT':
+                review=p['host_taxon_scope_review'];parent=p['source_witnesses'][1]
+                if role_overrides.get(a['uid'],a['role'])!='BIOLOGICAL_VARIANT' or not review['source_host_not_fruit'] or not review['child_remains_biological_variant'] or review['species_identity_assertion']is not False:raise ValueError('Host lineage must preserve biological cultivar grain')
+                parent_data=json.loads(b['data']);parent_description=parent_data.get('wikidata_description')or parent_data.get('description')or parent_data.get('evidence_record',{}).get('wikidata_description','')
+                if review['parent_taxon_rank']!='species' or not re.search(r'\bspecies\b',parent_description,re.I):raise ValueError('Biological host must independently denote a living source taxon')
+                if review['host_scientific_name']not in parent['statement'] or review['child_owned_host_phrase']not in own['statement'] or review['parent_owned_host_phrase']not in parent['statement']:raise ValueError('Scientific host and complete own definition do not close')
+                if own.get('table')=='evidence':
+                    payload=json.loads(c.execute('SELECT payload FROM evidence WHERE evidence_id=?',(own['evidence_id'],)).fetchone()[0])
+                    if payload.get('child_uid')!=a['uid']:raise ValueError('Independent complete cultivar sentence belongs to another object')
+                elif own.get('uid')!=a['uid']:raise ValueError('Biological host needs its own source object definition')
+                for support in review.get('retained_primary_taxonomic_or_classifier_assertions',[]):
+                    row=c.execute('SELECT * FROM edges WHERE id=?',(support['id'],)).fetchone()
+                    if not row or dict(row)!=support:raise ValueError('Retained primary cultivar host declaration changed')
+            elif o['relation'] == 'IS_A':
                 parent = p['source_witnesses'][1]
                 geographic = qualified_seamount_scope(own['statement'], a['label']) and parent['statement'] == 'an underwater mountain rising above the ocean floor'
                 road_vehicle = motor_vehicle_class_scope(p, own, parent, a['label'])
@@ -236,6 +273,14 @@ def validate_owned_scope_repairs(c, manifest, operations):
                     complete_car = p.get('source_assertion_witnesses', [])
                     if parent['statement'] != 'a self-propelled wheeled vehicle that does not run on rails' or not complete_car or not re.search(r'\bis a motor vehicle with wheels\.?$',complete_car[0]['statement'],re.I):raise ValueError('Automotive design lacks independently grounded broad motor-vehicle sense')
                     result = ('motor vehicle','wordnet31:03796768-n') if owned_motor_vehicle_design_scope(own['statement'],a['label'],own.get('bound_source_names',())) else None
+                elif kind == 'PRIMARY_MANUFACTURER_WHOLE_NOMINAL_MOTOR_VEHICLE':
+                    scope=p['primary_manufacturer_scope'];doc=scope['document'];facts=scope['scope_facts']
+                    if own.get('table')!='entity_relations':raise ValueError('Primary nominal object lacks its retained producer binding')
+                    origin=c.execute('SELECT * FROM entity_relations WHERE id=?',(own['id'],)).fetchone();basis=json.loads(origin['data'])['admission_basis']
+                    if origin['subject_uid']!=a['uid'] or basis['primary_label']!=a['label'] or scope['nominal_design_name']!=a['label'] or scope['title']!=a['label']+' model series':raise ValueError('Manufacturer document belongs to a different nominal source object')
+                    if doc['source_kind']!='PRIMARY_MANUFACTURER_OR_REGULATOR' or not re.fullmatch(r'[0-9a-f]{64}',doc['sha256']) or not doc['source_uri'].startswith('https://') or not scope['primary_scope_covers_whole_named_design'] or scope['four_wheel_assertion']is not False or scope['category_same_concept_assertion']is not False or not facts['licensed_bubble_car_design'] or not facts['self_propulsion_combustion_engine']:raise ValueError('Primary complete manufacturer range is not independently defined')
+                    if p['source_witnesses'][1]['statement']!='a self-propelled wheeled vehicle that does not run on rails':raise ValueError('Primary automotive scope does not prove a narrower parent sense')
+                    result=('motor vehicle','wordnet31:03796768-n')
                 else:
                     result = owned_physical_genus(re.sub(r'\b(wide|narrow)body\b', r'\1-body', own['statement'], flags=re.I), a['label'], own.get('bound_source_names', ()))
                 if not result or result[1] != b['uid'] or b['uid'] == 'wordnet31:02961779-n': raise ValueError('Owned complete physical genus does not entail its selected source parent')
@@ -245,10 +290,10 @@ def validate_owned_scope_repairs(c, manifest, operations):
         elif o['op'] in REVIEWS:
             before = o['before_assertion']; table = REVIEWS[o['op']]
             actual = c.execute('SELECT * FROM '+table+' WHERE id=?', (before['id'],)).fetchone()
-            cols = ('left_uid','right_uid') if table == 'bridges' else ('subject_uid','object_uid')
+            cols = ('left_uid','right_uid') if table == 'bridges' else ('child_uid','parent_uid') if table=='edges' else ('subject_uid','object_uid')
             if not actual or dict(actual) != before or source_assertion_sha256(actual) != o['content_sha256'] or (before[cols[0]], before[cols[1]], before['relation']) != (o['uid'],o['parent'],o['relation']) or before['status'] != 'ACTIVE' or o['after_status'] != 'SOURCE_SCOPE_REVIEW': raise ValueError('Review must bind exactly its original active assertion')
             if o['op'] == 'review_bridge' and o['relation'] != 'SAME_CONCEPT': raise ValueError('Identity scope review must retain a true identity declaration')
-            if p['basis'] not in {'INCOMPATIBLE_WHOLE_SOURCE_AND_NARROW_WORDNET_SENSE','INSUFFICIENT_WHOLE_PARENT_RANGE_EVIDENCE','HISTORICAL_TAXON_VERSION_WHOLE_SCOPE_GAP','OWNED_WHOLE_PURPOSE_RANGE_INCOMPATIBLE_WITH_COMMERCIAL_TYPE'}: raise ValueError('Unknown individually grounded scope review kind')
+            if p['basis'] not in {'INCOMPATIBLE_WHOLE_SOURCE_AND_NARROW_WORDNET_SENSE','INSUFFICIENT_WHOLE_PARENT_RANGE_EVIDENCE','HISTORICAL_TAXON_VERSION_WHOLE_SCOPE_GAP','OWNED_WHOLE_PURPOSE_RANGE_INCOMPATIBLE_WITH_COMMERCIAL_TYPE','BIOLOGICAL_VARIANT_NOT_FRUIT_OR_ORDINARY_CLASS','INSUFFICIENT_NAMED_INDIVIDUAL_ROLE_SCOPE'}: raise ValueError('Unknown individually grounded scope review kind')
             if not p.get('source_native_objects_preserved'): raise ValueError('Review cannot delete source objects')
         elif o['op'] in MAPPINGS:
             key = (o['dataset'], o['class_id'])
@@ -270,14 +315,28 @@ def validate_owned_scope_repairs(c, manifest, operations):
             for table, field in [('node_profiles','before_profile'),('normalization_roles','before_normalization_role')]:
                 actual = c.execute('SELECT * FROM '+table+' WHERE uid=?',(o['uid'],)).fetchone()
                 if (dict(actual) if actual else None) != o[field]:raise ValueError('Original canonical role adjudication changed')
-            if not a or a['visibility'] != 'ACTIVE' or o['uid'] != o['parent'] or o['relation'] != 'ROLE_ADJUDICATION' or o['after_profile']['node_kind'] != 'INSTANCE' or o['after_normalization_role']['canonical_role'] != 'INSTANCE':raise ValueError('Role correction is not a grounded named individual')
-            if not p.get('source_native_objects_preserved') or len(p.get('source_witnesses',[])) != 1 or not owned_named_instance_genus(p['source_witnesses'][0]['statement'],a['label']):raise ValueError('Own name is not independently identified as a physical member')
+            target_role=o['after_profile']['node_kind']
+            if not a or a['visibility'] != 'ACTIVE' or o['uid'] != o['parent'] or o['relation'] != 'ROLE_ADJUDICATION' or target_role not in {'MODEL','MODEL_FAMILY','BIOLOGICAL_VARIANT','INSTANCE','UNKNOWN'} or o['after_normalization_role']['canonical_role'] != target_role:raise ValueError('Role correction is not a grounded source grain')
+            if not p.get('source_native_objects_preserved') or len(p.get('source_witnesses',[])) != 1:raise ValueError('Source whole role statement must be preserved')
+            role_w=p['source_witnesses'][0]
+            if role_w['uid']!=a['uid']:
+                ground=p.get('same_source_identifier_role_grounding')
+                if not ground:raise ValueError('Role cannot be copied from a different source object')
+                for field,uid in [('before_own_node',a['uid']),('before_independent_definition_node',role_w['uid'])]:
+                    actual=c.execute('SELECT * FROM nodes WHERE uid=?',(uid,)).fetchone()
+                    if not actual or dict(actual)!=ground[field]:raise ValueError('Same-source complete scope binding changed')
+                own_data=json.loads(a['data']);definition_data=json.loads(ground['before_independent_definition_node']['data'])
+                bridge=ground['before_identity_bridge'];actual=c.execute('SELECT * FROM bridges WHERE id=?',(bridge['id'],)).fetchone()
+                if not actual or dict(actual)!=bridge or bridge['status']!='ACTIVE'or bridge['relation']!='SAME_CONCEPT' or not own_data.get('qid')or own_data['qid']!=definition_data.get('qid')or a['label']!=ground['before_independent_definition_node']['label']:raise ValueError('Independent producer definition lacks a complete same-source identifier scope binding')
+            if owned_role_scope(role_w['statement'],a['label'])!=target_role:raise ValueError('Own complete source does not declare the selected role')
             before = o['before_profile']; norm = o['before_normalization_role']
-            eid = 'usability:'+sha(dump(p)); attrs = json.loads(before['attributes'])
+            eid = 'usability:'+sha(dump(p)); attrs = json.loads(before['attributes']) if before else {}
             attrs.update(source_role=p.get('source_role', attrs.get('source_role','UNSPECIFIED')), native_rank=p.get('native_rank', attrs.get('native_rank',a['rank'])),role_status='VERIFIED',role_evidence_id=eid)
             attrs.pop('canonical_scope_guard',None);attrs.pop('canonical_scope_evidence_id',None)
-            expected_profile = {**before,'node_kind':'INSTANCE','source_uri':o['uri'],'evidence_id':eid,'attributes':dump(attrs)}
-            expected_norm = {**norm,'canonical_role':'INSTANCE','evidence_id':eid,'source':SOURCE}
+            if target_role=='UNKNOWN':attrs.update(role_status='REVIEW',allowed_views=[])
+            expected_profile = {**(before or {'uid':a['uid'],'domain':a['domain']}),'node_kind':target_role,'source_uri':o['uri'],'evidence_id':eid,'attributes':dump(attrs)}
+            expected_norm = {**(norm or {'uid':a['uid'],'source_role':p.get('source_role')or a['rank']or'UNSPECIFIED','status':'VERIFIED','prior_profile':dump(before or {})}),'canonical_role':target_role,'evidence_id':eid,'source':SOURCE}
+            if target_role=='UNKNOWN':expected_norm['status']='REVIEW'
             if o['after_profile'] != expected_profile or o['after_normalization_role'] != expected_norm:raise ValueError('Corrected role must preserve all unrelated original profile and source fields')
         else: raise ValueError('Unknown owned scope operation')
     partitions = expected_partitions(c, operations)
@@ -300,6 +359,9 @@ def apply_owned_scope_repairs(m):
     for o in operations:
         if o['op'] != 'correct_role':continue
         m.role(o['uid'],o['after_profile']['node_kind'],o['proof'],SOURCE,o['uri'])
+        if o['after_profile']['node_kind']=='UNKNOWN':
+            m.c.execute('UPDATE node_profiles SET attributes=? WHERE uid=?',(o['after_profile']['attributes'],o['uid']))
+            m.c.execute("UPDATE normalization_roles SET status='REVIEW' WHERE uid=?",(o['uid'],))
         after = {'profile':dict(m.c.execute('SELECT * FROM node_profiles WHERE uid=?',(o['uid'],)).fetchone()),'normalization_role':dict(m.c.execute('SELECT * FROM normalization_roles WHERE uid=?',(o['uid'],)).fetchone())}
         if after != {'profile':o['after_profile'],'normalization_role':o['after_normalization_role']}:raise ValueError('Corrected actual role differs from its frozen source decision')
         m.change(METADATA_KEY,'role_scope_correction',o['uid'],{'profile':o['before_profile'],'normalization_role':o['before_normalization_role']},after,o['proof'])
@@ -308,7 +370,7 @@ def apply_owned_scope_repairs(m):
         if o['op'] not in REVIEWS: continue
         before = o['before_assertion']; table = REVIEWS[o['op']]
         m.c.execute('UPDATE '+table+" SET status='SOURCE_SCOPE_REVIEW' WHERE id=?", (before['id'],))
-        m.change(METADATA_KEY,'bridge_scope_review' if table=='bridges' else 'typed_scope_review',before['id'],before,{'status':'SOURCE_SCOPE_REVIEW'},o['proof'])
+        m.change(METADATA_KEY,'bridge_scope_review' if table=='bridges' else 'class_scope_review' if table=='edges' else 'typed_scope_review',before['id'],before,{'status':'SOURCE_SCOPE_REVIEW'},o['proof'])
         counts[o['op']] += 1
         if o.get('non_navigation_reference_relation'):
             source = SOURCE+': prior-bridge:'+o['content_sha256']; eid=m.evidence(source,o['uri'],o['proof'],o['non_navigation_reference_relation'])

@@ -7,7 +7,7 @@ from fineatlas.migration import dump
 from fineatlas.structure_regression_repairs import sha
 from fineatlas.structure_owned_scope_rules import (
     bound_owned_source_names, owned_named_instance_genus,
-    owned_physical_genus, owned_reconfigurable_fixed_wing,
+    owned_physical_genus, owned_reconfigurable_fixed_wing, owned_role_scope,
 )
 from fineatlas.structure_owned_scope_repairs import (
     SOURCE, expected_partitions, validate_batch_cycles,
@@ -56,6 +56,25 @@ class OwnedScopeGrammarTests(unittest.TestCase):
         self.assertEqual(owned_named_instance_genus(article, 'Named Flyer')[1], 'wikidata:Q223818')
         self.assertIsNone(owned_named_instance_genus(article, 'Design'))
         self.assertIsNone(owned_named_instance_genus('The X is a biplane. Only one was built.', 'X'))
+
+    def test_source_role_is_declared_independently_of_peer_or_member_count(self):
+        cases = [
+            ('maritime patrol version of the X Series 200', 'MODEL'),
+            ('prototype series for the X family', 'MODEL_FAMILY'),
+            ('apple cultivar', 'BIOLOGICAL_VARIANT'),
+            ('spin trial aircraft, modified example of the X Mk II', 'UNKNOWN'),
+        ]
+        for statement, role in cases:
+            with self.subTest(statement=statement):
+                self.assertEqual(owned_role_scope(statement, 'Named object'), role)
+        self.assertIsNone(owned_role_scope('The Named object is a biplane. Only one was built.', 'Named object'))
+
+    def test_explicit_company_designation_does_not_admit_a_named_physical_member(self):
+        data = {'enwiki_title': 'Manufacturer Design'}
+        paragraph = 'The Manufacturer Design (company model X) is a jet trainer.'
+        self.assertIn('Manufacturer Design', bound_owned_source_names(data, 'Manufacturer X', paragraph))
+        physical = 'The Design is a biplane. Two examples were built. One of them—the Named Flyer—flew.'
+        self.assertEqual(bound_owned_source_names(data, 'Named Flyer', physical), [])
 
 
 class OwnedScopeDatabaseContracts(unittest.TestCase):
