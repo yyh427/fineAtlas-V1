@@ -99,6 +99,9 @@ def main():
     args = parser.parse_args()
     for name, path in vars(args).items():
         setattr(args, name, path.resolve())
+    from structure_literal_jet_delivery_guard import SPEC, input_path
+    if input_path(SPEC, args.inputs, ROOT) is None:
+        raise ValueError("Literal-jet child requires its sealed frozen input")
     fingerprints, context = start_build(args.inputs, args.reports)
     states = {}
     temp = args.database.parent / "tmp"
@@ -157,7 +160,13 @@ def main():
     from fineatlas.structure_literal_jet_scope_repairs import apply_literal_jet_scope_repairs
     original_metadata = read_metadata(args.database)
     original_stages = list(migration.c.execute('SELECT * FROM usability_stages ORDER BY stage'))
-    stage("literal_jet_scope_repairs", lambda: apply_literal_jet_scope_repairs(migration))
+    def apply_fifth():
+        result = apply_literal_jet_scope_repairs(migration)
+        if result.get("status") != "PASS":
+            raise ValueError("Actual literal-jet delta was not applied")
+        return result
+
+    stage("literal_jet_scope_repairs", apply_fifth)
     current = read_metadata(args.database)
     mutable_readiness = {'usability_indexes_ready', 'unified_ready', 'browse_indexes_ready'}
     if (any(current.get(key) != value for key, value in original_metadata.items() if key not in mutable_readiness)
