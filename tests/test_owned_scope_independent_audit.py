@@ -41,6 +41,22 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         self.assertNotIn('glider', audit.own_assertion_phrase(
             'The Prototype is an aircraft derived from a glider.'))
 
+    def test_universal_variant_scope_does_not_generalize_some_variants(self):
+        statement = 'The Model family were aircraft. All variants were single-engine monoplanes with landing gear.'
+        self.assertIn('monoplanes', audit.scoped_assertion_phrase(statement, 'OWNED_UNIVERSAL_VARIANTS', 'Model'))
+        with self.assertRaisesRegex(ValueError, 'all-variants'):
+            audit.scoped_assertion_phrase(statement.replace('All variants', 'Some variants'),
+                                          'OWNED_UNIVERSAL_VARIANTS', 'Model')
+
+    def test_anaphor_is_bound_to_named_own_design_and_positive_claim(self):
+        statement = 'The Model family is a series of aircraft. The twinjet has six-abreast seating.'
+        self.assertIn('twinjet', audit.scoped_assertion_phrase(statement, 'OWNED_SELF_TWINJET', 'Model family'))
+        with self.assertRaisesRegex(ValueError, 'named own'):
+            audit.scoped_assertion_phrase(statement, 'OWNED_SELF_TWINJET', 'Other family')
+        with self.assertRaisesRegex(ValueError, 'absent or incompatible'):
+            audit.scoped_assertion_phrase(statement.replace('has six', 'has never had six'),
+                                          'OWNED_SELF_TWINJET', 'Model family')
+
     def test_retired_identity_claim_cannot_supply_an_own_source_witness(self):
         self.con.execute("INSERT INTO bridges VALUES(1,'design-a','source-a','SAME_CONCEPT','SOURCE_SCOPE_REVIEW')")
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))

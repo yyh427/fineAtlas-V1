@@ -212,6 +212,27 @@ def own_assertion_phrase(statement):
                     predicate, maxsplit=1, flags=re.I)[0]
 
 
+def scoped_assertion_phrase(statement, scope_kind, label):
+    if scope_kind == 'OWNED_UNIVERSAL_VARIANTS':
+        match = re.search(r'(?:^|[.!?]\s+)All variants\s+(?:are|were)\s+([^.!?]+)', statement, re.I)
+        if not match:
+            raise ValueError('Universal physical kind needs an explicit complete all-variants assertion')
+        return re.split(r'\s+(?:with|that|which|whose)\b', match[1], maxsplit=1, flags=re.I)[0]
+    if scope_kind == 'OWNED_SELF_TWINJET':
+        copula = re.search(r'\b(?:is|was|are|were)\s+', statement, re.I)
+        words = lambda text: re.findall(r'[^\W_]+', text.casefold(), re.UNICODE)
+        lead = re.sub(r'^(?:the|an?)\s+', '', statement[:copula.start()].strip(), flags=re.I) if copula else ''
+        if words(lead) != words(label) or not re.search(r'\b(?:aircraft|airliners?|family)\b', own_assertion_phrase(statement), re.I):
+            raise ValueError('Self-anaphor needs the explicitly named own aircraft design scope')
+        match = re.search(r'\bthe twinjet\s+(?:has|had|retained|features|featured|is|was|came)\b([^.!?]*)', statement, re.I)
+        if not match or re.search(r'\b(?:not|never|fictional|virtual|toy|replica)\b', match[0], re.I):
+            raise ValueError('Own twinjet anaphor is absent or incompatible')
+        return match[0]
+    if scope_kind not in {None, 'OWNED_FIRST_SUBJECT', 'RETAINED_SOURCE_CLASS_MOTOR_VEHICLE'}:
+        raise ValueError('Unrecognized whole physical scope declaration')
+    return own_assertion_phrase(statement)
+
+
 def role_valid(con, relation, left, right):
     allowed = NAVIGATION_ROLES.get(relation)
     return bool(allowed and node_role(con, left) in allowed[0] and node_role(con, right) in allowed[1])
@@ -375,7 +396,9 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if len(witnesses) < 2 or not proof.get('whole_subject_scope_review'):
                     raise ValueError('Whole own subject and complete parent scope are required')
                 own = retained_own_statements[0] if retained_own_statements else witnesses[0]['statement']
-                phrase = own_assertion_phrase(own)
+                witness_node = row_at(con, 'nodes', witnesses[0].get('uid', child['uid']), 'uid')
+                phrase = scoped_assertion_phrase(own, proof.get('owned_physical_scope_kind'),
+                                                witness_node['label'] if witness_node else child['label'])
                 if re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
