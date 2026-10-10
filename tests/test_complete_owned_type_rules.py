@@ -79,3 +79,27 @@ class CompleteOwnedTypeRulesTest(unittest.TestCase):
         assert parent("Named design is a personal computer.") == "wikidata:Q16338"
         assert parent("Named design is a fictional digital camera.") is None
         assert parent("Named design is a car model.") is None
+
+    def test_structural_genus_survives_training_and_model_noun_tails(self):
+        assert parent('glider aircraft model designed in Finland')=='wikidata:Q2165278'
+        assert parent('small, single engine, tandem seat floatplane training aircraft')=='wikidata:Q115940'
+        assert parent('single-engined monoplane airplane')=='wikidata:Q627537'
+        assert parent('tandem seat biplane basic trainer')=='wikidata:Q223818'
+        assert parent('side-by-side seat biplane trainer')=='wikidata:Q223818'
+        assert parent('motor-glider aircraft family')=='wikidata:Q1930290'
+        assert parent('glider and motor glider')=='wikidata:Q2165278'
+        assert parent('aircraft derived from a motor glider')=='wordnet31:02689427-n'
+
+class OwnedWholeUnionScopeTest(unittest.TestCase):
+    def test_motor_configuration_union_keeps_common_source_capability(self):
+        for text in ('German glider / motor glider (2020)',
+                     'two-seat glider / motor glider (2011)',
+                     'glider and motor glider'):
+            self.assertEqual(complete_owned_physical_genus(text,'object')['parent'],
+                             'wikidata:Q2165278')
+
+    def test_thin_type_metadata_does_not_establish_class_grain(self):
+        self.assertFalse(owned_generic_class_scope('type of aircraft','Named Aircraft'))
+        self.assertTrue(owned_generic_class_scope(
+            'An autonomous aircraft is an aircraft which flies without a human pilot.',
+            'autonomous aircraft'))

@@ -18,7 +18,10 @@ def owned_complete_head(statement: str, label: str, source_names=()) -> tuple[st
     first = re.split(r"[.;]\s+(?=[A-Z])", text[copula.end():] if copula else text, maxsplit=1)[0]
     if re.search(r"\b(?:fictional|imaginary|virtual|replica|scale model|not real|not physical|toy)\b", first, re.I):
         return None
-    head = own_first_kind(statement, label, source_names)
+    # A hyphenated seating modifier is not the start of a "by manufacturer"
+    # clause. Normalize only that declared modifier before the frozen grammar.
+    parsed_statement=re.sub(r'\bside-by-side\b','sidebyside',statement,flags=re.I)
+    head = own_first_kind(parsed_statement, label, source_names)
     if head and head != "member":
         # Semicolons always end a declaration, even when the next historical
         # clause starts with lowercase. It cannot supply a missing jet kind.
@@ -45,6 +48,12 @@ def complete_owned_physical_genus(statement: str, label: str, source_names=(), c
     normalized = re.sub(r"\b(wide|narrow)body\b", r"\1-body", head, flags=re.I)
     normalized = re.sub(r"\b(short|medium|long)[ -]+to[ -]+(short|medium|long)[ -]+range\b", r"\1 \2 range", normalized, flags=re.I)
     normalized = re.sub(r"\btwin[ -]+jet\b", "twinjet", normalized, flags=re.I)
+    # A union of powered and unpowered configurations shares the native
+    # glider capability class, not universal motor hardware. Preserve the
+    # full first predicate rather than selecting the last noun after slash.
+    union=re.search(r"\bgliders?\s*(?:/|and|or)\s*motor[ -]gliders?\b",normalized,re.I)
+    if union and all(t in MODIFIERS or t.isdigit()for t in words(normalized[:union.start()])) and all(t.isdigit()or t in {'model','family','series'}for t in words(normalized[union.end():])):
+        return {'head':head,'genus':'glider','parent':'wikidata:Q2165278','predicate_kind':'OWNED_GLIDER_AND_MOTOR_GLIDER_UNION'}
     # Commas separating adjective groups cannot drop a coordinated noun kind.
     normalized = re.sub(r",\s*", " ", normalized)
     if re.search(r"\b(?:and|or|not|never)\b", normalized, re.I):
@@ -92,6 +101,26 @@ def complete_owned_physical_genus(statement: str, label: str, source_names=(), c
                 return {"head": head, "genus": "jet aircraft", "parent": "wordnet31:03601053-n" if fixed_wing_noun else "wikidata:Q206592", "predicate_kind": basis, "fixed_wing_evidence": end[1] if fixed_wing_noun else None}
             if "turboprop" in tokens and fixed_wing_noun:
                 return {"head": head, "genus": "turboprop airplane", "parent": "wordnet31:04018858-n", "predicate_kind": basis, "fixed_wing_evidence": end[1]}
+    # Preserve an explicit structural genus when a source appends a design,
+    # aircraft or training noun. The entire first predicate must remain a
+    # modifier list around that genus; a later derived object's kind is never
+    # searched. Powered and mixed glider ranges remain separate.
+    specific = (
+        (r'motor[ -]gliders?|motorgliders?', 'wikidata:Q1930290'),
+        (r'biplanes?', 'wikidata:Q223818'),
+        (r'monoplanes?', 'wikidata:Q627537'),
+        (r'triplanes?', 'wikidata:Q106459641'),
+        (r'helicopters?', 'wikidata:Q34486'),
+        (r'flying boats?', 'wikidata:Q1153376'),
+        (r'seaplanes?|floatplanes?', 'wikidata:Q115940'),
+        (r'autogyros?|autogiros?|gyroplanes?|gyrocopters?', 'wikidata:Q208708'),
+        (r'airships?|dirigibles?', 'wikidata:Q133585'),
+        (r'gliders?|sailplanes?', 'wikidata:Q2165278'),
+    )
+    for pattern, uid in specific:
+        match = re.search(r'\b('+pattern+r')\b', normalized,re.I)
+        if match and all(t in MODIFIERS or t.isdigit()or t=='sidebyside' for t in words(normalized[:match.start()])) and all(t in MODIFIERS or t.isdigit()or t in {'airplane','aeroplane','aircraft','design','designs','family','series','model','models'} for t in words(normalized[match.end():])):
+            return {'head':head,'genus':match[1],'parent':uid,'predicate_kind':basis}
     # A specific digital-camera/personal-computer declaration precedes its
     # broader camera/computer noun. Do not discard a proven specific modifier.
     for pattern, uid, _ in CLASS_GENERA:
@@ -127,7 +156,11 @@ def owned_generic_class_scope(statement: str, label: str, source_names=()) -> bo
         return False
     text = statement.strip()
     copula = re.search(r"\b(?:is|was|are|were)\b\s+", text, re.I)
-    predicate = text[copula.end():] if copula else text
+    # A thin metadata fragment "type of aircraft" is not an independent
+    # whole universal declaration; a named design importer may use it too.
+    if not copula:
+        return False
+    predicate = text[copula.end():]
     predicate = re.split(r"[.;]\s+(?=[A-Z])", predicate, maxsplit=1)[0]
     if re.match(r"(?:an?\s+)?(?:type|kind|category|class) of\b", predicate, re.I):
         return True

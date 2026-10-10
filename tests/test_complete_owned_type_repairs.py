@@ -4,11 +4,12 @@ import sqlite3
 import unittest
 
 from fineatlas.structure_complete_owned_type_repairs import (
-    SOURCE, dump, safe_input, validate_complete_owned_type_repairs,
+    SOURCE, dump, safe_input, parent_manifest_sha256, validate_complete_owned_type_repairs,
 )
 from fineatlas.structure_complete_owned_type_rules import complete_owned_physical_genus
 from fineatlas.structure_regression_repairs import sha
 from pathlib import Path
+from fineatlas.migration import Migration
 
 
 class CompleteOwnedTypeContractTest(unittest.TestCase):
@@ -47,7 +48,7 @@ class CompleteOwnedTypeContractTest(unittest.TestCase):
             'selected_physical_predicate':complete_owned_physical_genus(own['statement'],child['label']),
             'prior_assertions':[],
         }}
-        self.manifest = {'schema':'FINEATLAS_COMPLETE_OWNED_TYPE_REPAIRS_V1','operation_count':1,'operations_sha256':'exact-ops-sha','completed_parent_binding':{'database_revision':'parent-revision','frozen_manifest_sha256':sha(dump({'inputs':{'old.json':'old-sha'}}))},'parent_components':{parent['uid']:{'before_node':parent,'before_profile':{'uid':parent['uid'],'node_kind':'CLASS'},'before_normalization_role':None,'component_nodes':[parent],'component_bridges':[],'parent_edges':[],'parent_typed':[]}}}
+        self.manifest = {'schema':'FINEATLAS_COMPLETE_OWNED_TYPE_REPAIRS_V1','operation_count':1,'operations_sha256':'exact-ops-sha','completed_parent_binding':{'database_revision':'parent-revision','frozen_manifest_sha256':parent_manifest_sha256({'inputs':{'old.json':'old-sha'}})},'parent_components':{parent['uid']:{'before_node':parent,'before_profile':{'uid':parent['uid'],'node_kind':'CLASS'},'before_normalization_role':None,'component_nodes':[parent],'component_bridges':[],'parent_edges':[],'parent_typed':[]}}}
         self.approval = {'accepted_source_scope_only':True,'operations_sha256':'exact-ops-sha','approved_keys':[['model',parent['uid'],'DESIGN_TYPE_OF']]}
 
     def tearDown(self):
@@ -90,6 +91,82 @@ class CompleteOwnedTypeContractTest(unittest.TestCase):
         for filename in ('../outside.json','/tmp/source.json','', '..'):
             with self.assertRaises(ValueError): safe_input(Path('/inputs'),filename)
 
+    def test_role_evidence_matches_real_migration_encoding(self):
+        c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row
+        c.executescript('''
+            CREATE TABLE nodes(uid TEXT,label TEXT,domain TEXT,rank TEXT,data TEXT);
+            CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT,domain TEXT,source_uri TEXT,evidence_id TEXT,attributes TEXT);
+            CREATE TABLE normalization_roles(uid TEXT PRIMARY KEY,source_role TEXT,canonical_role TEXT,status TEXT,evidence_id TEXT,source TEXT,prior_profile TEXT);
+            CREATE TABLE evidence(layer TEXT,evidence_id TEXT PRIMARY KEY,source TEXT,source_uri TEXT,retrieved_utc TEXT,claim TEXT,payload TEXT,sha256 TEXT);
+            CREATE TABLE usability_changes(stage TEXT,object_type TEXT,object_id TEXT,before_json TEXT,after_json TEXT,evidence TEXT);
+        ''')
+        c.execute('INSERT INTO nodes VALUES(?,?,?,?,?)',('named','Named programme','computers','class','{}'))
+        before={'uid':'named','node_kind':'CLASS','domain':'computers','source_uri':'https://example.org/original','evidence_id':'old','attributes':'{}'}
+        c.execute('INSERT INTO node_profiles VALUES(?,?,?,?,?,?)',tuple(before.values()))
+        proof={'source_role':'MODEL','native_rank':'class','source_statement':'重复制造的计算机 programme','scope_observation':'A programme with many produced machines.'}
+        eid='usability:'+sha(dump(proof))
+        m=Migration.__new__(Migration);m.c=c;m.legacy_evidence_fallback=None
+        actual_eid=m.role('named','MODEL',proof,SOURCE,'https://example.org/original')
+        self.assertEqual(eid,actual_eid)
+        after=dict(c.execute("SELECT * FROM node_profiles WHERE uid='named'").fetchone())
+        self.assertEqual(after['attributes'],dump({'source_role':'MODEL','native_rank':'class','role_status':'VERIFIED','role_evidence_id':eid}))
+        norm=dict(c.execute("SELECT * FROM normalization_roles WHERE uid='named'").fetchone())
+        self.assertEqual(norm['prior_profile'],dump(before))
+        self.assertEqual(c.execute('SELECT payload FROM evidence').fetchone()[0],dump(proof))
+        c.close()
+
 
 if __name__ == '__main__':
     unittest.main()
+
+class SerialIndividualMigrationContractTest(unittest.TestCase):
+    def setUp(self):
+        self.c=sqlite3.connect(':memory:');self.c.row_factory=sqlite3.Row
+        self.c.executescript('''
+            CREATE TABLE nodes(uid TEXT PRIMARY KEY,label TEXT,data TEXT,visibility TEXT,source TEXT,rank TEXT,component_id INTEGER);
+            CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT);
+            CREATE TABLE normalization_roles(uid TEXT PRIMARY KEY,canonical_role TEXT);
+            CREATE TABLE bridges(id INTEGER PRIMARY KEY,left_uid TEXT,right_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);
+            CREATE TABLE edges(id INTEGER PRIMARY KEY,child_uid TEXT,parent_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);
+            CREATE TABLE entity_relations(id INTEGER PRIMARY KEY,subject_uid TEXT,object_uid TEXT,relation TEXT,source TEXT,status TEXT,data TEXT);
+        ''')
+        self.statement='The named airship was the 51st airship built and had tactical designation L81.'
+        data=dump({'definition':self.statement})
+        self.c.execute('INSERT INTO nodes VALUES(?,?,?,?,?,?,?)',('serial','named airship',data,'ACTIVE','source','class',1))
+        self.c.execute('INSERT INTO node_profiles VALUES(?,?)',('serial','MODEL'))
+        from fineatlas.structure_complete_owned_type_repairs import scope_inventory
+        self.w={'uid':'serial','field':'definition','field_path':'definition','statement':self.statement,'data_sha256':sha(data)}
+        self.record={'uid':'serial','approved_new_role':'INSTANCE','source_grain_disposition':'OWN_SERIAL_AND_OPERATIONAL_DESIGNATION_SUPPORT_INSTANCE','complete_source_record':{'before_node':dict(self.c.execute('SELECT * FROM nodes').fetchone()),'all_own_fields':[self.w]}}
+        self.proof={'kind':'INSTANCE_SCOPE_ROLE_MIGRATION','native_record_sha256':sha(data),'source_instance_review_record':self.record,'source_instance_review_locator':{'file':'instances.json','sha256':'bound','uid':'serial'},'source_witnesses':[self.w],'before_scope_declarations':scope_inventory(self.c,'serial')}
+        self.op={'op':'correct_role','uid':'serial','parent':'serial','relation':'ROLE_ADJUDICATION','proof':self.proof}
+        self.manifest={'source_instance_review_file':'instances.json','source_instance_review_sha256':'bound'}
+        self.review={'records':[self.record]}
+
+    def validate(self,ops=None):
+        from fineatlas.structure_complete_owned_type_repairs import validate_serial_instance
+        return validate_serial_instance(self.c,self.op,self.manifest,self.review,ops or[self.op])
+
+    def test_built_serial_with_operational_name_is_individual(self):
+        self.assertEqual(self.validate()['approved_new_role'],'INSTANCE')
+
+    def test_active_model_type_requires_exact_encoding_migration(self):
+        self.c.execute('INSERT INTO entity_relations VALUES(?,?,?,?,?,?,?)',(9,'serial','aircraft','DESIGN_TYPE_OF','original','ACTIVE','{}'))
+        from fineatlas.structure_complete_owned_type_repairs import scope_inventory
+        self.proof['before_scope_declarations']=scope_inventory(self.c,'serial')
+        with self.assertRaisesRegex(ValueError,'abandon'):
+            self.validate()
+        before=dict(self.c.execute('SELECT * FROM entity_relations').fetchone())
+        self.validate([self.op,{'op':'review_typed_relation','before_assertion':before}])
+
+    def test_single_prototype_is_not_built_serial_individual_evidence(self):
+        text='The named aircraft is a single prototype design.';data=dump({'definition':text})
+        self.c.execute('UPDATE nodes SET data=?',(data,))
+        self.record['complete_source_record']['before_node']['data']=data
+        self.w.update(statement=text,data_sha256=sha(data));self.proof['native_record_sha256']=sha(data)
+        with self.assertRaisesRegex(ValueError,'ordinal design'):
+            self.validate()
+
+    def test_active_identity_cannot_be_borrowed_for_individual_scope(self):
+        self.c.execute('INSERT INTO bridges VALUES(?,?,?,?,?,?,?)',(1,'serial','other','SAME_CONCEPT','source','ACTIVE','{}'))
+        with self.assertRaisesRegex(ValueError,'identity peer'):
+            self.validate()
