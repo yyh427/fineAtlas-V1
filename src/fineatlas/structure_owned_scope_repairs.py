@@ -17,6 +17,7 @@ from .semantics import role_expression
 from .structure_regression_repairs import sha
 from .structure_owned_scope_rules import (
     owned_physical_genus,
+    owned_multi_generation_programme_scope,
     owned_reconfigurable_fixed_wing,
     owned_named_instance_genus,
     bound_owned_source_names,
@@ -213,7 +214,7 @@ def validate_batch_cycles(c, operations, partitions):
                     visited.add(current); stack.extend(parents(current))
 
 
-def validate_owned_scope_repairs(c, manifest, operations):
+def validate_owned_scope_repairs(c, manifest, operations, source_review=None, family_review=None):
     if manifest.get('schema') != 'FINEATLAS_OWNED_SCOPE_REPAIRS_V1' or type(manifest.get('operation_count')) is not int or manifest['operation_count'] != len(operations) or not operations:
         raise ValueError('Owned scope input schema/count is invalid')
     seen = set()
@@ -226,7 +227,7 @@ def validate_owned_scope_repairs(c, manifest, operations):
         p = o['proof']
         if not p.get('scope_observation') or not p.get('license'):
             raise ValueError('Every scope decision needs a reason and source terms')
-        for w in p.get('source_witnesses', []) + p.get('retained_source_context_witnesses', []): _witness(c, w)
+        for w in p.get('source_witnesses', []) + p.get('retained_source_context_witnesses', []) + p.get('supporting_source_witnesses', []): _witness(c, w)
         for witness in p.get('source_assertion_witnesses', []): _assertion_witness(c, witness)
         if p.get('supporting_class_definition'):_witness(c,p['supporting_class_definition'])
         for u, before in p.get('source_nodes', {}).items():
@@ -264,7 +265,13 @@ def validate_owned_scope_repairs(c, manifest, operations):
                 parent = p['source_witnesses'][1]
                 geographic = qualified_seamount_scope(own['statement'], a['label']) and parent['statement'] == 'an underwater mountain rising above the ocean floor'
                 road_vehicle = motor_vehicle_class_scope(p, own, parent, a['label'])
-                if not (geographic or road_vehicle): raise ValueError('Owned ordinary class and parent whole sense are not closed')
+                instrumental=False
+                if p.get('owned_physical_scope_kind')=='OWNED_PHYSICAL_INSTRUMENTALITY':
+                    review=p['physical_instrumentality_scope_review']
+                    first=review['generic_own_system_clause'];physical=review['generic_physical_system_clause'];corroboration=review['specific_installed_system_corroboration']
+                    subject_prefix=re.split(r'\bis\b',first,maxsplit=1,flags=re.I)[0]
+                    instrumental=(not re.search(r'\b(?:virtual|toy|fictional|simulated|software|replica)\b',subject_prefix,re.I) and own['statement'].startswith(first) and all(span in own['statement']for span in[physical,corroboration]) and re.search(r'\bis an? airborne radar early warning system\b',first,re.I) and re.search(r'\bradar system on .+? aircraft allows the operators to detect, track\b',physical,re.I) and 'specific system installed'in corroboration and parent['statement']==review['parent_whole_sense'] and parent['statement'].startswith('an artifact (or system of artifacts) that is instrumental in accomplishing some end'))
+                if not (geographic or road_vehicle or instrumental): raise ValueError('Owned ordinary class and parent whole sense are not closed')
             else:
                 kind = p.get('owned_physical_scope_kind')
                 if kind == 'OWNED_UNIVERSAL_VARIANTS':
@@ -289,6 +296,45 @@ def validate_owned_scope_repairs(c, manifest, operations):
                     if doc['source_kind']!='PRIMARY_MANUFACTURER_OR_REGULATOR' or not re.fullmatch(r'[0-9a-f]{64}',doc['sha256']) or not doc['source_uri'].startswith('https://') or not scope['primary_scope_covers_whole_named_design'] or scope['four_wheel_assertion']is not False or scope['category_same_concept_assertion']is not False or not facts['licensed_bubble_car_design'] or not facts['self_propulsion_combustion_engine']:raise ValueError('Primary complete manufacturer range is not independently defined')
                     if p['source_witnesses'][1]['statement']!='a self-propelled wheeled vehicle that does not run on rails':raise ValueError('Primary automotive scope does not prove a narrower parent sense')
                     result=('motor vehicle','wordnet31:03796768-n')
+                elif kind == 'OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION':
+                    if o['relation']!='NATIVE_DESIGN_PARENT' or family_review is None:raise ValueError('Source family direction requires its frozen independent scope review')
+                    locator=p['source_review_locator'];record=p['nominal_family_scope_review']
+                    if locator!={'file':manifest['source_family_review_file'],'sha256':manifest['source_family_review_sha256'],'uid':a['uid'],'parent':b['uid'],'relation':o['relation']}:raise ValueError('Family source review locator changed')
+                    matches=[r for r in family_review['records']if(r['uid'],r['parent'],r['proposed_relation'])==(a['uid'],b['uid'],o['relation'])]
+                    if len(matches)!=1 or matches[0]!=record or record['status']!='SOURCE_DIRECTION_SUPPORTED_PENDING_EXACT_OPERATION_AND_SAFE_PARENT_ROLE':raise ValueError('Nominal family source review does not bind this direction')
+                    if role_overrides.get(a['uid'],a['role'])!='MODEL' or role_overrides.get(b['uid'],b['role'])!='MODEL_FAMILY' or p.get('physical_genus'):raise ValueError('Nominal family direction cannot assert ordinary physical inclusion')
+                    if not re.search(r'\b(?:variant|version|third-generation)\b',own['statement'],re.I):raise ValueError('Own nominal source does not declare this version or generation')
+                    for field in ['child_source_objects','parent_source_objects']:
+                        for source in record[field]:
+                            raw=source['node'];actual=c.execute('SELECT * FROM nodes WHERE uid=?',(raw['uid'],)).fetchone()
+                            if not actual or dict(actual)!=raw:raise ValueError('Complete directional family source object changed')
+                    for before in record['parent_own_same_primary_source_bridge']:
+                        actual=c.execute('SELECT * FROM bridges WHERE id=?',(before['id'],)).fetchone()
+                        if not actual or dict(actual)!=before or before['status']!='ACTIVE':raise ValueError('Family own source identity declaration changed')
+                    for before in record['preserved_original_relations']:
+                        actual=c.execute('SELECT * FROM entity_relations WHERE id=?',(before['id'],)).fetchone()
+                        if not actual or dict(actual)!=before:raise ValueError('Original family direction source history changed')
+                    result=(b['label'],b['uid'])
+                elif kind == 'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE':
+                    if p.get('physical_genus'):raise ValueError('Nominal purpose cannot counterfeit an own physical genus')
+                    if o['relation']!='DESIGN_TYPE_OF' or source_review is None:raise ValueError('Literal nominal type requires its frozen independent whole-source review')
+                    locator=p['source_review_locator'];record=p['nominal_design_type_scope_review']
+                    if locator!={'file':manifest['source_purpose_review_file'],'sha256':manifest['source_purpose_review_sha256'],'uid':a['uid'],'parent':b['uid'],'relation':o['relation']}:raise ValueError('Independent complete source review locator changed')
+                    matches=[r for r in source_review['approved_type_records']if(r['uid'],r['parent'],r['proposed_relation'])==(a['uid'],b['uid'],o['relation'])]
+                    if len(matches)!=1 or matches[0]!=record or record['owned_complete_source_witness']!=own or record['whole_parent_definition_witness']!=p['source_witnesses'][1]:raise ValueError('Literal source review does not bind this exact own and parent definition')
+                    if record['status']!='SOURCE_TYPE_SCOPE_SUPPORTED_PENDING_ACTUAL_OPERATION' or role_overrides.get(a['uid'],a['role'])!=record['after_role']:raise ValueError('Reviewed nominal source grain changed')
+                    if p.get('classification_axis')not in{'function','purpose'}or not p['parent_conditions']or not p['child_exact_spans']:raise ValueError('Nominal classifier needs complete source condition and axis distinctions')
+                    for condition in p['parent_conditions']:
+                        if condition['parent_exact_span']not in p['source_witnesses'][1]['statement']or not condition['complete_parent_definition']:raise ValueError('Selected parent conditions lack complete source scope')
+                    for span in p['child_exact_spans']:
+                        _witness(c,span['witness'])
+                        if span['child_exact_span']not in span['witness']['statement']:raise ValueError('Nominal classifier condition lacks its complete exact own source span')
+                    for support in record['required_supporting_source_fields']:
+                        raw=support['complete_source_parent'];actual=c.execute('SELECT * FROM nodes WHERE uid=?',(raw['uid'],)).fetchone()
+                        if not actual or dict(actual)!=raw:raise ValueError('Referenced physical design source object changed')
+                        before=support['original_full_relation'];actual=c.execute('SELECT * FROM entity_relations WHERE id=?',(before['id'],)).fetchone()
+                        if not actual or dict(actual)!=before:raise ValueError('Original nominal source reference changed')
+                    result=(b['label'],b['uid'])
                 else:
                     result = owned_physical_genus(re.sub(r'\b(wide|narrow)body\b', r'\1-body', own['statement'], flags=re.I), a['label'], own.get('bound_source_names', ()))
                 if not result or result[1] != b['uid'] or b['uid'] == 'wordnet31:02961779-n': raise ValueError('Owned complete physical genus does not entail its selected source parent')
@@ -301,7 +347,7 @@ def validate_owned_scope_repairs(c, manifest, operations):
             cols = ('left_uid','right_uid') if table == 'bridges' else ('child_uid','parent_uid') if table=='edges' else ('subject_uid','object_uid')
             if not actual or dict(actual) != before or source_assertion_sha256(actual) != o['content_sha256'] or (before[cols[0]], before[cols[1]], before['relation']) != (o['uid'],o['parent'],o['relation']) or before['status'] != 'ACTIVE' or o['after_status'] != 'SOURCE_SCOPE_REVIEW': raise ValueError('Review must bind exactly its original active assertion')
             if o['op'] == 'review_bridge' and o['relation'] != 'SAME_CONCEPT': raise ValueError('Identity scope review must retain a true identity declaration')
-            if p['basis'] not in {'INCOMPATIBLE_WHOLE_SOURCE_AND_NARROW_WORDNET_SENSE','INSUFFICIENT_WHOLE_PARENT_RANGE_EVIDENCE','HISTORICAL_TAXON_VERSION_WHOLE_SCOPE_GAP','OWNED_WHOLE_PURPOSE_RANGE_INCOMPATIBLE_WITH_COMMERCIAL_TYPE','BIOLOGICAL_VARIANT_NOT_FRUIT_OR_ORDINARY_CLASS','INSUFFICIENT_NAMED_INDIVIDUAL_ROLE_SCOPE'}: raise ValueError('Unknown individually grounded scope review kind')
+            if p['basis'] not in {'INCOMPATIBLE_WHOLE_SOURCE_AND_NARROW_WORDNET_SENSE','INSUFFICIENT_WHOLE_PARENT_RANGE_EVIDENCE','HISTORICAL_TAXON_VERSION_WHOLE_SCOPE_GAP','OWNED_WHOLE_PURPOSE_RANGE_INCOMPATIBLE_WITH_COMMERCIAL_TYPE','BIOLOGICAL_VARIANT_NOT_FRUIT_OR_ORDINARY_CLASS','INSUFFICIENT_NAMED_INDIVIDUAL_ROLE_SCOPE','CANONICAL_ROLE_EXCLUDES_ORDINARY_CLASS_INCLUSION','OWNED_SYSTEM_NOT_ITS_CARRIER_PLATFORM'}: raise ValueError('Unknown individually grounded scope review kind')
             if not p.get('source_native_objects_preserved'): raise ValueError('Review cannot delete source objects')
         elif o['op'] in MAPPINGS:
             key = (o['dataset'], o['class_id'])
@@ -336,7 +382,9 @@ def validate_owned_scope_repairs(c, manifest, operations):
                 own_data=json.loads(a['data']);definition_data=json.loads(ground['before_independent_definition_node']['data'])
                 bridge=ground['before_identity_bridge'];actual=c.execute('SELECT * FROM bridges WHERE id=?',(bridge['id'],)).fetchone()
                 if not actual or dict(actual)!=bridge or bridge['status']!='ACTIVE'or bridge['relation']!='SAME_CONCEPT' or not own_data.get('qid')or own_data['qid']!=definition_data.get('qid')or a['label']!=ground['before_independent_definition_node']['label']:raise ValueError('Independent producer definition lacks a complete same-source identifier scope binding')
-            if owned_role_scope(role_w['statement'],a['label'])!=target_role:raise ValueError('Own complete source does not declare the selected role')
+            if p.get('source_role_scope_kind')=='OWNED_WHOLE_MULTI_GENERATION_PROGRAMME':
+                if target_role!='MODEL_FAMILY' or not owned_multi_generation_programme_scope(role_w['statement'],a['label'],p['generation_scope_review']):raise ValueError('Whole programme does not independently close multiple generations')
+            elif owned_role_scope(role_w['statement'],a['label'])!=target_role:raise ValueError('Own complete source does not declare the selected role')
             before = o['before_profile']; norm = o['before_normalization_role']
             eid = 'usability:'+sha(dump(p)); attrs = json.loads(before['attributes']) if before else {}
             attrs.update(source_role=p.get('source_role', attrs.get('source_role','UNSPECIFIED')), native_rank=p.get('native_rank', attrs.get('native_rank',a['rank'])),role_status='VERIFIED',role_evidence_id=eid)
@@ -361,7 +409,21 @@ def apply_owned_scope_repairs(m):
     if sha(raw) != manifest['operations_sha256']: raise ValueError('Owned scope operation bytes changed')
     operations = [json.loads(line) for line in raw.decode().splitlines() if line]
     if m.c.execute('SELECT 1 FROM metadata WHERE key=?',(METADATA_KEY,)).fetchone(): raise ValueError('Owned scope checkpoint already applied; do not allocate identity partitions twice')
-    partitions = validate_owned_scope_repairs(m.c, manifest, operations)
+    source_review=None
+    if manifest.get('source_purpose_review_file'):
+        file=manifest['source_purpose_review_file']
+        if file!='structure_owned_purpose_source_review.json':raise ValueError('Unexpected independent nominal source review input path')
+        source_raw=(m.inputs/file).read_bytes()
+        if sha(source_raw)!=manifest['source_purpose_review_sha256']:raise ValueError('Independent whole-source approval bytes changed')
+        source_review=json.loads(source_raw)
+    family_review=None
+    if manifest.get('source_family_review_file'):
+        file=manifest['source_family_review_file']
+        if file!='structure_owned_family_source_review.json':raise ValueError('Unexpected nominal family review path')
+        family_raw=(m.inputs/file).read_bytes()
+        if sha(family_raw)!=manifest['source_family_review_sha256']:raise ValueError('Independent family source scope approval bytes changed')
+        family_review=json.loads(family_raw)
+    partitions = validate_owned_scope_repairs(m.c, manifest, operations,source_review,family_review)
     node_count = m.c.execute('SELECT count(*) FROM nodes').fetchone()[0]
     counts = Counter()
     for o in operations:
@@ -403,7 +465,12 @@ def apply_owned_scope_repairs(m):
                 # edge contract, never through design terminal relations.
                 eid=m.evidence(SOURCE,o['uri'],p,'TAXONOMIC_CONNECTION')
                 m.c.execute('INSERT INTO edges(child_uid,parent_uid,relation,original_relation,facet_family,classification_basis,navigation_role,source,source_relation,confidence,provenance,data,layer,status,reason) VALUES(?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)',(o['uid'],o['parent'],'TAXONOMIC_PARENT','TAXONOMIC_PARENT','TAXONOMIC_LINEAGE',p['basis'],'SOURCE_VALIDATED',SOURCE,'COMPLETE_CULTIVAR_HOST_SCOPE',dump({'evidence_ids':[eid]}),dump({'eligible_for_final_dag':False,'eligible_for_final_typed_graph':True,'admission_basis':p,'classification_axis':'scientific_host_taxon'}),'v1.8-hierarchy-review','TYPED_ACTIVE','Complete own cultivar and living source taxon host independently reviewed'))
-            else: m.typed(o['uid'],o['parent'],o['relation'],p,SOURCE,o['uri'])
+            else:
+                m.typed(o['uid'],o['parent'],o['relation'],p,SOURCE,o['uri'])
+                if p.get('classification_axis'):
+                    row=m.c.execute('SELECT id,data FROM entity_relations WHERE subject_uid=? AND object_uid=? AND relation=? AND source=?',(o['uid'],o['parent'],o['relation'],SOURCE)).fetchone()
+                    data=json.loads(row['data']);data['classification_axis']=p['classification_axis']
+                    m.c.execute('UPDATE entity_relations SET data=? WHERE id=?',(dump(data),row['id']))
             m.change(METADATA_KEY,'owned_scope_link',o['uid'],{'prior_assertions':p.get('prior_assertions',[])},{'parent_uid':o['parent'],'relation':o['relation']},p);counts['source_links_added'] += 1
         elif o['op'] in MAPPINGS:
             eid=m.evidence(SOURCE,o['uri'],p,'DATASET_NOMINAL_DESIGN_SCOPE')

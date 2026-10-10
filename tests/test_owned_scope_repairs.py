@@ -8,6 +8,7 @@ from fineatlas.structure_regression_repairs import sha
 from fineatlas.structure_owned_scope_rules import (
     bound_owned_source_names, owned_named_instance_genus,
     owned_physical_genus, owned_reconfigurable_fixed_wing, owned_role_scope,
+    owned_multi_generation_programme_scope, owned_motor_vehicle_design_scope,
 )
 from fineatlas.structure_owned_scope_repairs import (
     SOURCE, expected_partitions, validate_batch_cycles,
@@ -76,6 +77,21 @@ class OwnedScopeGrammarTests(unittest.TestCase):
         physical = 'The Design is a biplane. Two examples were built. One of them—the Named Flyer—flew.'
         self.assertEqual(bound_owned_source_names(data, 'Named Flyer', physical), [])
 
+    def test_explicit_programme_alias_does_not_borrow_a_related_design(self):
+        own='The Maker Alpha (), also known as the Maker Beta (), is a series of compact cars produced by Maker.'
+        self.assertTrue(owned_motor_vehicle_design_scope(own,'Maker Beta (Alpha)'))
+        self.assertFalse(owned_motor_vehicle_design_scope(own,'Maker Beta (Gamma)'))
+        self.assertFalse(owned_motor_vehicle_design_scope('The Other programme is a series of compact cars. The Maker Alpha is based on it.','Maker Beta (Alpha)'))
+        self.assertEqual(owned_physical_genus('The X, also known as Y is a training monoplane. Later variants, based on Z, were introduced.','X')[1],'wikidata:Q627537')
+
+    def test_whole_generations_distinguish_programme_from_one_generation(self):
+        text='is a sports car manufactured and developed by Maker. The initial four generations of the Alpha were produced from 1978 to 2002. The fifth generation has been produced since March 2019.'
+        scope={'own_programme_name':'Maker Alpha','programme_definition':text,'initial_generations_clause':'The initial four generations of the Alpha were produced from 1978 to 2002.','later_generation_clause':'The fifth generation has been produced since March 2019.'}
+        self.assertTrue(owned_multi_generation_programme_scope(text,'Maker Alpha',scope))
+        self.assertFalse(owned_multi_generation_programme_scope(text,'Maker Alpha 70',scope))
+        self.assertFalse(owned_multi_generation_programme_scope(text.replace('of the Alpha','of the Other'),'Maker Alpha',scope))
+        self.assertFalse(owned_multi_generation_programme_scope(text.replace('sports car','fictional car'),'Maker Alpha',{**scope,'programme_definition':text.replace('sports car','fictional car')}))
+
 
 class OwnedScopeDatabaseContracts(unittest.TestCase):
     def setUp(self):
@@ -121,6 +137,24 @@ class OwnedScopeDatabaseContracts(unittest.TestCase):
         manifest = {**self.manifest,'operation_count':2}
         with self.assertRaises(ValueError): validate_owned_scope_repairs(self.c,manifest,[self.op,self.op])
         with self.assertRaises(ValueError): validate_owned_scope_repairs(self.c,self.manifest,[self.op,self.op])
+
+    def test_nominal_family_direction_requires_exact_frozen_review_and_family_role(self):
+        self.c.execute("UPDATE nodes SET data=? WHERE uid='model'",(dump({'description':'training version of Parent'}),))
+        self.c.execute("UPDATE node_profiles SET node_kind='MODEL_FAMILY' WHERE uid='wikidata:Q223818'")
+        rows={r['uid']:dict(r)for r in self.c.execute('SELECT * FROM nodes')}
+        own={'uid':'model','field':'description','statement':'training version of Parent','data_sha256':sha(rows['model']['data'])}
+        record={'uid':'model','parent':'wikidata:Q223818','proposed_relation':'NATIVE_DESIGN_PARENT','status':'SOURCE_DIRECTION_SUPPORTED_PENDING_EXACT_OPERATION_AND_SAFE_PARENT_ROLE','child_source_objects':[{'node':rows['model']}],'parent_source_objects':[{'node':rows['wikidata:Q223818']}],'parent_own_same_primary_source_bridge':[],'preserved_original_relations':[]}
+        manifest={**self.manifest,'source_family_review_file':'structure_owned_family_source_review.json','source_family_review_sha256':'review-hash'}
+        op=copy.deepcopy(self.op);op['relation']='NATIVE_DESIGN_PARENT';p=op['proof'];p.update(owned_physical_scope_kind='OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION',native_record_sha256=sha(rows['model']['data']),nominal_family_scope_review=record,source_review_locator={'file':manifest['source_family_review_file'],'sha256':'review-hash','uid':'model','parent':'wikidata:Q223818','relation':'NATIVE_DESIGN_PARENT'});p['source_witnesses'][0]=own
+        review={'records':[record]}
+        validate_owned_scope_repairs(self.c,manifest,[op],family_review=review)
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[op])
+        wrong=copy.deepcopy(review);wrong['records'][0]['parent']='another-family'
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[op],family_review=wrong)
+        physical=copy.deepcopy(op);physical['proof']['physical_genus']='aircraft'
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[physical],family_review=review)
+        self.c.execute("UPDATE node_profiles SET node_kind='CLASS' WHERE uid='wikidata:Q223818'")
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[op],family_review=review)
 
     def test_two_new_links_cannot_form_a_batch_cycle(self):
         ops = [{'op':'link','uid':'model','parent':'wikidata:Q223818'}, {'op':'link','uid':'wikidata:Q223818','parent':'model'}]

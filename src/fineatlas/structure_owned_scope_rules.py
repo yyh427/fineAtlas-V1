@@ -59,7 +59,13 @@ def own_first_kind(statement,label,source_names=()):
             named_suffix=bool(suffix and len(suffix.split())<=4 and all(re.fullmatch(r'[A-Z][A-Za-z]*|"[A-Z][A-Za-z]*"',t)for t in suffix.split()) and not re.search(r'\b(?:Family|Series|Model|Version|MAX|Neo|Mark|Mk)\b',suffix,re.I))
             bound_source_name=any(words(prefix)==words(name) or (prefix.startswith(name+' ') and all(re.fullmatch(r'[A-Z][a-zA-Z]+',token) for token in prefix[len(name):].split()) and not re.search(r'\b(?:family|series|model|version|MAX|Neo)\b',prefix[len(name):],re.I))for name in source_names)
             repeated_subject=bool(prefix.startswith(label+' The ') and len(prefix.split(' The ',1)[1].split())<=5 and not re.search(r'\b(?:of|from|for|family|version|part)\b',prefix,re.I))
-            if not(alias_prefix or leading_company or coordinated_names or named_suffix or repeated_subject or bound_source_name):return None
+            annotated_label=re.fullmatch(r'(.+?)\s*\(([^()]+)\)',label)
+            explicit_alias=re.fullmatch(r'(.+?)\s*,\s*also known as (?:the )?(.+?)\s*,?',prefix,re.I)
+            parenthetical_alias=False
+            if annotated_label and explicit_alias:
+                base=words(annotated_label[1]);alternate=words(annotated_label[2]);first=words(explicit_alias[1]);alias=words(explicit_alias[2])
+                parenthetical_alias=bool(base==alias and first and alternate and first[-len(alternate):]==alternate and first[0]==base[0] and not re.search(r'\b(?:family|series|version|model|neo|max)\b',annotated_label[2],re.I))
+            if not(alias_prefix or leading_company or coordinated_names or named_suffix or repeated_subject or bound_source_name or parenthetical_alias):return None
         text=text[m.end():]
     text=re.split(r'[.;]\s+(?=[A-Z])',text,maxsplit=1)[0]
     text=re.sub(r'^(?:an?|the)\s+','',text,flags=re.I)
@@ -219,3 +225,14 @@ def owned_self_twinjet_scope(statement,label):
     between=flat[len(tail[0]):m.start()]
     if re.search(r'\b(?:is|was|are|were)\s+(?:an?\s+)?(?:twinjet|jet aircraft|jet airliner|jet airplane)\b',between,re.I):return False
     return True
+
+
+def owned_multi_generation_programme_scope(statement, label, review):
+    """A whole named programme contains separately stated early/later generations."""
+    if review.get('own_programme_name') != label or review.get('programme_definition') != statement:
+        return False
+    initial=review['initial_generations_clause'];later=review['later_generation_clause']
+    if initial not in statement or later not in statement:
+        return False
+    tokens=words(label);short=tokens[-1] if tokens else ''
+    return bool(short and re.fullmatch(r'The initial (?:three|four|five|six|[3-9]) generations of the '+re.escape(short)+r' were produced from [0-9]{4} to [0-9]{4}\.',initial,re.I) and re.fullmatch(r'The (?:fourth|fifth|sixth|seventh) generation has been produced since .+\.',later,re.I) and re.search(r'\bmanufactured and developed by\b',statement[:statement.find(initial)],re.I) and not re.search(r'\b(?:fictional|virtual|toy|scale replica)\b',statement[:statement.find(initial)],re.I))
