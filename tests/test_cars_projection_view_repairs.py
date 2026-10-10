@@ -146,6 +146,15 @@ class CarsProjectionReviewTests(unittest.TestCase):
         del self.entry['before_mapping_check']; self.write_inputs()
         with self.assertRaisesRegex(ValueError, 'current mapping'): self.apply()
 
+    def test_wrong_complete_parent_revision_cannot_build(self):
+        self.manifest['completed_parent_binding'] = {'revision': 'different', 'actual_source_rows_independently_verified': True, 'parent_binding_is_not_repaired_candidate_acceptance': True}; self.write_inputs()
+        with self.assertRaisesRegex(ValueError, 'parent revision'): self.apply()
+
+    def test_actual_audit_requires_complete_parent_ancestry(self):
+        self.manifest['completed_parent_binding'] = {'revision': 'fixture-revision', 'actual_source_rows_independently_verified': True, 'parent_binding_is_not_repaired_candidate_acceptance': True}; self.write_inputs()
+        self.apply(); self.assertFalse(self.audit())
+        self.c.execute('INSERT INTO metadata VALUES(?,?)', ('structure_resume_parent', json.dumps({'parent_revision': 'fixture-revision'}))); self.c.commit(); self.assertTrue(self.audit())
+
     def test_reapply_requires_new_parent(self):
         self.apply()
         with self.assertRaisesRegex(ValueError, 'already applied'): self.apply()

@@ -44,6 +44,11 @@ def table_snapshot(c, table):
 
 
 def validate_cars_projection_view_repairs(c, manifest, operations):
+    binding = manifest.get('completed_parent_binding')
+    if binding:
+        revision = c.execute("SELECT value FROM metadata WHERE key='database_revision'").fetchone()
+        if not revision or json.loads(revision[0]) != binding.get('revision') or binding.get('actual_source_rows_independently_verified') is not True or binding.get('parent_binding_is_not_repaired_candidate_acceptance') is not True:
+            raise ValueError('Projection review belongs to a different complete parent revision')
     nodes = manifest['source_projections']
     if (type(manifest.get('source_projection_count')) is not int or len(nodes) != manifest['source_projection_count']
             or len({x['uid'] for x in nodes}) != len(nodes) or not nodes

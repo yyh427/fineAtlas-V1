@@ -165,6 +165,11 @@ def run(database, inputs, output, preflight=False):
             if not current or current['status'] != before['status']:
                 bad('LEGAL_OEM_OR_EPA_CLAIM_WITHDRAWN', uid=entry['uid'])
     metadata = {r['key']: json.loads(r['value']) for r in c.execute('SELECT * FROM metadata')}
+    binding = manifest.get('completed_parent_binding')
+    if binding:
+        parent_revision = metadata.get('database_revision') if preflight else metadata.get('structure_resume_parent', {}).get('parent_revision')
+        if parent_revision != binding.get('revision') or binding.get('actual_source_rows_independently_verified') is not True or binding.get('parent_binding_is_not_repaired_candidate_acceptance') is not True:
+            bad('COMPLETED_PARENT_ANCESTRY_NOT_BOUND')
     if not preflight:
         applied = metadata.get(STAGE, {}); frozen = metadata.get('structure_frozen_build_manifest', {}).get('inputs', {})
         if (applied.get('manifest_sha256') != sha(manifest_path.read_bytes()) or applied.get('operations_sha256') != sha(raw)
