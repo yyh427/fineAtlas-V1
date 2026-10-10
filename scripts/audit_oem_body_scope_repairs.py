@@ -46,6 +46,10 @@ def run(database, inputs, output, preflight=False):
         if role != expected_role or node['visibility'] != 'ACTIVE' or parent['visibility'] != 'ACTIVE':
             errors.append({'kind': 'ROLE_OR_VISIBILITY_CHANGED', 'uid': uid})
         body = native.get('scope', {}).get('body')
+        parent_profile = c.execute('SELECT node_kind FROM node_profiles WHERE uid=?', (op['parent'],)).fetchone()
+        parent_role = parent_profile[0] if parent_profile and parent_profile[0] else ('CLASS' if parent['rank'] in ('', 'class') else parent['rank'].upper())
+        if parent_role != 'CLASS':
+            errors.append({'kind': 'PHYSICAL_PARENT_NOT_CANONICAL_CLASS', 'uid': uid})
         if body == 'convertible':
             if parent['description'] != 'a car that has top that can be folded or removed' or proof['reviewed_type_sense'] != 'CAR_CONVERTIBLE':
                 errors.append({'kind': 'WRONG_CONVERTIBLE_SENSE', 'uid': uid})
@@ -64,7 +68,13 @@ def run(database, inputs, output, preflight=False):
         meta = c.execute("SELECT value FROM metadata WHERE key='oem_body_scope_repairs'").fetchone()
         if not meta or json.loads(meta[0]).get('manifest_sha256') != sha((inputs / 'structure_oem_body_scope_repairs.json').read_bytes()):
             errors.append({'kind': 'MANIFEST_NOT_BOUND'})
-    report = {'schema': 'FINEATLAS_INDEPENDENT_OEM_BODY_SCOPE_AUDIT_V1', 'pass': not errors, 'preflight_only': preflight, 'database': str(database), 'manifest_sha256': sha((inputs / 'structure_oem_body_scope_repairs.json').read_bytes()), 'operations': dict(Counter(x['relation'] for x in ops)), 'errors': errors}
+    metadata = {r['key']: json.loads(r['value']) for r in c.execute('SELECT * FROM metadata')}
+    if not preflight:
+        frozen = metadata.get('structure_frozen_build_manifest', {}).get('inputs', {})
+        for name in ('structure_oem_body_scope_repairs.json', manifest['operations_file']):
+            if frozen.get(name) != sha((inputs / name).read_bytes()):
+                errors.append({'kind': 'FROZEN_BUILD_INPUT_NOT_BOUND', 'name': name})
+    report = {'database_revision': metadata.get('database_revision'), 'release': metadata.get('release'), 'operations_sha256': sha(raw), 'operation_count': len(ops), 'incremental_inputs_frozen': not preflight, 'schema': 'FINEATLAS_INDEPENDENT_OEM_BODY_SCOPE_AUDIT_V1', 'pass': not errors, 'preflight_only': preflight, 'database': str(database), 'manifest_sha256': sha((inputs / 'structure_oem_body_scope_repairs.json').read_bytes()), 'operations': dict(Counter(x['relation'] for x in ops)), 'errors': errors}
     output.parent.mkdir(parents=True, exist_ok=True); output.write_text(json.dumps(report, indent=2)+'\n')
     print(json.dumps(report)); c.close(); return not errors
 
