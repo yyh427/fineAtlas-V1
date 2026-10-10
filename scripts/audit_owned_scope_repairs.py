@@ -305,6 +305,26 @@ def named_instance_phrase(statement, label):
     return own_assertion_phrase(statement)
 
 
+def verify_physical_instrumentality_scope(proof, statement, parent_statement):
+    review = proof['physical_instrumentality_scope_review']
+    first = review['generic_own_system_clause']
+    hardware = review['generic_physical_system_clause']
+    installed = review['specific_installed_system_corroboration']
+    if (not all(isinstance(value, str) and value and value in statement
+                for value in (first, hardware, installed)) or not statement.startswith(first)):
+        raise ValueError('Physical instrumentality needs the complete own generic and hardware assertions')
+    expected = 'an artifact (or system of artifacts) that is instrumental in accomplishing some end'
+    if parent_statement != expected or review['parent_whole_sense'] != expected:
+        raise ValueError('Physical instrumentality cannot supply a narrower artifact-system sense')
+    if (not re.search(r'\bsystem\s+is\s+an?\s+[^.!?]*\bradar\b[^.!?]*\bsystem\s+designed to detect\b', first, re.I)
+            or not re.search(r'\b(?:aircraft|ships|vehicles|missiles)\b', first, re.I)
+            or not re.search(r'\bradar system on\b[^.!?]*\baircraft\b[^.!?]*\ballows the operators to\b', hardware, re.I)
+            or not re.search(r'\bsystem installed in\b[^.!?]*\bairframes\b', installed, re.I)
+            or re.search(r'\b(?:not|never|fictional|virtual|imaginary|replica)\b', first + ' ' + hardware + ' ' + installed, re.I)):
+        raise ValueError('Generic physical system must be distinguished from its carrier and operator')
+    return own_assertion_phrase(first)
+
+
 def independently_declared_role(statement, label, scope_kind):
     if scope_kind is None:
         named_instance_phrase(statement, label)
@@ -606,6 +626,10 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     verify_biological_host_scope(con, op, child, parent, role_overrides if preflight else {},
                                                  reviewed if not preflight else {})
                     phrase = witnesses[0]['statement']
+                elif proof.get('owned_physical_scope_kind') == 'OWNED_PHYSICAL_INSTRUMENTALITY':
+                    if op['relation'] != 'IS_A':
+                        raise ValueError('Physical instrumentality scope requires ordinary class inclusion')
+                    phrase = verify_physical_instrumentality_scope(proof, own, witnesses[1]['statement'])
                 elif manufacturer_design:
                     phrase = manufacturer_vehicle_phrase(proof, child, parent, retained_own_statements,
                                                          primary_snapshots_dir, verified_sources)

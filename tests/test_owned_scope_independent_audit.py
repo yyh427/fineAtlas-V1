@@ -48,6 +48,25 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'distinct scientific relation'):
             audit.verify_edge_grounding(row, 'own', 'TAXONOMIC_PARENT')
 
+    def test_instrumentality_requires_generic_physical_scope_separate_from_carrier(self):
+        first = 'An airborne monitoring system is an airborne radar system designed to detect aircraft and ships.'
+        hardware = 'The radar system on monitoring aircraft allows the operators to detect and track targets.'
+        installed = 'Named hardware is a system installed in specific airframes.'
+        parent = 'an artifact (or system of artifacts) that is instrumental in accomplishing some end'
+        proof = {'physical_instrumentality_scope_review': {
+            'generic_own_system_clause': first, 'generic_physical_system_clause': hardware,
+            'specific_installed_system_corroboration': installed, 'parent_whole_sense': parent}}
+        source = ' '.join((first, hardware, installed))
+        self.assertIn('radar system', audit.verify_physical_instrumentality_scope(proof, source, parent))
+        with self.assertRaisesRegex(ValueError, 'complete own'):
+            audit.verify_physical_instrumentality_scope(proof, 'A mathematical system is an abstraction. ' + source, parent)
+        with self.assertRaisesRegex(ValueError, 'narrower'):
+            audit.verify_physical_instrumentality_scope(proof, source, 'interacting artifacts')
+        bad_hardware = hardware.replace('radar system on', 'operator on')
+        proof['physical_instrumentality_scope_review']['generic_physical_system_clause'] = bad_hardware
+        with self.assertRaisesRegex(ValueError, 'carrier and operator'):
+            audit.verify_physical_instrumentality_scope(proof, source.replace(hardware, bad_hardware), parent)
+
     def test_abbreviated_design_name_does_not_truncate_real_type_assertion(self):
         statement = 'The G.A.C. 102 Aristocrat is a cabin monoplane built in the US.'
         self.assertEqual(audit.own_assertion_phrase(statement), 'a cabin monoplane')
