@@ -127,6 +127,19 @@ def validate_portable_parent_independence(support,primary,reproduction,accepted)
             if row['member']!=str(file.relative_to(support.root))or digest(file)!=row['sha256']:raise ValueError('Portable exact historical build material changed')
         child=require_complete_type_build(path);lineage=json.loads(path.with_name('parent_lineage.json').read_text());seal=json.loads(path.with_name('parent_integrity.json').read_text())
         source_path=path.parent/'source-parent/build_complete.json';parent=require_literal_jet_child_build(source_path)
+        inventory=json.loads(path.with_name('started_fingerprints.json').read_text())
+        source_inventory=json.loads(source_path.with_name('started_fingerprints.json').read_text())
+        source_freeze=json.loads(source_path.with_name('frozen_metadata.json').read_text())
+        if inventory!=accepted.get('fingerprints'):
+            raise ValueError('Portable actual final child must bind the accepted complete frozen inventory')
+        if (source_freeze.get('revision')!=parent.get('source_graph_revision')
+                or any(source_freeze.get('manifest',{}).get(group)!=source_inventory.get(group)
+                       for group in ('inputs','code','packaging'))
+                or any(not isinstance(inventory.get(group),dict)
+                       or not isinstance(source_inventory.get(group),dict)
+                       or any(inventory[group].get(key)!=sha for key,sha in source_inventory[group].items())
+                       for group in ('inputs','code','packaging'))):
+            raise ValueError('Portable final child must preserve every actually frozen source-parent input and implementation')
         if (digest(path.with_name('parent_integrity.json'))!=lineage['parent_integrity_sha256']
                 or digest(source_path)!=lineage['parent_receipt_sha256']or parent['revision']!=lineage['parent_revision']
                 or parent['build_id']!=lineage['parent_build_id']

@@ -15,17 +15,20 @@ from structure_literal_jet_delivery_guard import CHILD_STAGES
 class CompletePortableLineageControls(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name)
-        self.support=SimpleNamespace(root=self.root);self.accepted={'database_revision':'final','database_sha256':'final-sha'};rows=[]
+        self.support=SimpleNamespace(root=self.root)
+        self.parent_inventory={'inputs':{'parent-input':'source-sha'},'code':{'old-code':'code-sha'},'packaging':{'package-rule':'packaging-sha'}}
+        self.inventory={**self.parent_inventory,'inputs':{**self.parent_inventory['inputs'],'child-input':'child-sha'}}
+        self.accepted={'database_revision':'final','database_sha256':'final-sha','fingerprints':self.inventory};rows=[]
         for index,name in enumerate(('primary','reproduction')):
             folder=self.root/'builds'/name;parent=folder/'source-parent';parent.mkdir(parents=True)
-            (parent/'started_fingerprints.json').write_text('{}');(parent/'build_status.json').write_text(json.dumps({s:{'status':'PASS'}for s in CHILD_STAGES}))
-            (parent/'parent_lineage.json').write_text('{}');(parent/'frozen_metadata.json').write_text('{}')
-            receipt={'schema':'FINEATLAS_STRUCTURE_BUILD_COMPLETE_V1','pass':True,'complete':True,'build_id':'owned-'+name,'revision':'c933','ended_utc':'historical','required_stages':list(CHILD_STAGES),'database':'/no-clean-host/c933-'+name+'.sqlite','started_fingerprints_sha256':portable.digest(parent/'started_fingerprints.json'),'build_status_sha256':portable.digest(parent/'build_status.json')}
+            (parent/'started_fingerprints.json').write_text(json.dumps(self.parent_inventory));(parent/'build_status.json').write_text(json.dumps({s:{'status':'PASS'}for s in CHILD_STAGES}))
+            (parent/'parent_lineage.json').write_text('{}');(parent/'frozen_metadata.json').write_text(json.dumps({'revision':'source-graph','manifest':self.parent_inventory}))
+            receipt={'schema':'FINEATLAS_STRUCTURE_BUILD_COMPLETE_V1','pass':True,'complete':True,'build_id':'owned-'+name,'revision':'c933','source_graph_revision':'source-graph','ended_utc':'historical','required_stages':list(CHILD_STAGES),'database':'/no-clean-host/c933-'+name+'.sqlite','started_fingerprints_sha256':portable.digest(parent/'started_fingerprints.json'),'build_status_sha256':portable.digest(parent/'build_status.json')}
             source_receipt=parent/'build_complete.json';source_receipt.write_text(json.dumps(receipt))
             seal={'sha256':'c933-whole','database_revision':'c933','database':receipt['database'],'integrity_check':['ok'],**{k:True for k in('pass','complete','integrity_pass','file_unchanged_during_checks','all_frozen_inputs_and_recipes_checked')}}
             integrity=folder/'parent_integrity.json';integrity.write_text(json.dumps(seal))
             lineage={'schema':'FINEATLAS_REPAIR_PARENT_LINEAGE_V1','resumed_build_id':'child-'+name,'resumed_revision':'final','parent_build_id':'owned-'+name,'parent_source_inode':[2049,index+10],'parent_revision':'c933','parent_database':receipt['database'],'parent_database_sha256':'c933-whole','parent_integrity_sha256':portable.digest(integrity),'parent_receipt_sha256':portable.digest(source_receipt)}
-            (folder/'parent_lineage.json').write_text(json.dumps(lineage));(folder/'started_fingerprints.json').write_text('{}')
+            (folder/'parent_lineage.json').write_text(json.dumps(lineage));(folder/'started_fingerprints.json').write_text(json.dumps(self.inventory))
             status={s:{'status':'PASS'}for s in portable.STAGES};status[portable.STAGES[0]]['result']={k:lineage[k]for k in ('parent_database_sha256','parent_integrity_sha256','parent_receipt_sha256','parent_build_id','parent_revision')};(folder/'build_status.json').write_text(json.dumps(status))
             child={'schema':'FINEATLAS_STRUCTURE_BUILD_COMPLETE_V1','pass':True,'complete':True,'build_id':lineage['resumed_build_id'],'revision':'final','ended_utc':'complete','parent_build_id':lineage['parent_build_id'],'parent_source_inode':lineage['parent_source_inode'],'parent_lineage_sha256':portable.digest(folder/'parent_lineage.json'),'required_stages':list(portable.STAGES),'started_fingerprints_sha256':portable.digest(folder/'started_fingerprints.json'),'build_status_sha256':portable.digest(folder/'build_status.json')};(folder/'build_complete.json').write_text(json.dumps(child))
             files={str(p.relative_to(folder)):{'member':str(p.relative_to(self.root)),'sha256':portable.digest(p)}for p in folder.rglob('*')if p.is_file()}
@@ -59,6 +62,19 @@ class CompletePortableLineageControls(unittest.TestCase):
     def test_stale3445_parent_binding_is_rejected(self):
         self.proof['children'][0]['source_parent_revision']='3445';self.save()
         with self.assertRaises(ValueError):self.validate()
+    def test_validly_rehashed_child_inventory_cannot_replace_accepted_implementation(self):
+        folder=self.root/'builds/primary';inventory=json.loads((folder/'started_fingerprints.json').read_text())
+        inventory['code']['old-code']='changed';(folder/'started_fingerprints.json').write_text(json.dumps(inventory))
+        receipt=json.loads((folder/'build_complete.json').read_text());receipt['started_fingerprints_sha256']=portable.digest(folder/'started_fingerprints.json');(folder/'build_complete.json').write_text(json.dumps(receipt))
+        for name in ('started_fingerprints.json','build_complete.json'):
+            self.proof['children'][0]['files'][name]['sha256']=portable.digest(folder/name)
+        self.save()
+        with self.assertRaisesRegex(ValueError,'accepted complete frozen inventory'):self.validate()
+    def test_validly_rehashed_source_freeze_cannot_change_historical_graph(self):
+        folder=self.root/'builds/primary';path=folder/'source-parent/frozen_metadata.json'
+        value=json.loads(path.read_text());value['revision']='another-source-graph';path.write_text(json.dumps(value))
+        self.proof['children'][0]['files']['source-parent/frozen_metadata.json']['sha256']=portable.digest(path);self.save()
+        with self.assertRaisesRegex(ValueError,'actually frozen source-parent'):self.validate()
     def test_changed_complete_source_parent_or_whole_seal_is_rejected(self):
         path=self.root/'builds/primary/parent_integrity.json';value=json.loads(path.read_text());value['sha256']='changed';path.write_text(json.dumps(value))
         with self.assertRaises(ValueError):self.validate()
