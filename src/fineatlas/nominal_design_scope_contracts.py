@@ -149,28 +149,34 @@ def validate_root_closure(c, operations, role_overrides):
         if o['op'] == 'link':
             proposed.setdefault(node(c, o['uid'])['component_id'], set()).add(node(c, o['parent'])['component_id'])
     cache = {}
+    def admitted(n):
+        if not n or n['visibility'] != 'ACTIVE':
+            return False
+        profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (n['uid'],)).fetchone()
+        # Existing unified SOURCE admission maps to the taxonomy source view.
+        attrs = json.loads(profile['attributes']) if profile else {}
+        allowed = attrs.get('allowed_views')
+        return not isinstance(allowed, list) or 'taxonomy' in allowed
     def parents(component):
         if component in cache:
             return cache[component]
         result = set(proposed.get(component, ()))
         for peer in c.execute('SELECT uid FROM nodes WHERE component_id=?', (component,)).fetchall():
             a = node(c, peer['uid'])
-            if a['visibility'] != 'ACTIVE':
+            if not admitted(a):
                 continue
             ar = role_overrides.get(a['uid'], a['role'])
-            rows = [('edges', r) for r in c.execute("SELECT * FROM edges WHERE child_uid=? AND status IN ('ACTIVE','TYPED_ACTIVE','BACKBONE_ACTIVE')", (a['uid'],))]
-            rows += [('entity_relations', r) for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND status='ACTIVE'", (a['uid'],))]
+            rows = [('edges', r) for r in c.execute("SELECT * FROM edges WHERE child_uid=? AND status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A'", (a['uid'],))]
+            rows += [('entity_relations', r) for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT')", (a['uid'],))]
             for table, r in rows:
                 if table == 'edges' and r['id'] in retired:
                     continue
                 b = node(c, r['parent_uid'] if table == 'edges' else r['object_uid'])
-                if not b or b['visibility'] != 'ACTIVE':
+                if not admitted(b):
                     continue
                 try:
                     validate_link_roles(r['relation'], ar, role_overrides.get(b['uid'], b['role']))
                 except ValueError:
-                    continue
-                if table == 'edges' and r['relation'] not in {'IS_A', 'TAXONOMIC_PARENT', 'NATIVE_CLASSIFICATION_PARENT'}:
                     continue
                 if b['component_id'] != component:
                     result.add(b['component_id'])
@@ -372,5 +378,12 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
                 continue
             # Every previously legitimate typed parent must remain legitimate.
             validate_link_roles(r['relation'], role_overrides.get(a['uid'], a['role']), role_overrides.get(b['uid'], b['role']))
+    for op in operations:
+        for uid in {op['uid'], op['parent']}:
+            profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (uid,)).fetchone()
+            attrs = json.loads(profile['attributes']) if profile else {}
+            views = attrs.get('allowed_views')
+            if isinstance(views, list) and 'taxonomy' not in views:
+                raise ValueError('Reviewed source endpoint is not admitted to the actual unified source view')
     validate_batch_cycles(c, operations, {})
     validate_root_closure(c, operations, role_overrides)

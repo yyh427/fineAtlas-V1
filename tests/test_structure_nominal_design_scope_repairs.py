@@ -317,6 +317,28 @@ class NominalScopeContractTest(unittest.TestCase):
         self.assertEqual(self.c.execute('SELECT count(*) FROM evidence').fetchone()[0], 0)
         self.assertEqual(self.c.execute('SELECT count(*) FROM usability_changes').fetchone()[0], 0)
 
+    def test_typed_active_isa_is_not_an_admitted_root_path(self):
+        self.c.execute("UPDATE edges SET status='TYPED_ACTIVE' WHERE child_uid='purpose'")
+        self.manifest['scope_inventories']['purpose'] = inventory(self.c, 'purpose')
+        self.manifest['scope_inventories']['aircraft'] = inventory(self.c, 'aircraft')
+        with self.assertRaisesRegex(ValueError, 'legitimate planned root path'):
+            self.validate()
+
+    def test_regulatory_reference_is_not_a_physical_ancestor(self):
+        self.c.execute("DELETE FROM edges WHERE child_uid='purpose'")
+        self.c.execute("INSERT INTO entity_relations VALUES(5,'purpose','aircraft','REGULATED_AS','ACTIVE','original','old-eid','{}')")
+        self.manifest['scope_inventories']['purpose'] = inventory(self.c, 'purpose')
+        self.manifest['scope_inventories']['aircraft'] = inventory(self.c, 'aircraft')
+        with self.assertRaisesRegex(ValueError, 'legitimate planned root path'):
+            self.validate()
+
+    def test_membership_only_source_cannot_claim_unified_admission(self):
+        self.c.execute("UPDATE node_profiles SET attributes=? WHERE uid='purpose'", (dump({'allowed_views': ['membership', 'unified']}),))
+        self.ops = [self.operation('programme', 'purpose', 'DESIGN_TYPE_OF', 'purpose'), self.operation('variant', 'programme', 'NATIVE_DESIGN_PARENT', 'design_family'), self.operation('propjet', 'aircraft', 'IS_A', 'physical_intension')]
+        self.freeze_changed_operations()
+        with self.assertRaisesRegex(ValueError, 'actual unified source view'):
+            self.validate()
+
 
 if __name__ == '__main__':
     unittest.main()
