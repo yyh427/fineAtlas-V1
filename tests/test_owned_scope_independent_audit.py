@@ -35,6 +35,19 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
     def test_shared_component_and_name_do_not_prove_owned_source_identity(self):
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))
 
+    def test_source_evidence_must_be_attached_to_the_navigable_edge(self):
+        row = {'status': 'TYPED_ACTIVE', 'provenance': json.dumps({'evidence_ids': ['own']}),
+               'data': json.dumps({'eligible_for_final_typed_graph': True, 'eligible_for_final_dag': False})}
+        audit.verify_edge_grounding(row, 'own', 'TAXONOMIC_PARENT')
+        with self.assertRaisesRegex(ValueError, 'evidence reference'):
+            audit.verify_edge_grounding(row, 'unrelated', 'TAXONOMIC_PARENT')
+        row['data'] = json.dumps({'eligible_for_final_typed_graph': False, 'eligible_for_final_dag': False})
+        with self.assertRaisesRegex(ValueError, 'scientific typed graph'):
+            audit.verify_edge_grounding(row, 'own', 'TAXONOMIC_PARENT')
+        row['data'] = json.dumps({'eligible_for_final_typed_graph': True, 'eligible_for_final_dag': True})
+        with self.assertRaisesRegex(ValueError, 'distinct scientific relation'):
+            audit.verify_edge_grounding(row, 'own', 'TAXONOMIC_PARENT')
+
     def test_abbreviated_design_name_does_not_truncate_real_type_assertion(self):
         statement = 'The G.A.C. 102 Aristocrat is a cabin monoplane built in the US.'
         self.assertEqual(audit.own_assertion_phrase(statement), 'a cabin monoplane')

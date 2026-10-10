@@ -42,6 +42,21 @@ def assertion_content(row):
                            if k not in {'id', 'status', 'reason'}}, sort_keys=True))
 
 
+def verify_edge_grounding(row, evidence_id, relation):
+    provenance = json.loads(row['provenance'])
+    identifiers = provenance.get('evidence_ids', []) if isinstance(provenance, dict) else provenance
+    if evidence_id not in identifiers:
+        raise ValueError('Actual navigable edge lacks its own evidence reference')
+    data = json.loads(row['data'])
+    if relation == 'TAXONOMIC_PARENT':
+        if row['status'] != 'TYPED_ACTIVE' or data.get('eligible_for_final_typed_graph') is not True:
+            raise ValueError('Biological host is missing from the scientific typed graph')
+        if data.get('eligible_for_final_dag') is not False:
+            raise ValueError('Biological host must preserve its distinct scientific relation')
+    elif relation == 'IS_A' and data.get('eligible_for_final_dag') is not True:
+        raise ValueError('Legal ordinary class link is absent from the final DAG')
+
+
 def row_at(con, table, identifier, key='id'):
     if table not in {'nodes', 'edges', 'entity_relations', 'bridges', 'evidence', 'node_profiles', 'normalization_roles'}:
         raise ValueError('Unsafe source witness table')
@@ -631,6 +646,8 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                         raise ValueError('Actual new physical link evidence differs')
                     if table == 'entity_relations' and rows[0]['evidence_id'] != eid:
                         raise ValueError('Actual typed link points at a different evidence record')
+                    if table == 'edges':
+                        verify_edge_grounding(rows[0], eid, op['relation'])
                     exact_history(con, 'owned_scope_link', op['uid'], {'prior_assertions': proof.get('prior_assertions', [])},
                                   {'parent_uid': op['parent'], 'relation': op['relation']}, proof)
                     if reaches(con, op['parent'], op['uid']):
