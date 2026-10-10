@@ -54,8 +54,8 @@ def independent_permissions(database, inputs, output, primary_snapshots_dir,owne
         subprocess.run(command, check=True)
         validate_delta_receipt(spec, report, database, inputs, revision)
         if spec.name == 'complete-subject-scope':
-            from structure_subject_scope_temporal_contract import require_temporal_subject_receipt
-            require_temporal_subject_receipt(report, database, inputs, revision, ROOT)
+            from structure_eighth_subject_scope_temporal_contract import require_temporal_eighth_subject_receipt
+            require_temporal_eighth_subject_receipt(report, database, inputs, revision, ROOT)
             fresh=json.loads(report.read_bytes())
             if fresh.get('eighth_temporal_subject_contract')!='FINEATLAS_EXACT_COMPLETE_OWNED_TYPE_SUBJECT_TRANSITIONS_V1' or fresh.get('original_subject_scope_checks_preserved')is not True:
                 raise ValueError('Eighth actual full SOURCE3 temporal audit required')

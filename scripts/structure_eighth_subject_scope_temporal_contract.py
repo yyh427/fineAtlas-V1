@@ -124,3 +124,34 @@ class EighthSubjectTemporalContract(SubjectTemporalContract):
             later_complete_type_role_permissions=len(self.eighth_roles),
             later_complete_type_typed_permissions=len(self.eighth_reviews))
         return value
+
+
+def require_temporal_eighth_subject_receipt(report_path, database, inputs, revision, code_root=ROOT):
+    """Keep the entire earlier gate and require the exact current eighth layer."""
+    from structure_subject_scope_temporal_contract import require_temporal_subject_receipt
+    from structure_complete_owned_type_delivery_guard import require_complete_type_receipt
+    import sqlite3
+    report_path,database,inputs,code_root=map(Path,(report_path,database,inputs,code_root))
+    report=require_temporal_subject_receipt(report_path,database,inputs,revision,code_root)
+    with sqlite3.connect(database.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)as con:
+        meta={k:json.loads(v)for k,v in con.execute('SELECT *FROM metadata')}
+    frozen=meta['structure_frozen_build_manifest'];mf_path=inputs/'structure_complete_owned_type_repairs.json';mf=json.loads(mf_path.read_bytes());reference_path=inputs/REFERENCE;reference=json.loads(reference_path.read_bytes());parent=meta['structure_complete_type_resume_parent']['parent_revision']
+    if (report.get('eighth_temporal_subject_contract')!='FINEATLAS_EXACT_COMPLETE_OWNED_TYPE_SUBJECT_TRANSITIONS_V1'
+            or report.get('original_subject_scope_checks_preserved')is not True
+            or report.get('complete_type_manifest_sha256')!=sha(mf_path.read_bytes())
+            or report.get('complete_type_temporal_reference_sha256')!=sha(reference_path.read_bytes())
+            or frozen['inputs'].get(REFERENCE)!=sha(reference_path.read_bytes())
+            or reference.get('parent_revision')!=parent or mf['completed_parent_binding']['database_revision']!=parent):
+        raise ValueError('The complete actual eighth SOURCE temporal contract is required')
+    for name in ('audit_temporal_eighth_complete_subject_scope_repairs.py','structure_eighth_subject_scope_temporal_contract.py','audit_complete_owned_type_repairs.py'):
+        if frozen['code'].get('scripts/'+name)!=sha((code_root/'scripts'/name).read_bytes()):
+            raise ValueError('Every actual eighth temporal implementation must be frozen')
+    evidence=report.get('complete_type_actual_audit')or{};path=Path(evidence.get('path',''))
+    if not path.is_file()or sha(path.read_bytes())!=evidence.get('sha256'):
+        raise ValueError('Current independent eighth actual audit evidence changed')
+    require_complete_type_receipt(path,database,inputs,revision,code_root)
+    operations=[json.loads(line)for line in(inputs/mf['operations_file']).read_text().splitlines()if line]
+    if (report.get('later_complete_type_role_permissions')!=sum(o['op']=='correct_role'for o in operations)
+            or report.get('later_complete_type_typed_permissions')!=sum(o['op']=='review_typed_relation'for o in operations)):
+        raise ValueError('Temporal permissions must match the exact complete operation inventory')
+    return report
