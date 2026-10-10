@@ -60,7 +60,8 @@ def allowed(relation, child_role, parent_role):
     return (relation == 'IS_A' and child_role == parent_role == 'CLASS'
             or relation == 'DESIGN_TYPE_OF' and child_role in {'MODEL', 'MODEL_FAMILY'} and parent_role == 'CLASS'
             or relation == 'NATIVE_DESIGN_PARENT' and child_role in {'MODEL', 'MODEL_FAMILY'}
-            and parent_role in {'MODEL', 'MODEL_FAMILY'})
+            and parent_role in {'MODEL', 'MODEL_FAMILY'}
+            or relation == 'INSTANCE_OF' and child_role == 'INSTANCE' and parent_role == 'CLASS')
 
 
 def complete_fields(node):
@@ -117,7 +118,7 @@ def scope_inventory(con, uid, post):
 
 
 def admitted(con, node):
-    if not node or node['visibility'] != 'ACTIVE' or role(con, node) not in {'CLASS', 'MODEL', 'MODEL_FAMILY'}:
+    if not node or node['visibility'] != 'ACTIVE' or role(con, node) not in {'CLASS', 'MODEL', 'MODEL_FAMILY', 'INSTANCE'}:
         return False
     profile = row_at(con, 'node_profiles', node['uid'])
     attrs = json.loads(profile.get('attributes') or '{}') if profile else {}
@@ -139,7 +140,7 @@ def raw_parents(con, uid):
             for edge in con.execute('SELECT * FROM ' + table + ' WHERE ' + left + '=?', (peer['uid'],)):
                 parent = row_at(con, 'nodes', edge[right])
                 valid_status = (table == 'edges' and edge['relation'] == 'IS_A' and edge['status'] in {'ACTIVE', 'BACKBONE_ACTIVE'}
-                                or table == 'entity_relations' and edge['relation'] in {'DESIGN_TYPE_OF', 'NATIVE_DESIGN_PARENT'} and edge['status'] == 'ACTIVE')
+                                or table == 'entity_relations' and edge['relation'] in {'DESIGN_TYPE_OF', 'NATIVE_DESIGN_PARENT', 'INSTANCE_OF'} and edge['status'] == 'ACTIVE')
                 if (admitted(con, parent) and valid_status
                         and allowed(edge['relation'], role(con, peer), role(con, parent))
                         and parent['component_id'] != child['component_id']):
@@ -171,8 +172,8 @@ def check_operation(con, inputs, manifest, op, post, operations=()):
         raise ValueError('Conservative independently reviewed source link required')
     axis = op['classification_axis']
     if (axis != proof['classification_axis']
-            or axis not in {'IS_A': {'physical_intension'}, 'DESIGN_TYPE_OF': {'purpose', 'function'},
-                             'NATIVE_DESIGN_PARENT': {'design_family'}}.get(op['relation'], set())):
+            or axis not in {'IS_A': {'physical_intension', 'class_intension'}, 'DESIGN_TYPE_OF': {'purpose', 'function', 'physical_intension'},
+                             'NATIVE_DESIGN_PARENT': {'design_family'}, 'INSTANCE_OF': {'physical_intension'}}.get(op['relation'], set())):
         raise ValueError('Declared classification axis is incompatible with relation')
     child, parent = [row_at(con, 'nodes', op[k]) for k in ('uid', 'parent')]
     if (not child or not parent or any(n['visibility'] != 'ACTIVE' for n in (child, parent))
@@ -234,7 +235,16 @@ def check_operation(con, inputs, manifest, op, post, operations=()):
         raise ValueError('Design derivation and whole nominal family range require explicit review')
     for item in proof['prior_assertions'] + composition['non_admitted_derivations']:
         before = item['before_assertion']
-        if row_at(con, item['table'], before['id']) != before or assertion_sha(before) != item['content_sha256']:
+        expected = before
+        same_batch_reviews = [o for o in operations if o['op'] == 'review_class_edge'
+                              and item['table'] == 'edges' and o['before_assertion']['id'] == before['id']]
+        if same_batch_reviews:
+            if len(same_batch_reviews) != 1 or same_batch_reviews[0]['before_assertion'] != before:
+                raise ValueError('Prior declaration withdrawal differs from its exact full original row')
+            check_review_operation(con, inputs, same_batch_reviews[0], post)
+            if post:
+                expected = {**before, 'status': 'SOURCE_SCOPE_REVIEW'}
+        if row_at(con, item['table'], before['id']) != expected or assertion_sha(before) != item['content_sha256']:
             raise ValueError('Original declaration content, status or source history changed')
     for item in composition['non_admitted_derivations']:
         if item['before_assertion']['status'] in ACTIVE:
@@ -353,10 +363,17 @@ def check_role_operation(con, inputs, op, post):
         raise ValueError('Original whole role-source object changed')
     locator = proof['source_review_locator']
     raw = read_input(inputs, locator['file']); review = json.loads(raw)
+    before = op['before_profile']; old_norm = op['before_normalization_role']
+    before_role = before['node_kind'] if before else {
+        'model': 'MODEL', 'product_model': 'MODEL', 'aircraft_model': 'MODEL', 'vehicle_model': 'MODEL',
+        'series': 'MODEL_FAMILY', 'model_family': 'MODEL_FAMILY', 'configuration': 'CONFIGURATION',
+        'instance': 'INSTANCE', 'unknown': 'UNKNOWN', 'type_or_product_model': 'UNKNOWN',
+        'biological_variant': 'BIOLOGICAL_VARIANT', 'dataset_category': 'DATASET_CATEGORY',
+        'manufacturer': 'ORGANIZATION', 'attribute': 'ATTRIBUTE'}.get((node.get('rank') or '').lower(), 'CLASS')
     approved = [r for r in review.get('approved_source_role_corrections', []) if r['uid'] == op['uid']]
     if (sha(raw) != locator['sha256'] or review != proof['source_scope_review_record']
             or review.get('accepted_source_scope_only') is not True or len(approved) != 1
-            or approved[0]['before_role'] != op['before_profile']['node_kind']
+            or approved[0]['before_role'] != before_role
             or approved[0]['source_role_scope_kind'] != op['after_profile']['node_kind']
             or approved[0]['before_profile'] != op['before_profile']
             or approved[0]['before_normalization'] != op['before_normalization_role']):
@@ -369,23 +386,50 @@ def check_role_operation(con, inputs, op, post):
     declared = {(str(w['field_path']).split('.')[-1], w['statement']) for w in witnesses}
     if not declared or declared != complete_fields(node):
         raise ValueError('Complete own role-source context omitted or changed')
-    # A same-object model-to-family adjudication preserves original source rank,
-    # first prior profile and all view limits. No new broad-view admission follows.
-    before = op['before_profile']; old_norm = op['before_normalization_role']
-    if (proof.get('source_role') != old_norm['source_role']
-            or proof.get('native_rank') != json.loads(before['attributes']).get('native_rank', node['rank'])
-            or proof.get('role_status') != 'VERIFIED'):
-        raise ValueError('A canonical role correction cannot replace original source role or rank')
-    if before['node_kind'] != 'MODEL' or op['after_profile']['node_kind'] != 'MODEL_FAMILY':
-        raise ValueError('Unreviewed kind of role change needs a separate source contract')
+    # Preserve source rank, first normalization history and every view limit.
+    attrs = json.loads(before['attributes']) if before else {}
+    source_role = old_norm['source_role'] if old_norm else node.get('rank') or 'UNSPECIFIED'
+    native_rank = attrs.get('native_rank', node.get('rank'))
+    target = op['after_profile']['node_kind']
+    contracts = {
+        'WHOLE_NOMINAL_MULTIMODEL_PROGRAMME': ('MODEL_FAMILY', 'VERIFIED'),
+        'OWNED_NAMED_REUSABLE_DESIGN_PROGRAMME': ('MODEL', 'VERIFIED'),
+        'OWNED_NAMED_OPERATIONAL_PHYSICAL_INSTANCE': ('INSTANCE', 'VERIFIED'),
+        'SOURCE_NOMINAL_OR_INDIVIDUAL_GRAIN_PENDING': ('UNKNOWN', 'REVIEW'),
+    }
+    declared = contracts.get(proof.get('source_role_scope_kind'))
+    if (declared is None or declared != (target, proof.get('role_status'))
+            or target == before_role or proof.get('source_role') != source_role
+            or proof.get('native_rank') != native_rank):
+        raise ValueError('Unreviewed role grain, original source rank or confidence differs')
+    if target == 'MODEL_FAMILY' and before_role not in {'MODEL', 'MODEL_FAMILY'}:
+        raise ValueError('Nominal family correction requires an existing evidenced design role')
     eid = 'usability:' + sha(dump(proof))
-    attrs = json.loads(before['attributes'])
-    attrs.update(source_role=proof['source_role'], native_rank=proof['native_rank'],
-                 role_status='VERIFIED', role_evidence_id=eid)
+    attrs.update(source_role=source_role, native_rank=native_rank,
+                 role_status=declared[1], role_evidence_id=eid)
     attrs.pop('canonical_scope_guard', None); attrs.pop('canonical_scope_evidence_id', None)
-    expected_profile = {**before, 'node_kind': 'MODEL_FAMILY', 'source_uri': op['uri'],
-                        'evidence_id': eid, 'attributes': dump(attrs)}
-    expected_norm = {**old_norm, 'canonical_role': 'MODEL_FAMILY', 'evidence_id': eid, 'source': SOURCE}
+    if target == 'UNKNOWN':
+        decision = approved[0]
+        if (decision.get('after_role_status') != 'REVIEW' or decision.get('allowed_views') != []
+                or decision.get('quarantine_role_grain') is not True or proof.get('allowed_views') != []):
+            raise ValueError('Pending grain requires explicit independent review-only view quarantine')
+        attrs['allowed_views'] = []
+    elif proof.get('allowed_views') is not None and proof['allowed_views'] != attrs.get('allowed_views'):
+        raise ValueError('Verified grain cannot loosen source view admission')
+    if before:
+        expected_profile = {**before, 'node_kind': target, 'source_uri': op['uri'],
+                            'evidence_id': eid, 'attributes': dump(attrs)}
+    else:
+        expected_profile = {'uid': op['uid'], 'node_kind': target, 'domain': node.get('domain') or '',
+                            'source_uri': op['uri'], 'evidence_id': eid, 'attributes': dump(attrs)}
+    if old_norm:
+        expected_norm = {**old_norm, 'canonical_role': target, 'evidence_id': eid, 'source': SOURCE}
+        if target == 'UNKNOWN':
+            expected_norm['status'] = 'REVIEW'
+    else:
+        expected_norm = {'uid': op['uid'], 'source_role': source_role, 'canonical_role': target,
+                         'status': declared[1], 'evidence_id': eid, 'source': SOURCE,
+                         'prior_profile': dump(before or {})}
     if op['after_profile'] != expected_profile or op['after_normalization_role'] != expected_norm:
         raise ValueError('Role migration changed unrelated profile, source history or view fields')
     for table, suffix in (('node_profiles', 'profile'), ('normalization_roles', 'normalization_role')):
@@ -404,7 +448,7 @@ def check_role_operation(con, inputs, op, post):
                and json.loads(r['evidence']) == proof for r in histories) != 1:
             raise ValueError('Exact source-role before and after history missing or duplicated')
     return {'uid': op['uid'], 'parent': op['parent'], 'relation': op['relation'],
-            'before_role': before['node_kind'], 'after_role': expected_profile['node_kind']}
+            'before_role': before_role, 'after_role': expected_profile['node_kind']}
 
 
 def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
@@ -502,6 +546,8 @@ def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
                     or not proof.get('scope_observation') or not proof.get('license')):
                 raise ValueError('Conservative complete source scope, attribution and licensing required')
             key = op['uid'], op['parent'], op['relation']
+            if op['op'] == 'review_class_edge':
+                key = (*key, op['table'], op['before_assertion']['id'])
             if key in seen:
                 raise ValueError('Duplicate source direction')
             seen.add(key)

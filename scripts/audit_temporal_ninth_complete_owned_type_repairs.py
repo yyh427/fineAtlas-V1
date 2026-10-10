@@ -772,6 +772,8 @@ def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False, 
             or not ops or any(manifest.get(k) != 0 for k in ('new_nodes', 'positive_identity_merges', 'mapping_promotions'))):
         raise ValueError('Exact source operations and conservative mutation limits are required')
     errors, routes, checked, seen = [], {}, [], set()
+    if any(Path(str(database) + suffix).exists() for suffix in ('-wal', '-shm', '-journal')):
+        raise ValueError('Independent temporal audit requires a closed database without sidecars')
     con = sqlite3.connect(database.as_uri() + '?mode=ro&immutable=1', uri=True)
     con.row_factory = sqlite3.Row
     metadata = {r['key']: json.loads(r['value']) for r in con.execute('SELECT * FROM metadata')}

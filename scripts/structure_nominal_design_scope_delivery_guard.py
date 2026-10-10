@@ -41,8 +41,15 @@ def require_nominal_scope_receipt(report, database, inputs, revision, code_root)
             or freeze['code'].get('scripts/' + SPEC.auditor) != digest(code_root / 'scripts' / SPEC.auditor)):
         raise ValueError('Independent scope review and actual auditor bytes must be frozen')
     operations = [json.loads(line) for line in (inputs / manifest['operations_file']).read_text().splitlines() if line]
-    expected = {(o['uid'], o['parent'], o['relation']) for o in operations}
+    def expected_key(op):
+        key = (op['uid'], op['parent'], op['relation'])
+        return (*key, op['before_assertion']['id']) if op['op'] == 'review_class_edge' else key
+    def checked_key(row):
+        key = (row['uid'], row['parent'], row['relation'])
+        return (*key, row['reviewed_original_id']) if 'reviewed_original_id' in row else key
+    expected = {expected_key(o) for o in operations}
     checked = value.get('checked_complete_source', [])
-    if len(checked) != len(expected) or {(r['uid'], r['parent'], r['relation']) for r in checked} != expected:
-        raise ValueError('Every added source direction needs its independent complete-field check')
+    if (len(expected) != len(operations) or len(checked) != len(expected)
+            or {checked_key(row) for row in checked} != expected):
+        raise ValueError('Every exact source operation needs its independent complete-field check')
     return value
