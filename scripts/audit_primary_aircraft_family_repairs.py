@@ -47,8 +47,11 @@ def component_route(c, uid, target_uid):
         for parent,steps in canonical_parents(c,component):queue.append((parent,path+steps))
     return None
 
-def run(database,inputs,output,preflight=False):
+def run(database,inputs,output,preflight=False,primary_snapshots_dir=None,primary_source_registry=None):
  database=database.resolve();path=inputs/INPUT_NAME;manifest=json.loads(path.read_text());raw=(inputs/manifest['operations_file']).read_bytes();ops=[json.loads(l)for l in raw.decode().splitlines()if l]
+ registry_path=primary_source_registry or inputs/'structure_primary_source_snapshots.json'
+ registry=json.loads(registry_path.read_text())if registry_path.is_file()else {}
+ snapshots=primary_snapshots_dir.resolve()if primary_snapshots_dir is not None else None
  c=sqlite3.connect(database.as_uri()+'?mode=ro&immutable=1',uri=True);c.row_factory=sqlite3.Row;errors=[];checked_docs={};links=set();components=set()
  if sha(raw)!=manifest['operations_sha256']or type(manifest['operation_count'])is not int or len(ops)!=manifest['operation_count']or len({(x['uid'],x['parent'],x['relation'])for x in ops})!=len(ops):errors.append({'kind':'INPUT_BINDING_OR_UNIQUENESS_FAILED'})
  for op in ops:
@@ -68,7 +71,12 @@ def run(database,inputs,output,preflight=False):
     if doc.get('source_kind')=='SOURCE_OWNED_COMPLETE_DESCRIPTION':
      owned=c.execute('SELECT data FROM nodes WHERE uid=?',(doc['database_source_uid'],)).fetchone();actual=sha(owned[0])if owned else None;local=Path('source-payload:'+doc['database_source_uid'])
     else:
-     local=Path(doc['local_snapshot_path']);actual=sha(local.read_bytes())if local.is_file()else None
+     entry=registry.get('documents',{}).get(loc['document_id'],{})
+     filename=entry.get('filename','')
+     safe=bool(filename and Path(filename).name==filename and filename not in('.','..')and snapshots is not None)
+     bound=registry.get('schema')=='FINEATLAS_PORTABLE_PRIMARY_SOURCE_SNAPSHOTS_V1'and entry.get('source_uri')==doc['source_uri']and entry.get('sha256')==doc['sha256']and entry.get('hash_basis')=='HTTP_RESPONSE_BODY_BYTES'
+     local=snapshots/filename if safe else Path('MISSING_EXPLICIT_PRIMARY_SNAPSHOTS_DIR')
+     actual=sha(local.read_bytes())if safe and bound and local.is_file()and local.resolve().is_relative_to(snapshots)else None
     checked_docs[loc['document_id']]={'path':str(local),'expected_sha256':doc['sha256'],'actual_sha256':actual,'pass':actual==doc['sha256']}
     if actual!=doc['sha256']:errors.append({'kind':'INDEPENDENT_PRIMARY_SOURCE_SNAPSHOT_CHANGED_OR_UNAVAILABLE','document_id':loc['document_id']})
   for w in proof['source_witnesses']:
@@ -123,8 +131,8 @@ def run(database,inputs,output,preflight=False):
    if canonical_cycle is not None:errors.append({'kind':'ACTUAL_CANONICAL_COMPONENT_CYCLE','uid':op['uid'],'path':canonical_cycle})
    cycle=c.execute("WITH RECURSIVE lin(uid) AS(SELECT object_uid FROM entity_relations WHERE subject_uid=?AND relation='NATIVE_DESIGN_PARENT'AND status='ACTIVE'UNION SELECT r.object_uid FROM entity_relations r JOIN lin l ON r.subject_uid=l.uid WHERE r.relation='NATIVE_DESIGN_PARENT'AND r.status='ACTIVE')SELECT 1 FROM lin WHERE uid=?LIMIT 1",(op['uid'],op['uid'])).fetchone()
    if cycle:errors.append({'kind':'ACTUAL_DESIGN_CYCLE','uid':op['uid']})
- report={'schema':'FINEATLAS_INDEPENDENT_PRIMARY_AIRCRAFT_FAMILY_AUDIT_V1','pass':not errors,'preflight_only':preflight,'database':str(database),'database_revision':metadata.get('database_revision'),'release':metadata.get('release'),'manifest_sha256':sha(path.read_bytes()),'operations_sha256':sha(raw),'operation_count':len(ops),'operations':dict(Counter(x['relation']for x in ops)),'added_source_assertions':len(ops),'distinct_uid_relation_links':len(links),'quotient_identity_directions_in_input':len(components),'navigation_assertions':sum(x['relation']!='SOURCE_DESIGN_DERIVATION_REFERENCE'for x in ops),'non_navigation_references':sum(x['relation']=='SOURCE_DESIGN_DERIVATION_REFERENCE'for x in ops),'actual_parent_root_routes':routes if not preflight else 'NOT_APPLIED_PARENT_SCOPE_ONLY','new_nodes':0,'world_identity_promotions':0,'dataset_mapping_promotions':0,'primary_snapshot_actual_hashes':checked_docs,'pair_or_new_view_path_recovery_claimed':False,'errors':errors}
+ report={'schema':'FINEATLAS_INDEPENDENT_PRIMARY_AIRCRAFT_FAMILY_AUDIT_V1','pass':not errors,'preflight_only':preflight,'database':str(database),'database_revision':metadata.get('database_revision'),'release':metadata.get('release'),'manifest_sha256':sha(path.read_bytes()),'operations_sha256':sha(raw),'operation_count':len(ops),'operations':dict(Counter(x['relation']for x in ops)),'added_source_assertions':len(ops),'distinct_uid_relation_links':len(links),'quotient_identity_directions_in_input':len(components),'navigation_assertions':sum(x['relation']!='SOURCE_DESIGN_DERIVATION_REFERENCE'for x in ops),'non_navigation_references':sum(x['relation']=='SOURCE_DESIGN_DERIVATION_REFERENCE'for x in ops),'actual_parent_root_routes':routes if not preflight else 'NOT_APPLIED_PARENT_SCOPE_ONLY','new_nodes':0,'world_identity_promotions':0,'dataset_mapping_promotions':0,'primary_snapshot_actual_hashes':checked_docs,'primary_source_registry_sha256':sha(registry_path.read_bytes())if registry_path.is_file()else None,'primary_snapshots_dir':str(snapshots)if snapshots else None,'pair_or_new_view_path_recovery_claimed':False,'errors':errors}
  output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n');c.close();print(json.dumps({k:v for k,v in report.items()if k not in('errors','primary_snapshot_actual_hashes')}));return not errors
 
 if __name__=='__main__':
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,required=True);p.add_argument('--inputs',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--preflight',action='store_true');a=p.parse_args();raise SystemExit(0 if run(a.database,a.inputs,a.output,a.preflight) else 1)
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,required=True);p.add_argument('--inputs',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--preflight',action='store_true');p.add_argument('--primary-snapshots-dir',type=Path,help='Explicit directory containing verified official HTTP source snapshots; no absolute source fallback');p.add_argument('--primary-source-registry',type=Path,help='Portable registry; defaults to inputs/structure_primary_source_snapshots.json');a=p.parse_args();raise SystemExit(0 if run(a.database,a.inputs,a.output,a.preflight,a.primary_snapshots_dir,a.primary_source_registry) else 1)
