@@ -135,7 +135,7 @@ def validate_additional_grain(c, op, manifest, reviews, operations):
     inventory=scope_inventory(c,uid)
     if any(r['status']=='ACTIVE'for r in inventory['identity_bridges']):raise ValueError('Additional grain cannot silently migrate an identity component')
     if op['op']=='correct_role':
-        if approved!=op['after_profile']['node_kind']or p['source_witnesses']!=fields or p['before_scope_declarations']!=inventory:
+        if approved!=op['after_profile']['node_kind']or p['source_witnesses']!=[{k:v for k,v in w.items()if k!='bound_source_names'}for w in fields] or p['before_scope_declarations']!=inventory:
             raise ValueError('Additional role migration changed original complete source declarations')
         wanted='REVIEW'if approved=='UNKNOWN'else'VERIFIED'
         if p.get('role_status')!=wanted or p.get('allowed_views')!=([]if approved=='UNKNOWN'else['taxonomy','membership']):raise ValueError('Uncertain grain cannot activate hierarchy or claim verified certainty')
@@ -357,7 +357,7 @@ def apply_complete_owned_type_repairs(m):
         for row in m.c.execute('SELECT * FROM '+table+where+' ORDER BY '+order,role_uids if where else ()):
             digest.update((dump(dict(row))+'\n').encode())
         return digest.hexdigest()
-    before = {t:fingerprint(t) for t in protected_tables}
+    protected_before = {t:fingerprint(t) for t in protected_tables}
     role_diffs=[]
     for o in operations:
         if o['op']!='correct_role':continue
@@ -392,11 +392,11 @@ def apply_complete_owned_type_repairs(m):
         m.c.execute('UPDATE entity_relations SET data=?WHERE id=?',(dump(data),row['id']))
         row=m.c.execute('SELECT *FROM entity_relations WHERE id=?',(row['id'],)).fetchone()
         m.change(METADATA_KEY,'complete_owned_source_scope_reference',o['uid'],o['proof']['original_assertion'],dict(row),o['proof']);references+=1
-    if any(fingerprint(t) != before[t] for t in protected_tables):
+    if any(fingerprint(t) != protected_before[t] for t in protected_tables):
         raise ValueError('Complete owned physical types changed source roles, identities or mappings')
     counts = dict(Counter(o['relation'] for o in operations))
     links=sum(o['op']=='link'for o in operations)
     m.c.execute('INSERT INTO source_catalogs VALUES(?,?,?,?,?)',('Hierarchy refinement: '+SOURCE,operations[0]['uri'],'Derived factual source-scope assertions; original source records, attribution and licenses retained',sha(raw),dump({'source_operations':len(operations),'source_assertions_added':links,'physical_kind_and_explicit_grain_review_only':True,'source_review_sha256':manifest['source_review_sha256']})))
-    m.meta(METADATA_KEY, {'manifest_sha256':sha(path.read_bytes()),'operations_sha256':sha(raw),'operation_count':len(operations),'operations':counts,'source_assertions_added':links,'roles_corrected':len(role_diffs),'source_scope_references_added':references,'class_encodings_reviewed':sum(o['op']=='review_class_edge'for o in operations),'typed_encodings_reviewed':sum(o['op']=='review_typed_relation'for o in operations),'role_allowed_differences':role_diffs,'protected_table_hashes':before,'distinct_canonical_directions_asserted':len(canonical_links),'new_nodes':0,'mapping_promotions':0,'positive_identity_merges':0,'source_declarations_preserved':True,'completed_parent_binding':manifest['completed_parent_binding']})
+    m.meta(METADATA_KEY, {'manifest_sha256':sha(path.read_bytes()),'operations_sha256':sha(raw),'operation_count':len(operations),'operations':counts,'source_assertions_added':links,'roles_corrected':len(role_diffs),'source_scope_references_added':references,'class_encodings_reviewed':sum(o['op']=='review_class_edge'for o in operations),'typed_encodings_reviewed':sum(o['op']=='review_typed_relation'for o in operations),'role_allowed_differences':role_diffs,'protected_table_hashes':protected_before,'distinct_canonical_directions_asserted':len(canonical_links),'new_nodes':0,'mapping_promotions':0,'positive_identity_merges':0,'source_declarations_preserved':True,'completed_parent_binding':manifest['completed_parent_binding']})
     m.c.commit()
     return {'status':'PASS','source_assertions_added':links,'roles_corrected':len(role_diffs),'typed_encodings_reviewed':sum(o['op']=='review_typed_relation'for o in operations),'distinct_canonical_directions_asserted':len(canonical_links),'new_nodes':0,'mapping_promotions':0,'positive_identity_merges':0}
