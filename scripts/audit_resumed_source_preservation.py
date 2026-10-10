@@ -17,6 +17,7 @@ import sys
 import time
 
 from structure_delivery_delta_registry import required_deltas, validate_delta_receipt
+from structure_acceptance_contract import file_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -24,8 +25,13 @@ ROOT = Path(__file__).resolve().parents[1]
 def independent_permissions(database, inputs, output):
     """Require complete independent actual audits before allowing any change."""
     con = sqlite3.connect(database.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
-    revision = json.loads(con.execute(
-        "SELECT value FROM metadata WHERE key='database_revision'").fetchone()[0])
+    metadata = {key: json.loads(value) for key, value in con.execute('SELECT * FROM metadata')}
+    revision = metadata['database_revision']
+    frozen_inputs = metadata['structure_frozen_build_manifest']['inputs']
+    actual_inputs = {str(path.relative_to(inputs)): file_sha256(path)
+                     for path in sorted(inputs.rglob('*')) if path.is_file()}
+    if actual_inputs != frozen_inputs:
+        raise ValueError('Source-preservation inputs differ from actual frozen revision')
     con.close()
     permissions, audits = {}, []
     for spec in required_deltas(inputs):
@@ -49,7 +55,7 @@ def independent_permissions(database, inputs, output):
             permissions[uid] = {'before': before, 'after': after, 'delta': spec.name}
         audits.append({'delta': spec.name, 'report': str(report),
                        'sha256': hashlib.sha256(report.read_bytes()).hexdigest()})
-    return permissions, audits, revision
+    return permissions, audits, revision, frozen_inputs
 
 
 def digest_rows(con, table, columns, maximum, permissions=None):
@@ -82,7 +88,7 @@ def run(baseline, candidate, inputs, output, reference=None):
     if not __debug__:
         raise RuntimeError('Optimized Python is forbidden for source preservation')
     output.parent.mkdir(parents=True, exist_ok=True)
-    permissions, audits, revision = independent_permissions(candidate, inputs, output)
+    permissions, audits, revision, frozen_inputs = independent_permissions(candidate, inputs, output)
     base = sqlite3.connect(baseline.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     con = sqlite3.connect(candidate.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     saved = json.loads(reference.read_text()) if reference else None
@@ -101,6 +107,7 @@ def run(baseline, candidate, inputs, output, reference=None):
     result = {'schema': 'FINEATLAS_RESUMED_RAW_SOURCE_PRESERVATION_V1',
               'baseline': str(baseline), 'candidate': str(candidate),
               'database_revision': revision, 'independent_actual_audits': audits,
+              'frozen_input_fingerprints': frozen_inputs,
               'allowed_fields': ['nodes.visibility'], 'complete': False, 'tables': results}
     for table in tables:
         columns = [row[1] for row in base.execute('PRAGMA table_info("' + table + '")')
