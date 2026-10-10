@@ -47,7 +47,7 @@ def read_metadata(database):
         return {key: json.loads(value) for key, value in con.execute("SELECT * FROM metadata")}
 
 
-def validate_parent_receipt(database, receipt_path, fingerprints):
+def validate_parent_receipt(database, receipt_path, fingerprints, integrity_path):
     """Bind all completed parent stages and unchanged source inputs and code."""
     receipt = json.loads(receipt_path.read_text())
     if (receipt.get("schema") != "FINEATLAS_STRUCTURE_BUILD_COMPLETE_V1" or
@@ -74,12 +74,34 @@ def validate_parent_receipt(database, receipt_path, fingerprints):
     binding = final_artifact_binding(database, receipt["release"], receipt["source_graph_revision"])
     if binding["revision"] != receipt["revision"]:
         raise ValueError("Parent database revision differs from its completion receipt")
-    return receipt, meta
+    seal = json.loads(integrity_path.read_text())
+    if (any(seal.get(key) is not True for key in (
+            "pass", "complete", "integrity_pass", "file_unchanged_during_checks",
+            "all_frozen_inputs_and_recipes_checked")) or seal.get("integrity_check") != ["ok"] or
+            Path(seal.get("database", "")).resolve() != database.resolve() or
+            seal.get("database_revision") != receipt["revision"] or
+            seal.get("release") != receipt["release"] or seal.get("bytes") != database.stat().st_size or
+            not isinstance(seal.get("sha256"), str) or len(seal["sha256"]) != 64):
+        raise ValueError("A complete integrity and whole-file hash seal for the parent is required")
+    return receipt, meta, seal
+
+
+def verify_parent_byte_copy(source, output, seal):
+    before = source.stat()
+    source_sha = digest_file(source)
+    if source_sha != seal["sha256"]:
+        raise ValueError("Completed parent source bytes differ from the independent integrity seal")
+    if digest_file(output) != source_sha or output.stat().st_size != before.st_size:
+        raise ValueError("Repair output is not an exact independent parent copy")
+    after = source.stat()
+    if (before.st_ino, before.st_size, before.st_mtime_ns) != (after.st_ino, after.st_size, after.st_mtime_ns):
+        raise ValueError("Completed source changed during copy verification")
+    return source_sha
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("source", "parent-build", "baseline", "database", "inputs",
+    for name in ("source", "parent-build", "parent-integrity", "baseline", "database", "inputs",
                  "reports", "browse-staging"):
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
@@ -115,17 +137,13 @@ def main():
         for database in (args.source, args.database):
             if any(Path(str(database) + suffix).exists() for suffix in ("-wal", "-journal", "-shm")):
                 raise ValueError("Source and independent copy must be closed without sidecars")
-        receipt, meta = validate_parent_receipt(args.source, args.parent_build, fingerprints)
+        receipt, meta, seal = validate_parent_receipt(
+            args.source, args.parent_build, fingerprints, args.parent_integrity)
         protection = protect_output(args.database, args.inputs, args.baseline, (args.source,))
-        before = args.source.stat()
-        source_sha = digest_file(args.source)
-        if digest_file(args.database) != source_sha or args.database.stat().st_size != before.st_size:
-            raise ValueError("Repair output is not an exact independent parent copy")
-        after = args.source.stat()
-        if (before.st_ino, before.st_size, before.st_mtime_ns) != (after.st_ino, after.st_size, after.st_mtime_ns):
-            raise ValueError("Completed source changed during copy verification")
+        source_sha = verify_parent_byte_copy(args.source, args.database, seal)
         return {"parent_build_id": receipt["build_id"], "parent_revision": meta["database_revision"],
                 "parent_receipt_sha256": digest_file(args.parent_build),
+                "parent_integrity_sha256": digest_file(args.parent_integrity),
                 "parent_database_sha256": source_sha, "parent_database": str(args.source),
                 "previous_source_stages_replayed": False, "protection": protection}
 
@@ -161,6 +179,15 @@ def main():
           "--source-revision", frozen["revision"], "--output", args.reports / "browse_application.json"]))
     require_stable_build(args.inputs, fingerprints)
     binding = final_artifact_binding(args.database, release, frozen["revision"])
+    lineage_path = args.reports / "parent_lineage.json"
+    lineage_path.write_text(json.dumps(
+        {"schema": "FINEATLAS_REPAIR_PARENT_LINEAGE_V1", **lineage,
+         "resumed_build_id": context["build_id"], "resumed_revision": binding["revision"],
+         "parent_source_inode": [args.source.stat().st_dev, args.source.stat().st_ino]},
+        indent=2) + "\n")
+    context.update(parent_build_id=lineage["parent_build_id"],
+                   parent_lineage_sha256=digest_file(lineage_path),
+                   parent_source_inode=[args.source.stat().st_dev, args.source.stat().st_ino])
     write_build_complete(args.reports, args.database, release, binding["revision"], context,
                          states, STAGES, source_graph_revision=frozen["revision"])
 
