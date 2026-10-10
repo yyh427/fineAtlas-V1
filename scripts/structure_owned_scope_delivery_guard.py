@@ -19,6 +19,22 @@ def require_owned_scope_receipt(report, database, inputs, revision, code_root):
         raise ValueError('Complete actual owned-scope evidence is required')
     manifest_path=input_path(SPEC,Path(inputs),Path(code_root));manifest=json.loads(manifest_path.read_text())
     operations=[json.loads(line)for line in (Path(inputs)/manifest['operations_file']).read_text().splitlines()if line]
+    purposes=[op for op in operations if op.get('proof',{}).get('owned_physical_scope_kind')=='OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE']
+    if purposes:
+        name=manifest.get('source_purpose_review_file','');path=Path(inputs)/name
+        if not name or Path(name).name!=name or '\\'in name or not path.is_file():
+            raise ValueError('Portable independent source-purpose review is required')
+        sha=hashlib.sha256(path.read_bytes()).hexdigest()
+        with sqlite3.connect(Path(database).resolve().as_uri()+'?mode=ro&immutable=1',uri=True)as con:
+            frozen=json.loads(con.execute('SELECT value FROM metadata WHERE key="structure_frozen_build_manifest"').fetchone()[0])['inputs']
+        if sha!=manifest.get('source_purpose_review_sha256')or frozen.get(name)!=sha:
+            raise ValueError('Independent source-purpose review is not bound to this frozen database')
+        expected=sorted((op['uid'],op['parent'],name,sha)for op in purposes)
+        actual=sorted((row['uid'],row['parent'],row['file'],row['sha256'])for row in value.get('verified_purpose_source_reviews',[]))
+        if actual!=expected:
+            raise ValueError('Every actual nominal purpose requires its independent whole-source check')
+    elif value.get('verified_purpose_source_reviews')not in(None,[]):
+        raise ValueError('Audit claims source-purpose reviews outside frozen operations')
     def documents(raw):
         if isinstance(raw,dict):
             if raw.get('source_kind')=='PRIMARY_MANUFACTURER_OR_REGULATOR':yield raw

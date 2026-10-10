@@ -325,6 +325,59 @@ def verify_physical_instrumentality_scope(proof, statement, parent_statement):
     return own_assertion_phrase(first)
 
 
+def verify_nominal_purpose_source(con, inputs, manifest, op, reviewed=None):
+    proof = op['proof']
+    locator = op.get('source_review_locator', proof.get('source_review_locator', {}))
+    filename = manifest.get('source_purpose_review_file')
+    if (not filename or Path(filename).name != filename or '\\' in filename
+            or locator.get('file') != filename):
+        raise ValueError('Nominal purpose requires its portable independent source review')
+    raw = (Path(inputs) / filename).read_bytes()
+    if sha(raw) != manifest.get('source_purpose_review_sha256') or locator.get('sha256') != sha(raw):
+        raise ValueError('Independent source-purpose review bytes changed')
+    source = json.loads(raw)
+    if (source.get('schema') != 'FINEATLAS_SEVENTH_CORRECTED_DESIGN_OLD_ISA_SOURCE_TYPE_SCOPE_ADJUDICATION_V1'
+            or source.get('source_revision') != manifest.get('completed_parent_revision')):
+        raise ValueError('Independent purpose review belongs to a different source snapshot')
+    records = [record for record in source['approved_type_records']
+               if (record['uid'], record['parent'], record['proposed_relation']) ==
+                  (op['uid'], op['parent'], op['relation'])]
+    if (len(records) != 1 or locator.get('uid') != op['uid'] or locator.get('parent') != op['parent']
+            or locator.get('relation') != op['relation'] or op['relation'] != 'DESIGN_TYPE_OF'):
+        raise ValueError('Complete independent review does not approve this nominal direction')
+    record = records[0]
+    if (proof.get('nominal_design_type_scope_review') != record
+            or record['status'] != 'SOURCE_TYPE_SCOPE_SUPPORTED_PENDING_ACTUAL_OPERATION'
+            or record.get('no_identity_or_mapping_promotion') is not True):
+        raise ValueError('Nominal purpose scope differs from its independent whole-source decision')
+    own, parent = record['owned_complete_source_witness'], record['whole_parent_definition_witness']
+    if proof.get('source_witnesses', [])[:2] != [own, parent]:
+        raise ValueError('Nominal purpose does not retain the approved own and parent fields')
+    source_witness(con, own); source_witness(con, parent)
+    before = record['original_full_active_assertion']
+    actual = row_at(con, 'edges', before['id'])
+    expected = dict(before)
+    precise_review = (reviewed or {}).get(('edges', before['id']))
+    if precise_review:
+        if precise_review['before_assertion'] != before:
+            raise ValueError('Purpose migration uses another original class assertion')
+        expected['status'] = 'SOURCE_SCOPE_REVIEW'
+    if not actual or actual != expected:
+        raise ValueError('Original class assertion or its exact scope review changed')
+    for context in record.get('required_supporting_source_fields', []):
+        source_witness(con, context['parent_owned_field'])
+        relation = context['original_full_relation']
+        if row_at(con, 'entity_relations', relation['id']) != relation:
+            raise ValueError('Supporting native family declaration changed')
+        node = row_at(con, 'nodes', context['complete_source_parent']['uid'], 'uid')
+        if not node or {k: value for k, value in node.items() if k != 'component_id'} != {
+                k: value for k, value in context['complete_source_parent'].items() if k != 'component_id'}:
+            raise ValueError('Supporting whole source design object changed')
+    if proof.get('classification_axis') not in {'function', 'purpose'}:
+        raise ValueError('Nominal purpose must retain its distinct classification axis')
+    return {'file': filename, 'sha256': sha(raw), 'uid': op['uid'], 'parent': op['parent']}
+
+
 def independently_declared_role(statement, label, scope_kind):
     if scope_kind is None:
         named_instance_phrase(statement, label)
@@ -541,6 +594,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
     con.row_factory = sqlite3.Row
     metadata = {r['key']: json.loads(r['value']) for r in con.execute('SELECT * FROM metadata')}
     errors, partition_sets, routes, verified_sources = [], set(), {}, {}
+    verified_purpose_sources = []
     author_records = None
     if any(o['op'] == 'migrate_nominal_design_mapping' for o in operations):
         try:
@@ -630,6 +684,10 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     if op['relation'] != 'IS_A':
                         raise ValueError('Physical instrumentality scope requires ordinary class inclusion')
                     phrase = verify_physical_instrumentality_scope(proof, own, witnesses[1]['statement'])
+                elif proof.get('owned_physical_scope_kind') == 'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE':
+                    verified_purpose_sources.append(verify_nominal_purpose_source(
+                        con, inputs, manifest, op, reviewed if not preflight else None))
+                    phrase = own_assertion_phrase(own)
                 elif manufacturer_design:
                     phrase = manufacturer_vehicle_phrase(proof, child, parent, retained_own_statements,
                                                          primary_snapshots_dir, verified_sources)
@@ -670,6 +728,9 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                         raise ValueError('Actual new physical link evidence differs')
                     if table == 'entity_relations' and rows[0]['evidence_id'] != eid:
                         raise ValueError('Actual typed link points at a different evidence record')
+                    if (proof.get('owned_physical_scope_kind') == 'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE'
+                            and json.loads(rows[0]['data']).get('classification_axis') != proof['classification_axis']):
+                        raise ValueError('Actual nominal type has lost its function or purpose axis')
                     if table == 'edges':
                         verify_edge_grounding(rows[0], eid, op['relation'])
                     exact_history(con, 'owned_scope_link', op['uid'], {'prior_assertions': proof.get('prior_assertions', [])},
@@ -847,6 +908,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
               'role_corrections': sum(o['op'] == 'correct_role' for o in operations),
               'primary_snapshots_dir': str(Path(primary_snapshots_dir).resolve()) if primary_snapshots_dir else None,
               'verified_primary_sources': verified_sources, 'identity_component_censuses': len(partition_sets),
+              'verified_purpose_source_reviews': verified_purpose_sources,
               'author_annotations_verified': len(author_records) if author_records else 0,
               'actual_new_link_root_reachability': routes, 'new_nodes': 0, 'positive_identity_merges': 0,
               'errors': errors}

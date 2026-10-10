@@ -67,6 +67,48 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'carrier and operator'):
             audit.verify_physical_instrumentality_scope(proof, source.replace(hardware, bad_hardware), parent)
 
+    def test_nominal_purpose_requires_frozen_independent_case_and_actual_source(self):
+        self.con.execute('ALTER TABLE edges ADD COLUMN parent_uid TEXT')
+        self.con.execute('ALTER TABLE edges ADD COLUMN relation TEXT')
+        self.con.execute('ALTER TABLE edges ADD COLUMN status TEXT')
+        self.con.execute("INSERT INTO edges VALUES(1,'{}','design-a','source-a','IS_A','ACTIVE')")
+        witnesses = []
+        for uid, text in [('design-a', 'search and rescue aircraft conversion'),
+                          ('source-a', 'aircraft intended to support search and rescue operations')]:
+            raw = audit.dump({'definition': text})
+            self.con.execute('UPDATE nodes SET data=? WHERE uid=?', (raw, uid))
+            witnesses.append({'uid': uid, 'field': 'definition', 'statement': text,
+                              'data_sha256': audit.sha(raw)})
+        before = audit.row_at(self.con, 'edges', 1)
+        case = {'uid': 'design-a', 'parent': 'source-a', 'proposed_relation': 'DESIGN_TYPE_OF',
+                'status': 'SOURCE_TYPE_SCOPE_SUPPORTED_PENDING_ACTUAL_OPERATION',
+                'no_identity_or_mapping_promotion': True, 'original_full_active_assertion': before,
+                'owned_complete_source_witness': witnesses[0], 'whole_parent_definition_witness': witnesses[1]}
+        doc = {'schema': 'FINEATLAS_SEVENTH_CORRECTED_DESIGN_OLD_ISA_SOURCE_TYPE_SCOPE_ADJUDICATION_V1',
+               'source_revision': 'closed-parent', 'approved_type_records': [case]}
+        path = self.root / 'review.json'; path.write_text(json.dumps(doc))
+        digest = audit.sha(path.read_bytes())
+        manifest = {'source_purpose_review_file': path.name, 'source_purpose_review_sha256': digest,
+                    'completed_parent_revision': 'closed-parent'}
+        op = {'uid': 'design-a', 'parent': 'source-a', 'relation': 'DESIGN_TYPE_OF',
+              'source_review_locator': {'file': path.name, 'sha256': digest, 'uid': 'design-a',
+                                       'parent': 'source-a', 'relation': 'DESIGN_TYPE_OF'},
+              'proof': {'nominal_design_type_scope_review': case, 'source_witnesses': witnesses,
+                        'classification_axis': 'purpose'}}
+        audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
+        self.con.execute("UPDATE edges SET status='SOURCE_SCOPE_REVIEW' WHERE id=1")
+        audit.verify_nominal_purpose_source(self.con, self.root, manifest, op,
+                                          {('edges', 1): {'before_assertion': before}})
+        with self.assertRaisesRegex(ValueError, 'exact scope review'):
+            audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
+        op['source_review_locator']['parent'] = 'another-scope'
+        with self.assertRaisesRegex(ValueError, 'nominal direction'):
+            audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
+        op['source_review_locator']['parent'] = 'source-a'
+        path.write_text(json.dumps({**doc, 'source_revision': 'other-parent'}))
+        with self.assertRaisesRegex(ValueError, 'review bytes changed'):
+            audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
+
     def test_abbreviated_design_name_does_not_truncate_real_type_assertion(self):
         statement = 'The G.A.C. 102 Aristocrat is a cabin monoplane built in the US.'
         self.assertEqual(audit.own_assertion_phrase(statement), 'a cabin monoplane')
