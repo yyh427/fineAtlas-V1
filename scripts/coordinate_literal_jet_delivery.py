@@ -17,12 +17,15 @@ from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, requi
 from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC, require_owned_scope_receipt
 from primary_source_snapshot_delivery import require_fresh_retrieval
 from structure_regression_temporal_contract import require_temporal_receipt
+from structure_subject_scope_temporal_contract import require_temporal_subject_receipt
 
 
 class LiteralJetCoordinator(Coordinator):
     def cmd(self, script, *values, python=None):
         # Explicit additive executors keep the old frozen programs unchanged.
         replacements = {'audit_structure_regression_repairs.py':'audit_temporal_structure_regression_repairs.py',
+                        'accept_resumed_structure_candidate.py':'accept_owned_structure_candidate.py',
+                        'audit_complete_subject_scope_repairs.py':'audit_temporal_complete_subject_scope_repairs.py',
                         'run_structure_public_checks.py':'run_literal_jet_public_checks.py'}
         return super().cmd(replacements.get(script,script),*values,python=python)
 
@@ -74,6 +77,8 @@ class LiteralJetCoordinator(Coordinator):
         for name, key in (('primary','database'),('reproduction','reproduction')):
             require_temporal_receipt(self.root / (name + '-scope-repairs.json'),
                 self.c[key],self.inputs,self.meta['database_revision'])
+            require_temporal_subject_receipt(self.root / (name + '-complete-subject-scope.json'),
+                self.c[key],self.inputs,self.meta['database_revision'],ROOT)
 
     def local(self):
         self.validate_child_builds()
@@ -193,6 +198,16 @@ class LiteralJetCoordinator(Coordinator):
         if not temporal or digest(Path(temporal['path'])) != temporal['sha256']:
             raise ValueError('Actual public temporal regression SQL evidence is required')
         require_temporal_receipt(temporal['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'])
+        subject = original_extension.get('evidence',{}).get('complete-subject-scope')
+        if not subject or digest(Path(subject['path'])) != subject['sha256']:
+            raise ValueError('Actual public temporal complete-subject evidence is required')
+        require_temporal_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        preservation = original_extension.get('evidence',{}).get('resumed-source-preservation')
+        if not preservation or digest(Path(preservation['path'])) != preservation['sha256']:
+            raise ValueError('Actual temporal raw source preservation evidence is required')
+        from structure_owned_source_guard import validate_source_preservation
+        validate_source_preservation(preservation['path'],database,self.c['baseline'],self.c['reference'],
+            self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         return extension, report
 
     def validate_public_owned(self):

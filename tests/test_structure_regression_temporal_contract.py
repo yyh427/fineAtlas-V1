@@ -65,8 +65,15 @@ class ExactTemporalTransitions(unittest.TestCase):
         scripts=Path(__file__).resolve().parents[1]/'scripts'
         original=(scripts/'run_structure_public_checks.py').read_text()
         actual=(scripts/'run_literal_jet_public_checks.py').read_text()
-        self.assertEqual(actual,original.replace("cmd('audit_structure_regression_repairs.py'",
-                                               "cmd('audit_temporal_structure_regression_repairs.py'"))
+        expected=original.replace("cmd('audit_structure_regression_repairs.py'","cmd('audit_temporal_structure_regression_repairs.py'")
+        expected=expected.replace("cmd('audit_resumed_source_preservation.py'","cmd('audit_owned_source_preservation.py'")
+        expected=expected.replace('registered=required_deltas(a.inputs,a.code)',
+            "registered=required_deltas(a.inputs,a.code)\nfrom dataclasses import replace\nfrom structure_subject_scope_temporal_contract import require_temporal_subject_receipt\nregistered=[replace(spec,auditor='audit_temporal_complete_subject_scope_repairs.py') if spec.name=='complete-subject-scope' else spec for spec in registered]")
+        expected=expected.replace(" validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)",
+            " validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)\n if spec.name=='complete-subject-scope':require_temporal_subject_receipt(report,a.database,a.inputs,d['database_revision'],a.code)")
+        expected=expected.replace('from structure_delivery_source_guard import validate_source_preservation',
+                                  'from structure_owned_source_guard import validate_source_preservation')
+        self.assertEqual(actual,expected)
 
 
 class ExactMappingTransitions(unittest.TestCase):

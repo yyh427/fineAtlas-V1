@@ -158,3 +158,13 @@ delivery require both actual final local temporal reports, and public finalize
 requires the real downloaded-database temporal report and its nested actual
 seventh-delta evidence.
 
+The same exact transition rule applies to the third complete-subject stage.
+`audit_temporal_complete_subject_scope_repairs.py` checks every original source
+record, role, witness, relation proof, preserved prior claim and activation.
+Current ACTIVE counts subtract only exact frozen later withdrawals whose raw row
+and review history match. The parent reference includes the original third SQL
+audit's actual PASS on revision 3445, original source hashes and complete census.
+Both local databases and the fresh public database require this temporal report;
+the raw preservation compatibility audit calls the same real SQL auditor before
+permitting the previously frozen 170 visibility changes.
+

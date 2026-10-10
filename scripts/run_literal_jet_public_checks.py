@@ -30,7 +30,7 @@ for k in ('release','database_revision','database_sha256'):
 env=dict(os.environ);env.pop('PYTHONPATH',None);env.pop('PYTHONOPTIMIZE',None);temp=a.output/'tmp';temp.mkdir(exist_ok=True);env.update(TMPDIR=str(temp),SQLITE_TMPDIR=str(temp),PYTHONPYCACHEPREFIX=str(temp/uuid.uuid4().hex),PYTHONDONTWRITEBYTECODE='1')
 def cmd(script,*args):return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]
 jobs={
- 'resumed-source-preservation':cmd('audit_resumed_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,'--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'resumed-source-preservation.json'),
+ 'resumed-source-preservation':cmd('audit_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,'--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'resumed-source-preservation.json'),
  'installed-sdk':cmd('verify_unified_install.py','--database',a.database,'--manifest',a.manifest,'--expected-validation',a.expected,'--output',a.output/'installed-sdk'),
  'full-six-matrix':cmd('audit_structure_rewards.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'matrix','--installed-sdk'),
  'living':cmd('audit_living_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'living','--installed-sdk'),
@@ -43,6 +43,9 @@ sys.path.insert(0,str(a.code/'scripts'))
 from structure_delivery_oem_guard import optional_oem_input, validate_oem_receipt
 from structure_delivery_delta_registry import required_deltas, validate_delta_receipt
 registered=required_deltas(a.inputs,a.code)
+from dataclasses import replace
+from structure_subject_scope_temporal_contract import require_temporal_subject_receipt
+registered=[replace(spec,auditor='audit_temporal_complete_subject_scope_repairs.py') if spec.name=='complete-subject-scope' else spec for spec in registered]
 for spec in registered:jobs[spec.name]=cmd(spec.auditor,'--database',a.database,'--inputs',a.inputs,'--output',a.output/(spec.name+'.json'))
 oem_input=optional_oem_input(a.inputs,a.code)
 if oem_input is not None:jobs['oem-body-scope']=cmd('audit_oem_body_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'oem-body-scope.json')
@@ -83,8 +86,9 @@ if oem_input is not None:
 for spec in registered:
  report=a.output/(spec.name+'.json')
  validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)
+ if spec.name=='complete-subject-scope':require_temporal_subject_receipt(report,a.database,a.inputs,d['database_revision'],a.code)
  extension['evidence'][spec.name]={'path':str(report),'sha256':digest(report)}
-from structure_delivery_source_guard import validate_source_preservation
+from structure_owned_source_guard import validate_source_preservation
 source_report=a.output/'resumed-source-preservation.json'
 validate_source_preservation(source_report,a.database,a.baseline,a.reference,a.inputs,d['database_revision'],a.code)
 extension['evidence']['resumed-source-preservation']={'path':str(source_report),'sha256':digest(source_report)}

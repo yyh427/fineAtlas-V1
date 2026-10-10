@@ -107,6 +107,7 @@ def main():
             raise ValueError("Child requires its sealed frozen input: " + spec.name)
     from primary_source_snapshot_delivery import REGISTRY_NAME, registry
     from structure_regression_temporal_contract import REFERENCE
+    from structure_subject_scope_temporal_contract import validate_subject_parent_reference
     for name in (REGISTRY_NAME, REFERENCE):
         if not (args.inputs / name).is_file():
             raise ValueError('Child requires its portable frozen acceptance input: ' + name)
@@ -153,6 +154,7 @@ def main():
                 or peer.get("build_id") == receipt["build_id"]):
             raise ValueError("Literal-jet delta needs two distinct complete current parent databases")
         temporal = json.loads((args.inputs / REFERENCE).read_text())
+        validate_subject_parent_reference(temporal,args.inputs,ROOT)
         reference_hash = temporal.get('completed_parent_build_sha256')
         bound_parent = receipt if reference_hash == digest_file(args.parent_build) else peer
         original_report = json.loads(temporal['audit_receipt_text'])
