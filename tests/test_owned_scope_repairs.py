@@ -132,6 +132,21 @@ class OwnedScopeDatabaseContracts(unittest.TestCase):
         self.c.execute("INSERT INTO edges VALUES(1,'wikidata:Q223818','alias','IS_A','ACTIVE')")
         with self.assertRaisesRegex(ValueError,'cycle'): validate_batch_cycles(self.c,[self.op],{})
 
+    def test_existing_scientific_edge_participates_in_canonical_cycle_check(self):
+        self.c.execute("INSERT INTO nodes VALUES('alias','alias','{}','ACTIVE','',1,'publisher')")
+        self.c.execute("INSERT INTO node_profiles VALUES('alias','BIOLOGICAL_VARIANT')")
+        self.c.execute("INSERT INTO edges VALUES(9,'wikidata:Q223818','alias','TAXONOMIC_PARENT','TYPED_ACTIVE')")
+        roles = {'op': 'correct_role', 'uid': 'model', 'after_profile': {'node_kind': 'BIOLOGICAL_VARIANT'}}
+        with self.assertRaisesRegex(ValueError, 'cycle'):
+            validate_batch_cycles(self.c, [self.op, roles], {})
+
+    def test_precisely_retired_class_edge_does_not_create_a_false_cycle(self):
+        self.c.execute("UPDATE node_profiles SET node_kind='CLASS' WHERE uid='model'")
+        self.c.execute("INSERT INTO edges VALUES(9,'wikidata:Q223818','model','IS_A','ACTIVE')")
+        retired = {'op': 'review_class_edge', 'before_assertion': {'id': 9}}
+        validate_batch_cycles(self.c, [self.op, retired], {})
+        self.assertEqual(self.c.execute('SELECT status FROM edges WHERE id=9').fetchone()[0], 'ACTIVE')
+
     def test_retiring_one_bridge_preserves_independent_source_partition(self):
         self.c.execute("INSERT INTO nodes VALUES('source','source','{}','ACTIVE','',2,'publisher')")
         self.c.execute("INSERT INTO bridges VALUES(1,'source','wikidata:Q223818','SAME_CONCEPT','ACTIVE')")

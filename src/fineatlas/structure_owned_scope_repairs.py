@@ -188,6 +188,14 @@ def validate_batch_cycles(c, operations, partitions):
                 except ValueError: continue
                 target = component(p['uid'])
                 if target != key: result.add(target)
+            if role_overrides.get(n['uid'],n['role']) in {'CLASS','BIOLOGICAL_VARIANT'}:
+                for r in c.execute("SELECT * FROM edges WHERE child_uid=? AND status IN ('ACTIVE','BACKBONE_ACTIVE','TYPED_ACTIVE') AND relation='TAXONOMIC_PARENT'",(u,)):
+                    if r['id']in class_retired:continue
+                    p=node(c,r['parent_uid'])
+                    if not p or p['visibility']!='ACTIVE':continue
+                    try:validate_link_roles(r['relation'],role_overrides.get(n['uid'],n['role']),role_overrides.get(p['uid'],p['role']))
+                    except ValueError:continue
+                    if component(p['uid'])!=key:result.add(component(p['uid']))
             if role_overrides.get(n['uid'],n['role']) == 'CLASS':
                 for r in c.execute("SELECT id,parent_uid FROM edges WHERE child_uid=? AND status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A'", (u,)):
                     if r['id'] in class_retired:continue
@@ -390,6 +398,11 @@ def apply_owned_scope_repairs(m):
             if o['relation']=='IS_A':
                 eid=m.evidence(SOURCE,o['uri'],p,'HIERARCHY_REFINEMENT')
                 m.c.execute("INSERT INTO edges(child_uid,parent_uid,relation,original_relation,facet_family,classification_basis,navigation_role,source,source_relation,confidence,provenance,data,layer,status,reason) VALUES(?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)",(o['uid'],o['parent'],'IS_A','IS_A','NATIVE_OBJECT_KIND',p['basis'],'SOURCE_VALIDATED',SOURCE,'EVIDENCED_SUBSUMPTION',dump({'evidence_ids':[eid]}),dump({'eligible_for_final_dag':True,'admission_basis':p,'classification_axis':'physical_structure'}),'v1.8-hierarchy-review','ACTIVE','Complete owned source and parent ranges independently reviewed'))
+            elif o['relation']=='TAXONOMIC_PARENT':
+                # Biological variants navigate through the SDK's scientific
+                # edge contract, never through design terminal relations.
+                eid=m.evidence(SOURCE,o['uri'],p,'TAXONOMIC_CONNECTION')
+                m.c.execute('INSERT INTO edges(child_uid,parent_uid,relation,original_relation,facet_family,classification_basis,navigation_role,source,source_relation,confidence,provenance,data,layer,status,reason) VALUES(?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)',(o['uid'],o['parent'],'TAXONOMIC_PARENT','TAXONOMIC_PARENT','TAXONOMIC_LINEAGE',p['basis'],'SOURCE_VALIDATED',SOURCE,'COMPLETE_CULTIVAR_HOST_SCOPE',dump({'evidence_ids':[eid]}),dump({'eligible_for_final_dag':False,'eligible_for_final_typed_graph':True,'admission_basis':p,'classification_axis':'scientific_host_taxon'}),'v1.8-hierarchy-review','TYPED_ACTIVE','Complete own cultivar and living source taxon host independently reviewed'))
             else: m.typed(o['uid'],o['parent'],o['relation'],p,SOURCE,o['uri'])
             m.change(METADATA_KEY,'owned_scope_link',o['uid'],{'prior_assertions':p.get('prior_assertions',[])},{'parent_uid':o['parent'],'relation':o['relation']},p);counts['source_links_added'] += 1
         elif o['op'] in MAPPINGS:
