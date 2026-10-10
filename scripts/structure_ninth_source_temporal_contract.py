@@ -76,7 +76,13 @@ class NinthMixin:
         before = {'profile': op['before_profile'], 'normalization_role': op['before_normalization_role']}
         after = {'profile': op['after_profile'], 'normalization_role': op['after_normalization_role']}
         self._history('role_source_adjudication', uid, before, after, op['proof'])
-        role = op['before_profile']['node_kind'] if op['before_profile'] else op['proof']['before_role']
+        rank = op['proof']['before_node']['rank'].lower()
+        historical_default = ('MODEL' if rank in ('model','product_model','aircraft_model','vehicle_model') else
+            'MODEL_FAMILY' if rank in ('model_family','series') else 'INSTANCE' if rank == 'instance' else
+            'CONFIGURATION' if rank in ('model_year','model_year_configuration','configuration') else 'CLASS')
+        role = op['before_profile']['node_kind'] if op['before_profile'] else historical_default
+        if 'before_role' in op['proof'] and op['proof']['before_role'] != role:
+            raise ValueError('Unprofiled historical role must derive from the unchanged original rank')
         return super().expected_original_subject_role(uid, role)
 
     def _history(self, kind, identifier, before, after, proof):

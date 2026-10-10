@@ -16,6 +16,8 @@ from structure_ninth_source_temporal_contract import NinthMixin, require_current
 
 
 class Base:
+    def expected_original_subject_role(self, uid, role):
+        return role
     def expected_assertion_status(self, current, original):
         return original
 
@@ -79,6 +81,20 @@ class TemporalTests(unittest.TestCase):
         self.assertEqual(obj.expected_assertion_status(dict(before,status='SOURCE_SCOPE_REVIEW'),'ACTIVE'),'SOURCE_SCOPE_REVIEW')
         with self.assertRaisesRegex(ValueError,'history is missing'):
             obj.expected_assertion_status(dict(before,id=9,status='SOURCE_SCOPE_REVIEW'),'ACTIVE')
+    def test_unprofiled_history_cannot_invent_source_role(self):
+        c=sqlite3.connect(':memory:');c.row_factory=sqlite3.Row;self.addCleanup(c.close)
+        c.executescript('CREATE TABLE node_profiles(uid TEXT,node_kind TEXT);CREATE TABLE normalization_roles(uid TEXT,status TEXT);CREATE TABLE usability_changes(stage TEXT,object_type TEXT,object_id TEXT,before_json TEXT,after_json TEXT,evidence TEXT);')
+        op={'before_profile':None,'before_normalization_role':None,'after_profile':{'uid':'u','node_kind':'MODEL'},'after_normalization_role':{'uid':'u','status':'VERIFIED'},'proof':{'before_node':{'rank':'named_refinement'},'before_role':'MODEL'}}
+        c.execute('INSERT INTO node_profiles VALUES(?,?)',('u','MODEL'));c.execute('INSERT INTO normalization_roles VALUES(?,?)',('u','VERIFIED'))
+        before={'profile':None,'normalization_role':None};after={'profile':op['after_profile'],'normalization_role':op['after_normalization_role']}
+        def history():
+            c.execute('DELETE FROM usability_changes');c.execute('INSERT INTO usability_changes VALUES(?,?,?,?,?,?)',('nominal_design_scope_repairs','role_source_adjudication','u',json.dumps(before),json.dumps(after),json.dumps(op['proof'])))
+        history();obj=object.__new__(Contract);obj.c=c;obj.ninth_roles={'u':op}
+        with self.assertRaisesRegex(ValueError,'unchanged original rank'):
+            obj.expected_original_subject_role('u','MODEL')
+        op['proof']['before_role']='CLASS';history()
+        self.assertEqual(obj.expected_original_subject_role('u','MODEL'),'CLASS')
+
     def test_entire_earlier_sql_bodies_preserved(self):
         for suffix in ('structure_regression_repairs','complete_subject_scope_repairs'):
             old=(ROOT/'scripts'/('audit_temporal_eighth_'+suffix+'.py')).read_text()
