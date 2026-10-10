@@ -1,7 +1,7 @@
 """Execute independent checks on an actual fresh public download; never simulates receipts."""
 import argparse,concurrent.futures,datetime,hashlib,json,os,pathlib,subprocess,sys,time,uuid
 p=argparse.ArgumentParser()
-for k in ('code','python','database','inputs','baseline','inventory','manifest','expected','acceptance','output','primary-build','reproduction-build','legacy-reference','legacy-baseline-matrix','legacy-dispositions'):p.add_argument('--'+k,type=pathlib.Path,required=True)
+for k in ('code','python','database','inputs','baseline','reference','inventory','manifest','expected','acceptance','output','primary-build','reproduction-build','legacy-reference','legacy-baseline-matrix','legacy-dispositions'):p.add_argument('--'+k,type=pathlib.Path,required=True)
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
 if a.code.resolve()!=pathlib.Path(__file__).resolve().parents[1]:raise RuntimeError('Executor must use its own frozen checkout')
 for k,v in vars(a).items():setattr(a,k,v.resolve())
@@ -30,6 +30,7 @@ for k in ('release','database_revision','database_sha256'):
 env=dict(os.environ);env.pop('PYTHONPATH',None);env.pop('PYTHONOPTIMIZE',None);temp=a.output/'tmp';temp.mkdir(exist_ok=True);env.update(TMPDIR=str(temp),SQLITE_TMPDIR=str(temp),PYTHONPYCACHEPREFIX=str(temp/uuid.uuid4().hex),PYTHONDONTWRITEBYTECODE='1')
 def cmd(script,*args):return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]
 jobs={
+ 'resumed-source-preservation':cmd('audit_resumed_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,'--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'resumed-source-preservation.json'),
  'installed-sdk':cmd('verify_unified_install.py','--database',a.database,'--manifest',a.manifest,'--expected-validation',a.expected,'--output',a.output/'installed-sdk'),
  'full-six-matrix':cmd('audit_structure_rewards.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'matrix','--installed-sdk'),
  'living':cmd('audit_living_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'living','--installed-sdk'),
@@ -83,5 +84,9 @@ for spec in registered:
  report=a.output/(spec.name+'.json')
  validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)
  extension['evidence'][spec.name]={'path':str(report),'sha256':digest(report)}
+from structure_delivery_source_guard import validate_source_preservation
+source_report=a.output/'resumed-source-preservation.json'
+validate_source_preservation(source_report,a.database,a.baseline,a.reference,a.inputs,d['database_revision'],a.code)
+extension['evidence']['resumed-source-preservation']={'path':str(source_report),'sha256':digest(source_report)}
 write(a.output/'resume_public_extension.json',extension)
 print('ACTUAL FULL PUBLIC VERIFICATION PASS',q,flush=True)

@@ -170,7 +170,7 @@ class Coordinator:
             # A running or failed predecessor is investigated, never restarted.
             self.accepted()
         else:
-            self.execute('local-acceptance', self.cmd('accept_structure_candidate.py', 'local',
+            self.execute('local-acceptance', self.cmd('accept_resumed_structure_candidate.py', 'local',
                 '--database', self.c['database'], '--reproduction', self.c['reproduction'],
                 '--baseline', self.c['baseline'], '--inputs', self.inputs, '--inventory', self.c['inventory'],
                 '--reference', self.c['reference'], '--output', output,
@@ -293,7 +293,7 @@ class Coordinator:
                      '--output-dir', public / 'data', python=python), env)
         self.execute('actual-public-checks', self.cmd('run_structure_public_checks.py', '--code', ROOT,
             '--python', python, '--database', public / 'data/fineatlas.sqlite', '--inputs', public / 'frozen/inputs',
-            '--baseline', self.c['baseline'], '--inventory', self.c['inventory'], '--manifest', public / 'review_data.json',
+            '--baseline', self.c['baseline'], '--reference', self.c['reference'], '--inventory', self.c['inventory'], '--manifest', public / 'review_data.json',
             '--expected', public / 'installed_expectations.json', '--acceptance', Path(self.c['local_output']) / 'acceptance_receipt.json',
             '--output', public / 'checks', '--primary-build', self.lineage_primary, '--reproduction-build', self.lineage_reproduction,
             '--legacy-reference', self.c['legacy_reference'], '--legacy-baseline-matrix', self.c['legacy_baseline_matrix'],
@@ -317,6 +317,12 @@ class Coordinator:
             if not evidence:
                 raise ValueError('Frozen delta requires actual public evidence: ' + spec.name)
             validate_delta_receipt(spec, Path(evidence['path']), database, self.inputs, accepted['database_revision'])
+        source = extension['evidence'].get('resumed-source-preservation')
+        if not source:
+            raise ValueError('Full actual public raw source preservation required')
+        from structure_delivery_source_guard import validate_source_preservation
+        validate_source_preservation(Path(source['path']), database, Path(self.c['baseline']), Path(self.c['reference']),
+            self.inputs, accepted['database_revision'], ROOT)
         for row in extension['evidence'].values():
             if digest(Path(row['path'])) != row['sha256']:
                 raise ValueError('Public extension evidence changed')

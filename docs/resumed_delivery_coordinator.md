@@ -140,3 +140,14 @@ it. Restored source-object navigation, confirmed dataset/world identity, fine
 distance recovery and source-native annotation coverage must be reported
 separately. Adding this relation cannot promote an unconfirmed author label
 mapping or substitute native projections for missing world-object paths.
+
+Resumed local delivery invokes the additive `accept_resumed_structure_candidate.py`
+entry point. Its source preservation job still hashes every original source row;
+it permits only frozen, independently audited `nodes.visibility` migrations.
+The public executor runs that same full raw audit on the freshly downloaded
+artifact using the original formal row-digest reference. The extra receipt is
+recorded as `resumed-source-preservation` in the public extension, leaving the
+original public evidence keys unchanged. Finalization checks its complete table
+hashes, actual revision, frozen inputs, precise visibility census and all nested
+third/fourth actual audit receipts. A missing or partial source receipt blocks
+finalization.
