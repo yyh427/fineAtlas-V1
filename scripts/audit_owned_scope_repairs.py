@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter, deque
 import hashlib
+from html import unescape
 import json
 from pathlib import Path
 import re
@@ -85,10 +86,13 @@ def source_witness(con, witness):
     return row
 
 
-def source_assertion_witness(con, witness, uid):
+def source_assertion_witness(con, witness, uid, reviewed=None):
     before = witness['before']
     actual = row_at(con, witness['table'], before['id'])
-    if (actual != before or sha(dump(before)) != witness['before_fullrow_sha256']
+    expected = dict(before)
+    if reviewed and (witness['table'], before['id']) in reviewed:
+        expected['status'] = 'SOURCE_SCOPE_REVIEW'
+    if (actual != expected or sha(dump(before)) != witness['before_fullrow_sha256']
             or (before.get('child_uid') or before.get('subject_uid')) != uid
             or not witness.get('original_source_uri', '').startswith('https://')):
         raise ValueError('Retained complete own source assertion or provenance changed')
@@ -278,6 +282,87 @@ def named_instance_phrase(statement, label):
     return own_assertion_phrase(statement)
 
 
+def independently_declared_role(statement, label, scope_kind):
+    if scope_kind is None:
+        named_instance_phrase(statement, label)
+        return 'INSTANCE'
+    phrase = own_assertion_phrase(statement)
+    if re.search(r'\b(?:not|never|fictional|virtual|toy|replica)\b', phrase, re.I):
+        raise ValueError('Incompatible whole statement cannot resolve a canonical role')
+    if scope_kind == 'OWNED_UNRESOLVED_DESIGN_VERSUS_MODIFIED_EXAMPLE':
+        if not re.search(r'\bmodified example\b', phrase, re.I):
+            raise ValueError('Unresolved individual/design role must retain its actual ambiguity')
+        return 'UNKNOWN'
+    if re.search(r'\b(?:cultivar|grape variety)\b', phrase, re.I):
+        if scope_kind not in {'OWNED_HORTICULTURAL_VARIANT_ROLE', 'OWNED_NOMINAL_DESIGN_ROLE'}:
+            raise ValueError('Horticultural role requires its explicit whole-source scope review')
+        return 'BIOLOGICAL_VARIANT'
+    if scope_kind != 'OWNED_NOMINAL_DESIGN_ROLE':
+        raise ValueError('Unknown complete source-role review kind')
+    if re.search(r'\b(?:prototype|trainer|target) series\b', phrase, re.I):
+        return 'MODEL_FAMILY'
+    if re.search(r'\b(?:version|variant|conversion|third-generation)\b|\b(?:system|transport|car) model\b|\btest and trials prototype\b', phrase, re.I):
+        return 'MODEL'
+    if re.search(r'\bloitering munition\b', phrase, re.I) and re.search(r'\bproduced .+? by\b', statement, re.I):
+        return 'MODEL'
+    raise ValueError('Whole owned source does not independently declare a nominal design role')
+
+
+def verify_same_identifier_role_source(con, proof, child):
+    grounding = proof.get('same_source_identifier_role_grounding')
+    if not grounding:
+        raise ValueError('Role source must describe the own preserved object')
+    own, definition, bridge = (grounding[k] for k in ('before_own_node', 'before_independent_definition_node', 'before_identity_bridge'))
+    for before in (own, definition):
+        actual = row_at(con, 'nodes', before['uid'], 'uid')
+        if not actual or {k:v for k,v in actual.items() if k != 'component_id'} != {k:v for k,v in before.items() if k != 'component_id'}:
+            raise ValueError('Same-identifier role review changed an original source object')
+    data, other = json.loads(own['data']), json.loads(definition['data'])
+    if (own['uid'] != child['uid'] or own['uid'] == definition['uid']
+            or own['label'] != definition['label'] or not data.get('qid')
+            or data['qid'] != other.get('qid') or own['uid'].split(':')[-1] != data['qid']
+            or definition['uid'].split(':')[-1] != other['qid']
+            or not own['source'].startswith('wikidata') or not definition['source'].startswith('wikidata')
+            or bridge['status'] != 'ACTIVE' or bridge['relation'] != 'SAME_CONCEPT'
+            or {bridge['left_uid'],bridge['right_uid']} != {own['uid'],definition['uid']}
+            or row_at(con,'bridges',bridge['id']) != bridge
+            or json.loads(bridge['data']).get('alignment_type') != 'SOURCE_ID_EQUIVALENCE'
+            or other.get('evidence_record',{}).get('wikipedia_redirect_chain')
+            or len(proof['source_witnesses']) != 1 or proof['source_witnesses'][0]['uid'] != definition['uid']):
+        raise ValueError('Source identifier/name/range or exact original alignment does not close')
+    return definition
+
+
+def manufacturer_vehicle_phrase(proof, child, parent, retained, directory, verified):
+    scope = proof['primary_manufacturer_scope']; doc = scope['document']
+    matching = [name for name, row in verified.items()
+                if (row['source_uri'], row['sha256']) == (doc['source_uri'], doc['sha256'])]
+    if len(matching) != 1:
+        raise ValueError('Manufacturer whole-design statement has no verified complete source bytes')
+    raw = (Path(directory) / matching[0]).read_text()
+    title = re.search(r'<title[^>]*>(.*?)</title>', raw, re.I | re.S)
+    text = unescape(re.sub(r'<[^>]+>', ' ', raw))
+    text = ' '.join(text.split())
+    if (not title or unescape(title[1]).strip() != scope['title']
+            or scope['nominal_design_name'] != child['label']
+            or scope['title'] != child['label'] + ' model series'
+            or not scope.get('primary_scope_covers_whole_named_design')
+            or scope.get('four_wheel_assertion') is not False
+            or scope.get('category_same_concept_assertion') is not False
+            or parent['uid'] != 'wordnet31:03796768-n'
+            or not retained or not re.search(r'\bindustrial car model\b', retained[0], re.I)):
+        raise ValueError('Manufacturer design and retained UID nominal scope are not closed')
+    name = re.escape(scope['nominal_design_name'])
+    versions = scope.get('scope_facts', {}).get('nominal_version_names', [])
+    condensed = re.sub(r'\s+', '', text).casefold()
+    if (not versions or any(re.sub(r'\s+', '', version).casefold() not in condensed for version in versions)
+            or not re.search(r'\blicence agreement\b.*?\b' + re.escape(scope['physical_genus']) + r'\b', text, re.I)
+            or not re.search(r'As the ' + name + r',.*?engine.*?was installed in this vehicle', text, re.I)
+            or not scope.get('scope_facts', {}).get('self_propulsion_combustion_engine')):
+        raise ValueError('Complete primary paragraph does not establish the whole motorized vehicle program')
+    return scope['physical_genus']
+
+
 def role_valid(con, relation, left, right, overrides=None):
     allowed = NAVIGATION_ROLES.get(relation)
     overrides = overrides or {}
@@ -414,7 +499,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                             or witness['before'].get('parent_uid') != op['parent']
                             or not re.search(r'\bis a motor vehicle with wheels\.?$', witness['statement'], re.I)):
                         raise ValueError('Shared automotive class definition does not prove the broad motor-vehicle sense')
-                retained_own_statements.append(source_assertion_witness(con, witness, subject))
+                retained_own_statements.append(source_assertion_witness(con, witness, subject, reviewed if not preflight else None))
             for collection in ('source_nodes', 'counterexamples'):
                 for uid, before in proof.get(collection, {}).items():
                     actual = row_at(con, 'nodes', uid, 'uid')
@@ -454,10 +539,17 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if len(witnesses) < 2 or not proof.get('whole_subject_scope_review'):
                     raise ValueError('Whole own subject and complete parent scope are required')
                 motor_design = proof.get('owned_physical_scope_kind') == 'OWNED_MOTOR_VEHICLE_DESIGN'
+                manufacturer_design = proof.get('owned_physical_scope_kind') == 'PRIMARY_MANUFACTURER_WHOLE_NOMINAL_MOTOR_VEHICLE'
                 own = retained_own_statements[0] if retained_own_statements and not motor_design else witnesses[0]['statement']
                 witness_node = row_at(con, 'nodes', witnesses[0].get('uid', child['uid']), 'uid')
-                phrase = scoped_assertion_phrase(own, proof.get('owned_physical_scope_kind'),
-                                                witness_node['label'] if witness_node else child['label'])
+                if manufacturer_design:
+                    phrase = manufacturer_vehicle_phrase(proof, child, parent, retained_own_statements,
+                                                         primary_snapshots_dir, verified_sources)
+                    if witnesses[0]['statement'] != child['label'] or witnesses[1]['statement'] != 'a self-propelled wheeled vehicle that does not run on rails':
+                        raise ValueError('Manufacturer program lost its exact own nominal designation or parent sense')
+                else:
+                    phrase = scoped_assertion_phrase(own, proof.get('owned_physical_scope_kind'),
+                                                    witness_node['label'] if witness_node else child['label'])
                 if motor_design and (not retained_own_statements
                         or witnesses[1]['statement'] != 'a self-propelled wheeled vehicle that does not run on rails'
                         or not re.search(r'\b(?:cars?|automobiles?|sportscars?)(?:\s+(?:model|family|series))?$', phrase.rstrip('. '), re.I)):
@@ -502,18 +594,30 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                         or op['relation'] != 'ROLE_ADJUDICATION' or not proof.get('source_native_objects_preserved')
                         or sha(child['data']) != proof['native_record_sha256']
                         or len(proof.get('source_witnesses', [])) != 1
-                        or proof['source_witnesses'][0]['uid'] != child['uid']):
+                        ):
                     raise ValueError('Role adjudication is not grounded in the preserved own object')
-                named_instance_phrase(proof['source_witnesses'][0]['statement'], child['label'])
+                if proof['source_witnesses'][0]['uid'] != child['uid']:
+                    verify_same_identifier_role_source(con, proof, child)
+                target_role = independently_declared_role(proof['source_witnesses'][0]['statement'], child['label'],
+                                                         proof.get('source_role_scope_kind'))
+                if proof.get('canonical_role', target_role) != target_role:
+                    raise ValueError('Declared canonical role conflicts with its whole source statement')
                 before, norm = op['before_profile'], op['before_normalization_role']
                 eid = 'usability:' + sha(dump(proof))
-                attrs = json.loads(before['attributes'])
+                attrs = json.loads(before['attributes']) if before else {}
                 attrs.update(source_role=proof.get('source_role', attrs.get('source_role', 'UNSPECIFIED')),
                              native_rank=proof.get('native_rank', attrs.get('native_rank', child['rank'])),
                              role_status='VERIFIED', role_evidence_id=eid)
                 attrs.pop('canonical_scope_guard', None); attrs.pop('canonical_scope_evidence_id', None)
-                after = {**before, 'node_kind': 'INSTANCE', 'source_uri': op['uri'], 'evidence_id': eid, 'attributes': dump(attrs)}
-                after_norm = {**norm, 'canonical_role': 'INSTANCE', 'evidence_id': eid, 'source': SOURCE}
+                if target_role == 'UNKNOWN':
+                    attrs.update(role_status='REVIEW', allowed_views=[])
+                after = {**(before or {'uid': child['uid'], 'domain': child['domain']}),
+                         'node_kind': target_role, 'source_uri': op['uri'], 'evidence_id': eid, 'attributes': dump(attrs)}
+                after_norm = {**(norm or {'uid': child['uid'], 'source_role': proof.get('source_role') or child['rank'] or 'UNSPECIFIED',
+                                        'status': 'VERIFIED', 'prior_profile': dump(before or {})}),
+                              'canonical_role': target_role, 'evidence_id': eid, 'source': SOURCE}
+                if target_role == 'UNKNOWN':
+                    after_norm['status'] = 'REVIEW'
                 if op['after_profile'] != after or op['after_normalization_role'] != after_norm:
                     raise ValueError('Role correction changed unrelated source profile fields')
                 for table, part in (('node_profiles', 'profile'), ('normalization_roles', 'normalization_role')):

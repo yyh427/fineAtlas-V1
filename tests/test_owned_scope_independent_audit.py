@@ -70,6 +70,26 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
     def test_instance_role_is_incompatible_with_design_type_link(self):
         self.assertTrue(audit.role_valid(self.con, 'INSTANCE_OF',
             {'uid':'design-a','rank':'model'}, {'uid':'class','rank':''}, {'design-a':'INSTANCE'}))
+
+    def test_owned_version_and_series_roles_are_not_copied_from_peer(self):
+        self.assertEqual(audit.independently_declared_role('training version of the base aircraft', 'Version',
+                         'OWNED_NOMINAL_DESIGN_ROLE'), 'MODEL')
+        self.assertEqual(audit.independently_declared_role('unmanned aerial target series', 'Series',
+                         'OWNED_NOMINAL_DESIGN_ROLE'), 'MODEL_FAMILY')
+        with self.assertRaisesRegex(ValueError, 'independently declare'):
+            audit.independently_declared_role('kamikaze drone', 'Drone', 'OWNED_NOMINAL_DESIGN_ROLE')
+
+    def test_modified_example_alone_preserves_role_ambiguity(self):
+        self.assertEqual(audit.independently_declared_role('spin trial aircraft, modified example of the base',
+                         'Version', 'OWNED_UNRESOLVED_DESIGN_VERSUS_MODIFIED_EXAMPLE'), 'UNKNOWN')
+        with self.assertRaisesRegex(ValueError, 'explicitly identified'):
+            audit.independently_declared_role('spin trial aircraft, modified example of the base', 'Version', None)
+
+    def test_horticultural_source_cannot_supply_industrial_model_role(self):
+        self.assertEqual(audit.independently_declared_role('apple cultivar', 'Cultivar',
+                         'OWNED_HORTICULTURAL_VARIANT_ROLE'), 'BIOLOGICAL_VARIANT')
+        with self.assertRaisesRegex(ValueError, 'explicit whole-source'):
+            audit.independently_declared_role('apple cultivar', 'Cultivar', 'UNREVIEWED_PEER_ROLE')
         self.assertFalse(audit.role_valid(self.con, 'DESIGN_TYPE_OF',
             {'uid':'design-a','rank':'model'}, {'uid':'class','rank':''}, {'design-a':'INSTANCE'}))
 
