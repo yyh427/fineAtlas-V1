@@ -35,6 +35,22 @@ def require_owned_scope_receipt(report, database, inputs, revision, code_root):
             raise ValueError('Every actual nominal purpose requires its independent whole-source check')
     elif value.get('verified_purpose_source_reviews')not in(None,[]):
         raise ValueError('Audit claims source-purpose reviews outside frozen operations')
+    families=[op for op in operations if op.get('proof',{}).get('owned_physical_scope_kind')=='OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION']
+    if families:
+        name=manifest.get('source_family_review_file','');path=Path(inputs)/name
+        if not name or Path(name).name!=name or '\\'in name or not path.is_file():
+            raise ValueError('Portable independent family-direction source review is required')
+        sha=hashlib.sha256(path.read_bytes()).hexdigest()
+        with sqlite3.connect(Path(database).resolve().as_uri()+'?mode=ro&immutable=1',uri=True)as con:
+            frozen=json.loads(con.execute('SELECT value FROM metadata WHERE key="structure_frozen_build_manifest"').fetchone()[0])['inputs']
+        if sha!=manifest.get('source_family_review_sha256')or frozen.get(name)!=sha:
+            raise ValueError('Independent family-direction review is not frozen in this database')
+        expected=sorted((op['uid'],op['parent'],name,sha)for op in families)
+        actual=sorted((row['uid'],row['parent'],row['file'],row['sha256'])for row in value.get('verified_family_source_reviews',[]))
+        if actual!=expected:
+            raise ValueError('Every nominal family direction requires its actual independent source check')
+    elif value.get('verified_family_source_reviews')not in(None,[]):
+        raise ValueError('Audit claims family-direction reviews outside frozen operations')
     def documents(raw):
         if isinstance(raw,dict):
             if raw.get('source_kind')=='PRIMARY_MANUFACTURER_OR_REGULATOR':yield raw

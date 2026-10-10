@@ -824,7 +824,8 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                         raise ValueError('Actual new physical link evidence differs')
                     if table == 'entity_relations' and rows[0]['evidence_id'] != eid:
                         raise ValueError('Actual typed link points at a different evidence record')
-                    if (proof.get('owned_physical_scope_kind') == 'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE'
+                    if (proof.get('owned_physical_scope_kind') in {'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE',
+                                                                   'OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION'}
                             and json.loads(rows[0]['data']).get('classification_axis') != proof['classification_axis']):
                         raise ValueError('Actual nominal type has lost its function or purpose axis')
                     if table == 'edges':
