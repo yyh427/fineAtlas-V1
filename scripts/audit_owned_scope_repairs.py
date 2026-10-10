@@ -71,11 +71,15 @@ def node_role(con, node):
 
 def source_witness(con, witness):
     table = witness.get('table', 'nodes')
-    identifier = witness.get('id') if table != 'nodes' else witness['uid']
-    row = row_at(con, table, identifier, 'uid' if table == 'nodes' else 'id')
-    if not row or sha(row['data']) != witness['data_sha256']:
+    identifier = witness.get('evidence_id') if table == 'evidence' else witness.get('id') if table != 'nodes' else witness['uid']
+    key = 'evidence_id' if table == 'evidence' else 'uid' if table == 'nodes' else 'id'
+    row = row_at(con, table, identifier, key)
+    field_name = 'payload' if table == 'evidence' else 'data'
+    if not row or sha(row[field_name]) != witness['data_sha256']:
         raise ValueError('Whole retained source witness bytes changed')
-    data = json.loads(row['data'])
+    if table == 'evidence' and row['payload_sha256'] != witness['data_sha256']:
+        raise ValueError('Retained evidence payload index differs from its actual bytes')
+    data = json.loads(row[field_name])
     field = witness['field']
     value = data
     for part in field.split('.'):
@@ -154,10 +158,12 @@ def author_annotations(inputs, manifest):
     return records
 
 
-def identity_peer(con, first, second):
+def identity_peer(con, first, second, overrides=None):
     left, right = (row_at(con, 'nodes', uid, 'uid') for uid in (first, second))
+    overrides = overrides or {}
     if (not left or not right or left['visibility'] != 'ACTIVE' or right['visibility'] != 'ACTIVE'
-            or left['component_id'] != right['component_id'] or node_role(con, left) != node_role(con, right)):
+            or left['component_id'] != right['component_id']
+            or overrides.get(first, node_role(con, left)) != overrides.get(second, node_role(con, right))):
         return False
     queue, seen = deque([first]), set()
     while queue:
@@ -264,7 +270,8 @@ def scoped_assertion_phrase(statement, scope_kind, label):
         if not match or re.search(r'\b(?:not|never|fictional|virtual|toy|replica)\b', match[0], re.I):
             raise ValueError('Own twinjet anaphor is absent or incompatible')
         return match[0]
-    if scope_kind not in {None, 'OWNED_FIRST_SUBJECT', 'RETAINED_SOURCE_CLASS_MOTOR_VEHICLE', 'OWNED_MOTOR_VEHICLE_DESIGN'}:
+    if scope_kind not in {None, 'OWNED_FIRST_SUBJECT', 'RETAINED_SOURCE_CLASS_MOTOR_VEHICLE', 'OWNED_MOTOR_VEHICLE_DESIGN',
+                          'OWNED_BIOLOGICAL_CULTIVAR_HOST_TAXON'}:
         raise ValueError('Unrecognized whole physical scope declaration')
     return own_assertion_phrase(statement)
 
@@ -295,7 +302,7 @@ def independently_declared_role(statement, label, scope_kind):
             raise ValueError('Unresolved individual/design role must retain its actual ambiguity')
         return 'UNKNOWN'
     if re.search(r'\b(?:cultivar|grape variety)\b', phrase, re.I):
-        if scope_kind not in {'OWNED_HORTICULTURAL_VARIANT_ROLE', 'OWNED_NOMINAL_DESIGN_ROLE'}:
+        if scope_kind not in {'OWNED_HORTICULTURAL_VARIANT_ROLE', 'OWNED_BIOLOGICAL_CULTIVAR', 'OWNED_NOMINAL_DESIGN_ROLE'}:
             raise ValueError('Horticultural role requires its explicit whole-source scope review')
         return 'BIOLOGICAL_VARIANT'
     if scope_kind != 'OWNED_NOMINAL_DESIGN_ROLE':
@@ -362,6 +369,41 @@ def manufacturer_vehicle_phrase(proof, child, parent, retained, directory, verif
             or not scope.get('scope_facts', {}).get('self_propulsion_combustion_engine')):
         raise ValueError('Complete primary paragraph does not establish the whole motorized vehicle program')
     return scope['physical_genus']
+
+
+def verify_biological_host_scope(con, op, child, parent, overrides, reviewed):
+    proof = op['proof']; scope = proof['host_taxon_scope_review']
+    if (op['relation'] != 'TAXONOMIC_PARENT'
+            or overrides.get(child['uid'], node_role(con, child)) != 'BIOLOGICAL_VARIANT'
+            or node_role(con, parent) != 'CLASS' or scope.get('parent_taxon_rank') != 'species'
+            or scope.get('child_remains_biological_variant') is not True
+            or scope.get('source_host_not_fruit') is not True or scope.get('species_identity_assertion') is not False):
+        raise ValueError('Cultivar host link changed biological grain or scientific identity scope')
+    own, host = proof['source_witnesses'][:2]
+    if own.get('table') == 'evidence':
+        evidence = source_witness(con, own)
+        payload = json.loads(evidence['payload'])
+        if payload.get('child_uid') != child['uid'] or payload.get('definition_supported') is not True:
+            raise ValueError('Biological definition evidence belongs to a different or unconfirmed source object')
+    elif own.get('uid') != child['uid']:
+        raise ValueError('Cultivar host requires an independent own whole source assertion')
+    data = json.loads(parent['data']); description = data.get('wikidata_description') or data.get('description') or ''
+    if (host.get('uid') != parent['uid'] or host.get('table', 'nodes') != 'nodes'
+            or parent['label'] != scope['host_scientific_name']
+            or not re.search(r'\bspecies\b', description, re.I)
+            or scope['host_scientific_name'] not in host['statement']
+            or scope['parent_owned_host_phrase'] not in host['statement']
+            or scope['child_owned_host_phrase'] not in own['statement']):
+        raise ValueError('Complete own host assertion does not match the actual living scientific taxon')
+    claims = scope.get('retained_primary_taxonomic_or_classifier_assertions', [])
+    if not claims:
+        raise ValueError('Whole biological host must retain its original taxonomic or classifier provenance')
+    for before in claims:
+        expected = dict(before)
+        if ('edges', before['id']) in reviewed:
+            expected['status'] = 'SOURCE_SCOPE_REVIEW'
+        if row_at(con, 'edges', before['id']) != expected or before['child_uid'] != child['uid']:
+            raise ValueError('Original scientific or cultivar classifier declaration changed')
 
 
 def role_valid(con, relation, left, right, overrides=None):
@@ -541,9 +583,14 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     raise ValueError('Whole own subject and complete parent scope are required')
                 motor_design = proof.get('owned_physical_scope_kind') == 'OWNED_MOTOR_VEHICLE_DESIGN'
                 manufacturer_design = proof.get('owned_physical_scope_kind') == 'PRIMARY_MANUFACTURER_WHOLE_NOMINAL_MOTOR_VEHICLE'
+                biological_host = proof.get('owned_physical_scope_kind') == 'OWNED_BIOLOGICAL_CULTIVAR_HOST_TAXON'
                 own = retained_own_statements[0] if retained_own_statements and not motor_design else witnesses[0]['statement']
                 witness_node = row_at(con, 'nodes', witnesses[0].get('uid', child['uid']), 'uid')
-                if manufacturer_design:
+                if biological_host:
+                    verify_biological_host_scope(con, op, child, parent, role_overrides if preflight else {},
+                                                 reviewed if not preflight else {})
+                    phrase = witnesses[0]['statement']
+                elif manufacturer_design:
                     phrase = manufacturer_vehicle_phrase(proof, child, parent, retained_own_statements,
                                                          primary_snapshots_dir, verified_sources)
                     if witnesses[0]['statement'] != child['label'] or witnesses[1]['statement'] != 'a self-propelled wheeled vehicle that does not run on rails':
@@ -557,18 +604,18 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     raise ValueError('Own automotive design and broad parent scope do not close')
                 if proof.get('owned_physical_scope_kind') == 'OWNED_NAMED_INSTANCE_OF_STATED_DESIGN_KIND' and op['relation'] != 'INSTANCE_OF':
                     raise ValueError('A named physical member cannot supply a design TYPE link')
-                if re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
+                if not biological_host and re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
                 words = lambda value: re.findall(r'[^\W_]+', value.casefold(), re.UNICODE)
-                if not isinstance(genus, str) or not words(genus):
+                if not biological_host and (not isinstance(genus, str) or not words(genus)):
                     raise ValueError('Physical genus must be explicit in the whole source review')
-                declared_words, phrase_words = words(genus), words(phrase)
-                if not any(phrase_words[i:i + len(declared_words)] == declared_words
+                declared_words, phrase_words = words(genus or ''), words(phrase)
+                if not biological_host and not any(phrase_words[i:i + len(declared_words)] == declared_words
                            for i in range(len(phrase_words) - len(declared_words) + 1)):
                     raise ValueError('Declared physical genus exists only outside the own first assertion')
                 if (witnesses[0].get('table', 'nodes') == 'nodes'
-                        and not identity_peer(con, child['uid'], witnesses[0]['uid'])):
+                        and not identity_peer(con, child['uid'], witnesses[0]['uid'], role_overrides if preflight else None)):
                     raise ValueError('Attached different-source object cannot supply the own scope')
                 if not preflight:
                     table = 'edges' if op['relation'] == 'IS_A' else 'entity_relations'

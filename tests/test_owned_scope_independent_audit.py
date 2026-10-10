@@ -142,6 +142,40 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'own source assertion'):
             audit.source_assertion_witness(self.con, witness, 'source-a')
 
+    def test_whole_definition_evidence_uses_actual_payload_hash(self):
+        self.con.execute('CREATE TABLE evidence(evidence_id TEXT,payload TEXT,payload_sha256 TEXT)')
+        raw = audit.dump({'child_uid':'design-a','sentence':'A cultivar of domesticated apple.'})
+        self.con.execute('INSERT INTO evidence VALUES(?,?,?)', ('definition',raw,audit.sha(raw)))
+        witness = {'table':'evidence','evidence_id':'definition','field':'sentence',
+                   'statement':'A cultivar of domesticated apple.','data_sha256':audit.sha(raw)}
+        self.assertEqual(audit.source_witness(self.con,witness)['payload'],raw)
+        self.con.execute("UPDATE evidence SET payload_sha256='wrong'")
+        with self.assertRaisesRegex(ValueError,'payload index'):
+            audit.source_witness(self.con,witness)
+
+    def test_cultivar_host_requires_living_taxon_not_fruit_or_species_promotion(self):
+        child={'uid':'design-a','rank':'biological_variant'}
+        parent={'uid':'host','rank':'species','label':'Malus domestica',
+                'data':audit.dump({'wikidata_description':'species of plant'})}
+        own={'uid':'design-a','statement':'A cultivar of domesticated apple.'}
+        host={'uid':'host','statement':'The domestic apple (Malus domestica) is a cultivated tree.'}
+        before={'id':3,'data':'{}','child_uid':'design-a'}
+        self.con.execute('INSERT INTO edges VALUES(?,?,?)',(3,'{}','design-a'))
+        scope={'parent_taxon_rank':'species','child_remains_biological_variant':True,
+               'source_host_not_fruit':True,'species_identity_assertion':False,
+               'host_scientific_name':'Malus domestica','parent_owned_host_phrase':'domestic apple (Malus domestica)',
+               'child_owned_host_phrase':'cultivar of domesticated apple',
+               'retained_primary_taxonomic_or_classifier_assertions':[before]}
+        op={'uid':'design-a','relation':'TAXONOMIC_PARENT',
+            'proof':{'host_taxon_scope_review':scope,'source_witnesses':[own,host]}}
+        audit.verify_biological_host_scope(self.con,op,child,parent,{'design-a':'BIOLOGICAL_VARIANT'}, {})
+        fruit={**parent,'data':audit.dump({'wikidata_description':'edible fruit of an apple tree'})}
+        with self.assertRaisesRegex(ValueError,'living scientific taxon'):
+            audit.verify_biological_host_scope(self.con,op,child,fruit,{'design-a':'BIOLOGICAL_VARIANT'}, {})
+        scope['species_identity_assertion']=True
+        with self.assertRaisesRegex(ValueError,'biological grain'):
+            audit.verify_biological_host_scope(self.con,op,child,parent,{'design-a':'BIOLOGICAL_VARIANT'}, {})
+
     def test_historical_absolute_primary_path_is_not_a_download_locator(self):
         path = self.root / 'unpublished.pdf'
         path.write_bytes(b'official source fixture')
