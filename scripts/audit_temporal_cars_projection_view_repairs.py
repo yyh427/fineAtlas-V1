@@ -36,6 +36,14 @@ def find_claim(c, original):
     return found[0] if len(found) == 1 else None
 
 
+def source_reference_navigation_leaks(c, reference_id):
+    """Use the actual browse storage vocabulary for typed SOURCE references."""
+    leaks=[]
+    for table,condition,record_id in (('browse_links',"storage='entity' AND record_id=?",reference_id),('view_terminal_connections','witness_relation_id=?',reference_id),('view_paths','witness_id=?',-reference_id)):
+        if c.execute('SELECT count(*)FROM '+table+' WHERE '+condition,(record_id,)).fetchone()[0]:leaks.append(table)
+    return leaks
+
+
 def table_hash(c, table):
     rows = sorted([dict(r) for r in c.execute('SELECT * FROM ' + table)], key=lambda x: json.dumps(x, sort_keys=True))
     return sha(json.dumps(rows, sort_keys=True))
@@ -144,10 +152,8 @@ def run(database, inputs, output, preflight=False, owned_audit=None, complete_ow
                 or retained.get('world_identity_assertion') is not False or retained.get('no_navigation') is not True
                 or not ev or json.loads(ev[0]) != retained or sha(ev[0]) != ev[1]):
             bad('REFERENCE_SCOPE_OR_SOURCE_EVIDENCE_CHANGED', uid=uid)
-        for table, condition in (('browse_links', "storage='entity_relations' AND record_id=?"), ('view_terminal_connections', 'witness_relation_id=?'), ('view_paths', 'witness_id=?')):
-            record_id = -ref['id'] if table == 'view_paths' else ref['id']
-            if c.execute('SELECT count(*) FROM ' + table + ' WHERE ' + condition, (record_id,)).fetchone()[0]:
-                bad('SOURCE_REFERENCE_IN_NAVIGATION_OR_DISTANCE', uid=uid, table=table)
+        for table in source_reference_navigation_leaks(c,ref['id']):
+            bad('SOURCE_REFERENCE_IN_NAVIGATION_OR_DISTANCE',uid=uid,table=table)
     if preflight:
         actual_keys = {(r['subject_uid'], r['object_uid'], r['source'], claim_sha(r)) for uid in index for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND relation='CONFIGURATION_OF' AND status='ACTIVE'", (uid,))}
         if actual_keys != review_keys: bad('UNCLOSED_WORLD_CLAIM_CENSUS_INCOMPLETE')
