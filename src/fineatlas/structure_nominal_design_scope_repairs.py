@@ -80,6 +80,13 @@ def _apply_nominal_design_scope_repairs(m):
         if op['op'] != 'correct_role':
             continue
         m.role(op['uid'], op['after_profile']['node_kind'], op['proof'], SOURCE, op['uri'])
+        if op['after_profile']['node_kind'] == 'UNKNOWN':
+            # The old writer remains immutable; this local exact helper changes
+            # current certainty only after the complete source review above.
+            row = m.c.execute('SELECT attributes FROM node_profiles WHERE uid=?', (op['uid'],)).fetchone()
+            attrs = json.loads(row['attributes']); attrs.update(role_status='REVIEW', allowed_views=[])
+            m.c.execute('UPDATE node_profiles SET attributes=? WHERE uid=?', (dump(attrs), op['uid']))
+            m.c.execute("UPDATE normalization_roles SET status='REVIEW' WHERE uid=?", (op['uid'],))
         profile = dict(m.c.execute('SELECT * FROM node_profiles WHERE uid=?', (op['uid'],)).fetchone())
         normalization = dict(m.c.execute('SELECT * FROM normalization_roles WHERE uid=?', (op['uid'],)).fetchone())
         if profile != op['after_profile'] or normalization != op['after_normalization_role']:
@@ -141,5 +148,5 @@ def _apply_nominal_design_scope_repairs(m):
     m.c.execute('INSERT INTO source_catalogs VALUES(?,?,?,?,?)', ('Hierarchy refinement: '+SOURCE, operations[0]['uri'], 'Source-derived factual scope assertions; complete original source records and attribution retained', sha(raw), dump({'operation_count': len(operations), 'source_review_sha256': manifest['source_review_sha256'], 'no_identity_or_mapping_promotions': True})))
     changes = dict(Counter(o['op'] for o in operations))
     result = {'status': 'PASS', 'source_assertions_added': changes.get('link', 0), 'class_scope_reviews': changes.get('review_class_edge', 0), 'distinct_canonical_directions_asserted': len(canonical), 'operations': counts, 'operation_kinds': changes, 'classification_axes': axes, 'new_nodes': 0, 'role_changes': len(role_ops), 'identity_changes': 0, 'mapping_changes': 0}
-    m.meta(METADATA_KEY, {**result, 'manifest_sha256': sha(path.read_bytes()), 'operations_sha256': sha(raw), 'operation_count': len(operations), 'completed_parent_binding': manifest['completed_parent_binding'], 'protected_table_hashes': protected_before, 'protected_table_hashes_after': {t: fingerprint(t) for t in protected}, 'allowed_role_differences': sorted(role_ops), 'reviewed_class_assertion_ids': sorted(reviewed), 'source_declarations_preserved': True, 'fine_distance_recovery_not_inferred': True})
+    m.meta(METADATA_KEY, {**result, 'manifest_sha256': sha(path.read_bytes()), 'operations_sha256': sha(raw), 'operation_count': len(operations), 'completed_parent_binding': manifest['completed_parent_binding'], 'protected_table_hashes': protected_before, 'protected_table_hashes_after': {t: fingerprint(t) for t in protected}, 'allowed_role_differences': sorted(role_ops), 'reviewed_class_assertion_ids': sorted(reviewed), 'source_declarations_preserved': True, 'fine_distance_recovery_not_inferred': True, 'navigation_disabled_source_grain_uids': sorted(o['uid'] for o in role_ops.values() if o['after_profile']['node_kind']=='UNKNOWN')})
     return result

@@ -81,40 +81,60 @@ def validate_role(c, op, semantic_reviews):
     if op['before_profile'] != p['before_profile'] or op['before_normalization_role'] != p['before_normalization_role']:
         raise ValueError('Role original snapshots disagree')
     target = op['after_profile']['node_kind']
-    if actual['role'] not in {'MODEL', 'MODEL_FAMILY'} or target not in {'MODEL', 'MODEL_FAMILY'} or target == actual['role']:
-        raise ValueError('This contract only corrects evidenced nominal programme grain')
-    if p.get('source_role_scope_kind') != 'WHOLE_NOMINAL_MULTIMODEL_PROGRAMME' or p.get('role_status') != 'VERIFIED':
-        raise ValueError('Whole nominal programme scope adjudication is missing')
+    kinds = {'MODEL': 'OWNED_NAMED_REUSABLE_DESIGN_PROGRAMME',
+             'MODEL_FAMILY': 'WHOLE_NOMINAL_MULTIMODEL_PROGRAMME',
+             'INSTANCE': 'OWNED_NAMED_OPERATIONAL_PHYSICAL_INSTANCE',
+             'UNKNOWN': 'SOURCE_NOMINAL_OR_INDIVIDUAL_GRAIN_PENDING'}
+    if target not in kinds or target == actual['role'] or p.get('source_role_scope_kind') != kinds[target]:
+        raise ValueError('This contract only corrects independently evidenced source object grain')
     report = source_report(op, semantic_reviews, 'approved_source_role_corrections')
     records = report.get('approved_source_role_corrections', [])
-    if not any(r['uid'] == op['uid'] and r['before_role'] == actual['role'] and r['source_role_scope_kind'] == target
-               and r['before_profile'] == op['before_profile'] and r['before_normalization'] == op['before_normalization_role'] for r in records):
+    old_approved = any(r['uid'] == op['uid'] and r['before_role'] == actual['role'] and r['source_role_scope_kind'] == target
+               and r['before_profile'] == op['before_profile'] and r['before_normalization'] == op['before_normalization_role'] for r in records)
+    record = report.get('source_role_records', {}).get(op['uid']) or report.get('complete_before_records', {}).get(op['uid'])
+    new_approved = ([op['uid'], target] in report.get('approved_source_roles', []) and record is not None
+        and record['node'] == p['before_node'] and record['node_profiles'] == op['before_profile']
+        and record['normalization_roles'] == op['before_normalization_role'])
+    if not old_approved and not new_approved:
         raise ValueError('Independent source role decision does not match its exact before scope')
-    # Compute the unchanged Migration.role encoding independently before writing.
+    review = target == 'UNKNOWN'
+    expected_status = 'REVIEW' if review else 'VERIFIED'
+    if p.get('role_status') != expected_status:
+        raise ValueError('Role certainty must reflect the independent source grain decision')
+    if review:
+        decision = report.get('source_role_decisions', {}).get(op['uid']) or next((case for case in report.get('cases', []) if case.get('uid')==op['uid']), {})
+        if decision.get('after_role_status') != 'REVIEW' or decision.get('allowed_views') != [] or decision.get('quarantine_role_grain') is not True or p.get('allowed_views') != [] or p.get('quarantine_role_grain') is not True:
+            raise ValueError('Unknown source grain needs explicit independent quarantine approval')
     prior = op['before_profile']
-    attrs = json.loads(prior['attributes'])
+    attrs = json.loads(prior['attributes']) if prior else {}
+    norm = op['before_normalization_role']
+    source_role = norm['source_role'] if norm else attrs.get('source_role', actual['rank'] or 'UNSPECIFIED')
+    native_rank = attrs.get('native_rank', actual['rank'])
+    if p.get('source_role') != source_role or p.get('native_rank') != native_rank:
+        raise ValueError('Original native source role and rank must remain unchanged')
     eid = 'usability:'+sha(dump(p))
     if p.get('allowed_views') is not None:
-        if p['allowed_views'] != attrs.get('allowed_views'):
+        if not review and p['allowed_views'] != attrs.get('allowed_views'):
             raise ValueError('Nominal grain correction cannot change source view admission')
         attrs['allowed_views'] = p['allowed_views']
-    attrs['source_role'] = p.get('source_role', attrs.get('source_role', actual['rank'] or 'UNSPECIFIED'))
-    attrs.update(native_rank=p.get('native_rank', attrs.get('native_rank', actual['rank'])),
-                 role_status='VERIFIED', role_evidence_id=eid)
+    attrs.update(source_role=source_role, native_rank=native_rank,
+                 role_status=expected_status, role_evidence_id=eid)
     attrs.pop('canonical_scope_guard', None)
     attrs.pop('canonical_scope_evidence_id', None)
-    after = dict(prior, node_kind=target, source_uri=op['uri'], evidence_id=eid, attributes=dump(attrs))
-    norm = op['before_normalization_role']
+    after = {'uid': op['uid'], 'node_kind': target, 'domain': prior['domain'] if prior else actual['domain'],
+             'source_uri': op['uri'], 'evidence_id': eid, 'attributes': dump(attrs)}
     if norm:
+        if not review and norm['status'] != 'VERIFIED':
+            raise ValueError('A prior unverified source role cannot be silently promoted')
         after_norm = dict(norm, canonical_role=target, evidence_id=eid, source=op['source'])
+        if review:
+            after_norm['status'] = 'REVIEW'
     else:
-        after_norm = {'uid': op['uid'], 'source_role': p.get('source_role') or actual['rank'] or 'UNSPECIFIED',
-                      'canonical_role': target, 'status': 'VERIFIED', 'evidence_id': eid,
-                      'source': op['source'], 'prior_profile': dump(prior)}
+        after_norm = {'uid': op['uid'], 'source_role': source_role,
+                      'canonical_role': target, 'status': expected_status, 'evidence_id': eid,
+                      'source': op['source'], 'prior_profile': dump(prior or {})}
     if after != op['after_profile'] or after_norm != op['after_normalization_role']:
         raise ValueError('Role output differs from real Migration canonical encoding')
-    if norm and (p.get('source_role') != norm['source_role'] or norm['status'] != 'VERIFIED'):
-        raise ValueError('Original normalization source role and confidence must be retained')
     return actual
 
 
@@ -156,7 +176,8 @@ def validate_root_closure(c, operations, role_overrides):
             return False
         profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (n['uid'],)).fetchone()
         # Existing unified SOURCE admission maps to the taxonomy source view.
-        attrs = json.loads(profile['attributes']) if profile else {}
+        planned = next((o['after_profile'] for o in operations if o['op']=='correct_role' and o['uid']==n['uid']), None)
+        attrs = json.loads(planned['attributes']) if planned else json.loads(profile['attributes']) if profile else {}
         allowed = attrs.get('allowed_views')
         return not isinstance(allowed, list) or 'taxonomy' in allowed
     def parents(component):
@@ -169,7 +190,7 @@ def validate_root_closure(c, operations, role_overrides):
                 continue
             ar = role_overrides.get(a['uid'], a['role'])
             rows = [('edges', r) for r in c.execute("SELECT * FROM edges WHERE child_uid=? AND status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A'", (a['uid'],))]
-            rows += [('entity_relations', r) for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT')", (a['uid'],))]
+            rows += [('entity_relations', r) for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','INSTANCE_OF')", (a['uid'],))]
             for table, r in rows:
                 if table == 'edges' and r['id'] in retired:
                     continue
@@ -184,7 +205,9 @@ def validate_root_closure(c, operations, role_overrides):
                     result.add(b['component_id'])
         cache[component] = result
         return result
-    starts = {node(c, o['parent'] if o['op'] == 'link' else o['uid'])['component_id'] for o in operations}
+    quarantined = {o['uid'] for o in operations if o['op']=='correct_role' and o['after_profile']['node_kind']=='UNKNOWN'}
+    starts = {node(c, o['parent'] if o['op'] == 'link' else o['uid'])['component_id'] for o in operations if o['uid'] not in quarantined}
+    starts.update(node(c, o['uid'])['component_id'] for o in operations if o['op']=='link')
     for start in starts:
         pending, seen = [start], set()
         while pending:
@@ -260,7 +283,8 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
     if type(manifest.get('operation_count')) is not int or not operations or len(operations) != manifest['operation_count']:
         raise ValueError('Source operation count must be exact and nonempty')
     keys = [(o['uid'], o['parent'], o['relation']) for o in operations]
-    if len(set(keys)) != len(keys):
+    identities = [('review', o['table'], o['before_assertion']['id']) if o['op'] == 'review_class_edge' else (o['op'], o['uid'], o['parent'], o['relation']) for o in operations]
+    if len(set(identities)) != len(identities):
         raise ValueError('Source operations have duplicate directional assertions')
     if source_review.get('accepted_source_scope_only') is not True or source_review.get('operations_sha256') != manifest['operations_sha256']:
         raise ValueError('Independent exact operation source review is missing')
@@ -276,6 +300,7 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
         raise ValueError('Complete checkpoint frozen manifest differs from its parent binding')
     affected = set()
     role_overrides = {o['uid']: o['after_profile']['node_kind'] for o in operations if o['op'] == 'correct_role'}
+    retired = {o['before_assertion']['id'] for o in operations if o['op'] == 'review_class_edge'}
     if len(role_overrides) != sum(o['op'] == 'correct_role' for o in operations):
         raise ValueError('A source object cannot have multiple role adjudications')
     for op in operations:
@@ -283,7 +308,7 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
             raise ValueError('Nominal scope operations must be exact and attributed')
         relation = op['relation']
         axis = op['classification_axis']
-        expected_axes = {'DESIGN_TYPE_OF': {'purpose', 'function'}, 'NATIVE_DESIGN_PARENT': {'design_family'}, 'IS_A': {'physical_intension'}, 'ROLE_ADJUDICATION': {'source_grain'}}
+        expected_axes = {'DESIGN_TYPE_OF': {'purpose', 'function', 'physical_intension'}, 'INSTANCE_OF': {'physical_intension'}, 'NATIVE_DESIGN_PARENT': {'design_family'}, 'IS_A': {'physical_intension'}, 'ROLE_ADJUDICATION': {'source_grain'}}
         if op['op'] == 'review_class_edge':
             expected_axes['IS_A'].add('class_intension')
         if relation not in expected_axes or axis not in expected_axes[relation]:
@@ -370,7 +395,9 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
             other = b['right_uid'] if b['left_uid'] == uid else b['left_uid']
             if role_overrides.get(other, node(c, other)['role']) != target:
                 raise ValueError('Role correction leaves admitted identity peers at incompatible grains')
-        for r in c.execute("SELECT * FROM entity_relations WHERE status='ACTIVE' AND (subject_uid=? OR object_uid=?)", (uid, uid)):
+        relations = [dict(r) for r in c.execute("SELECT * FROM entity_relations WHERE status='ACTIVE' AND (subject_uid=? OR object_uid=?)", (uid, uid))]
+        relations += [dict(r, subject_uid=r['child_uid'], object_uid=r['parent_uid']) for r in c.execute("SELECT * FROM edges WHERE status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A' AND (child_uid=? OR parent_uid=?)", (uid, uid)) if r['id'] not in retired]
+        for r in relations:
             a, b = node(c, r['subject_uid']), node(c, r['object_uid'])
             if not a or not b:
                 continue
@@ -383,7 +410,12 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
     for op in operations:
         for uid in {op['uid'], op['parent']}:
             profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (uid,)).fetchone()
-            attrs = json.loads(profile['attributes']) if profile else {}
+            planned = next((o['after_profile'] for o in operations if o['op']=='correct_role' and o['uid']==uid), None)
+            attrs = json.loads(planned['attributes']) if planned else json.loads(profile['attributes']) if profile else {}
+            if role_overrides.get(uid) == 'UNKNOWN':
+                if op['op']=='link':
+                    raise ValueError('Quarantined source grain cannot receive a navigation link')
+                continue
             views = attrs.get('allowed_views')
             if isinstance(views, list) and 'taxonomy' not in views:
                 raise ValueError('Reviewed source endpoint is not admitted to the actual unified source view')

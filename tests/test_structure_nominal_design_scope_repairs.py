@@ -80,7 +80,8 @@ class NominalScopeContractTest(unittest.TestCase):
         for current, prefix in [(uid, ''), (parent, 'parent_')]:
             row = dict(self.c.execute('SELECT * FROM nodes WHERE uid=?', (current,)).fetchone())
             proof[prefix+'before_node'] = row
-            proof[prefix+'before_profile'] = dict(self.c.execute('SELECT * FROM node_profiles WHERE uid=?', (current,)).fetchone())
+            profile = self.c.execute('SELECT * FROM node_profiles WHERE uid=?', (current,)).fetchone()
+            proof[prefix+'before_profile'] = dict(profile) if profile else None
             proof[prefix+'before_normalization_role'] = None
             proof['parent_native_record_sha256' if prefix else 'native_record_sha256'] = sha(row['data'])
             witnesses.append({'uid': current, 'field_path': 'definition', 'statement': json.loads(row['data'])['definition'], 'data_sha256': sha(row['data'])})
@@ -115,10 +116,17 @@ class NominalScopeContractTest(unittest.TestCase):
             p = op['proof']
             eid = 'usability:'+sha(dump(p))
             prior = op['before_profile']
-            attrs = json.loads(prior['attributes'])
-            attrs.update(source_role=p['source_role'], native_rank=p['native_rank'], role_status='VERIFIED', role_evidence_id=eid)
-            op['after_profile'] = dict(prior, node_kind='MODEL_FAMILY', source_uri=op['uri'], evidence_id=eid, attributes=dump(attrs))
-            op['after_normalization_role'] = {'uid': op['uid'], 'source_role': p['source_role'], 'canonical_role': 'MODEL_FAMILY', 'status': 'VERIFIED', 'evidence_id': eid, 'source': SOURCE, 'prior_profile': dump(prior)}
+            attrs = json.loads(prior['attributes']) if prior else {}
+            target = op['after_profile']['node_kind']
+            status = 'REVIEW' if target == 'UNKNOWN' else 'VERIFIED'
+            if p.get('allowed_views') is not None:
+                attrs['allowed_views'] = p['allowed_views']
+            attrs.update(source_role=p['source_role'], native_rank=p['native_rank'], role_status=status, role_evidence_id=eid)
+            attrs.pop('canonical_scope_guard', None); attrs.pop('canonical_scope_evidence_id', None)
+            op['after_profile'] = {'uid': op['uid'], 'node_kind': target, 'domain': prior['domain'] if prior else p['before_node']['domain'], 'source_uri': op['uri'], 'evidence_id': eid, 'attributes': dump(attrs)}
+            norm=op['before_normalization_role']
+            op['after_normalization_role'] = dict(norm, canonical_role=target, evidence_id=eid, source=SOURCE) if norm else {'uid': op['uid'], 'source_role': p['source_role'], 'canonical_role': target, 'status': status, 'evidence_id': eid, 'source': SOURCE, 'prior_profile': dump(prior or {})}
+            if target == 'UNKNOWN': op['after_normalization_role']['status']='REVIEW'
         self.raw = ''.join(dump(o)+'\n' for o in self.ops).encode()
         self.approval = {'accepted_source_scope_only': True, 'operations_sha256': sha(self.raw), 'approved_keys': keys}
         self.manifest.update(operations_sha256=sha(self.raw), operation_count=len(self.ops), source_review_sha256=sha(dump(self.approval)), semantic_review_files=[{'file': 'semantic.json', 'sha256': self.semantic_sha}], scope_inventories={u: inventory(self.c, u) for u in sorted({o[k] for o in self.ops for k in ('uid', 'parent')})})
@@ -139,6 +147,73 @@ class NominalScopeContractTest(unittest.TestCase):
         review['proof']['withdrawn_scope_witness'] = {'table': 'edges', 'before_assertion': original, 'content_sha256': review['content_sha256'], 'data_sha256': sha(old_data), 'field_path': ['admission_basis', 'source_statement'], 'statement': 'A utility object is an airplane or helicopter.', 'witness_kind': 'RETAINED_COMPLETE_SOURCE_STATEMENT'}
         self.ops.extend([role, review])
         self.freeze_changed_operations()
+
+    def new_source_role(self, target, missing_profile=False):
+        if missing_profile:
+            self.c.execute("DELETE FROM node_profiles WHERE uid='propjet'")
+        self.ops = [o for o in self.ops if o['uid'] != 'propjet']
+        role = self.operation('propjet','propjet','ROLE_ADJUDICATION','source_grain')
+        role.update(op='correct_role', before_profile=role['proof']['before_profile'], before_normalization_role=None, after_profile={'node_kind':target})
+        kind={'MODEL':'OWNED_NAMED_REUSABLE_DESIGN_PROGRAMME','INSTANCE':'OWNED_NAMED_OPERATIONAL_PHYSICAL_INSTANCE','UNKNOWN':'SOURCE_NOMINAL_OR_INDIVIDUAL_GRAIN_PENDING'}[target]
+        role['proof'].update(source_role_scope_kind=kind, role_status='REVIEW' if target=='UNKNOWN' else 'VERIFIED', source_role='class', native_rank='class')
+        self.semantic['approved_source_roles']=[['propjet',target]]
+        self.semantic['source_role_records']={'propjet':{'node':role['proof']['before_node'],'node_profiles':role['before_profile'],'normalization_roles':None}}
+        if target=='UNKNOWN':
+            decision={'after_role_status':'REVIEW','allowed_views':[],'quarantine_role_grain':True}
+            self.semantic['source_role_decisions']={'propjet':decision};role['proof'].update(allowed_views=[],quarantine_role_grain=True)
+        self.ops.append(role)
+        if target!='UNKNOWN':
+            self.ops.append(self.operation('propjet','aircraft','INSTANCE_OF' if target=='INSTANCE' else 'DESIGN_TYPE_OF','physical_intension'))
+        self.freeze_changed_operations()
+        return role
+
+    def test_real_default_class_without_profile_receives_grounded_model_and_physics(self):
+        role=self.new_source_role('MODEL',missing_profile=True)
+        self.write_inputs();result=apply_nominal_design_scope_repairs(self.migration())
+        self.assertEqual(result['role_changes'],1)
+        self.assertIsNone(role['before_profile']);self.assertIsNone(role['before_normalization_role'])
+        self.assertEqual(dict(self.c.execute("SELECT * FROM normalization_roles WHERE uid='propjet'").fetchone()),role['after_normalization_role'])
+        self.assertEqual(role['after_normalization_role']['prior_profile'],'{}')
+        self.assertEqual(self.c.execute("SELECT rank FROM nodes WHERE uid='propjet'").fetchone()[0],'class')
+
+    def test_named_instance_has_real_physical_membership_and_complete_history(self):
+        role=self.new_source_role('INSTANCE')
+        self.write_inputs();apply_nominal_design_scope_repairs(self.migration())
+        row=self.c.execute("SELECT * FROM entity_relations WHERE subject_uid='propjet' AND source=?",(SOURCE,)).fetchone()
+        self.assertEqual((row['relation'],row['status']),('INSTANCE_OF','ACTIVE'))
+        self.assertEqual(dict(self.c.execute("SELECT * FROM node_profiles WHERE uid='propjet'").fetchone()),role['after_profile'])
+
+    def test_unknown_source_grain_helper_writes_review_and_disables_navigation(self):
+        role=self.new_source_role('UNKNOWN',missing_profile=True)
+        self.write_inputs();apply_nominal_design_scope_repairs(self.migration())
+        profile=dict(self.c.execute("SELECT * FROM node_profiles WHERE uid='propjet'").fetchone())
+        norm=dict(self.c.execute("SELECT * FROM normalization_roles WHERE uid='propjet'").fetchone())
+        self.assertEqual((profile['node_kind'],norm['status']),('UNKNOWN','REVIEW'))
+        self.assertEqual(json.loads(profile['attributes'])['allowed_views'],[])
+        self.assertEqual(profile,role['after_profile']);self.assertEqual(norm,role['after_normalization_role'])
+        meta=json.loads(self.c.execute("SELECT value FROM metadata WHERE key='nominal_design_scope_repairs'").fetchone()[0])
+        self.assertEqual(meta['navigation_disabled_source_grain_uids'],['propjet'])
+
+    def test_pending_list_is_not_permission_to_quarantine_source_object(self):
+        self.new_source_role('UNKNOWN')
+        del self.semantic['source_role_decisions']['propjet']['quarantine_role_grain'];self.freeze_changed_operations()
+        with self.assertRaisesRegex(ValueError,'explicit independent quarantine'):
+            self.validate()
+
+    def test_role_correction_cannot_leave_old_class_inclusion_active(self):
+        self.c.execute("INSERT INTO edges(id,child_uid,parent_uid,relation,source,status,data) VALUES(8,'propjet','aircraft','IS_A','old','ACTIVE','{}')")
+        self.new_source_role('MODEL')
+        with self.assertRaisesRegex(ValueError,'IS_A cannot join MODEL'):
+            self.validate()
+
+    def test_two_original_class_rows_same_direction_are_both_exactly_reviewed(self):
+        self.add_role_and_review();second=copy.deepcopy(self.ops[-1]);second['before_assertion']['id']=8
+        cols=list(second['before_assertion']);self.c.execute('INSERT INTO edges('+','.join(cols)+') VALUES('+','.join('?'for _ in cols)+')',tuple(second['before_assertion'].values()))
+        second['proof']['withdrawn_scope_witness']['before_assertion']=second['before_assertion'];self.ops.append(second);self.freeze_changed_operations()
+        self.write_inputs();result=apply_nominal_design_scope_repairs(self.migration())
+        self.assertEqual(result['class_scope_reviews'],2)
+        self.assertEqual([r[0]for r in self.c.execute('SELECT status FROM edges WHERE id IN(7,8) ORDER BY id')],['SOURCE_SCOPE_REVIEW']*2)
+        self.assertEqual(self.c.execute("SELECT count(*) FROM usability_changes WHERE object_type='class_scope_review'").fetchone()[0],2)
 
     def test_all_three_scoped_relations_validate(self):
         self.validate()
