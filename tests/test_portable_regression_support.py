@@ -86,7 +86,8 @@ class PortableRegressionTests(unittest.TestCase):
             'policy_sha256':'old-policy','candidate_matrix_sha256':'actual-final-matrix'}
         target=Path(config['delivery_root'])/'local-legacy-regressions/summary.json';target.parent.mkdir(parents=True);target.write_text(json.dumps(gate))
         accepted={'release':'v1.11.0rc1','database_revision':'actual-final','database_sha256':'actual-byte-sha'}
-        manifest,archive=support.package_support(config,self.root/'package',accepted)
+        with patch.object(support,'package_lineage_members',return_value={}),patch.object(support,'write_parent_snapshot',side_effect=lambda config,path,accepted:(path.write_bytes(b'actual derived snapshot')or {})and {'pass':True}):
+            manifest,archive=support.package_support(config,self.root/'package',accepted)
         extracted=support.PortableRegressionSupport(self.root/'package/roundtrip/support-registry.json')
         self.assertEqual((extracted.root/'dispositions.json').read_bytes(),ledger.read_bytes())
         self.assertEqual(extracted.value['candidate_matrix_sha256'],'actual-final-matrix')

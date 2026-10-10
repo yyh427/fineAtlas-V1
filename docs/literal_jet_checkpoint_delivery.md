@@ -214,3 +214,24 @@ delivery config. The verified formal revision is
 An existing read-only copy with the retained complete public verification may be
 reused. Candidate data, SDK, frozen inputs, runtime support, and official source
 snapshots still require their own actual fresh public transfers.
+
+
+Set `primary_parent_integrity` and `reproduction_parent_integrity` to the two
+complete, independently verified parent integrity receipts used by the child
+recipe. Packaging calls the unchanged physical parent-independence validator
+against the real two closed parent databases. It retains the original child
+completion, lineage, stage/fingerprint files and complete parent byte-hash seals
+in the runtime support archive. It also independently reads every original
+quarantined claim and historical sibling from the completed parent, retaining
+full-row hashes and exact status/reason states without redistributing source
+document text.
+
+The standalone public executor verifies these freshly downloaded historical
+bytes with `portable_structure_lineage.py`. Its receipt explicitly states
+`physical_parent_inodes_rechecked_here=false`: recorded build IDs, distinct
+source inodes, source whole-file SHA and the original actual physical audit are
+historical build evidence. A clean public machine performs the full current SDK,
+SQL, API, CLI, export and source-byte audits on its downloaded final database;
+it does not pretend to recreate the old physical inode values. Normal local
+coordinator and build entry points continue to call the original physical
+independence validator.

@@ -8,6 +8,8 @@ import subprocess
 import tarfile
 
 from _download import digest, download
+from structure_parent_claim_snapshot import write_parent_snapshot
+from portable_structure_lineage import package_lineage_members
 from coordinate_structure_delivery import require_fresh, read, write
 
 SCHEMA = 'FINEATLAS_PORTABLE_REGRESSION_SUPPORT_V1'
@@ -98,11 +100,16 @@ def package_support(config, output, accepted):
         if declared in locators and locators[declared] != member:
             raise ValueError('Conflicting original evidence locator')
         locators[declared] = member; members[member] = path
+    members.update(package_lineage_members(config,output,accepted))
+    parent_snapshot=output/'parent-assertion-states.jsonl.gz'
+    parent_header=write_parent_snapshot(config,parent_snapshot,accepted)
+    members['parent-assertion-states.jsonl.gz']=parent_snapshot
     support = {'schema':SCHEMA,'database_revision':accepted['database_revision'],
         'database_sha256':accepted['database_sha256'],'policy_sha256':local_gate['policy_sha256'],
         'candidate_matrix_sha256':local_gate['candidate_matrix_sha256'],
         'dispositions_sha256':digest(ledger),'reference_export_sha256':digest(members['reference.csv']),
         'baseline_matrix_sha256':digest(baseline/'legacy-pairs.csv'),
+        'parent_assertion_snapshot_sha256':digest(parent_snapshot),'parent_assertion_snapshot_binding':parent_header,
         'formal_baseline_verification_record_sha256':digest(formal_path),
         'formal_baseline_evidence_locators':formal_locators,
         'evidence_locator_map':locators,

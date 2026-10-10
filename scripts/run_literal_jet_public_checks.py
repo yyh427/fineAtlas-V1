@@ -15,9 +15,11 @@ def stamp(q):s=q.stat();return [s.st_size,s.st_mtime_ns,s.st_ino]
 def utc():return datetime.datetime.now(datetime.timezone.utc).isoformat()
 def write(q,x):q.write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
 sys.path.insert(0,str(a.code/'scripts'))
-from resume_structure_repairs import validate_resumed_parent_independence
-parent_proof=validate_resumed_parent_independence(a.primary_build,a.reproduction_build)
+from portable_structure_lineage import validate_portable_parent_independence
+from structure_regression_support import PortableRegressionSupport
 accepted=read(a.acceptance)
+support=PortableRegressionSupport(a.regression_support_registry)
+parent_proof=validate_portable_parent_independence(support,a.primary_build,a.reproduction_build,accepted)
 from build_structure_candidate import build_fingerprints
 if build_fingerprints(a.inputs)!=accepted['fingerprints']:raise RuntimeError('Public inputs or executable code differ from accepted freeze')
 deps=read(a.database.parent.parent/'public_dependency_downloads.json')

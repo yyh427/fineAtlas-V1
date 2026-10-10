@@ -78,6 +78,8 @@ class ExactTemporalTransitions(unittest.TestCase):
         expected=expected.replace("'legacy-dispositions'):p.add_argument", "'legacy-dispositions','regression-support-registry','primary-snapshots-dir'):p.add_argument")
         expected=expected.replace("def cmd(script,*args):return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]",
             "def cmd(script,*args):\n if script in {'audit_owned_source_preservation.py','audit_temporal_structure_regression_repairs.py','audit_temporal_complete_subject_scope_repairs.py'}:args=(*args,'--primary-snapshots-dir',a.primary_snapshots_dir)\n return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]")
+        expected=expected.replace("from resume_structure_repairs import validate_resumed_parent_independence\nparent_proof=validate_resumed_parent_independence(a.primary_build,a.reproduction_build)\naccepted=read(a.acceptance)",
+            "from portable_structure_lineage import validate_portable_parent_independence\nfrom structure_regression_support import PortableRegressionSupport\naccepted=read(a.acceptance)\nsupport=PortableRegressionSupport(a.regression_support_registry)\nparent_proof=validate_portable_parent_independence(support,a.primary_build,a.reproduction_build,accepted)")
         expected=expected.replace("cmd('audit_legacy_pair_regressions.py'","cmd('audit_portable_legacy_pair_regressions.py'")
         expected=expected.replace("'--output',a.output/'legacy-regressions'))","'--output',a.output/'legacy-regressions','--support-registry',a.regression_support_registry))")
         self.assertEqual(actual,expected)

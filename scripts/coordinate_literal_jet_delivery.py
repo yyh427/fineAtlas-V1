@@ -34,7 +34,9 @@ class LiteralJetCoordinator(Coordinator):
             support,_=download_public_support(package,self.root/'public',self.c['public_base_url'],self.accepted())
             replacements_values={'--legacy-reference':support.root/'reference.csv',
                 '--legacy-baseline-matrix':support.root/'baseline','--legacy-dispositions':support.root/'dispositions.json',
-                '--reference':support.root/'source-row-digests.json','--inventory':support.root/'domain-inventory.json'}
+                '--reference':support.root/'source-row-digests.json','--inventory':support.root/'domain-inventory.json',
+                '--primary-build':support.root/'builds/primary/build_complete.json',
+                '--reproduction-build':support.root/'builds/reproduction/build_complete.json'}
             values=list(values)
             for key,path in replacements_values.items():values[values.index(key)+1]=path
             values.extend(['--regression-support-registry',support.path,
