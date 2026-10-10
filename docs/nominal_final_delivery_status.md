@@ -112,13 +112,18 @@ eight cause categories, and cover every old-valid/new-invalid pair without
 duplicates. Unexplained engineering regression blocks publication.
 
 The independent external observer requires an additional versioned asset,
-`fineatlas-external-audit-source166-class-case-v1.tar.gz`, with SHA-256
-`b3be5866cfb68e07e2e2cdbe48e4776f84aa6eca2b9fc2b400fdfb48c129fb9d`.
-Its source controls passed all 166 operations and 73 rejection checks; these
+`fineatlas-external-audit-source166-class-case-v2.tar.gz`, with SHA-256
+`6a8049abbbe928fdaccb2b8ab9a3b411a9083df9db6fb7b5d7af14e7c4f80114`.
+Its source controls passed all 166 operations and 78 rejection checks; these
 are observer fixtures, not final candidate acceptance. The original frozen
 eight observer files and their earlier failure reports remain unchanged.
 The separately inventoried source is available under
-[independent audits](../independent_audits/nominal-source166-external-audit-supplement-v1/README.txt).
+[independent audits](../independent_audits/README.md).
+V1 is preserved as history and cannot authorize final execution: its entry
+assertion would disappear in Python optimization mode. V2 adds explicit module
+guards before mandatory assertions; 33 actual optimized subprocess attempts
+were rejected, including `-O`, `-OO` and `PYTHONOPTIMIZE=1`. Source parsing and
+the 152 frozen build inputs remain unchanged.
 Public verification must freshly download this asset, check its archive and
 member hashes, and run its actual downloaded code alongside the matching
 installed SDK and downloaded database, inputs and regression support.
