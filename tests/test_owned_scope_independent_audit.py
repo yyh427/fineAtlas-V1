@@ -35,6 +35,12 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
     def test_shared_component_and_name_do_not_prove_owned_source_identity(self):
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))
 
+    def test_abbreviated_design_name_does_not_truncate_real_type_assertion(self):
+        statement = 'The G.A.C. 102 Aristocrat is a cabin monoplane built in the US.'
+        self.assertEqual(audit.own_assertion_phrase(statement), 'a cabin monoplane')
+        self.assertNotIn('glider', audit.own_assertion_phrase(
+            'The Prototype is an aircraft derived from a glider.'))
+
     def test_retired_identity_claim_cannot_supply_an_own_source_witness(self):
         self.con.execute("INSERT INTO bridges VALUES(1,'design-a','source-a','SAME_CONCEPT','SOURCE_SCOPE_REVIEW')")
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))

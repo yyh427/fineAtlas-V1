@@ -188,6 +188,15 @@ def exact_history(con, kind, identifier, before, after, proof):
         raise ValueError('Exactly one preserved precise scope change history is required')
 
 
+def own_assertion_phrase(statement):
+    # Abbreviated design names before the copula contain periods. Separate the
+    # actual asserted predicate first, rather than treating those as sentences.
+    copula = re.search(r'\b(?:is|was|are|were)\s+', statement, re.I)
+    predicate = statement[copula.end():] if copula else statement
+    return re.split(r'[.;]\s+|\s+(?:which|that|whose|derived|based|replacing|built|designed|manufactured|produced)\b',
+                    predicate, maxsplit=1, flags=re.I)[0]
+
+
 def role_valid(con, relation, left, right):
     allowed = NAVIGATION_ROLES.get(relation)
     return bool(allowed and node_role(con, left) in allowed[0] and node_role(con, right) in allowed[1])
@@ -349,7 +358,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if len(witnesses) < 2 or not proof.get('whole_subject_scope_review'):
                     raise ValueError('Whole own subject and complete parent scope are required')
                 own = witnesses[0]['statement']
-                phrase = re.split(r'[.;]\s+|\s+(?:which|that|whose|derived|based|replacing|built|designed|manufactured|produced)\b', own, maxsplit=1, flags=re.I)[0]
+                phrase = own_assertion_phrase(own)
                 if re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
