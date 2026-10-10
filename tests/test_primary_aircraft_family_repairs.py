@@ -6,7 +6,7 @@ import sqlite3
 import sys
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
-from fineatlas.structure_primary_aircraft_family_repairs import SOURCE, validate_primary_aircraft_family_repairs, validate_proposed_component_cycles, own_physical_genus
+from fineatlas.structure_primary_aircraft_family_repairs import SOURCE, validate_primary_aircraft_family_repairs, validate_proposed_component_cycles, own_physical_genus, owned_twinjet_scope
 from fineatlas.structure_regression_repairs import sha
 
 class PrimaryAircraftScopeContracts(unittest.TestCase):
@@ -67,6 +67,11 @@ class PrimaryAircraftScopeContracts(unittest.TestCase):
     def test_modifier_normalization_does_not_accept_toy_incidental_or_negated_airliner(self):
         for text in ['toy widebody airliner','not a widebody airliner','an engine for a widebody airliner','Another is a widebody airliner','widebody airliner that is not a real physical aircraft']:
             self.assertIsNone(own_physical_genus(text,'Atlas'),text)
+    def test_whole_family_twinjet_preserves_private_and_commercial_use(self):
+        self.assertTrue(owned_twinjet_scope('The Atlas is a family of five-abreast twinjet airliners. A private business version uses the same design.', 'Atlas'))
+    def test_incidental_other_model_twinjet_does_not_define_the_subject(self):
+        self.assertFalse(owned_twinjet_scope('Another aircraft is a twinjet airliner.', 'Atlas'))
+        self.assertFalse(owned_twinjet_scope('The Atlas is an aircraft that replaced a twinjet airliner.', 'Atlas'))
     def test_design_derivation_scope_must_be_explicitly_non_navigation(self):
         self.op['relation']='SOURCE_DESIGN_DERIVATION_REFERENCE';self.fact['relation']=self.op['relation'];self.assertRaises(ValueError,self.validate)
 

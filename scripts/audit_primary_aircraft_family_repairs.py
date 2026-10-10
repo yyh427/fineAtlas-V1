@@ -86,7 +86,18 @@ def run(database,inputs,output,preflight=False):
    if not re.search(r'\bairliner\s*(?:family|model|series)?\s*$',head,re.I)or re.search(r'\b(?:not|never|toy|virtual|fictional|imaginary|parts|engine for)\b',head,re.I):errors.append({'kind':'OWN_FIRST_PHYSICAL_GENUS_NOT_CLOSED','uid':uid})
    parent_statement=next(w['statement']for w in proof['source_witnesses']if w['uid']==op['parent']);kind=fact.get('physical_genus');expected={'airliner':'fixed-wing powered aircraft intended to carry cargo or passengers in commercial service','jet':'an airplane powered by one or more jet engines','twinjet':'a jet plane propelled by two jet engines'}
    if parent_statement!=expected.get(kind):errors.append({'kind':'PARENT_PHYSICAL_RANGE_OR_SENSE_NOT_CLOSED','uid':uid})
-   if kind=='twinjet'and not re.search(r'\btwinjet\b',head,re.I):errors.append({'kind':'TWINJET_COUNT_NOT_OWN_SUBJECT_PROPERTY','uid':uid})
+   owned_twinjets=[]
+   for w in proof['source_witnesses']:
+    if w['uid']==op['parent']:continue
+    text=re.sub(r'\([^()]*\)','',w['statement']);first=re.split(r'[.;]\s+(?=[A-Z])',text,maxsplit=1)[0];copula=re.search(r'\b(?:is|was|are|were)\b\s+',first,re.I)
+    if copula:
+     subject=re.sub(r'^(?:the|an?)\s+','',first[:copula.start()].strip(),flags=re.I)
+     if name(subject)!=name(n['label']):continue
+     first=first[copula.end():]
+    literal=re.search(r'\btwinjet\s+(?:airliners?|airplanes?)\b',first,re.I)
+    self_engine=bool(copula and re.search(r'\bairliners?\b',first,re.I)and re.search(r'(?:^|\. )Powered by [^.]+ (?:under|beneath) its wings, the twinjet features\b',text,re.I))
+    if (literal or self_engine)and not re.search(r'\b(?:fictional|virtual|toy|not|never|without)\b',first,re.I):owned_twinjets.append(w['uid'])
+   if kind=='twinjet'and not owned_twinjets:errors.append({'kind':'TWINJET_COUNT_NOT_OWN_SUBJECT_PROPERTY','uid':uid})
   links.add((uid,op['parent'],op['relation']));components.add((n['component_id'],p['component_id'],op['relation']))
   if not preflight:
    rr=c.execute('SELECT r.*,e.payload FROM entity_relations r JOIN evidence e ON e.evidence_id=r.evidence_id WHERE r.subject_uid=? AND r.object_uid=? AND r.relation=? AND r.source=?',(uid,op['parent'],op['relation'],SOURCE)).fetchall()

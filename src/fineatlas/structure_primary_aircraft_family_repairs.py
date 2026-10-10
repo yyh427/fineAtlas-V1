@@ -21,6 +21,24 @@ def own_physical_genus(statement: str, label: str):
     normalized = re.sub(r'\b(wide|narrow)body\b', r'\1-body', statement, flags=re.I)
     return scoped_subject_genus(normalized, label)
 
+def owned_twinjet_scope(statement: str, label: str) -> bool:
+    """A literal count in the source's own first subject, not a related model."""
+    text=re.sub(r'\([^()]*\)','',statement)
+    text=re.split(r'[.;]\s+(?=[A-Z])',text,maxsplit=1)[0]
+    copula=re.search(r'\b(?:is|was|are|were)\b\s+',text,re.I)
+    if copula:
+        prefix=re.sub(r'^(?:the|an?)\s+','',text[:copula.start()].strip(),flags=re.I)
+        if normalized_name(prefix)!=normalized_name(label):return False
+        text=text[copula.end():]
+    head=re.split(r'\s+(?:that|which|with|whose|for|by|from|developed|designed|manufactured|produced)\b',text,maxsplit=1,flags=re.I)[0]
+    if subject_is_nonphysical(head) or re.search(r'\b(?:not|never|no|without)\b',head,re.I):return False
+    if re.search(r'\btwinjet\s+(?:airliners?|airplanes?)\b',head,re.I):return True
+    # A retained complete paragraph can explicitly describe its named subject's
+    # own engines; no related model's jet terminology supplies this inference.
+    if not copula or not re.search(r'\bairliners?\b',head,re.I):return False
+    full=re.sub(r'\([^()]*\)','',statement)
+    return bool(re.search(r'(?:^|\. )Powered by [^.]+ (?:under|beneath) its wings, the twinjet features\b',full,re.I))
+
 def subject_is_nonphysical(statement: str) -> bool:
     head = re.split(r'[.;]|\s+(?:used|for|with|developed|manufactured)\b', statement, maxsplit=1, flags=re.I)[0]
     return bool(re.search(r'\b(?:fictional|virtual|imaginary|toy|scale model|model of|parts? of|engine for|not real|not physical)\b', head, re.I))
@@ -142,7 +160,7 @@ def validate_primary_aircraft_family_repairs(c, manifest: dict, operations: list
             pw=next(w['statement']for w in proof['source_witnesses']if w['uid']==op['parent'])
             patterns={'airliner':r'^fixed-wing powered aircraft intended to carry cargo or passengers in commercial service$', 'jet':r'^an airplane powered by one or more jet engines$', 'twinjet':r'^a jet plane propelled by two jet engines$'}
             if kind not in patterns or not re.fullmatch(patterns[kind],pw,re.I):raise ValueError('Physical parent whole definition is not the reviewed sense')
-            if kind=='twinjet' and not re.search(r'\btwinjet\b',child_witness['statement'],re.I):raise ValueError('Two jet engines cannot be inferred from a bare airliner label')
+            if kind=='twinjet' and not any(owned_twinjet_scope(w['statement'],child['label'])for w in proof['source_witnesses']if w['uid']!=op['parent']):raise ValueError('Two jet engines cannot be inferred from a bare airliner label')
             if kind=='jet' and not any(re.search(r'\bis\s+(?:an?\s+)?(?:four[ -]engined\s+)?jet aircraft\b',w['statement'],re.I)for w in proof['source_witnesses']if w['uid']!=op['parent']):raise ValueError('Jet propulsion requires an owned complete subject statement')
             if kind not in {'airliner','twinjet','jet'}:raise ValueError('Unreviewed physical genus')
     validate_proposed_component_cycles(c,operations)
