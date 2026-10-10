@@ -51,10 +51,20 @@ def row_at(con, table, identifier, key='id'):
 
 def node_role(con, node):
     profile = row_at(con, 'node_profiles', node['uid'], 'uid')
-    return (profile.get('node_kind') if profile else None) or {
-        'model': 'MODEL', 'model_family': 'MODEL_FAMILY', 'series': 'MODEL_FAMILY',
-        'configuration': 'CONFIGURATION', 'model_year': 'CONFIGURATION',
-    }.get((node['rank'] or '').lower(), 'CLASS')
+    if profile and profile.get('node_kind'):
+        return profile['node_kind']
+    rank = (node.get('rank') or '').lower()
+    if (node.get('source') or '').lower() == 'wfo' and rank == 'series':
+        return 'CLASS'
+    return {
+        'model': 'MODEL', 'product_model': 'MODEL', 'aircraft_model': 'MODEL', 'vehicle_model': 'MODEL',
+        'model_family': 'MODEL_FAMILY', 'series': 'MODEL_FAMILY',
+        'configuration': 'CONFIGURATION', 'model_year': 'CONFIGURATION', 'model_year_configuration': 'CONFIGURATION',
+        'instance': 'INSTANCE', 'manufacturer': 'ORGANIZATION', 'make': 'ORGANIZATION',
+        'attribute': 'ATTRIBUTE', 'horticultural_color_class': 'ATTRIBUTE',
+        'unknown': 'UNKNOWN', 'type_or_product_model': 'UNKNOWN',
+        'dataset_category': 'DATASET_CATEGORY', 'biological_variant': 'BIOLOGICAL_VARIANT',
+    }.get(rank, 'CLASS')
 
 
 def source_witness(con, witness):
