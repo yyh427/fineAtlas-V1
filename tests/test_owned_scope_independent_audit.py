@@ -169,6 +169,22 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'independently declare'):
             audit.independently_declared_role('kamikaze drone', 'Drone', 'OWNED_NOMINAL_DESIGN_ROLE')
 
+    def test_whole_generational_programme_does_not_merge_individual_generation_scope(self):
+        first = 'The initial four generations of the Example were produced from 1978 to 2002.'
+        later = 'The fifth generation has been produced since March 2019 and later went on sale in May 2019.'
+        source = 'is a sports car manufactured by Maker. ' + first + ' ' + later
+        review = {'own_programme_name': 'Maker Example', 'programme_definition': source,
+                  'initial_generations_clause': first, 'later_generation_clause': later}
+        self.assertEqual(audit.independently_declared_role(source, 'Maker Example',
+                         'OWNED_WHOLE_MULTI_GENERATION_PROGRAMME', review), 'MODEL_FAMILY')
+        with self.assertRaisesRegex(ValueError, 'complete own'):
+            audit.independently_declared_role(source, 'Maker Example (A70)',
+                         'OWNED_WHOLE_MULTI_GENERATION_PROGRAMME', review)
+        other = source.replace(first, first + ' The Other model was introduced separately.')
+        with self.assertRaisesRegex(ValueError, 'Another design'):
+            audit.independently_declared_role(other, 'Maker Example',
+                         'OWNED_WHOLE_MULTI_GENERATION_PROGRAMME', {**review, 'programme_definition':other})
+
     def test_modified_example_alone_preserves_role_ambiguity(self):
         self.assertEqual(audit.independently_declared_role('spin trial aircraft, modified example of the base',
                          'Version', 'OWNED_UNRESOLVED_DESIGN_VERSUS_MODIFIED_EXAMPLE'), 'UNKNOWN')

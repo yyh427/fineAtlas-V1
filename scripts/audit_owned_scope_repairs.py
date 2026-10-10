@@ -400,10 +400,30 @@ def verify_nominal_purpose_source(con, inputs, manifest, op, reviewed=None):
     return {'file': filename, 'sha256': sha(raw), 'uid': op['uid'], 'parent': op['parent']}
 
 
-def independently_declared_role(statement, label, scope_kind):
+def independently_declared_role(statement, label, scope_kind, generation_review=None):
     if scope_kind is None:
         named_instance_phrase(statement, label)
         return 'INSTANCE'
+    if scope_kind == 'OWNED_WHOLE_MULTI_GENERATION_PROGRAMME':
+        review = generation_review or {}
+        first, later = review.get('initial_generations_clause', ''), review.get('later_generation_clause', '')
+        if (review.get('own_programme_name') != label or review.get('programme_definition') != statement
+                or not first or not later or first not in statement or later not in statement):
+            raise ValueError('Programme family must retain its complete own multi-generation definition')
+        names = {label, label.split()[-1]}
+        name_pattern = '|'.join(re.escape(name) for name in sorted(names, key=len, reverse=True))
+        initial = re.fullmatch(r'The (?:initial|first) (two|three|four|five|six|\d+) generations of (?:the )?(?:' +
+                              name_pattern + r') were (?:produced|manufactured) from \d{4} to \d{4}\.', first, re.I)
+        following = re.fullmatch(r'The (third|fourth|fifth|sixth|seventh|\d+(?:st|nd|rd|th)) generation '
+                                 r'has been (?:produced|manufactured) since [^.]+\.', later, re.I)
+        between = statement[statement.index(first) + len(first):statement.index(later)]
+        numbers = {'two':2,'three':3,'four':4,'five':5,'six':6,'third':3,'fourth':4,'fifth':5,'sixth':6,'seventh':7}
+        numeric = lambda word: numbers[word.lower()] if word.lower() in numbers else int(re.match(r'\d+',word)[0])
+        if (not initial or not following or between.strip() or numeric(following[1]) != numeric(initial[1]) + 1):
+            raise ValueError('Another design or an incidental generation mention cannot define the whole programme family')
+        if not re.search(r'\b(?:car|aircraft|model|design)\b', own_assertion_phrase(statement), re.I):
+            raise ValueError('Programme must independently declare its own design kind')
+        return 'MODEL_FAMILY'
     phrase = own_assertion_phrase(statement)
     if re.search(r'\b(?:not|never|fictional|virtual|toy|replica)\b', phrase, re.I):
         raise ValueError('Incompatible whole statement cannot resolve a canonical role')
@@ -775,7 +795,10 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if proof['source_witnesses'][0]['uid'] != child['uid']:
                     verify_same_identifier_role_source(con, proof, child)
                 target_role = independently_declared_role(proof['source_witnesses'][0]['statement'], child['label'],
-                                                         proof.get('source_role_scope_kind'))
+                                                         proof.get('source_role_scope_kind'), proof.get('generation_scope_review'))
+                if (proof.get('source_role_scope_kind') == 'OWNED_WHOLE_MULTI_GENERATION_PROGRAMME'
+                        and proof['generation_scope_review'].get('scope_source_uid') != proof['source_witnesses'][0]['uid']):
+                    raise ValueError('Whole programme scope belongs to another original source object')
                 if proof.get('canonical_role', target_role) != target_role:
                     raise ValueError('Declared canonical role conflicts with its whole source statement')
                 before, norm = op['before_profile'], op['before_normalization_role']
