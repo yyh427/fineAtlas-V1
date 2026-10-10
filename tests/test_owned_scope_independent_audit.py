@@ -21,7 +21,7 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
                              visibility TEXT, label TEXT);
           CREATE TABLE node_profiles(uid TEXT,node_kind TEXT);
           CREATE TABLE bridges(id INTEGER,left_uid TEXT,right_uid TEXT,relation TEXT,status TEXT);
-          CREATE TABLE edges(id INTEGER,data TEXT);
+          CREATE TABLE edges(id INTEGER,data TEXT,child_uid TEXT);
         ''')
         for uid in ('design-a', 'source-a'):
             self.con.execute('INSERT INTO nodes VALUES(?,?,?,?,?,?)',
@@ -53,13 +53,24 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
 
     def test_retained_definition_field_is_checked_in_original_source_bytes(self):
         raw = json.dumps({'admission_basis': {'source_statement': 'A car is a motor vehicle with wheels.'}})
-        self.con.execute('INSERT INTO edges VALUES(1,?)', (raw,))
+        self.con.execute('INSERT INTO edges VALUES(1,?,?)', (raw, 'design-a'))
         witness = {'table': 'edges', 'id': 1, 'field': 'admission_basis.source_statement',
                    'statement': 'A car is a motor vehicle with wheels.', 'data_sha256': audit.sha(raw)}
         self.assertEqual(audit.source_witness(self.con, witness)['data'], raw)
         self.con.execute('UPDATE edges SET data=?', (raw.replace('motor vehicle', 'four-wheel car'),))
         with self.assertRaisesRegex(ValueError, 'bytes changed'):
             audit.source_witness(self.con, witness)
+
+    def test_full_retained_definition_cannot_be_borrowed_from_another_subject(self):
+        raw = json.dumps({'admission_basis': {'source_statement': 'A car is a motor vehicle.'}})
+        self.con.execute('INSERT INTO edges VALUES(1,?,?)', (raw, 'design-a'))
+        before = dict(self.con.execute('SELECT * FROM edges').fetchone())
+        witness = {'table': 'edges', 'before': before, 'before_fullrow_sha256': audit.sha(audit.dump(before)),
+                   'field_path': ['admission_basis', 'source_statement'], 'statement': 'A car is a motor vehicle.',
+                   'original_source_uri': 'https://source.example/car'}
+        self.assertEqual(audit.source_assertion_witness(self.con, witness, 'design-a'), witness['statement'])
+        with self.assertRaisesRegex(ValueError, 'own source assertion'):
+            audit.source_assertion_witness(self.con, witness, 'source-a')
 
     def test_historical_absolute_primary_path_is_not_a_download_locator(self):
         path = self.root / 'unpublished.pdf'

@@ -74,6 +74,21 @@ def source_witness(con, witness):
     return row
 
 
+def source_assertion_witness(con, witness, uid):
+    before = witness['before']
+    actual = row_at(con, witness['table'], before['id'])
+    if (actual != before or sha(dump(before)) != witness['before_fullrow_sha256']
+            or (before.get('child_uid') or before.get('subject_uid')) != uid
+            or not witness.get('original_source_uri', '').startswith('https://')):
+        raise ValueError('Retained complete own source assertion or provenance changed')
+    value = json.loads(before['data'])
+    for key in witness['field_path']:
+        value = value.get(key) if isinstance(value, dict) else None
+    if value != witness['statement']:
+        raise ValueError('Own source sentence is not the complete original assertion field')
+    return value
+
+
 def primary_documents(value):
     if isinstance(value, dict):
         if value.get('source_kind') == 'PRIMARY_MANUFACTURER_OR_REGULATOR':
@@ -319,6 +334,8 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 raise ValueError('Complete source scope decision and attribution are required')
             for witness in proof.get('source_witnesses', []) + proof.get('retained_source_context_witnesses', []):
                 source_witness(con, witness)
+            retained_own_statements = [source_assertion_witness(con, witness, op['uid'])
+                                      for witness in proof.get('source_assertion_witnesses', [])]
             for collection in ('source_nodes', 'counterexamples'):
                 for uid, before in proof.get(collection, {}).items():
                     actual = row_at(con, 'nodes', uid, 'uid')
@@ -357,7 +374,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 witnesses = proof['source_witnesses']
                 if len(witnesses) < 2 or not proof.get('whole_subject_scope_review'):
                     raise ValueError('Whole own subject and complete parent scope are required')
-                own = witnesses[0]['statement']
+                own = retained_own_statements[0] if retained_own_statements else witnesses[0]['statement']
                 phrase = own_assertion_phrase(own)
                 if re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
