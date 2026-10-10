@@ -344,8 +344,16 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
         declared = {}
         for w in witnesses:
             n = node(c, w['uid'])
-            if not n or sha(n['data']) != w['data_sha256'] or field_value(json.loads(n['data']), w['field_path']) != w['statement'] or not w['statement']:
+            if not n or sha(n['data']) != w['data_sha256'] or not w['statement']:
                 raise ValueError('Owned full source witness changed')
+            if w.get('field_storage') == 'node_column':
+                if w['field_path'] != 'description' or 'description' not in n.keys() or n['description'] != w['statement'] or sha(n['description']) != w.get('field_sha256'):
+                    raise ValueError('Controlled source definition must bind its exact original description column')
+                declared_field = 'node_column.description'
+            else:
+                if field_value(json.loads(n['data']), w['field_path']) != w['statement']:
+                    raise ValueError('Owned full source witness changed')
+                declared_field = w['field_path']
             expected_role = child['role'] if n['component_id'] == child['component_id'] else parent['role']
             if n['component_id'] not in (child['component_id'], parent['component_id']) or n['role'] != expected_role:
                 raise ValueError('Source body belongs to a different object or role')
@@ -353,11 +361,15 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
             if not active_source_peer(c, own_uid, w['uid'], expected_role):
                 raise ValueError('A source body requires an actual admitted same-role identity path')
             represented.add(n['component_id'])
-            declared.setdefault(w['uid'], {})[w['field_path']] = w['statement']
+            declared.setdefault(w['uid'], {})[declared_field] = w['statement']
         if represented != {child['component_id'], parent['component_id']}:
             raise ValueError('Both complete endpoint scopes must be witnessed')
         for uid in declared:
-            if declared[uid] != complete_fields(json.loads(node(c, uid)['data'])):
+            expected = complete_fields(json.loads(node(c, uid)['data']))
+            current = node(c, uid)
+            if 'description' in current.keys() and current['description'] and current['description'] not in expected.values():
+                expected['node_column.description'] = current['description']
+            if declared[uid] != expected:
                 raise ValueError('Every retained whole owned definition field must be reviewed')
         if not {op['uid'], op['parent']} <= set(declared):
             raise ValueError('Both original endpoints need their own complete definition inventory')

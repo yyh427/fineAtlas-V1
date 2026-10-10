@@ -215,6 +215,33 @@ class NominalScopeContractTest(unittest.TestCase):
         self.assertEqual([r[0]for r in self.c.execute('SELECT status FROM edges WHERE id IN(7,8) ORDER BY id')],['SOURCE_SCOPE_REVIEW']*2)
         self.assertEqual(self.c.execute("SELECT count(*) FROM usability_changes WHERE object_type='class_scope_review'").fetchone()[0],2)
 
+    def controlled_column_parent(self):
+        self.c.execute("ALTER TABLE nodes ADD COLUMN description TEXT DEFAULT ''")
+        desc='A civil jet aircraft designed to transport executives and VIPs.'
+        self.c.execute("UPDATE nodes SET data=?,description=? WHERE uid='purpose'",(dump({'source_dictionary':'code','license':'retained'}),desc))
+        for o in self.ops:
+            p=o['proof']
+            for prefix, uid in [('',o['uid']),('parent_',o['parent'])]:
+                p[prefix+'before_node']=dict(self.c.execute('SELECT * FROM nodes WHERE uid=?',(uid,)).fetchone())
+                p['parent_native_record_sha256' if prefix else 'native_record_sha256']=sha(p[prefix+'before_node']['data'])
+            for i,w in enumerate(p['source_witnesses']):
+                if w['uid']=='purpose':
+                    p['source_witnesses'][i]={'uid':'purpose','field_storage':'node_column','field_path':'description','statement':desc,'field_sha256':sha(desc),'data_sha256':sha(p['parent_before_node']['data'])}
+                    p['parent_conditions'][0]['exact_spans'][i]['text']=desc
+        self.freeze_changed_operations()
+
+    def test_controlled_dictionary_parent_uses_exact_original_node_column(self):
+        self.controlled_column_parent();self.write_inputs()
+        result=apply_nominal_design_scope_repairs(self.migration())
+        self.assertEqual(result['source_assertions_added'],3)
+        self.assertEqual(json.loads(self.c.execute("SELECT data FROM nodes WHERE uid='purpose'").fetchone()[0]),{'source_dictionary':'code','license':'retained'})
+
+    def test_controlled_dictionary_column_cannot_be_fabricated_as_data_definition(self):
+        self.controlled_column_parent()
+        self.ops[0]['proof']['source_witnesses'][1]['field_sha256']='invented'
+        with self.assertRaisesRegex(ValueError,'original description column'):
+            self.validate()
+
     def test_all_three_scoped_relations_validate(self):
         self.validate()
 
