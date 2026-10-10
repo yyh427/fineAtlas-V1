@@ -40,6 +40,29 @@ exact identities or design distances. Ordinary shared types can provide valid
 coarse structure. Inapplicable fine distances remain `null`, with reasons;
 the original label remains available for class accuracy supervision.
 
+The resumed repair inputs are separate, immutable deltas. They recover reviewed
+aircraft types and directional family relationships, manufacturer-defined body
+constraints, and complete source-owned subject scopes across the library. They
+do not promote a world label mapping merely because its source object gains a
+valid parent chain. Source definitions and WordNet senses must cover the entire
+subject range; for example, a single-chip microprocessor sense cannot represent
+a source class that also includes implementations using several chips.
+
+The Cars projection-view delta retains the original author-derived object UID,
+raw record, target mapping and declarations. Where a selected catalogue or
+reference sample does not establish the whole world configuration range, the
+reviewed role remains `UNKNOWN`, visibility becomes `SOURCE_ONLY`, and the old
+world `CONFIGURATION_OF` assertion becomes `SOURCE_SCOPE_REVIEW`. A retained
+`SOURCE_MODEL_REFERENCE` records source provenance and provides no typed
+navigation or distance. Independently evidenced EPA configurations and
+manufacturer body constraints remain separate. The dataset-native author
+category remains available under its own UID and annotation version.
+
+The withdrawal ledger distinguishes missing evidence from contradicted scope.
+Pending historical bird crosswalks, precise aircraft identities and mixed-grain
+flower annotations must retain their review status. New rank floors and native
+annotation tasks are reported separately from the fixed old-policy comparison.
+
 ## Resume without discarding verified source work
 
 `scripts/resume_structure_repairs.py` takes an independently copied, completed
