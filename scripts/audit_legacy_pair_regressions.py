@@ -26,7 +26,10 @@ STAGES = {'endpoint_mapping', 'endpoint_identity', 'endpoint_role',
 
 def sha256(path: Path) -> str:
     with path.open('rb') as stream:
-        return hashlib.file_digest(stream, 'sha256').hexdigest()
+        digest = hashlib.sha256()
+        while block := stream.read(1024 * 1024):
+            digest.update(block)
+        return digest.hexdigest()
 
 
 def read_pairs(path: Path) -> dict:
