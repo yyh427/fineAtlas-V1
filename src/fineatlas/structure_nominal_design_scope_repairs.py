@@ -19,6 +19,23 @@ METADATA_KEY = 'nominal_design_scope_repairs'
 SOURCE = 'Reviewed complete nominal design and generic class scope'
 
 
+def apply_reviewed_source_role(m, op):
+    """Write one prevalidated source decision with exact current certainty."""
+    m.role(op['uid'], op['after_profile']['node_kind'], op['proof'], SOURCE, op['uri'])
+    if op['after_profile']['node_kind'] == 'UNKNOWN':
+        # The old writer remains immutable; this local exact helper changes
+        # current certainty only after the complete source review above.
+        row = m.c.execute('SELECT attributes FROM node_profiles WHERE uid=?', (op['uid'],)).fetchone()
+        attrs = json.loads(row['attributes']); attrs.update(role_status='REVIEW', allowed_views=[])
+        m.c.execute('UPDATE node_profiles SET attributes=? WHERE uid=?', (dump(attrs), op['uid']))
+        m.c.execute("UPDATE normalization_roles SET status='REVIEW' WHERE uid=?", (op['uid'],))
+    profile = dict(m.c.execute('SELECT * FROM node_profiles WHERE uid=?', (op['uid'],)).fetchone())
+    normalization = dict(m.c.execute('SELECT * FROM normalization_roles WHERE uid=?', (op['uid'],)).fetchone())
+    if profile != op['after_profile'] or normalization != op['after_normalization_role']:
+        raise ValueError('Real role output differs from the frozen complete after state')
+    return profile, normalization
+
+
 def apply_nominal_design_scope_repairs(m):
     if not (m.inputs / INPUT_NAME).exists():
         return {'status': 'not_requested'}
@@ -79,18 +96,7 @@ def _apply_nominal_design_scope_repairs(m):
     for op in operations:
         if op['op'] != 'correct_role':
             continue
-        m.role(op['uid'], op['after_profile']['node_kind'], op['proof'], SOURCE, op['uri'])
-        if op['after_profile']['node_kind'] == 'UNKNOWN':
-            # The old writer remains immutable; this local exact helper changes
-            # current certainty only after the complete source review above.
-            row = m.c.execute('SELECT attributes FROM node_profiles WHERE uid=?', (op['uid'],)).fetchone()
-            attrs = json.loads(row['attributes']); attrs.update(role_status='REVIEW', allowed_views=[])
-            m.c.execute('UPDATE node_profiles SET attributes=? WHERE uid=?', (dump(attrs), op['uid']))
-            m.c.execute("UPDATE normalization_roles SET status='REVIEW' WHERE uid=?", (op['uid'],))
-        profile = dict(m.c.execute('SELECT * FROM node_profiles WHERE uid=?', (op['uid'],)).fetchone())
-        normalization = dict(m.c.execute('SELECT * FROM normalization_roles WHERE uid=?', (op['uid'],)).fetchone())
-        if profile != op['after_profile'] or normalization != op['after_normalization_role']:
-            raise ValueError('Real role output differs from the frozen complete after state')
+        profile, normalization = apply_reviewed_source_role(m, op)
         m.change(METADATA_KEY, 'role_source_adjudication', op['uid'],
                  {'profile': op['before_profile'], 'normalization_role': op['before_normalization_role']},
                  {'profile': profile, 'normalization_role': normalization}, op['proof'])
