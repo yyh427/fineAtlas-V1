@@ -197,6 +197,8 @@ def source8_accepted_record(config):
     reproduction=require_complete_type_build(config['reproduction_parent_build'])
     seals=[json.loads(Path(config['nominal_'+name+'_parent_integrity']).read_text())for name in ('primary','reproduction')]
     inventories=[json.loads(Path(config[name+'_parent_build']).with_name('started_fingerprints.json').read_text())for name in ('primary','reproduction')]
-    if primary['revision']!=reproduction['revision']or seals[0]['sha256']!=seals[1]['sha256']or inventories[0]!=inventories[1]:
-        raise ValueError('Two complete-type parents must bind the same exact completed snapshot')
+    if (primary['revision']!=reproduction['revision']or inventories[0]!=inventories[1]
+            or any(seal.get('database_revision')!=parent['revision']or not seal.get('sha256')
+                   for seal,parent in zip(seals,(primary,reproduction)))):
+        raise ValueError('Two complete-type parents must bind the same revision and frozen inventory, each with its own actual whole-file SHA')
     return {'database_revision':primary['revision'],'database_sha256':seals[0]['sha256'],'fingerprints':inventories[0]}

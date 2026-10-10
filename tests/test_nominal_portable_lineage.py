@@ -86,6 +86,17 @@ class NominalThreeGenerationControls(unittest.TestCase):
     def test_foundation_candidate_sha_cannot_differ_from_direct_source8_whole_sha(self):
         self.proof['source8_foundation']['accepted']={**self.old.accepted,'database_sha256':'unrelated-source8-sha'};self.save()
         with self.assertRaises(ValueError):self.validate()
+    def test_same_revision_source8_parents_may_have_distinct_fully_bound_whole_hashes(self):
+        config={}
+        for name in ('primary','reproduction'):
+            folder=self.root/'builds'/name
+            config[name+'_parent_build']=str(folder/'source-parent/build_complete.json')
+            config['nominal_'+name+'_parent_integrity']=str(folder/'parent_integrity.json')
+        reproduction=Path(config['nominal_reproduction_parent_integrity']);value=json.loads(reproduction.read_text());value['sha256']='different-reproduction-whole-sha';reproduction.write_text(json.dumps(value))
+        accepted=nominal.source8_accepted_record(config)
+        self.assertEqual(accepted['database_revision'],'final');self.assertEqual(accepted['database_sha256'],'final-sha')
+        value['database_revision']='another-revision';reproduction.write_text(json.dumps(value))
+        with self.assertRaises(ValueError):nominal.source8_accepted_record(config)
     def test_configuration_binding_does_not_replace_c933_or_mutate_original_keys(self):
         config={'primary_build':'source9-p','reproduction_build':'source9-r','primary_parent_build':'source8-p','reproduction_parent_build':'source8-r',
             'nominal_primary_parent_build':'source8-p','nominal_reproduction_parent_build':'source8-r',
