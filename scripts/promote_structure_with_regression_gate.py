@@ -37,12 +37,20 @@ def validate_regressions(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('legacy-reference', 'legacy-baseline-matrix', 'legacy-candidate-matrix',
-                 'legacy-dispositions', 'source', 'source-inputs', 'reports'):
+                 'legacy-dispositions', 'primary-build', 'reproduction-build',
+                 'source', 'source-inputs', 'reports'):
         parser.add_argument('--' + name, type=Path, required=True)
     args, remaining = parser.parse_known_args(argv)
     if not __debug__:
         raise RuntimeError('Optimized Python is forbidden for mandatory structural checks')
-    validate_regressions(args)
+    from resume_structure_repairs import validate_resumed_parent_independence
+    lineage = validate_resumed_parent_independence(args.primary_build, args.reproduction_build)
+    report = validate_regressions(args)
+    builds = [json.loads(path.read_text()) for path in (args.primary_build, args.reproduction_build)]
+    if any(row['revision'] != report['candidate_revision'] for row in builds):
+        raise ValueError('Regression gate and independently resumed builds differ')
+    args.reports.mkdir(parents=True, exist_ok=True)
+    (args.reports / 'resumed_parent_independence.json').write_text(json.dumps(lineage, indent=2) + '\n')
     # Only remove this wrapper's extra arguments. Delegate all original required
     # options to the unmodified promotion implementation and its existing guards.
     command = [sys.executable, '-B', str(ROOT / 'scripts/promote_structure_stable.py'),
