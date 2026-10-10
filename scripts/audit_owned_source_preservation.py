@@ -23,7 +23,7 @@ from structure_acceptance_contract import file_sha256
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def independent_permissions(database, inputs, output):
+def independent_permissions(database, inputs, output, primary_snapshots_dir):
     """Require complete independent actual audits before allowing any change."""
     con = sqlite3.connect(database.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     metadata = {key: json.loads(value) for key, value in con.execute('SELECT * FROM metadata')}
@@ -41,9 +41,12 @@ def independent_permissions(database, inputs, output):
         if spec.name == 'complete-subject-scope':
             spec = replace(spec, auditor='audit_temporal_complete_subject_scope_repairs.py')
         report = output.parent / (output.stem + '-' + spec.name + '.json')
-        subprocess.run([sys.executable, '-B', str(ROOT / 'scripts' / spec.auditor),
-                        '--database', str(database), '--inputs', str(inputs),
-                        '--output', str(report)], check=True)
+        command = [sys.executable, '-B', str(ROOT / 'scripts' / spec.auditor),
+                   '--database', str(database), '--inputs', str(inputs),
+                   '--output', str(report)]
+        if spec.name == 'complete-subject-scope':
+            command.extend(['--primary-snapshots-dir', str(primary_snapshots_dir)])
+        subprocess.run(command, check=True)
         validate_delta_receipt(spec, report, database, inputs, revision)
         if spec.name == 'complete-subject-scope':
             from structure_subject_scope_temporal_contract import require_temporal_subject_receipt
@@ -90,7 +93,7 @@ def digest_rows(con, table, columns, maximum, permissions=None):
             'seconds': time.monotonic() - started}, changes
 
 
-def run(baseline, candidate, inputs, output, reference=None):
+def run(baseline, candidate, inputs, output, reference=None, primary_snapshots_dir=None):
     if not __debug__:
         raise RuntimeError('Optimized Python is forbidden for source preservation')
     protected = [baseline, candidate, *(path for path in inputs.rglob('*') if path.is_file())]
@@ -99,7 +102,9 @@ def run(baseline, candidate, inputs, output, reference=None):
                 (output.exists() and output.samefile(path)) for path in protected)):
         raise ValueError('Source preservation reports must not overwrite source artifacts or frozen inputs')
     output.parent.mkdir(parents=True, exist_ok=True)
-    permissions, audits, revision, frozen_inputs = independent_permissions(candidate, inputs, output)
+    if primary_snapshots_dir is None or not Path(primary_snapshots_dir).is_dir():
+        raise ValueError('Explicit verified primary source snapshots are required')
+    permissions, audits, revision, frozen_inputs = independent_permissions(candidate, inputs, output, Path(primary_snapshots_dir).resolve())
     base = sqlite3.connect(baseline.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     con = sqlite3.connect(candidate.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     saved = json.loads(reference.read_text()) if reference else None
@@ -155,6 +160,8 @@ if __name__ == '__main__':
     for name in ('baseline', 'candidate', 'inputs', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--reference', type=Path)
+    parser.add_argument('--primary-snapshots-dir', type=Path, required=True)
     args = parser.parse_args()
     run(args.baseline.resolve(), args.candidate.resolve(), args.inputs.resolve(),
-        args.output.resolve(), args.reference.resolve() if args.reference else None)
+        args.output.resolve(), args.reference.resolve() if args.reference else None,
+        args.primary_snapshots_dir.resolve())

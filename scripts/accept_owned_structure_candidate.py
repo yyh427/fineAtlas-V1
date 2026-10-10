@@ -54,7 +54,8 @@ def run_local(a):
                          '--output',a.output/(name+'-integrity.json'),'--integrity')
                    for name,db in [('primary',a.database),('reproduction',a.reproduction)]],
       'source-preservation':[command('audit_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,
-                         '--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'source-preservation.json')],
+                         '--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'source-preservation.json',
+                         '--primary-snapshots-dir',a.primary_snapshots_dir)],
       'logical-reproduction':[command('compare_reproductions.py','--database',a.database,'--reproduction',a.reproduction,
                          '--output',a.output/'logical-comparison.json')],
       'whole-library':[command('audit_structure_library.py','--baseline',a.baseline,'--database',a.database,
@@ -162,6 +163,7 @@ if __name__=='__main__':
     local=sub.add_parser('local')
     for name in ('database','reproduction','baseline','inputs','inventory','reference','output','primary-build','reproduction-build'):local.add_argument('--'+name,type=Path,required=True)
     local.add_argument('--workers',type=int,default=3)
+    local.add_argument('--primary-snapshots-dir',type=Path,required=True)
     final=sub.add_parser('finalize')
     for name in ('inputs','output','public-verification'):final.add_argument('--'+name,type=Path,required=True)
     args=p.parse_args()
