@@ -29,6 +29,21 @@ source includes three-wheel automobiles. Unsupported identity or type claims
 retain their original content and review history. A broader physical parent is
 added only when independently supported; root reachability alone is insufficient.
 
+A source description of an automotive design can support a broad motor-vehicle
+type without establishing a four-wheel body or passenger-only purpose. Preserve
+those narrower claims as separate evidence decisions. Likewise, an aircraft
+family with military or corporate derivatives can retain a physical aircraft,
+jet or wing-geometry type while a whole-family commercial-airliner type is reviewed.
+Neither connection certifies a dataset label's precise world identity.
+
+Correct a source object's canonical role when the complete source identifies a
+named physical member of a design. `INSTANCE_OF` then preserves its physical
+classification without treating it as the complete `MODEL` or `MODEL_FAMILY`.
+Keep the original role evidence and exact before/after normalization history.
+An unprofiled source representation's default role also requires review when an
+active identity peer has a different evidenced role; a shared label alone cannot
+resolve that conflict.
+
 ## Select and retain an explicit task policy
 
 Use the frozen policy files distributed with the artifact. Keep the formal
