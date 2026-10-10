@@ -44,6 +44,29 @@ An unprofiled source representation's default role also requires review when an
 active identity peer has a different evidenced role; a shared label alone cannot
 resolve that conflict.
 
+A complete programme spanning several generations is a `MODEL_FAMILY`; a
+particular generation retains its own `MODEL` scope. A reviewed nominal version
+or generation can navigate to that programme without asserting configuration
+equality or inheriting every narrow purpose of its predecessor. The parent
+programme must also retain its evidenced physical type and a valid parent path.
+
+Reviewed design function and purpose are recorded separately from literal
+physical kinds. An airborne radar and command system is equipment installed on
+an aircraft. Its complete source can support an instrumentality parent while
+its aircraft task boundary remains unreachable. Native domain tags and a
+manufacturer name cannot substitute for that boundary path.
+
+Cultivars retain `BIOLOGICAL_VARIANT` roles. A complete source identification of
+their living host taxon can support `TAXONOMIC_PARENT` in the taxonomy and unified
+views, without asserting species identity or fruit-object inclusion. These
+connections support suitable mixed-grain hierarchy tasks; species-only admission
+remains separate. Training exports must use the same selected relation view.
+
+Where a modified example may denote either a design or an individual and the
+source cannot resolve that distinction, preserve `UNKNOWN` with its review
+evidence. The retained raw object can still be `ACTIVE`; that storage status does
+not admit it to navigation, a domain tree or a non-null hierarchy distance.
+
 ## Select and retain an explicit task policy
 
 Use the frozen policy files distributed with the artifact. Keep the formal
