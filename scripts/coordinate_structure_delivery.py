@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 from _download import digest, download
 from build_structure_candidate import build_fingerprints
 from resume_structure_repairs import validate_resumed_parent_independence
+from structure_delivery_oem_guard import optional_oem_input, validate_oem_receipt
 
 
 def read(path):
@@ -153,6 +154,10 @@ class Coordinator:
             if previous.get('fingerprints') != self.fingerprints or previous.get('revision') != self.meta['database_revision']:
                 raise ValueError('Completed delivery action belongs to another snapshot')
             self.accepted()
+            if optional_oem_input(self.inputs):
+                for name, key in [('primary', 'database'), ('reproduction', 'reproduction')]:
+                    validate_oem_receipt(self.root / (name + '-oem-body-scope.json'),
+                        Path(self.c[key]), self.inputs, self.meta['database_revision'])
             return
         output = Path(self.c['local_output'])
         receipt = output / 'acceptance_receipt.json'
@@ -168,15 +173,22 @@ class Coordinator:
         for name, database in [('primary', self.c['database']), ('reproduction', self.c['reproduction'])]:
             self.execute(name + '-scope-repairs', self.cmd('audit_structure_regression_repairs.py',
                 '--database', database, '--inputs', self.inputs, '--output', self.root / (name + '-scope-repairs.json')))
+            if optional_oem_input(self.inputs):
+                report = self.root / (name + '-oem-body-scope.json')
+                self.execute(name + '-oem-body-scope', self.cmd('audit_oem_body_scope_repairs.py',
+                    '--database', database, '--inputs', self.inputs, '--output', report))
+                validate_oem_receipt(report, Path(database), self.inputs, self.meta['database_revision'])
         self.execute('local-legacy-regressions', self.cmd('audit_legacy_pair_regressions.py',
             '--reference', self.c['legacy_reference'], '--baseline', self.c['legacy_baseline_matrix'],
             '--candidate', output / 'matrix', '--policy', self.inputs / 'legacy_policies.json',
             '--dispositions', self.c['legacy_dispositions'], '--output', self.root / 'local-legacy-regressions'))
+        evidence_paths = [self.root / 'primary-scope-repairs.json', self.root / 'reproduction-scope-repairs.json',
+                          self.root / 'local-legacy-regressions/summary.json']
+        if optional_oem_input(self.inputs):
+            evidence_paths.extend(self.root / (name + '-oem-body-scope.json') for name in ('primary', 'reproduction'))
         write(self.root / 'local_complete.json', {'pass': True, 'revision': self.meta['database_revision'],
               'parents': self.parents, 'fingerprints': self.fingerprints,
-              'evidence': [{'path': str(path), 'sha256': digest(path)} for path in (
-                  self.root / 'primary-scope-repairs.json', self.root / 'reproduction-scope-repairs.json',
-                  self.root / 'local-legacy-regressions/summary.json')]})
+              'evidence': [{'path': str(path), 'sha256': digest(path)} for path in evidence_paths]})
 
     def package(self):
         accepted = self.accepted()
@@ -185,6 +197,10 @@ class Coordinator:
             raise ValueError('Extended local checks incomplete')
         if any(digest(Path(row['path'])) != row['sha256'] for row in local['evidence']):
             raise ValueError('Extended local evidence changed')
+        if optional_oem_input(self.inputs):
+            for name, key in [('primary', 'database'), ('reproduction', 'reproduction')]:
+                validate_oem_receipt(self.root / (name + '-oem-body-scope.json'),
+                    Path(self.c[key]), self.inputs, self.meta['database_revision'])
         out = self.root / 'package'
         out.mkdir(exist_ok=False)
         self.execute('package-data', self.data_package_command(out / 'data'))
@@ -272,6 +288,14 @@ class Coordinator:
         accepted = self.accepted()
         if extension.get('pass') is not True or extension['database_revision'] != accepted['database_revision']:
             raise ValueError('Full public repair and regression extension incomplete')
+        database = self.root / 'public/data/fineatlas.sqlite'
+        if Path(extension['database']).resolve() != database.resolve():
+            raise ValueError('Public extension does not bind the actual downloaded artifact')
+        if optional_oem_input(self.inputs):
+            evidence = extension['evidence'].get('oem-body-scope')
+            if not evidence:
+                raise ValueError('Frozen OEM delta requires actual public OEM evidence')
+            validate_oem_receipt(Path(evidence['path']), database, self.inputs, accepted['database_revision'])
         for row in extension['evidence'].values():
             if digest(Path(row['path'])) != row['sha256']:
                 raise ValueError('Public extension evidence changed')

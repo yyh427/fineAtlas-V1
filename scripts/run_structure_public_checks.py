@@ -39,6 +39,9 @@ jobs={
  'source-contracts':cmd('audit_source_contract_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'source-contracts'),
 }
 sys.path.insert(0,str(a.code/'scripts'))
+from structure_delivery_oem_guard import optional_oem_input, validate_oem_receipt
+oem_input=optional_oem_input(a.inputs,a.code)
+if oem_input is not None:jobs['oem-body-scope']=cmd('audit_oem_body_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'oem-body-scope.json')
 from structure_acceptance_contract import SUPPLEMENTAL_AUDITS, frozen_supplemental_expectations
 expected_sources=frozen_supplemental_expectations(a.inputs,accepted['fingerprints'])
 if {name:row['expected'] for name,row in accepted.get('supplemental_audits',{}).items()}!=expected_sources:raise RuntimeError('Supplemental local expectations differ from actual frozen inputs')
@@ -70,5 +73,8 @@ proof={k:accepted[k] for k in ('release','database_revision','database_sha256')}
 sys.path.insert(0,str(a.code/'scripts'));from structure_acceptance_contract import validate_public_evidence
 q=a.output/'public_verification.json';validate_public_evidence(proof,accepted,q);write(q,proof)
 extension={'schema':'FINEATLAS_RESUMED_PUBLIC_EXTENSION_V1','pass':True,'database':str(a.database),'database_revision':d['database_revision'],'database_sha256':d['database_sha256'],'artifact_stamp':start_stamp,'parent_independence':parent_proof,'ended_utc':utc(),'evidence':{n:{'path':str(q),'sha256':digest(q)} for n,q in {'regression-repairs':a.output/'regression-repairs.json','legacy-regressions':a.output/'legacy-regressions/summary.json','sdk-and-input-downloads':a.database.parent.parent/'public_dependency_downloads.json'}.items()}}
+if oem_input is not None:
+ validate_oem_receipt(a.output/'oem-body-scope.json',a.database,a.inputs,d['database_revision'],a.code)
+ extension['evidence']['oem-body-scope']={'path':str(a.output/'oem-body-scope.json'),'sha256':digest(a.output/'oem-body-scope.json')}
 write(a.output/'resume_public_extension.json',extension)
 print('ACTUAL FULL PUBLIC VERIFICATION PASS',q,flush=True)

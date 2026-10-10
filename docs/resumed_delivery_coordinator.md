@@ -47,6 +47,12 @@ every fixed-policy loss. Existing running/failed local acceptance is preserved
 and must be investigated. The disposition file must be generated from the actual
 repaired database and matrix; merely rebinding the previous candidate is invalid.
 
+When the OEM adapter's declared `INPUT_NAME` exists in the frozen inputs, local
+acceptance additionally runs `audit_oem_body_scope_repairs.py` against both actual
+databases. Its receipts must bind the exact database path/revision, frozen
+manifest hash, operation hash and complete operation census. A preflight-only
+receipt, missing report or stale revision cannot satisfy this requirement.
+
 `package` checks the accepted database byte hash, creates the data parts, verifies
 every wheel module against the frozen SDK inventory, and roundtrips a complete
 input/license archive. Assets are listed with SHA-256 and sizes in
@@ -84,6 +90,11 @@ so the additional bound checks are retained separately in
 `public/checks/resume_public_extension.json`; the base proof remains
 `public/checks/public_verification.json`. `finalize` requires both before invoking
 the unchanged acceptance finalizer.
+The same optional frozen OEM input makes the actual public OEM audit mandatory;
+its receipt is included as `oem-body-scope` in the extension evidence. Finalization
+rechecks its revision, exact downloaded database, complete census and frozen
+manifest/operation hashes. The original acceptance job and public evidence key
+sets remain unchanged.
 
 For stable artifact preparation, use `promote_structure_with_regression_gate.py`
 with all original promotion arguments, all four legacy gate arguments, and the
