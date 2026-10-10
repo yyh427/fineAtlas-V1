@@ -414,7 +414,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                         data = json.loads(refs[0]['data'])
                         if data.get('allowed_views') != [] or data.get('navigation_eligible') is not False or data.get('admission_basis') != proof:
                             raise ValueError('Uncertain historical reference became navigational')
-                        if con.execute("SELECT 1 FROM browse_links WHERE storage='entity_relations' AND record_id=? LIMIT 1", (refs[0]['id'],)).fetchone():
+                        if con.execute("SELECT 1 FROM browse_links WHERE storage IN ('entity','entity_relations') AND record_id=? LIMIT 1", (refs[0]['id'],)).fetchone():
                             raise ValueError('Non-navigation source reference leaked into browsing')
             elif op['op'] in {'migrate_nominal_design_mapping', 'review_dataset_mapping'}:
                 key = (op['dataset'], str(op['class_id']))
