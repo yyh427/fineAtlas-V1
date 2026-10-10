@@ -105,3 +105,22 @@ class EighthRegressionTemporalContract(TemporalContract):
     def run_owned_actual_audit(self):run_eighth_owned_actual_audits(self)
     def receipt_binding(self):
         value=super().receipt_binding();value.update(eighth_regression_temporal_contract='FINEATLAS_EXACT_CURRENT_OWNED_SCOPE_EXECUTOR_V1',original_regression_scope_checks_preserved=True,complete_type_actual_audit={'path':str(self.eighth_report.resolve()),'sha256':sha(self.eighth_report.read_bytes())});return value
+
+
+def require_temporal_eighth_regression_receipt(report_path,database,inputs,revision,code_root=ROOT):
+    """Keep all 816 checks and explicitly verify the current SOURCE executors."""
+    from structure_regression_temporal_contract import require_temporal_receipt
+    report_path,database,inputs,code_root=map(Path,(report_path,database,inputs,code_root))
+    value=require_temporal_receipt(report_path,database,inputs,revision)
+    if (value.get('eighth_regression_temporal_contract')!='FINEATLAS_EXACT_CURRENT_OWNED_SCOPE_EXECUTOR_V1'
+            or value.get('original_regression_scope_checks_preserved')is not True):raise ValueError('Entire SOURCE1 contract with the current owned executor is required')
+    with sqlite3.connect(database.resolve().as_uri()+'?mode=ro&immutable=1',uri=True)as c:meta={k:json.loads(v)for k,v in c.execute('SELECT *FROM metadata')}
+    for name in('audit_temporal_eighth_structure_regression_repairs.py','structure_eighth_owned_scope_temporal_contract.py'):
+        if meta['structure_frozen_build_manifest']['code'].get('scripts/'+name)!=sha((code_root/'scripts'/name).read_bytes()):raise ValueError('Actual eighth SOURCE1 implementations must be frozen')
+    evidence=value.get('complete_type_actual_audit')or{};path=Path(evidence.get('path',''))
+    if not path.is_file()or sha(path.read_bytes())!=evidence.get('sha256'):raise ValueError('Current SOURCE8 evidence changed')
+    require_complete_type_receipt(path,database,inputs,revision,code_root)
+    owned=value['owned_actual_audit'];owned_path=Path(owned['path'])
+    if sha(owned_path.read_bytes())!=owned['sha256']:raise ValueError('Current temporal SOURCE7 evidence changed')
+    require_temporal_eighth_owned_scope_receipt(owned_path,database,inputs,revision,code_root)
+    return value

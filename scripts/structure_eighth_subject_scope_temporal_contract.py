@@ -151,6 +151,10 @@ def require_temporal_eighth_subject_receipt(report_path, database, inputs, revis
     if not path.is_file()or sha(path.read_bytes())!=evidence.get('sha256'):
         raise ValueError('Current independent eighth actual audit evidence changed')
     require_complete_type_receipt(path,database,inputs,revision,code_root)
+    from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_owned_scope_receipt
+    owned=report['owned_actual_audit'];owned_path=Path(owned['path'])
+    if sha(owned_path.read_bytes())!=owned['sha256']:raise ValueError('Actual current SOURCE7 evidence changed')
+    require_temporal_eighth_owned_scope_receipt(owned_path,database,inputs,revision,code_root)
     operations=[json.loads(line)for line in(inputs/mf['operations_file']).read_text().splitlines()if line]
     if (report.get('later_complete_type_role_permissions')!=sum(o['op']=='correct_role'for o in operations)
             or report.get('later_complete_type_typed_permissions')!=sum(o['op']=='review_typed_relation'for o in operations)):
