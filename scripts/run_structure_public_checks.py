@@ -40,6 +40,9 @@ jobs={
 }
 sys.path.insert(0,str(a.code/'scripts'))
 from structure_delivery_oem_guard import optional_oem_input, validate_oem_receipt
+from structure_delivery_delta_registry import required_deltas, validate_delta_receipt
+registered=required_deltas(a.inputs,a.code)
+for spec in registered:jobs[spec.name]=cmd(spec.auditor,'--database',a.database,'--inputs',a.inputs,'--output',a.output/(spec.name+'.json'))
 oem_input=optional_oem_input(a.inputs,a.code)
 if oem_input is not None:jobs['oem-body-scope']=cmd('audit_oem_body_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'oem-body-scope.json')
 from structure_acceptance_contract import SUPPLEMENTAL_AUDITS, frozen_supplemental_expectations
@@ -76,5 +79,9 @@ extension={'schema':'FINEATLAS_RESUMED_PUBLIC_EXTENSION_V1','pass':True,'databas
 if oem_input is not None:
  validate_oem_receipt(a.output/'oem-body-scope.json',a.database,a.inputs,d['database_revision'],a.code)
  extension['evidence']['oem-body-scope']={'path':str(a.output/'oem-body-scope.json'),'sha256':digest(a.output/'oem-body-scope.json')}
+for spec in registered:
+ report=a.output/(spec.name+'.json')
+ validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)
+ extension['evidence'][spec.name]={'path':str(report),'sha256':digest(report)}
 write(a.output/'resume_public_extension.json',extension)
 print('ACTUAL FULL PUBLIC VERIFICATION PASS',q,flush=True)

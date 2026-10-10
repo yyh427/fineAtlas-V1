@@ -96,6 +96,17 @@ rechecks its revision, exact downloaded database, complete census and frozen
 manifest/operation hashes. The original acceptance job and public evidence key
 sets remain unchanged.
 
+Additional source deltas use `structure_delivery_delta_registry.py` while the
+validated OEM interface remains separate. The complete-subject scope adapter
+declares `structure_complete_subject_scope_repairs.json`; its actual auditor is
+`audit_complete_subject_scope_repairs.py`. When this frozen input exists, both
+local databases and the downloaded public database must have complete independent
+receipts under `complete-subject-scope`. Counts are derived from the actual frozen
+operation JSONL, including each relation's exact census. Missing reports, a
+changed revision, a preflight-only result, Boolean counts or a different relation
+distribution prevent packaging/finalization. Future registered adapters use the
+same binding contract without adding keys to the original public evidence set.
+
 For stable artifact preparation, use `promote_structure_with_regression_gate.py`
 with all original promotion arguments, all four legacy gate arguments, and the
 two `--primary-build`/`--reproduction-build` resumed candidate receipts. The wrapper

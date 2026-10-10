@@ -27,6 +27,7 @@ from _download import digest, download
 from build_structure_candidate import build_fingerprints
 from resume_structure_repairs import validate_resumed_parent_independence
 from structure_delivery_oem_guard import optional_oem_input, validate_oem_receipt
+from structure_delivery_delta_registry import required_deltas, validate_delta_receipt
 
 
 def read(path):
@@ -158,6 +159,10 @@ class Coordinator:
                 for name, key in [('primary', 'database'), ('reproduction', 'reproduction')]:
                     validate_oem_receipt(self.root / (name + '-oem-body-scope.json'),
                         Path(self.c[key]), self.inputs, self.meta['database_revision'])
+            for spec in required_deltas(self.inputs):
+                for name, key in [('primary', 'database'), ('reproduction', 'reproduction')]:
+                    validate_delta_receipt(spec, self.root / (name + '-' + spec.name + '.json'),
+                        Path(self.c[key]), self.inputs, self.meta['database_revision'])
             return
         output = Path(self.c['local_output'])
         receipt = output / 'acceptance_receipt.json'
@@ -178,6 +183,11 @@ class Coordinator:
                 self.execute(name + '-oem-body-scope', self.cmd('audit_oem_body_scope_repairs.py',
                     '--database', database, '--inputs', self.inputs, '--output', report))
                 validate_oem_receipt(report, Path(database), self.inputs, self.meta['database_revision'])
+            for spec in required_deltas(self.inputs):
+                report = self.root / (name + '-' + spec.name + '.json')
+                self.execute(name + '-' + spec.name, self.cmd(spec.auditor,
+                    '--database', database, '--inputs', self.inputs, '--output', report))
+                validate_delta_receipt(spec, report, Path(database), self.inputs, self.meta['database_revision'])
         self.execute('local-legacy-regressions', self.cmd('audit_legacy_pair_regressions.py',
             '--reference', self.c['legacy_reference'], '--baseline', self.c['legacy_baseline_matrix'],
             '--candidate', output / 'matrix', '--policy', self.inputs / 'legacy_policies.json',
@@ -186,6 +196,8 @@ class Coordinator:
                           self.root / 'local-legacy-regressions/summary.json']
         if optional_oem_input(self.inputs):
             evidence_paths.extend(self.root / (name + '-oem-body-scope.json') for name in ('primary', 'reproduction'))
+        for spec in required_deltas(self.inputs):
+            evidence_paths.extend(self.root / (name + '-' + spec.name + '.json') for name in ('primary', 'reproduction'))
         write(self.root / 'local_complete.json', {'pass': True, 'revision': self.meta['database_revision'],
               'parents': self.parents, 'fingerprints': self.fingerprints,
               'evidence': [{'path': str(path), 'sha256': digest(path)} for path in evidence_paths]})
@@ -200,6 +212,10 @@ class Coordinator:
         if optional_oem_input(self.inputs):
             for name, key in [('primary', 'database'), ('reproduction', 'reproduction')]:
                 validate_oem_receipt(self.root / (name + '-oem-body-scope.json'),
+                    Path(self.c[key]), self.inputs, self.meta['database_revision'])
+        for spec in required_deltas(self.inputs):
+            for name, key in [('primary', 'database'), ('reproduction', 'reproduction')]:
+                validate_delta_receipt(spec, self.root / (name + '-' + spec.name + '.json'),
                     Path(self.c[key]), self.inputs, self.meta['database_revision'])
         out = self.root / 'package'
         out.mkdir(exist_ok=False)
@@ -296,6 +312,11 @@ class Coordinator:
             if not evidence:
                 raise ValueError('Frozen OEM delta requires actual public OEM evidence')
             validate_oem_receipt(Path(evidence['path']), database, self.inputs, accepted['database_revision'])
+        for spec in required_deltas(self.inputs):
+            evidence = extension['evidence'].get(spec.name)
+            if not evidence:
+                raise ValueError('Frozen delta requires actual public evidence: ' + spec.name)
+            validate_delta_receipt(spec, Path(evidence['path']), database, self.inputs, accepted['database_revision'])
         for row in extension['evidence'].values():
             if digest(Path(row['path'])) != row['sha256']:
                 raise ValueError('Public extension evidence changed')
