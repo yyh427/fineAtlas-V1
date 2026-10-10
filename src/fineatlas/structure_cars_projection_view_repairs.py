@@ -75,6 +75,8 @@ def validate_cars_projection_view_repairs(c, manifest, operations):
         if not target or target['target_uid'] != uid or target['label'] != origin['official_label']:
             raise ValueError('Projection author target changed')
         for field, table in (('before_current_target', 'dataset_targets'), ('before_mapping_check', 'dataset_mapping_checks')):
+            if field not in entry:
+                raise ValueError('Frozen current mapping and checks are required')
             if field in entry:
                 row = c.execute('SELECT * FROM ' + table + ' WHERE dataset=? AND class_id=?', (origin['dataset'], origin['class_id'])).fetchone()
                 if (dict(row) if row else None) != entry[field]:
@@ -107,6 +109,7 @@ def validate_cars_projection_view_repairs(c, manifest, operations):
     actual = {(r['subject_uid'], r['object_uid'], r['source'], source_assertion_sha256(r)) for uid in index for r in c.execute("SELECT * FROM entity_relations WHERE subject_uid=? AND relation='CONFIGURATION_OF' AND status='ACTIVE'", (uid,))}
     if actual != seen:
         raise ValueError('Not every active unclosed world inclusion is reviewed')
+    validate_preserved_claims(c, manifest)
     for item in manifest['preserved_nonprojection_configs']:
         if item['uid'] in index:
             raise ValueError('Legal source configurations cannot be withdrawn as projections')
@@ -180,6 +183,10 @@ def apply_cars_projection_view_repairs(m):
 
 def validate_preserved_claims(c, manifest):
     for item in manifest['preserved_nonprojection_configs']:
+        node = c.execute('SELECT * FROM nodes WHERE uid=?', (item['uid'],)).fetchone()
+        profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (item['uid'],)).fetchone()
+        if not node_unchanged(node, item['before_node']) or (dict(profile) if profile else None) != item['before_profile']:
+            raise ValueError('Legal manufacturer/EPA source object or role changed')
         for claim in item['current_configuration_of_claims']:
             locator = {k: claim[k] for k in ('subject_uid', 'object_uid', 'relation', 'source')}
             locator['content_sha256'] = source_assertion_sha256(claim)

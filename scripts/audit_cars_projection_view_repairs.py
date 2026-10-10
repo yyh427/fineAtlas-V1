@@ -78,6 +78,7 @@ def run(database, inputs, output, preflight=False):
         if not target or target['label'] != origin['official_label'] or target['target_uid'] != uid:
             bad('ORIGINAL_AUTHOR_TARGET_CHANGED', uid=uid)
         for field, table in (('before_current_target', 'dataset_targets'), ('before_mapping_check', 'dataset_mapping_checks')):
+            if field not in entry: bad('FROZEN_CURRENT_MAPPING_CHECK_MISSING', uid=uid, field=field)
             if field in entry:
                 current = c.execute('SELECT * FROM ' + table + ' WHERE dataset=? AND class_id=?', (origin['dataset'], origin['class_id'])).fetchone()
                 if (dict(current) if current else None) != entry[field]: bad('MAPPING_OR_CHECK_CHANGED', uid=uid, table=table)
@@ -153,6 +154,11 @@ def run(database, inputs, output, preflight=False):
         active = c.execute("SELECT count(*) FROM entity_relations WHERE subject_uid=? AND relation='CONFIGURATION_OF' AND status='ACTIVE'", (uid,)).fetchone()[0]
         if not preflight and active: bad('UNCLOSED_WORLD_INCLUSION_STILL_ACTIVE', uid=uid, count=active)
     for entry in manifest['preserved_nonprojection_configs']:
+        node = c.execute('SELECT * FROM nodes WHERE uid=?', (entry['uid'],)).fetchone()
+        profile = c.execute('SELECT * FROM node_profiles WHERE uid=?', (entry['uid'],)).fetchone()
+        if (not node or any(dict(node).get(k) != v for k, v in entry['before_node'].items() if k != 'component_id')
+                or (dict(profile) if profile else None) != entry['before_profile']):
+            bad('LEGAL_OEM_OR_EPA_SOURCE_ROLE_CHANGED', uid=entry['uid'])
         if entry['uid'] in index: bad('LEGAL_SOURCE_CONFIGURATION_INCLUDED_IN_WITHDRAWAL', uid=entry['uid'])
         for before in entry['current_configuration_of_claims']:
             current = find_claim(c, before)

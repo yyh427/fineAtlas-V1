@@ -63,7 +63,7 @@ class CarsProjectionReviewTests(unittest.TestCase):
                                        'no_identity_merges': True, 'scope_evidence_gap': True, 'source_scope_conflict': False, 'parent_data_has_closed_whole_model_scope': False,
                                        'source_origin': origin, 'review_reason': self.entry['reason'], 'old_relation_content_sha256': h,
                                        'native_record_sha256': sha(before['data']), 'parent_native_record_sha256': sha('{}'), 'parent_source': 'NHTSA vPIC', 'license': 'Original'}})
-        protected = [{'uid': uid, 'source': uid, 'current_configuration_of_claims': [dict(r) for r in self.c.execute('SELECT * FROM entity_relations WHERE subject_uid=?', (uid,))]} for uid in ('oem', 'epa')]
+        protected = [{'uid': uid, 'source': uid, 'before_node': dict(self.c.execute('SELECT * FROM nodes WHERE uid=?', (uid,)).fetchone()), 'before_profile': None, 'current_configuration_of_claims': [dict(r) for r in self.c.execute('SELECT * FROM entity_relations WHERE subject_uid=?', (uid,))]} for uid in ('oem', 'epa')]
         self.manifest = {'schema': 'FINEATLAS_CARS_PROJECTION_VIEW_REPAIRS_V1', 'operations_file': 'cars_projection_view_repairs.jsonl', 'operation_count': 2, 'operations': {'CONFIGURATION_OF': 2},
                          'source_projection_count': 1, 'source_projections': [self.entry], 'new_nodes': 0, 'mapping_promotions': 0, 'legacy_whole_world_claims_are_pending_not_proven_false': True, 'preserved_nonprojection_configs': protected}
         self.write_inputs()
@@ -138,6 +138,13 @@ class CarsProjectionReviewTests(unittest.TestCase):
 
     def test_independent_auditor_rejects_source_data_change(self):
         self.apply(); self.c.execute("UPDATE nodes SET label='renamed' WHERE uid=?", (self.uid,)); self.c.commit(); self.assertFalse(self.audit())
+
+    def test_independent_auditor_rejects_legal_epa_role_demotion(self):
+        self.apply(); self.c.execute("UPDATE nodes SET visibility='SOURCE_ONLY' WHERE uid='epa'"); self.c.commit(); self.assertFalse(self.audit())
+
+    def test_missing_current_mapping_freeze_cannot_build(self):
+        del self.entry['before_mapping_check']; self.write_inputs()
+        with self.assertRaisesRegex(ValueError, 'current mapping'): self.apply()
 
     def test_reapply_requires_new_parent(self):
         self.apply()
