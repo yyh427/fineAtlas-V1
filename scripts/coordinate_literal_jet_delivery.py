@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+"""Extend the unchanged delivery coordinator with mandatory fifth-delta gates.
+
+Uses normal subclass extension and explicit delegation. Old local/public checks,
+receipts and exact public evidence keys remain intact. No registry changes and
+no synthetic or patched acceptance results.
+"""
+from __future__ import annotations
+import argparse
+from pathlib import Path
+
+from _download import digest
+from coordinate_structure_delivery import Coordinator, ROOT, lease, metadata, read, write
+from structure_acceptance_contract import validate_public_evidence
+from structure_literal_jet_delivery_guard import SPEC, require_literal_jet_receipt, require_literal_jet_child_build
+
+
+class LiteralJetCoordinator(Coordinator):
+    def __init__(self, config):
+        super().__init__(config)
+        self.validate_child_builds()
+
+    def validate_child_builds(self):
+        for receipt in (self.lineage_primary, self.lineage_reproduction):
+            require_literal_jet_child_build(receipt)
+        lineage = self.meta.get('structure_delta_resume_parent', {})
+        if (not lineage.get('parent_revision') or lineage.get('repair_recipe') != 'resume_literal_jet_repairs.py'
+                or lineage.get('previous_source_stages_replayed') is not False
+                or lineage.get('previous_repair_stages_replayed') is not False
+                or lineage.get('all_derived_indexes_recomputed') is not True):
+            raise ValueError('Actual fifth child metadata and separate parent lineage required')
+
+    def validate_local_fifth(self):
+        self.validate_child_builds()
+        for name, key in (('primary','database'),('reproduction','reproduction')):
+            require_literal_jet_receipt(self.root / (name + '-literal-jet-scope.json'),
+                Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
+
+    def accepted(self):
+        accepted = super().accepted()
+        self.validate_local_fifth()
+        return accepted
+
+    def local(self):
+        self.validate_child_builds()
+        # Bind both complete child databases before the original local controller
+        # can regard its own fourteen-job receipt as sufficient for packaging.
+        for name, key in (('primary','database'),('reproduction','reproduction')):
+            report = self.root / (name + '-literal-jet-scope.json')
+            if not report.exists():
+                self.execute(name + '-literal-jet-scope', self.cmd(SPEC.auditor,
+                    '--database',self.c[key],'--inputs',self.inputs,'--output',report))
+            require_literal_jet_receipt(report,Path(self.c[key]),self.inputs,self.meta['database_revision'],ROOT)
+        super().local()
+        write(self.root / 'literal_jet_local_extension.json', {
+            'schema':'FINEATLAS_LITERAL_JET_LOCAL_EXTENSION_V1','pass':True,
+            'revision':self.meta['database_revision'],'fingerprints':self.fingerprints,
+            'evidence':{name:{'path':str(self.root / (name + '-literal-jet-scope.json')),
+                              'sha256':digest(self.root / (name + '-literal-jet-scope.json'))}
+                        for name in ('primary','reproduction')}})
+
+    def package(self):
+        self.validate_local_fifth()
+        super().package()
+
+    def validate_public_fifth(self):
+        extension_path = self.root / 'public/checks/literal_jet_public_extension.json'
+        extension = read(extension_path); accepted = self.accepted()
+        database = self.root / 'public/data/fineatlas.sqlite'
+        if (extension.get('schema') != 'FINEATLAS_LITERAL_JET_PUBLIC_EXTENSION_V1'
+                or extension.get('pass') is not True
+                or extension.get('database_revision') != accepted['database_revision']
+                or extension.get('database_sha256') != accepted['database_sha256']
+                or Path(extension.get('database','')).resolve() != database.resolve()):
+            raise ValueError('Complete actual public fifth-delta evidence is required')
+        parent_proof = self.root / 'public/checks/public_verification.json'
+        if digest(parent_proof) != extension.get('original_public_verification_sha256'):
+            raise ValueError('Original public evidence changed after literal-jet checks')
+        validate_public_evidence(read(parent_proof),accepted,parent_proof)
+        sdk_evidence = extension.get('evidence',{}).get('installed-sdk-inventory')
+        if not sdk_evidence or digest(Path(sdk_evidence['path'])) != sdk_evidence['sha256']:
+            raise ValueError('Full actual installed fifth SDK inventory evidence required')
+        sdk = read(sdk_evidence['path'])
+        expected_modules = {name[len('src/fineatlas/'):]:sha for name,sha in self.fingerprints['code'].items() if name.startswith('src/fineatlas/')}
+        if (sdk.get('schema') != 'FINEATLAS_LITERAL_JET_INSTALLED_SDK_V1' or sdk.get('pass') is not True or sdk.get('full_source_inventory_checked') is not True
+                or sdk.get('database_revision') != accepted['database_revision']
+                or Path(sdk.get('database','')).resolve() != database.resolve()
+                or sdk.get('source_modules') != expected_modules
+                or not Path(sdk.get('sdk_package','')).resolve().is_relative_to((self.root / 'public/venv').resolve())):
+            raise ValueError('Matching actual installed complete fifth SDK proof required')
+        evidence = extension.get('evidence',{}).get('literal-jet-scope')
+        if not evidence or digest(Path(evidence['path'])) != evidence['sha256']:
+            raise ValueError('Actual public literal-jet report is absent or changed')
+        downloaded_inputs = self.root / 'public/frozen/inputs'
+        report = require_literal_jet_receipt(Path(evidence['path']),database,downloaded_inputs,accepted['database_revision'],ROOT)
+        # All frozen downloaded inputs must still equal the accepted local freeze.
+        actual = {str(p.relative_to(downloaded_inputs)):digest(p) for p in sorted(downloaded_inputs.rglob('*')) if p.is_file()}
+        if actual != self.fingerprints['inputs']:
+            raise ValueError('Actual downloaded fifth-delta inputs differ from accepted freeze')
+        return extension, report
+
+    def public(self):
+        self.validate_local_fifth()
+        prior_proof = self.root / 'public/checks/public_verification.json'
+        if prior_proof.exists():
+            # Resume only a complete, verifiable old public run. No repeated
+            # download or replacement of an earlier failed/incomplete receipt.
+            accepted = self.accepted()
+            validate_public_evidence(read(prior_proof),accepted,prior_proof)
+            previous = read(self.root / 'public/checks/resume_public_extension.json')
+            if previous.get('pass') is not True or previous.get('database_revision') != accepted['database_revision']:
+                raise ValueError('Previous complete public extension is required for resumption')
+            for item in previous['evidence'].values():
+                if digest(Path(item['path'])) != item['sha256']:
+                    raise ValueError('Prior public extension evidence changed')
+        else:
+            super().public()
+        database = self.root / 'public/data/fineatlas.sqlite'
+        inputs = self.root / 'public/frozen/inputs'; report = self.root / 'public/checks/literal-jet-scope.json'
+        if not report.exists():
+            self.execute('public-literal-jet-scope',self.cmd(SPEC.auditor,
+                '--database',database,'--inputs',inputs,'--output',report,
+                python=self.root / 'public/venv/bin/python'))
+        require_literal_jet_receipt(report,database,inputs,self.meta['database_revision'],ROOT)
+        sdk_report = self.root / 'public/checks/literal-jet-installed-sdk.json'
+        if not sdk_report.exists():
+            self.execute('public-literal-jet-installed-sdk',
+                [str(self.root / 'public/venv/bin/python'),'-I','-B',str(ROOT / 'scripts/verify_literal_jet_installed_sdk.py'),
+                 '--database',str(database),'--output',str(sdk_report)])
+        accepted = self.accepted()
+        extension = {'schema':'FINEATLAS_LITERAL_JET_PUBLIC_EXTENSION_V1','pass':True,
+            'database':str(database.resolve()),'database_revision':accepted['database_revision'],
+            'database_sha256':accepted['database_sha256'],
+            'original_public_verification_sha256':digest(prior_proof),
+            'evidence':{'literal-jet-scope':{'path':str(report),'sha256':digest(report)},
+                        'installed-sdk-inventory':{'path':str(sdk_report),'sha256':digest(sdk_report)}}}
+        write(self.root / 'public/checks/literal_jet_public_extension.json',extension)
+        self.validate_public_fifth()
+
+    def finalize(self):
+        self.validate_public_fifth()
+        super().finalize()
+        write(self.root / 'literal_jet_finalized_extension.json', {
+            'schema':'FINEATLAS_LITERAL_JET_FINALIZED_EXTENSION_V1','pass':True,
+            'database_revision':self.meta['database_revision'],
+            'public_extension_sha256':digest(self.root / 'public/checks/literal_jet_public_extension.json')})
+
+
+if __name__ == '__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('action',choices=('local','package','public','finalize'))
+    parser.add_argument('--config',type=Path,required=True); args=parser.parse_args()
+    if not __debug__: raise RuntimeError('Mandatory literal-jet checks cannot run optimized')
+    coordinator=LiteralJetCoordinator(args.config)
+    # Use the original action lease names to exclude concurrent old/new workers.
+    with lease(coordinator.root / (args.action + '.lease.json')):
+        getattr(coordinator,args.action)()
