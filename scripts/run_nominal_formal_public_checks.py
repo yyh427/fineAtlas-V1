@@ -39,10 +39,10 @@ with (a.output/'nominal-design-scope-source-first.log').open('w') as stream:
  subprocess.run(nominal_first,env=env,cwd=a.code,stdout=stream,stderr=subprocess.STDOUT,check=True)
 from structure_nominal_design_scope_delivery_guard import require_nominal_scope_receipt
 require_nominal_scope_receipt(a.output/'nominal-design-scope-source-first.json',a.database,a.inputs,d['database_revision'],a.code)
-complete_first=cmd('audit_complete_owned_type_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'complete-owned-type-source-first.json')
+complete_first=cmd('audit_temporal_ninth_complete_owned_type_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'complete-owned-type-source-first.json','--nominal-scope-audit',a.output/'nominal-design-scope-source-first.json')
 with (a.output/'complete-owned-type-source-first.log').open('w') as stream:
  subprocess.run(complete_first,env=env,cwd=a.code,stdout=stream,stderr=subprocess.STDOUT,check=True)
-from structure_complete_owned_type_delivery_guard import require_complete_type_receipt
+from structure_ninth_complete_type_temporal_contract import require_complete_type_receipt
 require_complete_type_receipt(a.output/'complete-owned-type-source-first.json',a.database,a.inputs,d['database_revision'],a.code)
 owned_first=cmd('audit_temporal_eighth_owned_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'owned-scope-source-first.json','--complete-owned-audit',a.output/'complete-owned-type-source-first.json','--primary-snapshots-dir',a.primary_snapshots_dir)
 with (a.output/'owned-scope-source-first.log').open('w') as stream:

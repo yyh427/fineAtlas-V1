@@ -15,7 +15,7 @@ from nominal_scope_checkpoint_proof import (NAME, package_checkpoint_proof, vali
 from nominal_scope_prior_delivery import NominalScopePriorCoordinator
 from coordinate_structure_delivery import Coordinator, ROOT, lease, metadata, read, write, require_fresh
 from resume_structure_repairs import validate_resumed_parent_independence
-from structure_complete_owned_type_delivery_guard import (SPEC, require_complete_type_child_build,
+from structure_ninth_complete_type_temporal_contract import (SPEC, require_complete_type_child_build,
                                                          require_complete_type_receipt)
 from structure_literal_jet_delivery_guard import require_literal_jet_child_build
 from structure_nominal_design_scope_delivery_guard import SPEC as NOMINAL_SPEC, require_nominal_scope_child_build, require_nominal_scope_receipt
@@ -48,6 +48,17 @@ class NominalDesignScopeCoordinator(NominalScopePriorCoordinator):
 
     def cmd(self, script, *values, python=None):
         # Explicit executors preserve every frozen earlier implementation.
+        if script in {'audit_complete_owned_type_repairs.py', 'audit_temporal_ninth_complete_owned_type_repairs.py'}:
+            database = Path(values[values.index('--database') + 1]).resolve()
+            if python:
+                nominal = self.root / 'public/checks/nominal-design-scope-source-first.json'
+            else:
+                name = 'primary' if database == Path(self.c['database']).resolve() else 'reproduction'
+                if database != Path(self.c['database' if name == 'primary' else 'reproduction']).resolve():
+                    raise ValueError('Temporal audit requires one actual child database')
+                nominal = self.root / (name + '-nominal-design-scope.json')
+            values = (*values, '--nominal-scope-audit', nominal)
+            return Coordinator.cmd(self, 'audit_temporal_ninth_complete_owned_type_repairs.py', *values, python=python)
         if script == 'accept_resumed_structure_candidate.py':
             values = (*values, '--primary-snapshots-dir', self.primary_snapshots_directory(),
                       '--owned-scope-audit', self.root / 'primary-owned-scope.json',
