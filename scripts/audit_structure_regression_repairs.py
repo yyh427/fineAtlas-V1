@@ -45,19 +45,25 @@ def run(database: Path, inputs: Path, output: Path, preflight: bool = False):
                 errors.append({'kind': 'SOURCE_STATEMENT_NOT_IN_FROZEN_RECORD', 'uid': uid})
             texts.append(item['statement'])
         if op['relation'] == 'DESIGN_TYPE_OF':
-            if not prior or prior['relation'] != 'DESIGN_TYPE_OF' or prior['status'] != 'ACTIVE':
+            if proof.get('repair_kind') == 'COMPLETE_OWN_OBJECT_PHYSICAL_SCOPE':
+                if proof.get('reviewed_physical_genus') not in ('airliner', 'aircraft', 'airplane', 'jet', 'twinjet', 'biplane', 'warplane') or proof['source_witnesses'][0]['uid'] != uid or proof['source_witnesses'][0]['field'] != 'description':
+                    errors.append({'kind': 'OWN_OBJECT_PHYSICAL_SCOPE_NOT_BOUND', 'uid': uid})
+            elif not prior or prior['relation'] != 'DESIGN_TYPE_OF' or prior['status'] != 'ACTIVE':
                 errors.append({'kind': 'NOT_PRIOR_ADMITTED_WHOLE_DESIGN_SCOPE', 'uid': uid})
             elif matching:
                 old_proof = json.loads(matching[0]['data'])['admission_basis']
                 if old_proof.get('matched_explicit_genus') not in ('airliner', 'airliners') or old_proof.get('source_statement') != texts[0]:
                     errors.append({'kind': 'NOT_EXPLICIT_SUBJECT_AIRLINER_RANGE', 'uid': uid})
-            if 'fixed-wing powered aircraft' not in texts[1] or 'cargo or passengers in commercial service' not in texts[1]:
+            if proof.get('repair_kind') == 'COMPLETE_OWN_OBJECT_PHYSICAL_SCOPE' and proof.get('reviewed_physical_genus') != 'airliner':
+                if texts[1] != proof.get('reviewed_parent_definition'):
+                    errors.append({'kind': 'GENERIC_AIRCRAFT_RANGE_NOT_CONFIRMED', 'uid': uid})
+            elif 'fixed-wing powered aircraft' not in texts[1] or 'cargo or passengers in commercial service' not in texts[1]:
                 errors.append({'kind': 'AIRLINER_PARENT_RANGE_NOT_CONFIRMED', 'uid': uid})
         elif op['relation'] == 'IS_A':
             if 'fixed-wing powered aircraft' not in texts[0] or not texts[1].startswith('an aircraft that has a fixed wing and is powered by propellers or jets'):
                 errors.append({'kind': 'GENERIC_RANGE_DOES_NOT_ENTAIL_POWERED_FIXED_WING', 'uid': uid})
         elif op['relation'] == 'NATIVE_DESIGN_PARENT':
-            if not prior or prior['status'] != 'SOURCE_SCOPE_REVIEW' or 'variant' not in texts[0].lower() or len(texts) < 3:
+            if not prior or prior['status'] != 'SOURCE_SCOPE_REVIEW' or not any(word in texts[0].lower() for word in ('variant', 'version')) or len(texts) < 3:
                 errors.append({'kind': 'DESIGN_FAMILY_SCOPE_UNCORROBORATED', 'uid': uid})
             if proof['source_witnesses'][2]['uid'].split(':')[-1] != parent.split(':')[-1]:
                 errors.append({'kind': 'CORROBORATION_IS_NOT_THIS_FAMILY_ID', 'uid': uid})
@@ -71,6 +77,23 @@ def run(database: Path, inputs: Path, output: Path, preflight: bool = False):
             if len(actual) != 1 or actual[0]['status'] != 'ACTIVE' or json.loads(actual[0]['proof']) != proof:
                 errors.append({'kind': 'ACTUAL_NEW_ASSERTION_OR_EVIDENCE_DIFFER', 'uid': uid})
         counts[op['relation']] += 1
+    for review in manifest.get('mapping_reviews', []):
+        target = c.execute('SELECT * FROM dataset_targets WHERE dataset=? AND class_id=?', (review['dataset'], review['class_id'])).fetchone()
+        if not target or digest(json.dumps(dict(target), sort_keys=True)) != review['target_record_sha256']:
+            errors.append({'kind': 'ORIGINAL_WORLD_TARGET_NOT_PRESERVED', 'dataset': review['dataset'], 'class_id': review['class_id']})
+        for w in review['source_witnesses']:
+            row = c.execute('SELECT data FROM nodes WHERE uid=?', (w['uid'],)).fetchone()
+            data = json.loads(row[0]) if row else {}
+            text = data.get(w['field']) or data.get('evidence_record', {}).get(w['field'])
+            if not row or digest(row[0]) != w['data_sha256'] or text != w['statement']:
+                errors.append({'kind': 'MAPPING_RANGE_WITNESS_CHANGED', 'uid': w['uid']})
+        if not preflight:
+            check = c.execute('SELECT * FROM dataset_mapping_checks WHERE dataset=? AND class_id=?', (review['dataset'], review['class_id'])).fetchone()
+            if not check or check['status'] != 'ANNOTATION_SCOPE_REVIEW' or check['reason'] != review['reason']:
+                errors.append({'kind': 'MAPPING_SCOPE_REVIEW_NOT_APPLIED', 'class_id': review['class_id']})
+            history = c.execute("SELECT count(*) FROM dataset_mapping_history WHERE dataset=? AND class_id=? AND namespace='world' AND decision='ANNOTATION_SCOPE_REVIEW'", (review['dataset'], review['class_id'])).fetchone()[0]
+            if not history:
+                errors.append({'kind': 'MAPPING_SCOPE_HISTORY_MISSING', 'class_id': review['class_id']})
     if not preflight:
         actual_count = sum(c.execute("SELECT count(*) FROM " + table + " WHERE source=? AND status='ACTIVE'", (SOURCE,)).fetchone()[0] for table in ('edges', 'entity_relations'))
         if actual_count != len(ops):

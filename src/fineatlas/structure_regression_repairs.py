@@ -78,13 +78,33 @@ def apply_structure_regression_repairs(m):
     if len(operations) != manifest["operation_count"]:
         raise ValueError("Incremental operations are incomplete")
     validate_regression_repairs(m.c, manifest, operations)
+    for review in manifest.get("mapping_reviews", []):
+        target = m.c.execute("SELECT * FROM dataset_targets WHERE dataset=? AND class_id=?", (review["dataset"], review["class_id"])).fetchone()
+        check = m.c.execute("SELECT * FROM dataset_mapping_checks WHERE dataset=? AND class_id=?", (review["dataset"], review["class_id"])).fetchone()
+        if not target or target["target_uid"] != review["target_uid"] or sha(json.dumps(dict(target), sort_keys=True)) != review["target_record_sha256"] or (dict(check) if check else None) != review["before_check"]:
+            raise ValueError("Mapping review no longer binds the retained original claim")
+        for witness in review["source_witnesses"]:
+            row = m.c.execute("SELECT data FROM nodes WHERE uid=?", (witness["uid"],)).fetchone()
+            data = json.loads(row[0]) if row else {}
+            text = data.get(witness["field"]) or data.get("evidence_record", {}).get(witness["field"])
+            if not row or sha(row[0]) != witness["data_sha256"] or text != witness["statement"]:
+                raise ValueError("Mapping range evidence changed")
     targets = [tuple(row) for row in m.c.execute("SELECT * FROM dataset_targets ORDER BY dataset,class_id")]
     node_count = m.c.execute("SELECT count(*) FROM nodes").fetchone()[0]
     result = apply_refinements(m, operation_name)
     if node_count != m.c.execute("SELECT count(*) FROM nodes").fetchone()[0] or targets != [tuple(row) for row in m.c.execute("SELECT * FROM dataset_targets ORDER BY dataset,class_id")]:
         raise ValueError("Directional scope repair changed entities or target mappings")
+    for review in manifest.get("mapping_reviews", []):
+        proof = {**review, "input_sha256": sha(path.read_bytes()), "world_identity_assertion": False,
+            "original_target_retained": True, "review_is_not_proof_of_false_identity": True}
+        eid = m.evidence("Reviewed retained mapping scope", review["source_uri"], proof, "DATASET_MAPPING_SCOPE_REVIEW")
+        after = {"dataset": review["dataset"], "class_id": review["class_id"], "status": "ANNOTATION_SCOPE_REVIEW", "reason": review["reason"], "proof": json.dumps(proof, sort_keys=True)}
+        m.c.execute("INSERT OR REPLACE INTO dataset_mapping_checks(dataset,class_id,status,reason,proof) VALUES (?,?,?,?,?)", tuple(after[k] for k in ("dataset", "class_id", "status", "reason", "proof")))
+        m.c.execute("INSERT OR IGNORE INTO dataset_mapping_history(id,dataset,class_id,namespace,source_version,before_record,after_record,evidence_id,decision) VALUES (?,?,?,?,?,?,?,?,?)", (sha(json.dumps(proof,sort_keys=True)), review["dataset"], review["class_id"], "world", "v1.11.0rc1", json.dumps(review["before_check"],sort_keys=True), json.dumps(after,sort_keys=True), eid, "ANNOTATION_SCOPE_REVIEW"))
+        m.change("structure_regression_repairs", "mapping_scope_review", review["dataset"]+":"+review["class_id"], review["before_check"], after, proof)
     m.meta("structure_regression_repairs", {"manifest_sha256": sha(path.read_bytes()),
         "operations_sha256": sha(raw), "operation_count": len(operations),
-        "prior_claims_preserved": True, "world_identity_promotions": 0})
+        "prior_claims_preserved": True, "world_identity_promotions": 0,
+        "mapping_scope_reviews": len(manifest.get("mapping_reviews", []))})
     m.c.commit()
     return {"status": "PASS", **result, "world_identity_promotions": 0}
