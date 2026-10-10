@@ -1,6 +1,7 @@
 """New frozen deltas cannot be omitted from public extension acceptance."""
 import json
 from pathlib import Path
+import sqlite3
 import sys
 import unittest
 from unittest.mock import patch
@@ -55,6 +56,40 @@ class RegisteredDeltaGuards(oem_controls.OEMEvidenceGuards):
                     with self.assertRaisesRegex(ValueError, 'Frozen delta requires actual public evidence'):
                         coordinator.finalize()
                     execute.assert_not_called()
+
+
+class CarsProjectionViewGuards(RegisteredDeltaGuards):
+    def setUp(self):
+        super().setUp()
+        old_module = self.code / self.spec.module
+        old_module.unlink()
+        self.spec = registry.REGISTERED_DELTAS[1]
+        module = self.code / self.spec.module
+        module.write_text("INPUT_NAME = 'renamed-oem-repairs.json'\n")
+        self.operations.write_text('{"op":"review_world_projection_relation","relation":"CONFIGURATION_OF"}\n')
+        from _download import digest
+        manifest = json.loads(self.manifest.read_text())
+        manifest['operations_sha256'] = digest(self.operations)
+        self.manifest.write_text(json.dumps(manifest))
+        self.value['schema'] = self.spec.schema
+        self.value['operations'] = {'CONFIGURATION_OF': 1}
+        self.value['manifest_sha256'] = digest(self.manifest)
+        self.value['operations_sha256'] = digest(self.operations)
+        self.report.write_text(json.dumps(self.value))
+        with sqlite3.connect(self.database) as con:
+            con.execute('UPDATE metadata SET value=? WHERE key=?', (json.dumps({'inputs': {
+                self.manifest.name: digest(self.manifest), self.operations.name: digest(self.operations)}}),
+                'structure_frozen_build_manifest'))
+            con.execute('INSERT INTO metadata VALUES(?,?)', (self.spec.metadata_key, json.dumps({
+                'manifest_sha256': self.value['manifest_sha256'],
+                'operations_sha256': self.value['operations_sha256'], 'operation_count': 1})))
+
+    def test_view_review_count_is_bound_to_applied_metadata(self):
+        with sqlite3.connect(self.database) as con:
+            con.execute('UPDATE metadata SET value=? WHERE key=?',
+                        (json.dumps({'manifest_sha256': 'old-manifest'}), self.spec.metadata_key))
+        with self.assertRaisesRegex(ValueError, 'applied delta metadata'):
+            self.validate()
 
 
 if __name__ == '__main__':

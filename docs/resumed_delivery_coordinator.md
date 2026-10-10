@@ -107,6 +107,16 @@ changed revision, a preflight-only result, Boolean counts or a different relatio
 distribution prevent packaging/finalization. Future registered adapters use the
 same binding contract without adding keys to the original public evidence set.
 
+The Cars projection-view adapter registers `cars-projection-view`, with input
+`structure_cars_projection_view_repairs.json` and actual auditor
+`audit_cars_projection_view_repairs.py`. Its review operations retain the original
+`CONFIGURATION_OF` relation for the exact operation census. Applied metadata under
+`cars_projection_view_repairs` must also bind the complete manifest/operations and
+count. Its independent auditor must distinguish unsupported world inclusion from
+retained source-reference provenance, verify UID/history preservation, and check
+that independently evidenced configuration connections remain. Label mapping
+review alone cannot excuse an unsupported active relation in a typed view.
+
 For stable artifact preparation, use `promote_structure_with_regression_gate.py`
 with all original promotion arguments, all four legacy gate arguments, and the
 two `--primary-build`/`--reproduction-build` resumed candidate receipts. The wrapper

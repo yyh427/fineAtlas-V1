@@ -24,12 +24,16 @@ class DeltaAudit:
     fallback_input: str
     auditor: str
     schema: str
+    metadata_key: str | None = None
 
 
 REGISTERED_DELTAS = (
     DeltaAudit('complete-subject-scope', 'src/fineatlas/structure_complete_subject_scope_repairs.py',
                'structure_complete_subject_scope_repairs.json', 'audit_complete_subject_scope_repairs.py',
                'FINEATLAS_INDEPENDENT_COMPLETE_SUBJECT_SCOPE_AUDIT_V1'),
+    DeltaAudit('cars-projection-view', 'src/fineatlas/structure_cars_projection_view_repairs.py',
+               'structure_cars_projection_view_repairs.json', 'audit_cars_projection_view_repairs.py',
+               'FINEATLAS_INDEPENDENT_CARS_PROJECTION_VIEW_AUDIT_V1', 'cars_projection_view_repairs'),
 )
 
 
@@ -76,6 +80,12 @@ def validate_delta_receipt(spec: DeltaAudit, report_path: Path, database: Path,
             frozen.get(operation_name) != digest(operation_path) or
             digest(operation_path) != manifest['operations_sha256']):
         raise ValueError('Actual delta inputs or database differ from the frozen snapshot')
+    if spec.metadata_key:
+        applied = meta.get(spec.metadata_key, {})
+        if (applied.get('manifest_sha256') != frozen[manifest_path.name] or
+                applied.get('operations_sha256') != frozen[operation_name] or
+                type(applied.get('operation_count')) is not int or applied['operation_count'] != count):
+            raise ValueError('Actual applied delta metadata does not bind the frozen operations: ' + spec.name)
     if (report.get('schema') != spec.schema or report.get('pass') is not True or
             report.get('preflight_only') is not False or report.get('errors') != [] or
             Path(report.get('database', '')).resolve() != database.resolve() or
