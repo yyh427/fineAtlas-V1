@@ -16,6 +16,23 @@ import promote_structure_with_regression_gate as promotion
 
 
 class DeliveryGuards(unittest.TestCase):
+    def test_stable_package_preserves_original_sdk_validation(self):
+        coordinator = delivery.Coordinator.__new__(delivery.Coordinator)
+        coordinator.c = {'database': '/data/stable.sqlite'}
+        for release in ('v1.11.0', 'v2.0.0'):
+            coordinator.meta = {'release': release}
+            command = coordinator.data_package_command(Path('/data/package'))
+            self.assertIn('--stable', command)
+            self.assertEqual(command[command.index('--release') + 1], release)
+            self.assertTrue(command[2].endswith('/package_browse_candidate.py'))
+
+    def test_candidate_package_does_not_claim_stability(self):
+        coordinator = delivery.Coordinator.__new__(delivery.Coordinator)
+        coordinator.c = {'database': '/data/candidate.sqlite'}
+        for release in ('v1.11.0rc1', 'v1.11.0.dev1', 'v1.11.0-night-review'):
+            coordinator.meta = {'release': release}
+            self.assertNotIn('--stable', coordinator.data_package_command(Path('/data/package')))
+
     def test_fresh_network_positive(self):
         delivery.require_fresh({'fresh_download': True, 'network_request': True,
                                 'authenticated': False, 'initial_cached_bytes': 0})

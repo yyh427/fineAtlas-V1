@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sqlite3
 import subprocess
@@ -39,6 +40,11 @@ def write(path, value):
 def metadata(path):
     with sqlite3.connect(Path(path).resolve().as_uri() + '?mode=ro&immutable=1', uri=True) as con:
         return {key: json.loads(value) for key, value in con.execute('SELECT * FROM metadata')}
+
+
+def is_stable_release(release):
+    """Final three-part versions are stable; prerelease/nightly suffixes are not."""
+    return bool(re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', release))
 
 
 @contextmanager
@@ -113,6 +119,15 @@ class Coordinator:
     def cmd(self, script, *values, python=None):
         return [str(python or sys.executable), '-B', str(ROOT / 'scripts' / script), *map(str, values)]
 
+    def data_package_command(self, output):
+        values = ['--database', self.c['database'], '--output', output,
+                  '--release', self.meta['release']]
+        if is_stable_release(self.meta['release']):
+            values.append('--stable')
+        # The unmodified packager independently checks the exact stable SDK
+        # version and rejects a prerelease SDK for stable data packaging.
+        return self.cmd('package_browse_candidate.py', *values)
+
     def execute(self, name, argv, env=None):
         self.root.mkdir(parents=True, exist_ok=True)
         with (self.root / (name + '.log')).open('w') as stream:
@@ -172,8 +187,7 @@ class Coordinator:
             raise ValueError('Extended local evidence changed')
         out = self.root / 'package'
         out.mkdir(exist_ok=False)
-        self.execute('package-data', self.cmd('package_browse_candidate.py', '--database', self.c['database'],
-                     '--output', out / 'data', '--release', self.meta['release']))
+        self.execute('package-data', self.data_package_command(out / 'data'))
         if read(out / 'data/review_data.json')['database']['sha256'] != accepted['database_sha256']:
             raise ValueError('Packaged data differs from the actual accepted artifact')
         self.execute('package-sdk', [sys.executable, '-m', 'pip', 'wheel', '--no-deps', '--no-build-isolation',
