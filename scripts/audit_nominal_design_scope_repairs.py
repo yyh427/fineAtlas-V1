@@ -561,8 +561,10 @@ def check_planned_root_closure(con, operations, post=False):
                     result.append(parent['uid'])
         cache[node['component_id']] = result
         return result
-    root = row_at(con, 'nodes', 'wordnet31:00001740-n')
-    if not usable(root):
+    raw_root = con.execute("SELECT value FROM metadata WHERE key='root_uid'").fetchone()
+    root_uid = json.loads(raw_root['value']) if raw_root else None
+    root = row_at(con, 'nodes', root_uid) if isinstance(root_uid, str) and root_uid else None
+    if not usable(root) or kind(root) != 'CLASS':
         raise ValueError('Actual source parent has no admitted canonical root')
     # A withdrawn assertion does not introduce its historical parent into this
     # repair batch. Inspect every changed subject and every newly linked parent.

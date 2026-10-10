@@ -16,11 +16,13 @@ class PlannedRootClosure(unittest.TestCase):
         self.c = sqlite3.connect(':memory:')
         self.c.row_factory = sqlite3.Row
         self.c.executescript(
+            'CREATE TABLE metadata(key TEXT PRIMARY KEY,value TEXT);'
             'CREATE TABLE nodes(uid TEXT PRIMARY KEY,rank TEXT,component_id INTEGER,visibility TEXT);'
             'CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT,attributes TEXT);'
             'CREATE TABLE edges(id INTEGER PRIMARY KEY,child_uid TEXT,parent_uid TEXT,relation TEXT,status TEXT);'
             'CREATE TABLE entity_relations(id INTEGER PRIMARY KEY,subject_uid TEXT,object_uid TEXT,relation TEXT,status TEXT);')
-        self.root = 'wordnet31:00001740-n'
+        self.root = 'source:configured-canonical-root'
+        self.c.execute('INSERT INTO metadata VALUES (?,?)', ('root_uid', A.dump(self.root)))
         self.c.executemany('INSERT INTO nodes VALUES (?,?,?,?)',
                           [('source', 'class', 1, 'ACTIVE'), (self.root, 'class', 2, 'ACTIVE')])
         self.c.executemany('INSERT INTO node_profiles VALUES (?,?,?)',
@@ -68,6 +70,15 @@ class PlannedRootClosure(unittest.TestCase):
         # Source approval is checked by the role auditor; this closure exemption
         # grants no edge or navigation to the ambiguous object.
         self.assertEqual(self.c.execute('SELECT COUNT(*) FROM edges').fetchone()[0], 0)
+
+    def test_canonical_root_must_be_configured_and_admitted_as_a_class(self):
+        self.c.execute("UPDATE node_profiles SET node_kind='MODEL' WHERE uid=?", (self.root,))
+        with self.assertRaisesRegex(ValueError, 'no admitted canonical root'):
+            A.check_planned_root_closure(self.c, [self.link])
+        self.c.execute("UPDATE node_profiles SET node_kind='CLASS' WHERE uid=?", (self.root,))
+        self.c.execute('DELETE FROM metadata')
+        with self.assertRaisesRegex(ValueError, 'no admitted canonical root'):
+            A.check_planned_root_closure(self.c, [self.link])
 
 
 if __name__ == '__main__':
