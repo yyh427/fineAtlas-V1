@@ -141,6 +141,57 @@ class IndependentSourceGrain(unittest.TestCase):
         self.assertFalse(A.allowed('NATIVE_DESIGN_PARENT', 'INSTANCE', 'MODEL_FAMILY'))
         self.assertFalse(A.allowed('DESIGN_TYPE_OF', 'UNKNOWN', 'CLASS'))
 
+    def whole_object_pending_operation(self):
+        op = self.operation('UNKNOWN')
+        reason = 'Own retained scope mixes a physical object and its abstract configuration.'
+        decision = {'uid': self.node['uid'], 'before_node': self.node,
+                    'before_profiles': [], 'before_normalization_roles': [],
+                    'after_role_status': 'REVIEW', 'allowed_views': [],
+                    'quarantine_role_grain': True, 'scope_reason': reason,
+                    'pending_whole_scope': 'Source sense separation remains unconfirmed.'}
+        review = {'accepted_source_scope_only': True,
+                  'approved_source_roles': [[self.node['uid'], 'UNKNOWN']], 'cases': [decision]}
+        proof = op['proof']
+        proof.update(source_role_scope_kind='SOURCE_WHOLE_OBJECT_GRAIN_PENDING',
+                     quarantine_role_grain=True, scope_observation=reason,
+                     source_scope_review_record=review)
+        self.reseal_operation(op)
+        return op
+
+    def reseal_operation(self, op):
+        proof = op['proof']
+        raw = A.dump(proof['source_scope_review_record'])
+        (self.inputs/'review.json').write_text(raw)
+        proof['source_review_locator']['sha256'] = A.sha(raw)
+        eid = 'usability:' + A.sha(A.dump(proof))
+        op['after_profile']['evidence_id'] = eid
+        attrs = __import__('json').loads(op['after_profile']['attributes'])
+        attrs['role_evidence_id'] = eid
+        op['after_profile']['attributes'] = A.dump(attrs)
+        op['after_normalization_role']['evidence_id'] = eid
+
+    def test_whole_object_pending_keeps_exact_source_case_and_missing_prior_rows(self):
+        op = self.whole_object_pending_operation()
+        A.check_role_operation(self.c, self.inputs, op, False)
+        op['proof']['source_scope_review_record']['cases'][0]['before_profiles'] = [{'node_kind': 'CLASS'}]
+        self.reseal_operation(op)
+        with self.assertRaisesRegex(ValueError, 'exact original role'):
+            A.check_role_operation(self.c, self.inputs, op, False)
+
+    def test_whole_object_ambiguity_cannot_substitute_a_nominal_grain_rationale(self):
+        op = self.whole_object_pending_operation()
+        op['proof']['scope_observation'] = 'Only the name suggests a programme.'
+        self.reseal_operation(op)
+        with self.assertRaisesRegex(ValueError, 'exact independent scope decision'):
+            A.check_role_operation(self.c, self.inputs, op, False)
+
+    def test_whole_object_pending_requires_retained_unresolved_scope(self):
+        op = self.whole_object_pending_operation()
+        op['proof']['source_scope_review_record']['cases'][0]['pending_whole_scope'] = ''
+        self.reseal_operation(op)
+        with self.assertRaisesRegex(ValueError, 'exact independent scope decision'):
+            A.check_role_operation(self.c, self.inputs, op, False)
+
 
 if __name__ == '__main__':
     unittest.main()

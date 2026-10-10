@@ -407,7 +407,12 @@ def check_role_operation(con, inputs, op, post):
                     and record.get('normalization_roles') == old_norm)
     if (sha(raw) != locator['sha256'] or review != proof['source_scope_review_record']
             or review.get('accepted_source_scope_only') is not True
-            or not (old_approved or new_approved)):
+            or not (old_approved or new_approved or any(
+                r.get('uid') == op['uid'] and [op['uid'], target] in review.get('approved_source_roles', [])
+                and r.get('before_node') == proof['before_node']
+                and r.get('before_profiles') == ([before] if before else [])
+                and r.get('before_normalization_roles') == ([old_norm] if old_norm else [])
+                for r in review.get('cases', [])))):
         raise ValueError('Whole independent source grain verdict does not approve the exact original role transition')
     pending_decisions = [r for r in review.get('cases', []) if r.get('uid') == op['uid']]
     if old_approved:
@@ -434,6 +439,7 @@ def check_role_operation(con, inputs, op, post):
         'OWNED_NAMED_REUSABLE_DESIGN_PROGRAMME': ('MODEL', 'VERIFIED'),
         'OWNED_NAMED_OPERATIONAL_PHYSICAL_INSTANCE': ('INSTANCE', 'VERIFIED'),
         'SOURCE_NOMINAL_OR_INDIVIDUAL_GRAIN_PENDING': ('UNKNOWN', 'REVIEW'),
+        'SOURCE_WHOLE_OBJECT_GRAIN_PENDING': ('UNKNOWN', 'REVIEW'),
     }
     declared = contracts.get(proof.get('source_role_scope_kind'))
     if (declared is None or declared != (target, proof.get('role_status'))
@@ -451,6 +457,11 @@ def check_role_operation(con, inputs, op, post):
                 or decision.get('quarantine_role_grain') is not True or proof.get('allowed_views') != []
                 or (new_approved and proof.get('quarantine_role_grain') is not True)):
             raise ValueError('Pending grain requires explicit independent review-only view quarantine')
+        if proof.get('source_role_scope_kind') == 'SOURCE_WHOLE_OBJECT_GRAIN_PENDING':
+            if (not isinstance(decision.get('pending_whole_scope'), str) or not decision['pending_whole_scope'].strip()
+                    or not decision.get('scope_reason') or proof.get('scope_observation') != decision['scope_reason']
+                    or proof.get('quarantine_role_grain') is not True):
+                raise ValueError('Whole source-object ambiguity must retain its exact independent scope decision')
         attrs['allowed_views'] = []
     elif proof.get('allowed_views') is not None and proof['allowed_views'] != attrs.get('allowed_views'):
         raise ValueError('Verified grain cannot loosen source view admission')
@@ -511,6 +522,66 @@ def check_role_connection_inventory(con, operations, post):
             endpoints = [row_at(con, 'nodes', edge[k]) for k in ('subject_uid', 'object_uid')]
             if not all(endpoints) or not allowed(edge['relation'], *[roles.get(n['uid'], role(con, n)) for n in endpoints]):
                 raise ValueError('Role change leaves an incompatible original active typed assertion: ' + str(edge['id']))
+
+
+def check_planned_root_closure(con, operations, post=False):
+    """Inspect planned real UID directions without rebuilding or injecting rows."""
+    corrections = {o['uid']: o for o in operations if o['op'] == 'correct_role'}
+    retired = {o['before_assertion']['id'] for o in operations if o['op'] == 'review_class_edge'}
+    proposed = {}
+    for op in operations:
+        if op['op'] == 'link' and not post:
+            proposed.setdefault(op['uid'], []).append((op['parent'], op['relation']))
+    def kind(node):
+        return corrections[node['uid']]['after_profile']['node_kind'] if not post and node['uid'] in corrections else role(con, node)
+    def usable(node):
+        if not node or node['visibility'] != 'ACTIVE' or kind(node) not in {'CLASS', 'MODEL', 'MODEL_FAMILY', 'INSTANCE'}:
+            return False
+        profile = corrections[node['uid']]['after_profile'] if not post and node['uid'] in corrections else row_at(con, 'node_profiles', node['uid'])
+        views = __import__('json').loads(profile['attributes']).get('allowed_views') if profile else None
+        return not isinstance(views, list) or 'taxonomy' in views
+    cache = {}
+    def parents(uid):
+        node = row_at(con, 'nodes', uid)
+        if not usable(node):
+            return []
+        if node['component_id'] in cache:
+            return cache[node['component_id']]
+        result = []
+        for raw in con.execute('SELECT * FROM nodes WHERE component_id=?', (node['component_id'],)):
+            peer = dict(raw)
+            if not usable(peer):
+                continue
+            candidates = list(proposed.get(peer['uid'], []))
+            candidates += [(r['parent_uid'], r['relation']) for r in con.execute("SELECT *FROM edges WHERE child_uid=? AND relation='IS_A' AND status IN ('ACTIVE','BACKBONE_ACTIVE')", (peer['uid'],)) if r['id'] not in retired]
+            candidates += [(r['object_uid'], r['relation']) for r in con.execute("SELECT *FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','INSTANCE_OF')", (peer['uid'],))]
+            for target, relation in candidates:
+                parent = row_at(con, 'nodes', target)
+                if usable(parent) and allowed(relation, kind(peer), kind(parent)) and parent['component_id'] != node['component_id']:
+                    result.append(parent['uid'])
+        cache[node['component_id']] = result
+        return result
+    root = row_at(con, 'nodes', 'wordnet31:00001740-n')
+    if not usable(root):
+        raise ValueError('Actual source parent has no admitted canonical root')
+    # A withdrawn assertion does not introduce its historical parent into this
+    # repair batch. Inspect every changed subject and every newly linked parent.
+    starts = {o['uid'] for o in operations}
+    starts.update(o['parent'] for o in operations if o['op'] == 'link')
+    for uid in starts:
+        initial = row_at(con, 'nodes', uid)
+        if uid in corrections and corrections[uid]['after_profile']['node_kind'] == 'UNKNOWN':
+            continue  # Independent exact source quarantine was checked separately.
+        queue, seen = deque([uid]), set()
+        while queue:
+            node = row_at(con, 'nodes', queue.popleft())
+            if not usable(node) or node['component_id'] in seen:
+                continue
+            if node['component_id'] == root['component_id']:
+                break
+            seen.add(node['component_id']); queue.extend(parents(node['uid']))
+        else:
+            raise ValueError('Source-reviewed object has no legitimate planned root path: ' + uid)
 
 
 def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
@@ -581,6 +652,7 @@ def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
         if set(manifest['scope_inventories']) != expanded:
             raise ValueError('Full affected identity components were not inventoried')
         check_role_connection_inventory(con, ops, not preflight)
+        check_planned_root_closure(con, ops, not preflight)
         for uid in expanded:
             expected_inventory = json.loads(dump(manifest['scope_inventories'][uid]))
             for op in ops:
