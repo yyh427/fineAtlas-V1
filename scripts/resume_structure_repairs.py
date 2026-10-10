@@ -99,6 +99,37 @@ def verify_parent_byte_copy(source, output, seal):
     return source_sha
 
 
+def validate_resumed_parent_independence(primary_receipt, reproduction_receipt):
+    """Require two distinct completed parents, not two copies of one parent."""
+    rows = []
+    for path in (primary_receipt, reproduction_receipt):
+        receipt = json.loads(path.read_text())
+        lineage_path = path.parent / "parent_lineage.json"
+        if digest_file(lineage_path) != receipt.get("parent_lineage_sha256"):
+            raise ValueError("Resumed parent lineage is missing or changed")
+        lineage = json.loads(lineage_path.read_text())
+        if (receipt.get("complete") is not True or receipt.get("pass") is not True or
+                lineage.get("resumed_build_id") != receipt.get("build_id") or
+                lineage.get("resumed_revision") != receipt.get("revision") or
+                lineage.get("parent_build_id") != receipt.get("parent_build_id") or
+                not receipt.get("parent_build_id") or
+                lineage.get("parent_source_inode") != receipt.get("parent_source_inode")):
+            raise ValueError("Resumed parent lineage differs from its completion receipt")
+        source = Path(lineage["parent_database"]).resolve(strict=True)
+        if [source.stat().st_dev, source.stat().st_ino] != lineage["parent_source_inode"]:
+            raise ValueError("Resumed parent source inode changed")
+        rows.append((receipt, lineage, source))
+    if (rows[0][0]["build_id"] == rows[1][0]["build_id"] or
+            rows[0][0]["parent_build_id"] == rows[1][0]["parent_build_id"] or
+            rows[0][2].samefile(rows[1][2])):
+        raise ValueError("Two distinct independently completed parent builds are required")
+    if rows[0][1]["parent_revision"] != rows[1][1]["parent_revision"]:
+        raise ValueError("Resumed parents belong to different semantic snapshots")
+    return {"pass": True, "parent_build_ids": [row[0]["parent_build_id"] for row in rows],
+            "resumed_build_ids": [row[0]["build_id"] for row in rows],
+            "distinct_source_inodes": True, "parent_revision": rows[0][1]["parent_revision"]}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("source", "parent-build", "parent-integrity", "baseline", "database", "inputs",
