@@ -9,7 +9,7 @@ import re
 from .structure_subject_scope_rules import scoped_subject_genus, GENERAL_MODIFIERS
 
 MODIFIERS = GENERAL_MODIFIERS | frozenset('much modified long career configuration and or united states bay assault towed competition performance weight sports artillery acrobatic miniature miniature built kit pod boom strut braced tail tailed FAI class standard one launched self launch reverse staggered tricycle gear gull engined long distance narrow gap bay lifting span early unfinished general purpose amateur metre meter sport place amateur-built designation prototypes unused original simple small seater place engined wings national projected multirole long haul mailplanes amphibian tourer multirole personnel torpedo jetted Swedish company second performance licensing training distance created second racer night artillery civilian original projected unfinished ordinary common model models design designs family series transport racer mailplane mailplanes tourer purpose prototype prototypes rescue regional propeller jet turboprop narrowbody widebody airliners passenger seat single-seater five-seat one-design high-speed low-powered training single-bay equal-span three-engined pusher-engined winged scope comma designed made trainer very us west east long range kit narrow gap torpedo span powered launched launch metre meter lsa fai tail tailed taildragger equipment equipped sports amateur seat seater class carrier distance bay multi multi-purpose multirole haul office monoplane monoplanes military light civilian electric electricity two-bay configuration amphibious mailplane mailplanes tourer touring trainer trainers transport project launched aircraft jet taildragger'.split()) | frozenset('japanese german french british american russian soviet canadian australian italian spanish swiss swedish dutch norwegian danish finnish polish czech czechoslovak hungarian romanian portuguese serbian yugoslav chinese brazilian argentinian israeli ukrainian south korean north indonesian indian malaysian egyptian icelandic intended prototype prototypes planned proposed project experimental demonstration demonstrator observation reconnaissance surveillance patrol training trainer touring advertising cabin sport light sporting utility agricultural multipurpose multi purpose primary secondary naval navy civil civilian commercial executive business military ambulance rescue transport commuter regional powered jet piston turbine turboprop turboshaft gas diesel gasoline petrol engine engines seat seats seating passenger passengers freight cargo propeller propellers sail motor glider parasol wing wings winged shoulder lifting conventional flying float hull high low mid medium powered power all metal wooden composite cantilever semi sesquiplane water waterborne attack combat fighter bomber interceptor reconnaissance scout trainer aerobatic night day modular single twin triple four six eight open cockpit enclosed advanced supersonic subsonic homebuilt ultralight ultra short take off landing VTOL STOL rotary remote controlled unmanned uncrewed robot robotic coaxial pusher canard tailless delta swept forward backward tractor pure rigid semi-rigid non-rigid rigid-hulled powered-lift purpose built award winning second third fourth fifth standard fast first early late decade century world war interwar post pre onetime unsuccessful never-produced production design version maritime aeronautical jet-propelled jet-powered'.split())
-MODIFIERS |= frozenset('company s five gun t equal carrying unusual compound microlift microlight aerobatics hauling mail speed farman type pitcairn launching dragger'.split())
+MODIFIERS |= frozenset('trial trials test company s five gun t equal carrying unusual compound microlift microlight aerobatics hauling mail speed farman type pitcairn launching dragger'.split())
 FINE = (
  (r'jet (?:airliner|airplane)(?:\s+(?:family|series|model))?', 'wordnet31:03601053-n'),
  (r'(?:twin[ -]turboprop|turboprop)(?:\s+(?:[0-9]+[ -]passenger|commuter|regional))*\s+(?:airliner|airplane)(?:\s+(?:family|series|model))?', 'wordnet31:04018858-n'),
@@ -27,7 +27,7 @@ FINE = (
  (r'helicopter(?:\s+(?:family|series|model|design))?', 'wikidata:Q34486'),
  (r'(?:airplane|aeroplane)(?:\s+design)?', 'wordnet31:02694015-n'),
  (r'fixed-wing aircraft(?:\s+design)?', 'wikidata:Q2875704'),
- (r'(?:aircraft|rotorcraft)(?: (?:family|series|model|designs?|prototypes?))?', 'wordnet31:02689427-n'),
+ (r'(?:aircraft|rotorcraft)(?: (?:family|series|model|version|designs?|prototypes?))?', 'wordnet31:02689427-n'),
 )
 
 def words(value):return re.findall(r'[^\W_]+',value.casefold(),re.UNICODE)
@@ -125,8 +125,8 @@ def owned_physical_genus(statement,label,source_names=()):
     result=scoped_subject_genus(re.sub(r'\b(wide|narrow)body\b',r'\1-body',statement,flags=re.I),label)
     if result and result[1]=='wordnet31:02694015-n'and head and re.search(r'\b(?:unpowered|nonpowered|non-powered)\b',head,re.I):return None
     if result:return result
-    if head and re.search(r'\b(?:aircraft|rotorcraft)(?: (?:family|series|model|designs?|prototypes?))?$',head,re.I):
-        m=re.search(r'\b(?:aircraft|rotorcraft)(?: (?:family|series|model|designs?|prototypes?))?$',head,re.I);prefix=head[:m.start()];tokens=words(prefix)
+    if head and re.search(r'\b(?:aircraft|rotorcraft)(?: (?:family|series|model|version|designs?|prototypes?))?$',head,re.I):
+        m=re.search(r'\b(?:aircraft|rotorcraft)(?: (?:family|series|model|version|designs?|prototypes?))?$',head,re.I);prefix=head[:m.start()];tokens=words(prefix)
         if all(v in MODIFIERS or re.fullmatch(r'\d+(?:s|th|st|nd|rd)?',v)for v in tokens):return m[0],'wordnet31:02689427-n'
     return None
 

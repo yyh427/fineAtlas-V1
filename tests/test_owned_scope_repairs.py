@@ -20,6 +20,8 @@ class OwnedScopeGrammarTests(unittest.TestCase):
     def test_modifiers_and_abbreviated_names_retain_the_own_kind(self):
         samples = [
             ('The X was a very small single-seat sports monoplane.', 'X', 'wikidata:Q627537'),
+            ('military transport aircraft version of the Programme 200','Named version','wordnet31:02689427-n'),
+            ('prototype high-speed trials aircraft version of the Programme','Named version','wordnet31:02689427-n'),
             ('The G.A.C. 102 was a single-engine biplane.', 'G.A.C. 102', 'wikidata:Q223818'),
             ('The X are US-built open-cockpit biplane mailplanes derived from Y.', 'X', 'wikidata:Q223818'),
             ('The X was a biplane, the first aircraft launched from a ship.', 'X', 'wikidata:Q223818'),
