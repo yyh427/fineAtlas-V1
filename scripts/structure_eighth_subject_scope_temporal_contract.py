@@ -60,8 +60,6 @@ class EighthSubjectTemporalContract(SubjectTemporalContract):
     def run_owned_actual_audit(self):
         from structure_eighth_owned_scope_temporal_contract import run_eighth_owned_actual_audits
         run_eighth_owned_actual_audits(self)
-        subprocess.run([sys.executable,'-B',str(ROOT/'scripts/audit_complete_owned_type_repairs.py'),
-            '--database',str(self.database),'--inputs',str(self.inputs),'--output',str(self.eighth_report)],check=True)
         report=json.loads(self.eighth_report.read_bytes())
         if (report.get('schema')!='FINEATLAS_INDEPENDENT_COMPLETE_OWNED_TYPE_AUDIT_V1'
                 or report.get('pass')is not True or report.get('preflight_only')is not False

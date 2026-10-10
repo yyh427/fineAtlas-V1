@@ -35,3 +35,14 @@ class EighthTemporalReceiptTest(unittest.TestCase):
     def test_failed_original_gate_is_not_converted_to_current_success(self):
         with patch('structure_subject_scope_temporal_contract.require_temporal_subject_receipt',side_effect=ValueError('old SOURCE failed')):
             with self.assertRaisesRegex(ValueError,'old SOURCE failed'):contract.require_temporal_eighth_subject_receipt(self.root/'report.json',self.db,self.inputs,'final',self.code)
+
+class SubjectExecutorSingleInvocationTest(unittest.TestCase):
+    def test_shared_executor_creates_source8_once_and_report_is_reused(self):
+        with tempfile.TemporaryDirectory()as tmp:
+            root=Path(tmp);mf=root/'manifest.json';mf.write_text('{}');db=root/'database.sqlite';db.touch()
+            value=contract.EighthSubjectTemporalContract.__new__(contract.EighthSubjectTemporalContract);value.database=db;value.inputs=root;value.output=root/'audit.json';value.eighth_report=root/'audit-complete-type-actual.json';value.eighth_manifest_path=mf;value.eighth_manifest={'operations_sha256':'ops'};value.eighth_operations=[{}];value.meta={'database_revision':'final'}
+            def actual_executor(obj):
+                self.assertFalse(obj.eighth_report.exists())
+                obj.eighth_report.write_text(json.dumps({'schema':'FINEATLAS_INDEPENDENT_COMPLETE_OWNED_TYPE_AUDIT_V1','pass':True,'preflight_only':False,'errors':[],'candidate_acceptance':True,'database_revision':'final','database':str(db),'manifest_sha256':contract.sha(mf.read_bytes()),'operations_sha256':'ops','operation_count':1}))
+            with patch('structure_eighth_owned_scope_temporal_contract.run_eighth_owned_actual_audits',side_effect=actual_executor)as executor,patch.object(contract.subprocess,'run',side_effect=AssertionError('Duplicate external SOURCE8 execution')):
+                value.run_owned_actual_audit();executor.assert_called_once_with(value)
