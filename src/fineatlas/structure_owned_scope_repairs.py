@@ -214,7 +214,7 @@ def validate_batch_cycles(c, operations, partitions):
                     visited.add(current); stack.extend(parents(current))
 
 
-def validate_owned_scope_repairs(c, manifest, operations, source_review=None, family_review=None):
+def validate_owned_scope_repairs(c, manifest, operations, source_review=None, family_review=None, derivation_review=None):
     if manifest.get('schema') != 'FINEATLAS_OWNED_SCOPE_REPAIRS_V1' or type(manifest.get('operation_count')) is not int or manifest['operation_count'] != len(operations) or not operations:
         raise ValueError('Owned scope input schema/count is invalid')
     seen = set()
@@ -302,8 +302,9 @@ def validate_owned_scope_repairs(c, manifest, operations, source_review=None, fa
                     if locator!={'file':manifest['source_family_review_file'],'sha256':manifest['source_family_review_sha256'],'uid':a['uid'],'parent':b['uid'],'relation':o['relation']}:raise ValueError('Family source review locator changed')
                     matches=[r for r in family_review['records']if(r['uid'],r['parent'],r['proposed_relation'])==(a['uid'],b['uid'],o['relation'])]
                     if len(matches)!=1 or matches[0]!=record or record['status']!='SOURCE_DIRECTION_SUPPORTED_PENDING_EXACT_OPERATION_AND_SAFE_PARENT_ROLE':raise ValueError('Nominal family source review does not bind this direction')
-                    if role_overrides.get(a['uid'],a['role'])!='MODEL' or role_overrides.get(b['uid'],b['role'])!='MODEL_FAMILY' or p.get('physical_genus'):raise ValueError('Nominal family direction cannot assert ordinary physical inclusion')
-                    if not re.search(r'\b(?:variant|version|third-generation)\b',own['statement'],re.I):raise ValueError('Own nominal source does not declare this version or generation')
+                    if role_overrides.get(a['uid'],a['role'])not in{'MODEL','MODEL_FAMILY'} or role_overrides.get(b['uid'],b['role'])not in{'MODEL','MODEL_FAMILY'} or p.get('physical_genus'):raise ValueError('Nominal family direction cannot assert ordinary physical inclusion')
+                    if not re.search(r'\b(?:variant|version|third-generation|prototype series for)\b',own['statement'],re.I):raise ValueError('Own nominal source does not declare this version or generation')
+                    if record.get('parent_expected_role')and record['parent_expected_role']!=role_overrides.get(b['uid'],b['role']):raise ValueError('Reviewed directional parent grain changed')
                     for field in ['child_source_objects','parent_source_objects']:
                         for source in record[field]:
                             raw=source['node'];actual=c.execute('SELECT * FROM nodes WHERE uid=?',(raw['uid'],)).fetchone()
@@ -315,6 +316,26 @@ def validate_owned_scope_repairs(c, manifest, operations, source_review=None, fa
                         actual=c.execute('SELECT * FROM entity_relations WHERE id=?',(before['id'],)).fetchone()
                         if not actual or dict(actual)!=before:raise ValueError('Original family direction source history changed')
                     result=(b['label'],b['uid'])
+                elif kind=='OWNED_NOMINAL_PROTOTYPE_OR_CONVERSION_PHYSICAL_KIND':
+                    if o['relation']!='DESIGN_TYPE_OF' or derivation_review is None or p.get('physical_genus')or p.get('literal_own_aircraft_genus_asserted')is not False:raise ValueError('Whole nominal prototype reference cannot counterfeit a literal physical genus')
+                    locator=p['source_review_locator'];record=p['design_derivation_physical_scope_review'];link=record['proposed_broad_physical_link']
+                    if locator!={'file':manifest['source_design_derivation_review_file'],'sha256':manifest['source_design_derivation_review_sha256'],'uid':a['uid'],'parent':b['uid'],'relation':o['relation']}:raise ValueError('Physical design-reference source review locator changed')
+                    matches=[r for r in derivation_review['physical_reference_records']if r['uid']==a['uid']]
+                    if len(matches)!=1 or matches[0]!=record or record['status']!='SOURCE_BROAD_PHYSICAL_KIND_SUPPORTED_NARROW_MEMBERSHIP_PENDING':raise ValueError('Whole prototype physical scope approval changed')
+                    if (link['uid'],link['parent'],link['relation'])!=(a['uid'],b['uid'],o['relation'])or role_overrides.get(a['uid'],a['role'])!='MODEL'or p['source_witnesses'][1]['statement']!='a vehicle that can fly'or p.get('classification_axis')!='physical_structure':raise ValueError('Design prototype physical scope cannot assert a narrower type or purpose')
+                    if own['statement']!=link['own_declared_reference']or not re.search(r'\b(?:prototype of|re-engined conversion of)\b',own['statement'],re.I)or re.search(r'\b(?:parts?|toy|scale|fictional|virtual|ground apparatus|software)\b',own['statement'],re.I):raise ValueError('Source reference is not the complete owned nominal aircraft-design prototype or conversion')
+                    if p['supporting_source_witnesses'][0]['statement']!=link['proper_parent_full_physical_aircraft_statement']or not re.search(r'\baircraft\b',link['proper_parent_full_physical_aircraft_statement'],re.I)or not link['no_purpose_inheritance']or not p['no_design_purpose_inheritance']:raise ValueError('Named base lacks independently complete physical aircraft scope')
+                    for field in ['child_source_objects','parent_source_objects']:
+                        for source in record[field]:
+                            raw=source['node'];actual=c.execute('SELECT * FROM nodes WHERE uid=?',(raw['uid'],)).fetchone()
+                            if not actual or dict(actual)!=raw:raise ValueError('Complete design prototype or base source object changed')
+                    for before in record['preserved_original_relations']:
+                        actual=c.execute('SELECT * FROM entity_relations WHERE id=?',(before['id'],)).fetchone()
+                        if not actual or dict(actual)!=before:raise ValueError('Original nominal prototype reference source declaration changed')
+                    for before in record['parent_own_same_primary_source_bridge']:
+                        actual=c.execute('SELECT * FROM bridges WHERE id=?',(before['id'],)).fetchone()
+                        if not actual or dict(actual)!=before or before['status']!='ACTIVE':raise ValueError('Named base exact source representation scope changed')
+                    result=('aircraft','wordnet31:02689427-n')
                 elif kind == 'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE':
                     if p.get('physical_genus'):raise ValueError('Nominal purpose cannot counterfeit an own physical genus')
                     if o['relation']!='DESIGN_TYPE_OF' or source_review is None:raise ValueError('Literal nominal type requires its frozen independent whole-source review')
@@ -349,6 +370,23 @@ def validate_owned_scope_repairs(c, manifest, operations, source_review=None, fa
             if o['op'] == 'review_bridge' and o['relation'] != 'SAME_CONCEPT': raise ValueError('Identity scope review must retain a true identity declaration')
             if p['basis'] not in {'INCOMPATIBLE_WHOLE_SOURCE_AND_NARROW_WORDNET_SENSE','INSUFFICIENT_WHOLE_PARENT_RANGE_EVIDENCE','HISTORICAL_TAXON_VERSION_WHOLE_SCOPE_GAP','OWNED_WHOLE_PURPOSE_RANGE_INCOMPATIBLE_WITH_COMMERCIAL_TYPE','BIOLOGICAL_VARIANT_NOT_FRUIT_OR_ORDINARY_CLASS','INSUFFICIENT_NAMED_INDIVIDUAL_ROLE_SCOPE','CANONICAL_ROLE_EXCLUDES_ORDINARY_CLASS_INCLUSION','OWNED_SYSTEM_NOT_ITS_CARRIER_PLATFORM'}: raise ValueError('Unknown individually grounded scope review kind')
             if not p.get('source_native_objects_preserved'): raise ValueError('Review cannot delete source objects')
+        elif o['op']=='retain_design_reference':
+            before=o['before_assertion'];actual=c.execute('SELECT * FROM entity_relations WHERE id=?',(before['id'],)).fetchone()
+            if derivation_review is None:raise ValueError('Retained design reference needs its frozen whole-source adjudication')
+            record=p['design_derivation_scope_review'];locator=p['source_review_locator']
+            matches=[r for r in derivation_review['physical_reference_records']if r['uid']==o['uid']]
+            if len(matches)!=1 or matches[0]!=record or locator!={'file':manifest['source_design_derivation_review_file'],'sha256':manifest['source_design_derivation_review_sha256'],'uid':o['uid'],'parent':o['parent'],'relation':o['relation']}:raise ValueError('Exact retained design reference source approval changed')
+            if before not in record['preserved_original_relations']or record['parent']!=o['parent']or record['proposed_relation']!=o['relation']:raise ValueError('Original prototype declaration does not bind this new source reference')
+            if not actual or dict(actual)!=before or source_assertion_sha256(actual)!=o['content_sha256']or before['status']!='SOURCE_SCOPE_REVIEW'or before['relation']!='NATIVE_DESIGN_PARENT':raise ValueError('Non-navigation design reference must preserve its exact reviewed original source declaration')
+            a,b=node(c,o['uid']),node(c,o['parent'])
+            if o['relation']!='SOURCE_DESIGN_DERIVATION_REFERENCE'or not a or not b or before['object_uid']!=b['uid']or role_overrides.get(a['uid'],a['role'])not in{'MODEL','MODEL_FAMILY'}or role_overrides.get(b['uid'],b['role'])not in{'MODEL','MODEL_FAMILY'}:raise ValueError('Design reference cannot become physical class inclusion or identity')
+            if p.get('basis')!='OWNED_NOMINAL_DESIGN_PROTOTYPE_OR_ENGINE_CONVERSION_REFERENCE'or p.get('navigation_eligible')is not False or p.get('allowed_views')!=[]or p.get('world_identity_assertion')is not False or p.get('no_identity_merges')is not True:raise ValueError('Design derivation must remain a non-navigation source fact')
+            if len(p.get('source_witnesses',[]))<2 or p['source_witnesses'][0].get('uid')!=a['uid']or not re.search(r'\b(?:prototype of|re-engined conversion of)\b',p['source_witnesses'][0]['statement'],re.I):raise ValueError('Own complete source lacks the retained prototype or conversion fact')
+            origin=node(c,before['subject_uid']);ad=json.loads(a['data']);od=json.loads(origin['data'])
+            if origin['uid']!=a['uid']:
+                bridge=p['original_source_identifier_bridge'];actual=c.execute('SELECT * FROM bridges WHERE id=?',(bridge['id'],)).fetchone()
+                if not actual or dict(actual)!=bridge or bridge['status']!='ACTIVE'or bridge['relation']!='SAME_CONCEPT'or {bridge['left_uid'],bridge['right_uid']}!={a['uid'],origin['uid']}or not ad.get('qid')or ad['qid']!=od.get('qid'):raise ValueError('Retained prototype source declaration belongs to a different source object')
+            if p['original_reference_relation']!=before or not owned_identity_peer(c,b['uid'],p['source_witnesses'][1]['uid']):raise ValueError('Original design reference or complete own parent source fact changed')
         elif o['op'] in MAPPINGS:
             key = (o['dataset'], o['class_id'])
             for table, field in [('dataset_targets','before_target'),('dataset_mapping_checks','before_check')]:
@@ -423,7 +461,14 @@ def apply_owned_scope_repairs(m):
         family_raw=(m.inputs/file).read_bytes()
         if sha(family_raw)!=manifest['source_family_review_sha256']:raise ValueError('Independent family source scope approval bytes changed')
         family_review=json.loads(family_raw)
-    partitions = validate_owned_scope_repairs(m.c, manifest, operations,source_review,family_review)
+    derivation_review=None
+    if manifest.get('source_design_derivation_review_file'):
+        file=manifest['source_design_derivation_review_file']
+        if file!='structure_owned_design_derivation_source_review.json':raise ValueError('Unexpected complete prototype scope review path')
+        derivation_raw=(m.inputs/file).read_bytes()
+        if sha(derivation_raw)!=manifest['source_design_derivation_review_sha256']:raise ValueError('Independent nominal prototype source approval bytes changed')
+        derivation_review=json.loads(derivation_raw)
+    partitions = validate_owned_scope_repairs(m.c, manifest, operations,source_review,family_review,derivation_review)
     node_count = m.c.execute('SELECT count(*) FROM nodes').fetchone()[0]
     counts = Counter()
     for o in operations:
@@ -472,6 +517,11 @@ def apply_owned_scope_repairs(m):
                     data=json.loads(row['data']);data['classification_axis']=p['classification_axis']
                     m.c.execute('UPDATE entity_relations SET data=? WHERE id=?',(dump(data),row['id']))
             m.change(METADATA_KEY,'owned_scope_link',o['uid'],{'prior_assertions':p.get('prior_assertions',[])},{'parent_uid':o['parent'],'relation':o['relation']},p);counts['source_links_added'] += 1
+        elif o['op']=='retain_design_reference':
+            eid=m.evidence(SOURCE,o['uri'],p,'SOURCE_DESIGN_DERIVATION_REFERENCE')
+            m.c.execute('INSERT INTO entity_relations(subject_uid,object_uid,relation,status,source,evidence_id,data) VALUES(?,?,?,?,?,?,?)',(o['uid'],o['parent'],o['relation'],'SOURCE_DECLARED',SOURCE,eid,dump({'admission_basis':p,'allowed_views':[],'navigation_eligible':False,'classification_axis':'design_derivation_reference'})))
+            after={'subject_uid':o['uid'],'object_uid':o['parent'],'relation':o['relation'],'status':'SOURCE_DECLARED','source':SOURCE}
+            m.change(METADATA_KEY,'owned_non_navigation_design_reference',o['uid'],o['before_assertion'],after,p);counts['design_derivation_references_added']+=1
         elif o['op'] in MAPPINGS:
             eid=m.evidence(SOURCE,o['uri'],p,'DATASET_NOMINAL_DESIGN_SCOPE')
             after=o['after_target']; check=o['after_check']

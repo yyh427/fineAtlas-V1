@@ -3,6 +3,7 @@ import copy
 import sqlite3
 import unittest
 
+from fineatlas.hierarchy import source_assertion_sha256
 from fineatlas.migration import dump
 from fineatlas.structure_regression_repairs import sha
 from fineatlas.structure_owned_scope_rules import (
@@ -157,6 +158,23 @@ class OwnedScopeDatabaseContracts(unittest.TestCase):
         with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[physical],family_review=review)
         self.c.execute("UPDATE node_profiles SET node_kind='CLASS' WHERE uid='wikidata:Q223818'")
         with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[op],family_review=review)
+
+    def test_retained_design_reference_preserves_review_and_cannot_navigate(self):
+        self.c.execute("UPDATE nodes SET data=? WHERE uid='model'",(dump({'description':'test and trials prototype of Parent'}),))
+        self.c.execute("UPDATE node_profiles SET node_kind='MODEL_FAMILY' WHERE uid='wikidata:Q223818'")
+        self.c.execute("INSERT INTO entity_relations VALUES(99,'model','wikidata:Q223818','NATIVE_DESIGN_PARENT','SOURCE_SCOPE_REVIEW')")
+        before=dict(self.c.execute('SELECT * FROM entity_relations WHERE id=99').fetchone());data=self.c.execute("SELECT data FROM nodes WHERE uid='model'").fetchone()[0]
+        record={'uid':'model','parent':'wikidata:Q223818','proposed_relation':'SOURCE_DESIGN_DERIVATION_REFERENCE','preserved_original_relations':[before]}
+        manifest={**self.manifest,'source_design_derivation_review_file':'structure_owned_design_derivation_source_review.json','source_design_derivation_review_sha256':'review-hash'}
+        proof={'basis':'OWNED_NOMINAL_DESIGN_PROTOTYPE_OR_ENGINE_CONVERSION_REFERENCE','scope_observation':'Exact own prototype fact retained without inferring membership.','license':'Original source terms retained','navigation_eligible':False,'allowed_views':[],'world_identity_assertion':False,'no_identity_merges':True,'source_witnesses':[{'uid':'model','field':'description','statement':'test and trials prototype of Parent','data_sha256':sha(data)},copy.deepcopy(self.op['proof']['source_witnesses'][1])],'original_reference_relation':before,'design_derivation_scope_review':record,'source_review_locator':{'file':manifest['source_design_derivation_review_file'],'sha256':'review-hash','uid':'model','parent':'wikidata:Q223818','relation':'SOURCE_DESIGN_DERIVATION_REFERENCE'}}
+        op={'op':'retain_design_reference','uid':'model','parent':'wikidata:Q223818','relation':'SOURCE_DESIGN_DERIVATION_REFERENCE','source':SOURCE,'uri':'https://publisher.example/design','before_assertion':before,'content_sha256':source_assertion_sha256(before),'proof':proof};review={'physical_reference_records':[record]}
+        validate_owned_scope_repairs(self.c,manifest,[op],derivation_review=review)
+        self.assertEqual(self.c.execute('SELECT status FROM entity_relations WHERE id=99').fetchone()[0],'SOURCE_SCOPE_REVIEW')
+        navigation=copy.deepcopy(op);navigation['proof']['navigation_eligible']=True
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[navigation],derivation_review=review)
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[op])
+        self.c.execute("UPDATE entity_relations SET status='ACTIVE' WHERE id=99")
+        with self.assertRaises(ValueError):validate_owned_scope_repairs(self.c,manifest,[op],derivation_review=review)
 
     def test_two_new_links_cannot_form_a_batch_cycle(self):
         ops = [{'op':'link','uid':'model','parent':'wikidata:Q223818'}, {'op':'link','uid':'wikidata:Q223818','parent':'model'}]
