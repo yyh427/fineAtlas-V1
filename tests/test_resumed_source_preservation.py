@@ -1,5 +1,4 @@
 """Visibility migration permits must not hide changes to raw source facts."""
-import importlib.util
 from pathlib import Path
 import sqlite3
 import sys
