@@ -95,6 +95,8 @@ def validate_role(c, op, semantic_reviews):
     attrs = json.loads(prior['attributes'])
     eid = 'usability:'+sha(dump(p))
     if p.get('allowed_views') is not None:
+        if p['allowed_views'] != attrs.get('allowed_views'):
+            raise ValueError('Nominal grain correction cannot change source view admission')
         attrs['allowed_views'] = p['allowed_views']
     attrs['source_role'] = p.get('source_role', attrs.get('source_role', actual['rank'] or 'UNSPECIFIED'))
     attrs.update(native_rank=p.get('native_rank', attrs.get('native_rank', actual['rank'])),
