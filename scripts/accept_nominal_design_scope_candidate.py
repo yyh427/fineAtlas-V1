@@ -53,9 +53,9 @@ def run_local(a):
       'integrity':[command('audit_structure_artifact.py','--database',db,'--inputs',a.inputs,
                          '--output',a.output/(name+'-integrity.json'),'--integrity')
                    for name,db in [('primary',a.database),('reproduction',a.reproduction)]],
-      'source-preservation':[command('audit_eighth_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,
+      'source-preservation':[command('audit_ninth_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,
                          '--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'source-preservation.json',
-                         '--primary-snapshots-dir',a.primary_snapshots_dir,'--owned-audit',a.owned_scope_audit,'--complete-owned-audit',a.complete_owned_audit)],
+                         '--primary-snapshots-dir',a.primary_snapshots_dir,'--owned-audit',a.owned_scope_audit,'--complete-owned-audit',a.complete_owned_audit,'--nominal-scope-audit',a.nominal_scope_audit)],
       'logical-reproduction':[command('compare_reproductions.py','--database',a.database,'--reproduction',a.reproduction,
                          '--output',a.output/'logical-comparison.json')],
       'whole-library':[command('audit_structure_library.py','--baseline',a.baseline,'--database',a.database,
@@ -66,7 +66,7 @@ def run_local(a):
       'public-cli':[command('audit_browse_cli.py','--database',a.database,'--output',a.output/'public-cli')],
       'full-six-matrix':[command('audit_structure_rewards.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'matrix')],
       'living':[command('audit_living_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'living')],
-      'source-contracts':[command('audit_eighth_source_contract_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'source-contracts','--owned-audit',a.owned_scope_audit,'--complete-owned-audit',a.complete_owned_audit)],
+      'source-contracts':[command('audit_ninth_source_contract_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'source-contracts','--owned-audit',a.owned_scope_audit,'--complete-owned-audit',a.complete_owned_audit,'--nominal-scope-audit',a.nominal_scope_audit)],
       'source-freeze':[command('audit_structure_artifact.py','--database',db,'--inputs',a.inputs,
                          '--output',a.output/(name+'-freeze.json'))
                      for name,db in [('primary',a.database),('reproduction',a.reproduction)]],
@@ -172,6 +172,7 @@ if __name__=='__main__':
     local.add_argument('--primary-snapshots-dir',type=Path,required=True)
     local.add_argument('--owned-scope-audit',type=Path,required=True)
     local.add_argument('--complete-owned-audit',type=Path,required=True)
+    local.add_argument('--nominal-scope-audit',type=Path,required=True)
     final=sub.add_parser('finalize')
     for name in ('inputs','output','public-verification'):final.add_argument('--'+name,type=Path,required=True)
     args=p.parse_args()

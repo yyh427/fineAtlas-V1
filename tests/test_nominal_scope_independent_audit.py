@@ -46,6 +46,34 @@ class IndependentNominalScopeControls(unittest.TestCase):
             AUDIT.check_witness(con, witness)
         con.close()
 
+    def test_controlled_definition_is_read_from_its_actual_column(self):
+        con = sqlite3.connect(':memory:'); con.row_factory = sqlite3.Row
+        con.execute('CREATE TABLE nodes(uid TEXT PRIMARY KEY,data TEXT,description TEXT)')
+        raw = AUDIT.dump({'basis': 'Retained source enumeration', 'code': 'example'})
+        definition = 'A fixed-wing aircraft with one engine.'
+        con.execute('INSERT INTO nodes VALUES (?,?,?)', ('source:controlled', raw, definition))
+        witness = {'uid': 'source:controlled', 'data_sha256': AUDIT.sha(raw),
+                   'field_storage': 'node_column', 'field_path': 'description',
+                   'field_sha256': AUDIT.sha(definition), 'statement': definition}
+        node = AUDIT.check_witness(con, witness)
+        self.assertEqual(AUDIT.complete_fields(node), {('description', definition)})
+        witness['field_sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'column witness'):
+            AUDIT.check_witness(con, witness)
+        witness.update(field_sha256=AUDIT.sha(definition), field_path='label')
+        with self.assertRaisesRegex(ValueError, 'column witness'):
+            AUDIT.check_witness(con, witness)
+        con.close()
+
+    def test_equal_column_alias_preserves_the_same_complete_source_value(self):
+        node = {'description': 'A complete source definition', 'data': AUDIT.dump({'gloss': 'A complete source definition'})}
+        self.assertEqual(AUDIT.complete_fields(node), {('gloss', 'A complete source definition')})
+
+    def test_different_column_and_body_definitions_must_both_be_reviewed(self):
+        node = {'description': 'A whole programme', 'data': AUDIT.dump({'description': 'A derivative of that programme'})}
+        self.assertEqual(AUDIT.complete_fields(node), {('description', 'A whole programme'),
+                                                      ('description', 'A derivative of that programme')})
+
     def test_unsafe_source_locator_and_table_are_rejected(self):
         with self.assertRaisesRegex(ValueError, 'safe portable'):
             AUDIT.read_input(Path('/tmp'), '../source.json')
@@ -85,6 +113,41 @@ class IndependentNominalScopeControls(unittest.TestCase):
         self.assertTrue(AUDIT.witnessed_peer(con, own, other))
         con.execute("UPDATE node_profiles SET node_kind='MODEL_FAMILY' WHERE uid='other'")
         self.assertFalse(AUDIT.witnessed_peer(con, own, other))
+        con.close()
+
+    def test_role_migration_requires_each_old_class_encoding_to_be_accounted(self):
+        con = sqlite3.connect(':memory:'); con.row_factory = sqlite3.Row
+        con.executescript('CREATE TABLE nodes(uid TEXT PRIMARY KEY,rank TEXT,visibility TEXT);'
+                          'CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT);'
+                          'CREATE TABLE bridges(id INTEGER PRIMARY KEY,left_uid TEXT,right_uid TEXT,relation TEXT,status TEXT);'
+                          'CREATE TABLE edges(id INTEGER PRIMARY KEY,child_uid TEXT,parent_uid TEXT,relation TEXT,status TEXT);'
+                          'CREATE TABLE entity_relations(id INTEGER PRIMARY KEY,subject_uid TEXT,object_uid TEXT,relation TEXT,status TEXT);')
+        con.executemany('INSERT INTO nodes VALUES (?,?,?)', [('design', 'class', 'ACTIVE'), ('kind', 'class', 'ACTIVE')])
+        con.execute("INSERT INTO edges VALUES (7,'design','kind','IS_A','ACTIVE')")
+        correction = {'op': 'correct_role', 'uid': 'design', 'after_profile': {'node_kind': 'MODEL'}}
+        with self.assertRaisesRegex(ValueError, 'active class assertion: 7'):
+            AUDIT.check_role_connection_inventory(con, [correction], False)
+        review = {'op': 'review_class_edge', 'before_assertion': dict(con.execute('SELECT *FROM edges').fetchone())}
+        AUDIT.check_role_connection_inventory(con, [correction, review], False)
+        review['before_assertion']['parent_uid'] = 'other'
+        with self.assertRaisesRegex(ValueError, 'full actual'):
+            AUDIT.check_role_connection_inventory(con, [correction, review], False)
+        con.close()
+
+    def test_role_correction_cannot_leave_an_identity_peer_at_the_old_grain(self):
+        con = sqlite3.connect(':memory:'); con.row_factory = sqlite3.Row
+        con.executescript('CREATE TABLE nodes(uid TEXT PRIMARY KEY,rank TEXT,visibility TEXT);'
+                          'CREATE TABLE node_profiles(uid TEXT PRIMARY KEY,node_kind TEXT);'
+                          'CREATE TABLE bridges(id INTEGER PRIMARY KEY,left_uid TEXT,right_uid TEXT,relation TEXT,status TEXT);'
+                          'CREATE TABLE edges(id INTEGER PRIMARY KEY,child_uid TEXT,parent_uid TEXT,relation TEXT,status TEXT);'
+                          'CREATE TABLE entity_relations(id INTEGER PRIMARY KEY,subject_uid TEXT,object_uid TEXT,relation TEXT,status TEXT);')
+        con.executemany('INSERT INTO nodes VALUES (?,?,?)', [('a', 'class', 'ACTIVE'), ('b', 'class', 'ACTIVE')])
+        con.execute("INSERT INTO bridges VALUES (1,'a','b','SAME_CONCEPT','ACTIVE')")
+        correction = {'op': 'correct_role', 'uid': 'a', 'after_profile': {'node_kind': 'MODEL'}}
+        with self.assertRaisesRegex(ValueError, 'identity peer'):
+            AUDIT.check_role_connection_inventory(con, [correction], False)
+        other = {'op': 'correct_role', 'uid': 'b', 'after_profile': {'node_kind': 'MODEL'}}
+        AUDIT.check_role_connection_inventory(con, [correction, other], False)
         con.close()
 
     def test_source_content_hash_and_exact_status_are_separate(self):

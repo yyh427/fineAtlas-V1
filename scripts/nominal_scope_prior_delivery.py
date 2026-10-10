@@ -15,10 +15,10 @@ from structure_acceptance_contract import validate_public_evidence
 from structure_literal_jet_delivery_guard import SPEC, require_literal_jet_receipt, require_literal_jet_child_build
 from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, require_primary_aircraft_receipt
 from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC
-from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_owned_scope_receipt as require_owned_scope_receipt
+from structure_ninth_owned_scope_temporal_contract import require_temporal_ninth_owned_scope_receipt as require_owned_scope_receipt
 from primary_source_snapshot_delivery import require_fresh_retrieval
-from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_regression_receipt as require_temporal_receipt
-from structure_eighth_subject_scope_temporal_contract import require_temporal_eighth_subject_receipt
+from structure_ninth_source_temporal_contract import require_temporal_ninth_regression_receipt as require_temporal_receipt
+from structure_ninth_source_temporal_contract import require_temporal_ninth_subject_receipt
 from structure_nominal_regression_support import package_support, download_public_support, require_public_support
 from owned_source_snapshot_delivery import NAME as OWNED_SOURCE_REGISTRY, require_owned_retrieval
 
@@ -26,8 +26,8 @@ from owned_source_snapshot_delivery import NAME as OWNED_SOURCE_REGISTRY, requir
 class NominalScopePriorCoordinator(Coordinator):
     def cmd(self, script, *values, python=None):
         # Explicit additive executors keep the old frozen programs unchanged.
-        replacements = {'audit_structure_regression_repairs.py':'audit_temporal_eighth_structure_regression_repairs.py',
-                        'audit_owned_scope_repairs.py':'audit_temporal_eighth_owned_scope_repairs.py',
+        replacements = {'audit_structure_regression_repairs.py':'audit_temporal_ninth_structure_regression_repairs.py',
+                        'audit_owned_scope_repairs.py':'audit_temporal_ninth_owned_scope_repairs.py',
                         'accept_resumed_structure_candidate.py':'accept_owned_structure_candidate.py',
                         'audit_complete_subject_scope_repairs.py':'audit_temporal_complete_subject_scope_repairs.py',
                         'run_structure_public_checks.py':'run_nominal_design_scope_public_checks.py'}
@@ -127,7 +127,7 @@ class NominalScopePriorCoordinator(Coordinator):
         for name, key in (('primary','database'),('reproduction','reproduction')):
             require_temporal_receipt(self.root / (name + '-scope-repairs.json'),
                 self.c[key],self.inputs,self.meta['database_revision'])
-            require_temporal_eighth_subject_receipt(self.root / (name + '-complete-subject-scope.json'),
+            require_temporal_ninth_subject_receipt(self.root / (name + '-complete-subject-scope.json'),
                 self.c[key],self.inputs,self.meta['database_revision'],ROOT)
             for suffix in ('scope-repairs','complete-subject-scope'):
                 actual=read(self.root/(name+'-'+suffix+'.json'))
@@ -279,13 +279,13 @@ class NominalScopePriorCoordinator(Coordinator):
         subject = original_extension.get('evidence',{}).get('complete-subject-scope')
         if not subject or digest(Path(subject['path'])) != subject['sha256']:
             raise ValueError('Actual public temporal complete-subject evidence is required')
-        subject_report=require_temporal_eighth_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        subject_report=require_temporal_ninth_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         if Path(subject_report['primary_snapshots_dir']).resolve()!=snapshots.resolve():
             raise ValueError('Public temporal subject audit must use fresh source snapshots')
         preservation = original_extension.get('evidence',{}).get('resumed-source-preservation')
         if not preservation or digest(Path(preservation['path'])) != preservation['sha256']:
             raise ValueError('Actual temporal raw source preservation evidence is required')
-        from structure_eighth_owned_source_guard import validate_source_preservation
+        from structure_ninth_owned_source_guard import validate_source_preservation
         validate_source_preservation(preservation['path'],database,self.c['baseline'],support.root/'source-row-digests.json',
             self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         return extension, report

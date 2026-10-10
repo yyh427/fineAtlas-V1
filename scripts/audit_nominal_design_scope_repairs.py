@@ -66,9 +66,13 @@ def allowed(relation, child_role, parent_role):
 
 def complete_fields(node):
     data = json.loads(node['data'])
-    return {(name, value) for container in (data, data.get('evidence_record', {}))
-            for name in ('description', 'wikidata_description', 'definition', 'wikipedia_intro', 'gloss')
-            if isinstance((value := container.get(name)), str) and value}
+    fields = {(name, value) for container in (data, data.get('evidence_record', {}))
+              for name in ('description', 'wikidata_description', 'definition', 'wikipedia_intro', 'gloss')
+              if isinstance((value := container.get(name)), str) and value}
+    if (isinstance(node.get('description'), str) and node['description'].strip()
+            and node['description'] not in {value for _, value in fields}):
+        fields.add(('description', node['description']))
+    return fields
 
 
 def check_witness(con, witness):
@@ -76,6 +80,14 @@ def check_witness(con, witness):
     if not node or sha(node['data']) != witness['data_sha256']:
         raise ValueError('Complete retained source object bytes differ')
     path = witness['field_path']
+    if witness.get('field_storage') == 'node_column':
+        value = node.get(path) if path == 'description' else None
+        if (not isinstance(value, str) or not value.strip() or value != witness['statement']
+                or witness.get('field_sha256') != sha(value)):
+            raise ValueError('Source column witness differs from the complete retained description')
+        return node
+    if witness.get('field_storage', 'node_data') != 'node_data':
+        raise ValueError('Unsupported retained source field storage')
     if not isinstance(path, (str, list)):
         raise ValueError('Explicit source field path required')
     parts = path.split('.') if isinstance(path, str) else path
@@ -177,8 +189,17 @@ def check_operation(con, inputs, manifest, op, post, operations=()):
         raise ValueError('Declared classification axis is incompatible with relation')
     child, parent = [row_at(con, 'nodes', op[k]) for k in ('uid', 'parent')]
     if (not child or not parent or any(n['visibility'] != 'ACTIVE' for n in (child, parent))
-            or child['component_id'] == parent['component_id']
-            or not allowed(op['relation'], role(con, child), role(con, parent))):
+            or child['component_id'] == parent['component_id']):
+        raise ValueError('Grounded distinct endpoints and compatible actual roles required')
+    endpoint_roles = []
+    for node in (child, parent):
+        planned = [o for o in operations if o['op'] == 'correct_role' and o['uid'] == node['uid']]
+        if len(planned) > 1:
+            raise ValueError('Duplicate planned endpoint role adjudication')
+        if planned:
+            check_role_operation(con, inputs, planned[0], post)
+        endpoint_roles.append(role(con, node) if post or not planned else planned[0]['after_profile']['node_kind'])
+    if not allowed(op['relation'], *endpoint_roles):
         raise ValueError('Grounded distinct endpoints and compatible actual roles required')
     for node, prefix in ((child, ''), (parent, 'parent_')):
         expected_profile = proof[prefix + 'before_profile']
@@ -370,14 +391,31 @@ def check_role_operation(con, inputs, op, post):
         'instance': 'INSTANCE', 'unknown': 'UNKNOWN', 'type_or_product_model': 'UNKNOWN',
         'biological_variant': 'BIOLOGICAL_VARIANT', 'dataset_category': 'DATASET_CATEGORY',
         'manufacturer': 'ORGANIZATION', 'attribute': 'ATTRIBUTE'}.get((node.get('rank') or '').lower(), 'CLASS')
-    approved = [r for r in review.get('approved_source_role_corrections', []) if r['uid'] == op['uid']]
+    if 'before_role' in proof and proof['before_role'] != before_role:
+        raise ValueError('Declared historical role differs from the actual original source grain')
+    target = op['after_profile']['node_kind']
+    old_decisions = [r for r in review.get('approved_source_role_corrections', []) if r['uid'] == op['uid']]
+    old_approved = (len(old_decisions) == 1 and old_decisions[0]['before_role'] == before_role
+                    and old_decisions[0]['source_role_scope_kind'] == target
+                    and old_decisions[0]['before_profile'] == before
+                    and old_decisions[0]['before_normalization'] == old_norm)
+    records = review.get('source_role_records') or review.get('complete_before_records') or {}
+    record = records.get(op['uid']) if isinstance(records, dict) else None
+    new_approved = (record is not None and [op['uid'], target] in review.get('approved_source_roles', [])
+                    and record.get('node') == proof['before_node']
+                    and record.get('node_profiles') == before
+                    and record.get('normalization_roles') == old_norm)
     if (sha(raw) != locator['sha256'] or review != proof['source_scope_review_record']
-            or review.get('accepted_source_scope_only') is not True or len(approved) != 1
-            or approved[0]['before_role'] != before_role
-            or approved[0]['source_role_scope_kind'] != op['after_profile']['node_kind']
-            or approved[0]['before_profile'] != op['before_profile']
-            or approved[0]['before_normalization'] != op['before_normalization_role']):
-        raise ValueError('Whole independent source grain verdict does not approve the role transition')
+            or review.get('accepted_source_scope_only') is not True
+            or not (old_approved or new_approved)):
+        raise ValueError('Whole independent source grain verdict does not approve the exact original role transition')
+    pending_decisions = [r for r in review.get('cases', []) if r.get('uid') == op['uid']]
+    if old_approved:
+        decision = old_decisions[0]
+    elif len(pending_decisions) == 1:
+        decision = pending_decisions[0]
+    else:
+        decision = review.get('source_role_decisions', {}).get(op['uid'], {})
     witnesses = proof['source_witnesses']
     for witness in witnesses:
         if witness['uid'] != op['uid']:
@@ -388,7 +426,7 @@ def check_role_operation(con, inputs, op, post):
         raise ValueError('Complete own role-source context omitted or changed')
     # Preserve source rank, first normalization history and every view limit.
     attrs = json.loads(before['attributes']) if before else {}
-    source_role = old_norm['source_role'] if old_norm else node.get('rank') or 'UNSPECIFIED'
+    source_role = old_norm['source_role'] if old_norm else attrs.get('source_role', node.get('rank') or 'UNSPECIFIED')
     native_rank = attrs.get('native_rank', node.get('rank'))
     target = op['after_profile']['node_kind']
     contracts = {
@@ -409,9 +447,9 @@ def check_role_operation(con, inputs, op, post):
                  role_status=declared[1], role_evidence_id=eid)
     attrs.pop('canonical_scope_guard', None); attrs.pop('canonical_scope_evidence_id', None)
     if target == 'UNKNOWN':
-        decision = approved[0]
         if (decision.get('after_role_status') != 'REVIEW' or decision.get('allowed_views') != []
-                or decision.get('quarantine_role_grain') is not True or proof.get('allowed_views') != []):
+                or decision.get('quarantine_role_grain') is not True or proof.get('allowed_views') != []
+                or (new_approved and proof.get('quarantine_role_grain') is not True)):
             raise ValueError('Pending grain requires explicit independent review-only view quarantine')
         attrs['allowed_views'] = []
     elif proof.get('allowed_views') is not None and proof['allowed_views'] != attrs.get('allowed_views'):
@@ -449,6 +487,30 @@ def check_role_operation(con, inputs, op, post):
             raise ValueError('Exact source-role before and after history missing or duplicated')
     return {'uid': op['uid'], 'parent': op['parent'], 'relation': op['relation'],
             'before_role': before_role, 'after_role': expected_profile['node_kind']}
+
+
+def check_role_connection_inventory(con, operations, post):
+    """A role change cannot silently abandon incompatible active classifiers."""
+    roles = {o['uid']: o['after_profile']['node_kind'] for o in operations if o['op'] == 'correct_role'}
+    reviewed = {o['before_assertion']['id']: o for o in operations if o['op'] == 'review_class_edge'}
+    for uid, target in roles.items():
+        for bridge in con.execute("SELECT * FROM bridges WHERE relation='SAME_CONCEPT' AND status='ACTIVE' AND (left_uid=? OR right_uid=?)", (uid, uid)):
+            other = bridge['right_uid'] if bridge['left_uid'] == uid else bridge['left_uid']
+            node = row_at(con, 'nodes', other)
+            if node and node['visibility'] == 'ACTIVE' and roles.get(other, role(con, node)) != target:
+                raise ValueError('Role adjudication leaves an actual identity peer at another grain: ' + uid)
+        for edge in con.execute("SELECT * FROM edges WHERE status IN ('ACTIVE','BACKBONE_ACTIVE') AND relation='IS_A' AND (child_uid=? OR parent_uid=?)", (uid, uid)):
+            if not post and edge['id'] in reviewed:
+                if dict(edge) != reviewed[edge['id']]['before_assertion']:
+                    raise ValueError('Planned withdrawal does not preserve the full actual class assertion')
+                continue
+            endpoints = [row_at(con, 'nodes', edge[k]) for k in ('child_uid', 'parent_uid')]
+            if not all(endpoints) or not allowed('IS_A', *[roles.get(n['uid'], role(con, n)) for n in endpoints]):
+                raise ValueError('Role change leaves an incompatible original active class assertion: ' + str(edge['id']))
+        for edge in con.execute("SELECT * FROM entity_relations WHERE status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','INSTANCE_OF') AND (subject_uid=? OR object_uid=?)", (uid, uid)):
+            endpoints = [row_at(con, 'nodes', edge[k]) for k in ('subject_uid', 'object_uid')]
+            if not all(endpoints) or not allowed(edge['relation'], *[roles.get(n['uid'], role(con, n)) for n in endpoints]):
+                raise ValueError('Role change leaves an incompatible original active typed assertion: ' + str(edge['id']))
 
 
 def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
@@ -518,6 +580,7 @@ def run(database, inputs, output, preflight=False, allow_unsealed_inputs=False):
         expanded = {r['uid'] for uid in affected for r in con.execute('SELECT uid FROM nodes WHERE component_id=(SELECT component_id FROM nodes WHERE uid=?)', (uid,))}
         if set(manifest['scope_inventories']) != expanded:
             raise ValueError('Full affected identity components were not inventoried')
+        check_role_connection_inventory(con, ops, not preflight)
         for uid in expanded:
             expected_inventory = json.loads(dump(manifest['scope_inventories'][uid]))
             for op in ops:

@@ -16,8 +16,8 @@ from structure_nominal_design_scope_delivery_guard import require_nominal_scope_
 from _download import digest
 from structure_primary_aircraft_delivery_guard import require_primary_aircraft_receipt
 from primary_source_snapshot_delivery import require_fresh_retrieval
-from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_regression_receipt as require_temporal_receipt
-from structure_eighth_subject_scope_temporal_contract import require_temporal_eighth_subject_receipt
+from structure_ninth_source_temporal_contract import require_temporal_ninth_regression_receipt as require_temporal_receipt
+from structure_ninth_source_temporal_contract import require_temporal_ninth_subject_receipt
 
 
 class FormalNominalScopeCoordinator(NominalDesignScopeCoordinator):
@@ -161,13 +161,13 @@ class FormalNominalScopeCoordinator(NominalDesignScopeCoordinator):
         subject = original_extension.get('evidence',{}).get('complete-subject-scope')
         if not subject or digest(Path(subject['path'])) != subject['sha256']:
             raise ValueError('Actual public temporal complete-subject evidence is required')
-        subject_report=require_temporal_eighth_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        subject_report=require_temporal_ninth_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         if Path(subject_report['primary_snapshots_dir']).resolve()!=snapshots.resolve():
             raise ValueError('Public temporal subject audit must use fresh source snapshots')
         preservation = original_extension.get('evidence',{}).get('resumed-source-preservation')
         if not preservation or digest(Path(preservation['path'])) != preservation['sha256']:
             raise ValueError('Actual temporal raw source preservation evidence is required')
-        from structure_eighth_owned_source_guard import validate_source_preservation
+        from structure_ninth_owned_source_guard import validate_source_preservation
         validate_source_preservation(preservation['path'],database,self.c['baseline'],support.root/'source-row-digests.json',
             self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         return extension, report

@@ -31,9 +31,20 @@ for k in ('release','database_revision','database_sha256'):
  if d[k]!=accepted[k]:raise RuntimeError('Accepted public artifact differs: '+k)
 env=dict(os.environ);env.pop('PYTHONPATH',None);env.pop('PYTHONOPTIMIZE',None);temp=a.output/'tmp';temp.mkdir(exist_ok=True);env.update(TMPDIR=str(temp),SQLITE_TMPDIR=str(temp),PYTHONPYCACHEPREFIX=str(temp/uuid.uuid4().hex),PYTHONDONTWRITEBYTECODE='1')
 def cmd(script,*args):
- if script in {'audit_eighth_owned_source_preservation.py','audit_temporal_eighth_structure_regression_repairs.py','audit_temporal_eighth_complete_subject_scope_repairs.py'}:args=(*args,'--primary-snapshots-dir',a.primary_snapshots_dir)
- if script in {'audit_eighth_owned_source_preservation.py','audit_eighth_source_contract_candidate.py','audit_temporal_cars_projection_view_repairs.py'}:args=(*args,'--owned-audit',a.output/'owned-scope-source-first.json','--complete-owned-audit',a.output/'complete-owned-type-source-first.json')
- return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]
+ values=list(args)
+ flags={}
+ if script in {'audit_ninth_owned_source_preservation.py','audit_temporal_ninth_structure_regression_repairs.py','audit_temporal_ninth_complete_subject_scope_repairs.py'}:
+  flags['--primary-snapshots-dir']=a.primary_snapshots_dir
+ if script in {'audit_ninth_owned_source_preservation.py','audit_ninth_source_contract_candidate.py','audit_temporal_ninth_cars_projection_view_repairs.py','audit_temporal_ninth_structure_regression_repairs.py','audit_temporal_ninth_complete_subject_scope_repairs.py'}:
+  flags.update({'--owned-audit':a.output/'owned-scope-source-first.json','--complete-owned-audit':a.output/'complete-owned-type-source-first.json','--nominal-scope-audit':a.output/'nominal-design-scope-source-first.json'})
+ if script=='audit_temporal_ninth_owned_scope_repairs.py':
+  flags['--nominal-scope-audit']=a.output/'nominal-design-scope-source-first.json'
+ for flag,path in flags.items():
+  if values.count(flag)>1:raise ValueError('Duplicate public source evidence flag: '+flag)
+  if flag in values:
+   if pathlib.Path(values[values.index(flag)+1]).resolve()!=pathlib.Path(path).resolve():raise ValueError('Mismatched public source evidence: '+flag)
+  else:values.extend([flag,path])
+ return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,values)]
 nominal_first=cmd('audit_nominal_design_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'nominal-design-scope-source-first.json')
 with (a.output/'nominal-design-scope-source-first.log').open('w') as stream:
  subprocess.run(nominal_first,env=env,cwd=a.code,stdout=stream,stderr=subprocess.STDOUT,check=True)
@@ -44,28 +55,28 @@ with (a.output/'complete-owned-type-source-first.log').open('w') as stream:
  subprocess.run(complete_first,env=env,cwd=a.code,stdout=stream,stderr=subprocess.STDOUT,check=True)
 from structure_ninth_complete_type_temporal_contract import require_complete_type_receipt
 require_complete_type_receipt(a.output/'complete-owned-type-source-first.json',a.database,a.inputs,d['database_revision'],a.code)
-owned_first=cmd('audit_temporal_eighth_owned_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'owned-scope-source-first.json','--complete-owned-audit',a.output/'complete-owned-type-source-first.json','--primary-snapshots-dir',a.primary_snapshots_dir)
+owned_first=cmd('audit_temporal_ninth_owned_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'owned-scope-source-first.json','--complete-owned-audit',a.output/'complete-owned-type-source-first.json','--primary-snapshots-dir',a.primary_snapshots_dir)
 with (a.output/'owned-scope-source-first.log').open('w') as stream:
  subprocess.run(owned_first,env=env,cwd=a.code,stdout=stream,stderr=subprocess.STDOUT,check=True)
-from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_owned_scope_receipt as require_owned_scope_receipt
+from structure_ninth_owned_scope_temporal_contract import require_temporal_ninth_owned_scope_receipt as require_owned_scope_receipt
 require_owned_scope_receipt(a.output/'owned-scope-source-first.json',a.database,a.inputs,d['database_revision'],a.code)
 jobs={
- 'resumed-source-preservation':cmd('audit_eighth_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,'--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'resumed-source-preservation.json'),
+ 'resumed-source-preservation':cmd('audit_ninth_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,'--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'resumed-source-preservation.json'),
  'installed-sdk':cmd('verify_unified_install.py','--database',a.database,'--manifest',a.manifest,'--expected-validation',a.expected,'--output',a.output/'installed-sdk'),
  'full-six-matrix':cmd('audit_structure_rewards.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'matrix','--installed-sdk'),
  'living':cmd('audit_living_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'living','--installed-sdk'),
  'whole-library':cmd('audit_structure_library.py','--baseline',a.baseline,'--database',a.database,'--inventory',a.inventory,'--output',a.output/'whole-library','--installed-sdk'),
  'public-cli':cmd('audit_browse_cli.py','--database',a.database,'--output',a.output/'public-cli','--installed-sdk'),
- 'regression-repairs':cmd('audit_temporal_eighth_structure_regression_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'regression-repairs.json'),
- 'source-contracts':cmd('audit_eighth_source_contract_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'source-contracts'),
+ 'regression-repairs':cmd('audit_temporal_ninth_structure_regression_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'regression-repairs.json'),
+ 'source-contracts':cmd('audit_ninth_source_contract_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'source-contracts'),
 }
 sys.path.insert(0,str(a.code/'scripts'))
 from structure_delivery_oem_guard import optional_oem_input, validate_oem_receipt
 from structure_delivery_delta_registry import required_deltas, validate_delta_receipt
 registered=required_deltas(a.inputs,a.code)
 from dataclasses import replace
-from structure_eighth_subject_scope_temporal_contract import require_temporal_eighth_subject_receipt
-registered=[replace(spec,auditor='audit_temporal_eighth_complete_subject_scope_repairs.py') if spec.name=='complete-subject-scope' else replace(spec,auditor='audit_temporal_cars_projection_view_repairs.py') if spec.name=='cars-projection-view' else spec for spec in registered]
+from structure_ninth_source_temporal_contract import require_temporal_ninth_subject_receipt
+registered=[replace(spec,auditor='audit_temporal_ninth_complete_subject_scope_repairs.py') if spec.name=='complete-subject-scope' else replace(spec,auditor='audit_temporal_ninth_cars_projection_view_repairs.py') if spec.name=='cars-projection-view' else spec for spec in registered]
 for spec in registered:jobs[spec.name]=cmd(spec.auditor,'--database',a.database,'--inputs',a.inputs,'--output',a.output/(spec.name+'.json'))
 oem_input=optional_oem_input(a.inputs,a.code)
 if oem_input is not None:jobs['oem-body-scope']=cmd('audit_oem_body_scope_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'oem-body-scope.json')
@@ -101,10 +112,10 @@ files={'download':download,'installed-sdk':a.output/'installed-sdk/external_vali
 for name in accepted.get('supplemental_audits',{}):files[name]=a.output/name/SUPPLEMENTAL_AUDITS[name]['report']
 proof={k:accepted[k] for k in ('release','database_revision','database_sha256')};proof.update(all_pass=True,public_download_unauthenticated=True,matching_installed_sdk=True,ended_utc=utc(),evidence={n:{'path':str(q),'sha256':digest(q),'pass':True} for n,q in files.items()})
 sys.path.insert(0,str(a.code/'scripts'));from structure_acceptance_contract import validate_public_evidence
-from structure_eighth_owned_scope_temporal_contract import require_temporal_eighth_regression_receipt
+from structure_ninth_source_temporal_contract import require_temporal_ninth_regression_receipt
 from structure_biology_temporal_contract import require_temporal_biology_receipt
 if 'biology-version-scope' in files:require_temporal_biology_receipt(files['biology-version-scope'],a.database,a.inputs,d['database_revision'],a.code)
-require_temporal_eighth_regression_receipt(a.output/'regression-repairs.json',a.database,a.inputs,d['database_revision'],a.code)
+require_temporal_ninth_regression_receipt(a.output/'regression-repairs.json',a.database,a.inputs,d['database_revision'],a.code)
 q=a.output/'public_verification.json';validate_public_evidence(proof,accepted,q);write(q,proof)
 extension={'schema':'FINEATLAS_RESUMED_PUBLIC_EXTENSION_V1','pass':True,'database':str(a.database),'database_revision':d['database_revision'],'database_sha256':d['database_sha256'],'artifact_stamp':start_stamp,'parent_independence':parent_proof,'ended_utc':utc(),'evidence':{n:{'path':str(q),'sha256':digest(q)} for n,q in {'regression-repairs':a.output/'regression-repairs.json','legacy-regressions':a.output/'legacy-regressions/summary.json','sdk-and-input-downloads':a.database.parent.parent/'public_dependency_downloads.json'}.items()}}
 if oem_input is not None:
@@ -113,9 +124,9 @@ if oem_input is not None:
 for spec in registered:
  report=a.output/(spec.name+'.json')
  validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)
- if spec.name=='complete-subject-scope':require_temporal_eighth_subject_receipt(report,a.database,a.inputs,d['database_revision'],a.code)
+ if spec.name=='complete-subject-scope':require_temporal_ninth_subject_receipt(report,a.database,a.inputs,d['database_revision'],a.code)
  extension['evidence'][spec.name]={'path':str(report),'sha256':digest(report)}
-from structure_eighth_owned_source_guard import validate_source_preservation
+from structure_ninth_owned_source_guard import validate_source_preservation
 source_report=a.output/'resumed-source-preservation.json'
 validate_source_preservation(source_report,a.database,a.baseline,a.reference,a.inputs,d['database_revision'],a.code)
 extension['evidence']['resumed-source-preservation']={'path':str(source_report),'sha256':digest(source_report)}

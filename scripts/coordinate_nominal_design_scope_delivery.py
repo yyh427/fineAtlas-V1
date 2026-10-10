@@ -57,30 +57,57 @@ class NominalDesignScopeCoordinator(NominalScopePriorCoordinator):
                 if database != Path(self.c['database' if name == 'primary' else 'reproduction']).resolve():
                     raise ValueError('Temporal audit requires one actual child database')
                 nominal = self.root / (name + '-nominal-design-scope.json')
-            values = (*values, '--nominal-scope-audit', nominal)
+            values = list(values)
+            if values.count('--nominal-scope-audit') > 1:
+                raise ValueError('Duplicate current nominal source evidence flag')
+            if '--nominal-scope-audit' in values:
+                if Path(values[values.index('--nominal-scope-audit') + 1]).resolve() != nominal.resolve():
+                    raise ValueError('Mismatched current nominal source evidence flag')
+            else:
+                values.extend(['--nominal-scope-audit', nominal])
             return Coordinator.cmd(self, 'audit_temporal_ninth_complete_owned_type_repairs.py', *values, python=python)
         if script == 'accept_resumed_structure_candidate.py':
             values = (*values, '--primary-snapshots-dir', self.primary_snapshots_directory(),
                       '--owned-scope-audit', self.root / 'primary-owned-scope.json',
-                      '--complete-owned-audit', self.root / 'primary-complete-owned-type.json')
+                      '--complete-owned-audit', self.root / 'primary-complete-owned-type.json',
+                      '--nominal-scope-audit', self.root / 'primary-nominal-design-scope.json')
             return Coordinator.cmd(self, 'accept_nominal_design_scope_candidate.py', *values, python=python)
-        if script == 'audit_cars_projection_view_repairs.py':
-            database = Path(values[values.index('--database')+1]).resolve()
+        current_source_scripts = {
+            'audit_structure_regression_repairs.py': 'audit_temporal_ninth_structure_regression_repairs.py',
+            'audit_complete_subject_scope_repairs.py': 'audit_temporal_ninth_complete_subject_scope_repairs.py',
+            'audit_owned_scope_repairs.py': 'audit_temporal_ninth_owned_scope_repairs.py',
+            'audit_cars_projection_view_repairs.py': 'audit_temporal_ninth_cars_projection_view_repairs.py',
+        }
+        if script in current_source_scripts:
+            database = Path(values[values.index('--database') + 1]).resolve()
             if python:
                 owned = self.root / 'public/checks/owned-scope-source-first.json'
                 complete = self.root / 'public/checks/complete-owned-type-source-first.json'
+                nominal = self.root / 'public/checks/nominal-design-scope-source-first.json'
+                snapshots = self.root / 'public/source-snapshots'
             else:
                 name = 'primary' if database == Path(self.c['database']).resolve() else 'reproduction'
-                if database != Path(self.c['database' if name=='primary' else 'reproduction']).resolve():
-                    raise ValueError('A temporal source command must identify one actual child database')
-                owned = self.root / (name+'-owned-scope.json')
-                complete = self.root / (name+'-complete-owned-type.json')
-            values = (*values, '--owned-audit', owned, '--complete-owned-audit', complete)
-            return Coordinator.cmd(self, 'audit_temporal_cars_projection_view_repairs.py', *values, python=python)
-        if script == 'audit_complete_subject_scope_repairs.py':
-            snapshots = self.root / 'public/source-snapshots' if python else self.primary_snapshots_directory()
-            values = (*values, '--primary-snapshots-dir', snapshots)
-            return Coordinator.cmd(self, 'audit_temporal_eighth_complete_subject_scope_repairs.py', *values, python=python)
+                if database != Path(self.c['database' if name == 'primary' else 'reproduction']).resolve():
+                    raise ValueError('Current source executor requires one exact final database')
+                owned = self.root / (name + '-owned-scope.json')
+                complete = self.root / (name + '-complete-owned-type.json')
+                nominal = self.root / (name + '-nominal-design-scope.json')
+                snapshots = self.primary_snapshots_directory()
+            values = list(values)
+            bindings = {'--complete-owned-audit': complete, '--nominal-scope-audit': nominal}
+            if script != 'audit_owned_scope_repairs.py':
+                bindings['--owned-audit'] = owned
+            if script != 'audit_cars_projection_view_repairs.py':
+                bindings['--primary-snapshots-dir'] = snapshots
+            for flag, value in bindings.items():
+                if values.count(flag) > 1:
+                    raise ValueError('Duplicate current source evidence flag: ' + flag)
+                if flag in values:
+                    if Path(values[values.index(flag) + 1]).resolve() != Path(value).resolve():
+                        raise ValueError('Mismatched current source evidence flag: ' + flag)
+                else:
+                    values.extend([flag, value])
+            return Coordinator.cmd(self, current_source_scripts[script], *values, python=python)
         return super().cmd(script, *values, python=python)
 
     def validate_child_builds(self):

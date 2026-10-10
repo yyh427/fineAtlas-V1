@@ -72,6 +72,12 @@ class IndependentSourceGrain(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unrelated profile'):
             A.check_role_operation(self.c, self.inputs, op, False)
 
+    def test_missing_profile_cannot_invent_a_previous_verified_role(self):
+        op = self.operation()
+        op['proof']['before_role'] = 'MODEL_FAMILY'
+        with self.assertRaisesRegex(ValueError, 'historical role'):
+            A.check_role_operation(self.c, self.inputs, op, False)
+
     def test_pending_grain_cannot_claim_verified_or_expand_views(self):
         op = self.operation('UNKNOWN')
         A.check_role_operation(self.c, self.inputs, op, False)
@@ -90,6 +96,43 @@ class IndependentSourceGrain(unittest.TestCase):
                  'evidence_id': '', 'attributes': A.dump({'allowed_views': ['taxonomy']})}
         op = self.operation('MODEL', prior, [])
         with self.assertRaisesRegex(ValueError, 'loosen source view'):
+            A.check_role_operation(self.c, self.inputs, op, False)
+
+    def use_retained_source_approval(self, op, pending=False):
+        target = op['after_profile']['node_kind']
+        record = {'node': self.node, 'node_profiles': op['before_profile'],
+                  'normalization_roles': None, 'edges': [], 'entity_relations': [], 'bridges': []}
+        review = {'accepted_source_scope_only': True, 'approved_source_roles': [[self.node['uid'], target]],
+                  ('complete_before_records' if pending else 'source_role_records'): {self.node['uid']: record}}
+        if pending:
+            review['cases'] = [{'uid': self.node['uid'], 'after_role_status': 'REVIEW',
+                                'allowed_views': [], 'quarantine_role_grain': True}]
+            op['proof']['quarantine_role_grain'] = True
+        raw = A.dump(review); (self.inputs/'review.json').write_text(raw)
+        op['proof']['source_scope_review_record'] = review
+        op['proof']['source_review_locator']['sha256'] = A.sha(raw)
+        eid = 'usability:' + A.sha(A.dump(op['proof']))
+        op['after_profile']['evidence_id'] = eid
+        attrs = __import__('json').loads(op['after_profile']['attributes'])
+        attrs['role_evidence_id'] = eid
+        op['after_profile']['attributes'] = A.dump(attrs)
+        op['after_normalization_role']['evidence_id'] = eid
+
+    def test_source_peer_approval_keeps_original_none_records(self):
+        op = self.operation(); self.use_retained_source_approval(op)
+        A.check_role_operation(self.c, self.inputs, op, False)
+        review = op['proof']['source_scope_review_record']
+        review['source_role_records'][self.node['uid']]['node_profiles'] = {'node_kind': 'CLASS'}
+        raw = A.dump(review); (self.inputs/'review.json').write_text(raw)
+        op['proof']['source_review_locator']['sha256'] = A.sha(raw)
+        with self.assertRaisesRegex(ValueError, 'exact original role'):
+            A.check_role_operation(self.c, self.inputs, op, False)
+
+    def test_pending_peer_case_requires_exact_quarantine_flag(self):
+        op = self.operation('UNKNOWN'); self.use_retained_source_approval(op, pending=True)
+        A.check_role_operation(self.c, self.inputs, op, False)
+        op['proof']['quarantine_role_grain'] = False
+        with self.assertRaisesRegex(ValueError, 'quarantine'):
             A.check_role_operation(self.c, self.inputs, op, False)
 
     def test_individual_relationship_is_separate_from_class_or_family_inclusion(self):
