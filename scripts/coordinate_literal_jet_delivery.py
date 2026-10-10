@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extend the unchanged delivery coordinator with mandatory fifth and sixth delta gates.
+"""Extend the unchanged delivery coordinator with mandatory fifth, sixth and seventh delta gates.
 
 Uses normal subclass extension and explicit delegation. Old local/public checks,
 receipts and exact public evidence keys remain intact. No registry changes and
@@ -14,6 +14,7 @@ from coordinate_structure_delivery import Coordinator, ROOT, lease, metadata, re
 from structure_acceptance_contract import validate_public_evidence
 from structure_literal_jet_delivery_guard import SPEC, require_literal_jet_receipt, require_literal_jet_child_build
 from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, require_primary_aircraft_receipt
+from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC, require_owned_scope_receipt
 
 
 class LiteralJetCoordinator(Coordinator):
@@ -38,6 +39,8 @@ class LiteralJetCoordinator(Coordinator):
                 Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
             require_primary_aircraft_receipt(self.root / (name + '-primary-aircraft-family.json'),
                 Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
+            require_owned_scope_receipt(self.root / (name + '-owned-scope.json'),
+                Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
 
     def accepted(self):
         accepted = super().accepted()
@@ -60,8 +63,20 @@ class LiteralJetCoordinator(Coordinator):
                 self.execute(name + '-primary-aircraft-family', self.cmd(FAMILY_SPEC.auditor,
                     '--database',self.c[key],'--inputs',self.inputs,'--output',report))
             require_primary_aircraft_receipt(report,Path(self.c[key]),self.inputs,self.meta['database_revision'],ROOT)
+        for name, key in (('primary','database'),('reproduction','reproduction')):
+            report = self.root / (name + '-owned-scope.json')
+            if not report.exists():
+                self.execute(name + '-owned-scope', self.cmd(OWNED_SPEC.auditor,
+                    '--database',self.c[key],'--inputs',self.inputs,'--output',report))
+            require_owned_scope_receipt(report,Path(self.c[key]),self.inputs,self.meta['database_revision'],ROOT)
         super().local()
-        write(self.root / 'primary_aircraft_local_extension.json', {
+        write(self.root / 'owned_scope_local_extension.json', {
+            'schema':'FINEATLAS_OWNED_SCOPE_LOCAL_EXTENSION_V1','pass':True,
+            'revision':self.meta['database_revision'],'fingerprints':self.fingerprints,
+            'evidence':{name:{'path':str(self.root / (name + '-owned-scope.json')),
+                              'sha256':digest(self.root / (name + '-owned-scope.json'))}
+                        for name in ('primary','reproduction')}})
+        write(self.root / 'primary_aircraft_local_extension.json' , {
             'schema':'FINEATLAS_PRIMARY_AIRCRAFT_LOCAL_EXTENSION_V1','pass':True,
             'revision':self.meta['database_revision'],'fingerprints':self.fingerprints,
             'evidence':{name:{'path':str(self.root / (name + '-primary-aircraft-family.json')),
@@ -138,6 +153,29 @@ class LiteralJetCoordinator(Coordinator):
             self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         return extension, report
 
+    def validate_public_owned(self):
+        primary, _ = self.validate_public_primary()
+        extension = read(self.root / 'public/checks/owned_scope_public_extension.json')
+        database = self.root / 'public/data/fineatlas.sqlite'
+        if (extension.get('schema') != 'FINEATLAS_OWNED_SCOPE_PUBLIC_EXTENSION_V1'
+                or extension.get('pass') is not True
+                or extension.get('database_revision') != primary['database_revision']
+                or extension.get('database_sha256') != primary['database_sha256']
+                or Path(extension.get('database','')).resolve() != database.resolve()
+                or extension.get('primary_aircraft_public_extension_sha256') != digest(self.root / 'public/checks/primary_aircraft_public_extension.json')
+                or extension.get('original_public_verification_sha256') != primary['original_public_verification_sha256']):
+            raise ValueError('Complete actual public seventh-delta evidence is required')
+        evidence = extension.get('evidence',{}).get('owned-scope')
+        if not evidence or digest(Path(evidence['path'])) != evidence['sha256']:
+            raise ValueError('Actual public owned-scope report is absent or changed')
+        if extension.get('evidence',{}).get('installed-sdk-inventory') != primary['evidence']['installed-sdk-inventory']:
+            raise ValueError('Owned-scope delta requires the same actual complete installed SDK proof')
+        if 'src/fineatlas/structure_owned_scope_repairs.py' not in self.fingerprints['code']:
+            raise ValueError('Owned-scope adapter is absent from the actual frozen SDK inventory')
+        report = require_owned_scope_receipt(Path(evidence['path']),database,
+            self.root / 'public/frozen/inputs',primary['database_revision'],ROOT)
+        return extension, report
+
     def public(self):
         self.validate_local_fifth()
         prior_proof = self.root / 'public/checks/public_verification.json'
@@ -190,9 +228,24 @@ class LiteralJetCoordinator(Coordinator):
             'evidence':{'primary-aircraft-family':{'path':str(family_report),'sha256':digest(family_report)},
                         'installed-sdk-inventory':extension['evidence']['installed-sdk-inventory']}})
         self.validate_public_primary()
+        owned_report = self.root / 'public/checks/owned-scope.json'
+        if not owned_report.exists():
+            self.execute('public-owned-scope',self.cmd(OWNED_SPEC.auditor,
+                '--database',database,'--inputs',inputs,'--output',owned_report,
+                python=self.root / 'public/venv/bin/python'))
+        require_owned_scope_receipt(owned_report,database,inputs,self.meta['database_revision'],ROOT)
+        write(self.root / 'public/checks/owned_scope_public_extension.json', {
+            'schema':'FINEATLAS_OWNED_SCOPE_PUBLIC_EXTENSION_V1','pass':True,
+            'database':str(database.resolve()),'database_revision':accepted['database_revision'],
+            'database_sha256':accepted['database_sha256'],
+            'original_public_verification_sha256':digest(prior_proof),
+            'primary_aircraft_public_extension_sha256':digest(self.root / 'public/checks/primary_aircraft_public_extension.json'),
+            'evidence':{'owned-scope':{'path':str(owned_report),'sha256':digest(owned_report)},
+                        'installed-sdk-inventory':extension['evidence']['installed-sdk-inventory']}})
+        self.validate_public_owned()
 
     def finalize(self):
-        self.validate_public_primary()
+        self.validate_public_owned()
         super().finalize()
         write(self.root / 'literal_jet_finalized_extension.json', {
             'schema':'FINEATLAS_LITERAL_JET_FINALIZED_EXTENSION_V1','pass':True,
@@ -202,6 +255,10 @@ class LiteralJetCoordinator(Coordinator):
             'schema':'FINEATLAS_PRIMARY_AIRCRAFT_FINALIZED_EXTENSION_V1','pass':True,
             'database_revision':self.meta['database_revision'],
             'public_extension_sha256':digest(self.root / 'public/checks/primary_aircraft_public_extension.json')})
+        write(self.root / 'owned_scope_finalized_extension.json', {
+            'schema':'FINEATLAS_OWNED_SCOPE_FINALIZED_EXTENSION_V1','pass':True,
+            'database_revision':self.meta['database_revision'],
+            'public_extension_sha256':digest(self.root / 'public/checks/owned_scope_public_extension.json')})
 
 
 if __name__ == '__main__':

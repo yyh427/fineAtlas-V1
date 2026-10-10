@@ -21,7 +21,7 @@ def require_literal_jet_receipt(report, database, inputs, revision, code_root):
 
 
 CHILD_STAGES = ("verify_completed_resumed_parent_copy", "literal_jet_scope_repairs",
-                "primary_aircraft_family_repairs", "whole_graph_recomputation", "freeze_metadata", "browse_staging", "embed_browse_indexes")
+                "primary_aircraft_family_repairs", "owned_scope_repairs", "whole_graph_recomputation", "freeze_metadata", "browse_staging", "embed_browse_indexes")
 
 
 def require_literal_jet_child_build(receipt_path):
@@ -32,7 +32,7 @@ def require_literal_jet_child_build(receipt_path):
             or value.get('complete') is not True or value.get('pass') is not True
             or not value.get('build_id') or not value.get('ended_utc')
             or value.get('required_stages') != list(CHILD_STAGES)):
-        raise ValueError('Complete actual seven-stage literal-jet child build required')
+        raise ValueError('Complete actual eight-stage literal-jet child build required')
     for name in ('started_fingerprints', 'build_status'):
         path = receipt_path.parent / (name + '.json')
         if digest(path) != value.get(name + '_sha256'):

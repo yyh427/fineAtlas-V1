@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append the two frozen aircraft deltas to completed independent resumed parents.
+"""Append the frozen aircraft and owned-scope deltas to completed independent resumed parents.
 
 No original source or prior repair stage is replayed. Preserve the original
 structure_resume_parent adjudication lineage while recording this new layer
@@ -41,7 +41,7 @@ from resume_structure_repairs import (STAGES as PARENT_STAGES,
     validate_resumed_parent_independence, verify_parent_byte_copy)
 
 STAGES = ("verify_completed_resumed_parent_copy", "literal_jet_scope_repairs",
-          "primary_aircraft_family_repairs", "whole_graph_recomputation", "freeze_metadata", "browse_staging", "embed_browse_indexes")
+          "primary_aircraft_family_repairs", "owned_scope_repairs", "whole_graph_recomputation", "freeze_metadata", "browse_staging", "embed_browse_indexes")
 
 
 def read_metadata(database):
@@ -101,7 +101,8 @@ def main():
         setattr(args, name, path.resolve())
     from structure_literal_jet_delivery_guard import SPEC, input_path
     from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC
-    for spec in (SPEC, FAMILY_SPEC):
+    from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC
+    for spec in (SPEC, FAMILY_SPEC, OWNED_SPEC):
         if input_path(spec, args.inputs, ROOT) is None:
             raise ValueError("Child requires its sealed frozen input: " + spec.name)
     fingerprints, context = start_build(args.inputs, args.reports)
@@ -179,7 +180,19 @@ def main():
         return result
 
     stage("primary_aircraft_family_repairs", apply_sixth)
+    family_metadata = read_metadata(args.database)['primary_aircraft_family_repairs']
+    from fineatlas.structure_owned_scope_repairs import apply_owned_scope_repairs
+
+    def apply_seventh():
+        result = apply_owned_scope_repairs(migration)
+        if result.get("status") != "PASS":
+            raise ValueError("Actual owned-scope delta was not applied")
+        return result
+
+    stage("owned_scope_repairs", apply_seventh)
     current = read_metadata(args.database)
+    if current.get('primary_aircraft_family_repairs') != family_metadata:
+        raise ValueError('Owned-scope delta changed the independent primary-aircraft binding')
     if current.get('literal_jet_scope_repairs') != literal_metadata:
         raise ValueError('Primary-aircraft delta changed the independent literal-jet binding')
     mutable_readiness = {'usability_indexes_ready', 'unified_ready', 'browse_indexes_ready'}

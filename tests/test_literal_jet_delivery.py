@@ -17,6 +17,7 @@ import test_structure_delivery_oem_guard as controls
 import verify_literal_jet_installed_sdk as installed
 from structure_literal_jet_delivery_guard import require_literal_jet_child_build, CHILD_STAGES
 from structure_primary_aircraft_delivery_guard import SPEC as FAMILY_SPEC, require_primary_aircraft_receipt
+from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC, require_owned_scope_receipt
 
 
 class FifthReceiptGuards(controls.OEMEvidenceGuards):
@@ -46,7 +47,7 @@ class FifthReceiptGuards(controls.OEMEvidenceGuards):
     def test_promotion_cannot_bypass_actual_fifth_public_proof(self):
         with patch.object(promotion,'LiteralJetCoordinator') as factory:
             factory.return_value.c={'database':'/candidate'}; factory.return_value.inputs=Path('/inputs')
-            factory.return_value.validate_public_primary.side_effect=ValueError('missing actual public fifth')
+            factory.return_value.validate_public_owned.side_effect=ValueError('missing actual public fifth')
             with patch.object(promotion.subprocess,'run') as old:
                 with self.assertRaisesRegex(ValueError,'missing actual'):
                     promotion.main(['--literal-jet-delivery-config','config','--source','/candidate','--source-inputs','/inputs'])
@@ -78,12 +79,18 @@ class ChildAndInstalledSdkGuards(unittest.TestCase):
     def test_completed_six_stage_child_passes(self):
         self.assertTrue(require_literal_jet_child_build(self.child(CHILD_STAGES))['pass'])
     def test_old_nine_stage_parent_cannot_impersonate_child(self):
-        with self.assertRaisesRegex(ValueError,'seven-stage'): require_literal_jet_child_build(self.child(resume.PARENT_STAGES))
+        with self.assertRaisesRegex(ValueError,'eight-stage'): require_literal_jet_child_build(self.child(resume.PARENT_STAGES))
     def test_previous_six_stage_child_without_sixth_delta_rejected(self):
         stages=tuple(x for x in CHILD_STAGES if x!='primary_aircraft_family_repairs')
-        with self.assertRaisesRegex(ValueError,'seven-stage'): require_literal_jet_child_build(self.child(stages))
+        with self.assertRaisesRegex(ValueError,'eight-stage'): require_literal_jet_child_build(self.child(stages))
     def test_missing_sixth_sdk_module_cannot_pass(self):
         package,frozen=self.inventory(); (package/'structure_primary_aircraft_family_repairs.py').unlink()
+        with self.assertRaisesRegex(ValueError,'complete frozen'): installed.verify_source_inventory(package,self.root/'venv',frozen)
+    def test_previous_seven_stage_child_without_owned_scope_rejected(self):
+        stages=tuple(x for x in CHILD_STAGES if x!='owned_scope_repairs')
+        with self.assertRaisesRegex(ValueError,'eight-stage'): require_literal_jet_child_build(self.child(stages))
+    def test_missing_owned_scope_sdk_module_cannot_pass(self):
+        package,frozen=self.inventory(); (package/'structure_owned_scope_repairs.py').unlink()
         with self.assertRaisesRegex(ValueError,'complete frozen'): installed.verify_source_inventory(package,self.root/'venv',frozen)
     def test_partial_actual_child_rejected(self):
         path=self.child(CHILD_STAGES); status=self.root/'build_status.json'; data=json.loads(status.read_text()); data['literal_jet_scope_repairs']['status']='RUNNING'; status.write_text(json.dumps(data))
@@ -91,11 +98,11 @@ class ChildAndInstalledSdkGuards(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Every actual'): require_literal_jet_child_build(path)
     def inventory(self):
         package=self.root/'venv/lib/site-packages/fineatlas'; package.mkdir(parents=True)
-        for name in ('__init__.py','structure_literal_jet_scope_repairs.py','structure_primary_aircraft_family_repairs.py'): (package/name).write_text('# actual installed source\n')
+        for name in ('__init__.py','structure_literal_jet_scope_repairs.py','structure_primary_aircraft_family_repairs.py','structure_owned_scope_repairs.py'): (package/name).write_text('# actual installed source\n')
         frozen={'src/fineatlas/'+p.name:resume.digest_file(p) for p in package.glob('*.py')}
         return package,frozen
     def test_complete_installed_fifth_source_inventory_passes(self):
-        package,frozen=self.inventory(); self.assertEqual(len(installed.verify_source_inventory(package,self.root/'venv',frozen)),3)
+        package,frozen=self.inventory(); self.assertEqual(len(installed.verify_source_inventory(package,self.root/'venv',frozen)),4)
     def test_missing_new_sdk_module_cannot_pass(self):
         package,frozen=self.inventory(); (package/'structure_literal_jet_scope_repairs.py').unlink()
         with self.assertRaisesRegex(ValueError,'complete frozen'): installed.verify_source_inventory(package,self.root/'venv',frozen)
@@ -171,9 +178,57 @@ class SixthReceiptGuards(controls.OEMEvidenceGuards):
     def test_stable_wrapper_requires_actual_sixth_public_evidence(self):
         with patch.object(promotion,'LiteralJetCoordinator') as factory:
             factory.return_value.c={'database':'/candidate'}; factory.return_value.inputs=Path('/inputs')
-            factory.return_value.validate_public_primary.side_effect=ValueError('missing actual sixth public')
+            factory.return_value.validate_public_owned.side_effect=ValueError('missing actual sixth public')
             with patch.object(promotion.subprocess,'run') as old:
                 with self.assertRaisesRegex(ValueError,'missing actual sixth'):
+                    promotion.main(['--literal-jet-delivery-config','config','--source','/candidate','--source-inputs','/inputs'])
+                old.assert_not_called()
+
+
+class OwnedScopeReceiptGuards(controls.OEMEvidenceGuards):
+    def setUp(self):
+        super().setUp(); self.spec=OWNED_SPEC
+        module=self.code/OWNED_SPEC.module; module.parent.mkdir(parents=True,exist_ok=True)
+        module.write_text("INPUT_NAME = 'renamed-oem-repairs.json'\n")
+        self.value['schema']=OWNED_SPEC.schema; self.report.write_text(json.dumps(self.value))
+        with sqlite3.connect(self.database) as c:
+            c.execute('INSERT INTO metadata VALUES(?,?)',(OWNED_SPEC.metadata_key,json.dumps({'manifest_sha256':self.value['manifest_sha256'],'operations_sha256':self.value['operations_sha256'],'operation_count':1})))
+    def validate(self): return require_owned_scope_receipt(self.report,self.database,self.inputs,'actual-revision',self.code)
+    def test_absent_optional_input_requires_no_receipt(self):
+        self.manifest.unlink()
+        with self.assertRaisesRegex(ValueError,'frozen seventh'): self.validate()
+    def test_sixth_receipt_cannot_satisfy_owned_scope_contract(self):
+        self.value['schema']=FAMILY_SPEC.schema; self.report.write_text(json.dumps(self.value))
+        with self.assertRaisesRegex(ValueError,'Complete actual'): self.validate()
+    def test_old_parent_without_applied_owned_scope_metadata_rejected(self):
+        with sqlite3.connect(self.database) as c: c.execute('DELETE FROM metadata WHERE key=?',(OWNED_SPEC.metadata_key,))
+        with self.assertRaisesRegex(ValueError,'applied delta'): self.validate()
+    def test_package_requires_owned_scope_after_first_two_deltas_pass(self):
+        coordinator=delivery.LiteralJetCoordinator.__new__(delivery.LiteralJetCoordinator)
+        coordinator.root=self.root; coordinator.c={'database':str(self.database),'reproduction':str(self.database)}
+        coordinator.inputs=self.inputs; coordinator.meta={'database_revision':'actual-revision'}
+        with patch.object(coordinator,'validate_child_builds'), patch.object(delivery,'ROOT',self.code), patch.object(delivery,'require_literal_jet_receipt',return_value={'pass':True}), patch.object(delivery,'require_primary_aircraft_receipt',return_value={'pass':True}), patch.object(delivery.Coordinator,'package') as old:
+            with self.assertRaises(FileNotFoundError): coordinator.package()
+            old.assert_not_called()
+    def test_public_requires_owned_scope_after_first_two_deltas_pass(self):
+        coordinator=delivery.LiteralJetCoordinator.__new__(delivery.LiteralJetCoordinator)
+        coordinator.root=self.root; coordinator.c={'database':str(self.database),'reproduction':str(self.database)}
+        coordinator.inputs=self.inputs; coordinator.meta={'database_revision':'actual-revision'}
+        with patch.object(coordinator,'validate_child_builds'), patch.object(delivery,'ROOT',self.code), patch.object(delivery,'require_literal_jet_receipt',return_value={'pass':True}), patch.object(delivery,'require_primary_aircraft_receipt',return_value={'pass':True}), patch.object(delivery.Coordinator,'public') as old:
+            with self.assertRaises(FileNotFoundError): coordinator.public()
+            old.assert_not_called()
+    def test_finalize_blocks_missing_seventh_before_original_core(self):
+        coordinator=delivery.LiteralJetCoordinator.__new__(delivery.LiteralJetCoordinator)
+        with patch.object(coordinator,'validate_public_owned',side_effect=ValueError('missing seventh')):
+            with patch.object(delivery.Coordinator,'finalize') as old:
+                with self.assertRaisesRegex(ValueError,'missing seventh'): coordinator.finalize()
+                old.assert_not_called()
+    def test_stable_wrapper_requires_seventh_actual_public_evidence(self):
+        with patch.object(promotion,'LiteralJetCoordinator') as factory:
+            factory.return_value.c={'database':'/candidate'}; factory.return_value.inputs=Path('/inputs')
+            factory.return_value.validate_public_owned.side_effect=ValueError('missing actual seventh public')
+            with patch.object(promotion.subprocess,'run') as old:
+                with self.assertRaisesRegex(ValueError,'missing actual seventh'):
                     promotion.main(['--literal-jet-delivery-config','config','--source','/candidate','--source-inputs','/inputs'])
                 old.assert_not_called()
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Require complete fifth and sixth public delivery before unchanged regression promotion."""
+"""Require complete fifth, sixth and seventh public delivery before unchanged regression promotion."""
 import argparse
 from pathlib import Path
 import subprocess
@@ -20,7 +20,7 @@ def main(argv=None):
     if (Path(coordinator.c['database']).resolve() != original.source.resolve()
             or coordinator.inputs != original.source_inputs.resolve()):
         raise ValueError('Promotion source must be the actual fifth-gated delivery candidate')
-    coordinator.validate_public_primary()
+    coordinator.validate_public_owned()
     finalized=coordinator.root/'literal_jet_finalized_extension.json'
     if not finalized.exists():
         raise ValueError('Complete original and fifth finalization is required before promotion')
@@ -36,6 +36,11 @@ def main(argv=None):
             or family.get('pass') is not True or family.get('database_revision') != coordinator.meta['database_revision']
             or family.get('public_extension_sha256') != digest(coordinator.root/'public/checks/primary_aircraft_public_extension.json')):
         raise ValueError('Actual finalized sixth extension is stale or invalid')
+    owned=read(coordinator.root/'owned_scope_finalized_extension.json')
+    if (owned.get('schema') != 'FINEATLAS_OWNED_SCOPE_FINALIZED_EXTENSION_V1'
+            or owned.get('pass') is not True or owned.get('database_revision') != coordinator.meta['database_revision']
+            or owned.get('public_extension_sha256') != digest(coordinator.root/'public/checks/owned_scope_public_extension.json')):
+        raise ValueError('Actual finalized seventh extension is stale or invalid')
     subprocess.run([sys.executable,'-B',str(ROOT/'scripts/promote_structure_with_regression_gate.py'),*remaining],check=True)
 
 
