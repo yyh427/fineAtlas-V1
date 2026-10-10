@@ -84,6 +84,7 @@ def require_fresh_retrieval(report, inputs, directory):
     if (receipt.get('schema') != RECEIPT_SCHEMA or receipt.get('pass') is not True
             or receipt.get('complete') is not True or receipt.get('fresh_official_https_retrieval') is not True
             or receipt.get('registry_sha256') != digest(Path(inputs) / REGISTRY_NAME)
+            or receipt.get('errors') != []
             or Path(receipt.get('snapshots_directory', '')).resolve() != Path(directory).resolve()
             or set(receipt.get('documents', {})) != set(value['documents'])):
         raise ValueError('Complete fresh official primary source retrieval evidence is required')

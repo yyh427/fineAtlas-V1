@@ -36,10 +36,10 @@ def root_reachable(c,uid):
     return False
 
 
-def run(database,inputs,output,preflight=False):
+def run(database,inputs,output,preflight=False,primary_snapshots_dir=None):
     database=database.resolve();manifest_path=inputs/'structure_complete_subject_scope_repairs.json';manifest=json.loads(manifest_path.read_text());raw=(inputs/manifest['operations_file']).read_bytes();ops=[json.loads(x) for x in raw.decode().splitlines() if x]
     c=sqlite3.connect(database.as_uri()+'?mode=ro&immutable=1',uri=True);c.row_factory=sqlite3.Row;errors=[]
-    temporal=SubjectTemporalContract(database,inputs,output,c)
+    temporal=SubjectTemporalContract(database,inputs,output,c,primary_snapshots_dir)
     temporal.run_owned_actual_audit()
     if sha(raw)!=manifest['operations_sha256'] or type(manifest['operation_count']) is not int or len(ops)!=manifest['operation_count']:
         errors.append({'kind':'INPUT_NOT_BOUND'})
@@ -117,4 +117,4 @@ def run(database,inputs,output,preflight=False):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,required=True);p.add_argument('--inputs',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--preflight',action='store_true');a=p.parse_args();raise SystemExit(0 if run(a.database,a.inputs,a.output,a.preflight) else 1)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,required=True);p.add_argument('--inputs',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--preflight',action='store_true');p.add_argument('--primary-snapshots-dir',type=Path,required=True);a=p.parse_args();raise SystemExit(0 if run(a.database,a.inputs,a.output,a.preflight,a.primary_snapshots_dir) else 1)

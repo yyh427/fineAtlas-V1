@@ -18,6 +18,8 @@ from structure_owned_scope_delivery_guard import SPEC as OWNED_SPEC, require_own
 from primary_source_snapshot_delivery import require_fresh_retrieval
 from structure_regression_temporal_contract import require_temporal_receipt
 from structure_subject_scope_temporal_contract import require_temporal_subject_receipt
+from structure_regression_support import package_support, download_public_support, require_public_support
+from owned_source_snapshot_delivery import NAME as OWNED_SOURCE_REGISTRY, require_owned_retrieval
 
 
 class LiteralJetCoordinator(Coordinator):
@@ -27,7 +29,39 @@ class LiteralJetCoordinator(Coordinator):
                         'accept_resumed_structure_candidate.py':'accept_owned_structure_candidate.py',
                         'audit_complete_subject_scope_repairs.py':'audit_temporal_complete_subject_scope_repairs.py',
                         'run_structure_public_checks.py':'run_literal_jet_public_checks.py'}
+        if script=='run_structure_public_checks.py':
+            package=read(self.root/'package/delivery_assets.json')
+            support,_=download_public_support(package,self.root/'public',self.c['public_base_url'],self.accepted())
+            replacements_values={'--legacy-reference':support.root/'reference.csv',
+                '--legacy-baseline-matrix':support.root/'baseline','--legacy-dispositions':support.root/'dispositions.json',
+                '--reference':support.root/'source-row-digests.json','--inventory':support.root/'domain-inventory.json'}
+            values=list(values)
+            for key,path in replacements_values.items():values[values.index(key)+1]=path
+            values.extend(['--regression-support-registry',support.path,
+                           '--primary-snapshots-dir',self.prepare_public_primary_snapshots(self.root/'public/frozen/inputs')])
+        elif script in {'audit_structure_regression_repairs.py','audit_complete_subject_scope_repairs.py',
+                        'audit_owned_scope_repairs.py','accept_resumed_structure_candidate.py'}:
+            if '--primary-snapshots-dir' not in values:
+                snapshots=self.root/'public/source-snapshots' if python else self.primary_snapshots_directory()
+                values=(*values,'--primary-snapshots-dir',snapshots)
         return super().cmd(replacements.get(script,script),*values,python=python)
+
+    def prepare_public_primary_snapshots(self,inputs):
+        snapshots=self.root/'public/source-snapshots'
+        report=self.root/'public/checks/primary-source-retrieval.json'
+        if not report.exists():
+            self.execute('public-primary-source-retrieval',self.cmd('primary_source_snapshot_delivery.py',
+                '--inputs',inputs,'--snapshots-dir',snapshots,'--output',report,
+                python=self.root/'public/venv/bin/python'))
+        require_fresh_retrieval(report,inputs,snapshots)
+        if (Path(inputs)/OWNED_SOURCE_REGISTRY).exists():
+            owned_report=self.root/'public/checks/owned-source-retrieval.json'
+            if not owned_report.exists():
+                self.execute('public-owned-source-retrieval',self.cmd('owned_source_snapshot_delivery.py',
+                    '--inputs',inputs,'--snapshots-dir',snapshots,'--output',owned_report,'--primary-receipt',report,
+                    python=self.root/'public/venv/bin/python'))
+            require_owned_retrieval(owned_report,inputs,snapshots,report)
+        return snapshots
 
     def __init__(self, config):
         super().__init__(config)
@@ -54,9 +88,10 @@ class LiteralJetCoordinator(Coordinator):
                 Path(self.c[key]), self.inputs, self.meta['database_revision'], ROOT)
         directory = self.primary_snapshots_directory()
         for name in ('primary','reproduction'):
-            actual = read(self.root / (name + '-primary-aircraft-family.json'))
-            if Path(actual.get('primary_snapshots_dir') or '/MISSING').resolve() != directory:
-                raise ValueError('Local primary source receipt must use configured explicit snapshots')
+            for suffix in ('primary-aircraft-family','owned-scope'):
+                actual = read(self.root / (name + '-' + suffix + '.json'))
+                if Path(actual.get('primary_snapshots_dir') or '/MISSING').resolve() != directory:
+                    raise ValueError('Local primary source receipt must use configured explicit snapshots')
 
     def primary_snapshots_directory(self):
         value = self.c.get('primary_snapshots_directory')
@@ -79,6 +114,10 @@ class LiteralJetCoordinator(Coordinator):
                 self.c[key],self.inputs,self.meta['database_revision'])
             require_temporal_subject_receipt(self.root / (name + '-complete-subject-scope.json'),
                 self.c[key],self.inputs,self.meta['database_revision'],ROOT)
+            for suffix in ('scope-repairs','complete-subject-scope'):
+                actual=read(self.root/(name+'-'+suffix+'.json'))
+                if Path(actual.get('primary_snapshots_dir')or '/MISSING').resolve()!=self.primary_snapshots_directory():
+                    raise ValueError('Temporal local audit must use configured explicit source snapshots')
 
     def local(self):
         self.validate_child_builds()
@@ -127,6 +166,13 @@ class LiteralJetCoordinator(Coordinator):
         self.validate_local_fifth()
         self.require_local_temporal()
         super().package()
+        package_path=self.root/'package/delivery_assets.json'; package=read(package_path)
+        manifest,archive=package_support(self.c,self.root/'package/regression-support',self.accepted())
+        descriptors={name:{'path':str(path),'name':path.name,'bytes':path.stat().st_size,'sha256':digest(path)}
+                     for name,path in (('manifest',manifest),('archive',archive))}
+        package['assets'].extend(descriptors.values())
+        package['regression_support']={**descriptors,'original_ledger_sha256':digest(Path(self.c['legacy_dispositions']))}
+        write(package_path,package)
 
     def validate_public_fifth(self):
         extension_path = self.root / 'public/checks/literal_jet_public_extension.json'
@@ -197,16 +243,35 @@ class LiteralJetCoordinator(Coordinator):
         temporal = original_extension.get('evidence',{}).get('regression-repairs')
         if not temporal or digest(Path(temporal['path'])) != temporal['sha256']:
             raise ValueError('Actual public temporal regression SQL evidence is required')
-        require_temporal_receipt(temporal['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'])
+        temporal_report=require_temporal_receipt(temporal['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'])
+        if Path(temporal_report['primary_snapshots_dir']).resolve()!=snapshots.resolve():
+            raise ValueError('Public temporal audit cannot borrow a host snapshot directory')
+        support,downloads=require_public_support(read(self.root/'package/delivery_assets.json'),
+            self.root/'public',self.accepted())
+        support_evidence=extension.get('evidence',{}).get('regression-support-downloads')
+        if not support_evidence or Path(support_evidence['path']).resolve()!=downloads.resolve() or digest(downloads)!=support_evidence['sha256']:
+            raise ValueError('Public extension must bind the fresh regression support transfers')
+        regression=original_extension.get('evidence',{}).get('legacy-regressions')
+        if not regression or digest(Path(regression['path']))!=regression['sha256']:
+            raise ValueError('Actual public portable regression gate evidence is required')
+        gate=read(regression['path'])
+        if (gate.get('pass')is not True or gate.get('complete')is not True
+                or gate.get('host_evidence_fallback')is not False or gate.get('original_ledger_bytes_preserved')is not True
+                or gate.get('candidate_revision')!=fifth['database_revision']
+                or gate.get('dispositions_sha256')!=support.value['dispositions_sha256']
+                or gate.get('portable_support_registry_sha256')!=digest(support.path)):
+            raise ValueError('Public regression gate must use downloaded original support bytes')
         subject = original_extension.get('evidence',{}).get('complete-subject-scope')
         if not subject or digest(Path(subject['path'])) != subject['sha256']:
             raise ValueError('Actual public temporal complete-subject evidence is required')
-        require_temporal_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        subject_report=require_temporal_subject_receipt(subject['path'],database,self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
+        if Path(subject_report['primary_snapshots_dir']).resolve()!=snapshots.resolve():
+            raise ValueError('Public temporal subject audit must use fresh source snapshots')
         preservation = original_extension.get('evidence',{}).get('resumed-source-preservation')
         if not preservation or digest(Path(preservation['path'])) != preservation['sha256']:
             raise ValueError('Actual temporal raw source preservation evidence is required')
         from structure_owned_source_guard import validate_source_preservation
-        validate_source_preservation(preservation['path'],database,self.c['baseline'],self.c['reference'],
+        validate_source_preservation(preservation['path'],database,self.c['baseline'],support.root/'source-row-digests.json',
             self.root / 'public/frozen/inputs',fifth['database_revision'],ROOT)
         return extension, report
 
@@ -231,6 +296,14 @@ class LiteralJetCoordinator(Coordinator):
             raise ValueError('Owned-scope adapter is absent from the actual frozen SDK inventory')
         report = require_owned_scope_receipt(Path(evidence['path']),database,
             self.root / 'public/frozen/inputs',primary['database_revision'],ROOT)
+        expected=self.root/'public/source-snapshots'
+        if Path(report.get('primary_snapshots_dir')or '/MISSING').resolve()!=expected.resolve():
+            raise ValueError('Public owned audit must use the actual fresh explicit source folder')
+        if (self.root/'public/frozen/inputs'/OWNED_SOURCE_REGISTRY).exists():
+            item=extension.get('evidence',{}).get('owned-source-retrieval')
+            if not item or digest(Path(item['path']))!=item['sha256']:raise ValueError('Actual seventh fresh source retrieval evidence required')
+            require_owned_retrieval(item['path'],self.root/'public/frozen/inputs',expected,
+                self.root/'public/checks/primary-source-retrieval.json')
         return extension, report
 
     def public(self):
@@ -272,13 +345,8 @@ class LiteralJetCoordinator(Coordinator):
         write(self.root / 'public/checks/literal_jet_public_extension.json',extension)
         self.validate_public_fifth()
         family_report = self.root / 'public/checks/primary-aircraft-family.json'
-        snapshots = self.root / 'public/source-snapshots'
+        snapshots = self.prepare_public_primary_snapshots(inputs)
         retrieval = self.root / 'public/checks/primary-source-retrieval.json'
-        if not retrieval.exists():
-            self.execute('public-primary-source-retrieval',self.cmd('primary_source_snapshot_delivery.py',
-                '--inputs',inputs,'--snapshots-dir',snapshots,'--output',retrieval,
-                python=self.root / 'public/venv/bin/python'))
-        require_fresh_retrieval(retrieval,inputs,snapshots)
         if not family_report.exists():
             self.execute('public-primary-aircraft-family',self.cmd(FAMILY_SPEC.auditor,
                 '--database',database,'--inputs',inputs,'--output',family_report,
@@ -293,6 +361,8 @@ class LiteralJetCoordinator(Coordinator):
             'literal_jet_public_extension_sha256':digest(self.root / 'public/checks/literal_jet_public_extension.json'),
             'evidence':{'primary-aircraft-family':{'path':str(family_report),'sha256':digest(family_report)},
                         'primary-source-retrieval':{'path':str(retrieval),'sha256':digest(retrieval)},
+                        'regression-support-downloads':{'path':str(self.root/'public/regression-support-downloads.json'),
+                            'sha256':digest(self.root/'public/regression-support-downloads.json')},
                         'installed-sdk-inventory':extension['evidence']['installed-sdk-inventory']}})
         self.validate_public_primary()
         owned_report = self.root / 'public/checks/owned-scope.json'
@@ -309,11 +379,20 @@ class LiteralJetCoordinator(Coordinator):
             'primary_aircraft_public_extension_sha256':digest(self.root / 'public/checks/primary_aircraft_public_extension.json'),
             'evidence':{'owned-scope':{'path':str(owned_report),'sha256':digest(owned_report)},
                         'installed-sdk-inventory':extension['evidence']['installed-sdk-inventory']}})
+        if (inputs/OWNED_SOURCE_REGISTRY).exists():
+            path=self.root/'public/checks/owned_scope_public_extension.json';owned_extension=read(path)
+            owned_retrieval=self.root/'public/checks/owned-source-retrieval.json'
+            owned_extension['evidence']['owned-source-retrieval']={'path':str(owned_retrieval),'sha256':digest(owned_retrieval)}
+            write(path,owned_extension)
         self.validate_public_owned()
 
     def finalize(self):
         self.validate_public_owned()
-        super().finalize()
+        support,_=require_public_support(read(self.root/'package/delivery_assets.json'),self.root/'public',self.accepted())
+        portable_config={**self.c,'reference':str(support.root/'source-row-digests.json')}
+        portable_config_path=self.root/'public/portable-finalize-config.json'
+        write(portable_config_path,portable_config)
+        Coordinator(portable_config_path).finalize()
         write(self.root / 'literal_jet_finalized_extension.json', {
             'schema':'FINEATLAS_LITERAL_JET_FINALIZED_EXTENSION_V1','pass':True,
             'database_revision':self.meta['database_revision'],

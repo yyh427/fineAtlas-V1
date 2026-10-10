@@ -56,9 +56,11 @@ class ExactTemporalTransitions(unittest.TestCase):
         self.assertEqual(self.contract.expected_assertion_status(current,'ACTIVE'),'SOURCE_SCOPE_REVIEW')
     def test_explicit_dispatch_changes_only_the_two_additive_executors(self):
         coordinator=delivery.LiteralJetCoordinator.__new__(delivery.LiteralJetCoordinator)
+        directory=Path(__file__).resolve().parent
+        coordinator.c={'primary_snapshots_directory':str(directory)}
         with patch.object(delivery.Coordinator,'cmd',side_effect=lambda script,*values,**kw:[script,*values]):
             self.assertEqual(coordinator.cmd('audit_structure_regression_repairs.py','--database','actual'),
-                ['audit_temporal_structure_regression_repairs.py','--database','actual'])
+                ['audit_temporal_structure_regression_repairs.py','--database','actual','--primary-snapshots-dir',directory])
             self.assertEqual(coordinator.cmd('audit_structure_library.py','--database','actual'),
                 ['audit_structure_library.py','--database','actual'])
     def test_new_public_executor_preserves_every_other_job_byte_for_byte(self):
@@ -73,6 +75,11 @@ class ExactTemporalTransitions(unittest.TestCase):
             " validate_delta_receipt(spec,report,a.database,a.inputs,d['database_revision'],a.code)\n if spec.name=='complete-subject-scope':require_temporal_subject_receipt(report,a.database,a.inputs,d['database_revision'],a.code)")
         expected=expected.replace('from structure_delivery_source_guard import validate_source_preservation',
                                   'from structure_owned_source_guard import validate_source_preservation')
+        expected=expected.replace("'legacy-dispositions'):p.add_argument", "'legacy-dispositions','regression-support-registry','primary-snapshots-dir'):p.add_argument")
+        expected=expected.replace("def cmd(script,*args):return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]",
+            "def cmd(script,*args):\n if script in {'audit_owned_source_preservation.py','audit_temporal_structure_regression_repairs.py','audit_temporal_complete_subject_scope_repairs.py'}:args=(*args,'--primary-snapshots-dir',a.primary_snapshots_dir)\n return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]")
+        expected=expected.replace("cmd('audit_legacy_pair_regressions.py'","cmd('audit_portable_legacy_pair_regressions.py'")
+        expected=expected.replace("'--output',a.output/'legacy-regressions'))","'--output',a.output/'legacy-regressions','--support-registry',a.regression_support_registry))")
         self.assertEqual(actual,expected)
 
 
@@ -117,3 +124,32 @@ class ExactMappingTransitions(unittest.TestCase):
 
 
 if __name__=='__main__': unittest.main()
+
+
+class TemporalDocumentaryBinding(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name);self.inputs=self.root/'inputs';self.inputs.mkdir()
+        self.directory=self.root/'snapshots';self.directory.mkdir()
+        for name in (temporal.REFERENCE,'structure_owned_scope_repairs.json'):(self.inputs/name).write_text('{}')
+        self.owned=self.root/'owned.json';self.owned.write_text('{}');self.report=self.root/'temporal.json'
+        self.value={'pass':True,'preflight_only':False,'errors':[],'database_revision':'revision',
+            'database':str(self.root/'actual.sqlite'),'original_contract_fully_checked':True,
+            'temporal_contract':'FINEATLAS_EXACT_LATER_SCOPE_TRANSITIONS_V1',
+            'temporal_parent_reference_sha256':temporal.sha((self.inputs/temporal.REFERENCE).read_bytes()),
+            'owned_manifest_sha256':temporal.sha((self.inputs/'structure_owned_scope_repairs.json').read_bytes()),
+            'owned_actual_audit':{'path':str(self.owned),'sha256':temporal.sha(self.owned.read_bytes())},
+            'primary_snapshots_dir':str(self.directory)}
+    def validate(self,actual):
+        self.report.write_text(json.dumps(self.value))
+        with patch.object(temporal,'require_owned_scope_receipt',return_value=actual):
+            return temporal.require_temporal_receipt(self.report,self.root/'actual.sqlite',self.inputs,'revision')
+    def test_actual_later_and_temporal_source_directory_agree(self):
+        self.assertTrue(self.validate({'primary_snapshots_dir':str(self.directory)})['pass'])
+    def test_missing_temporal_source_binding_is_not_accepted(self):
+        del self.value['primary_snapshots_dir']
+        with self.assertRaises(ValueError):self.validate({'primary_snapshots_dir':str(self.directory)})
+    def test_other_host_source_directory_cannot_replace_same_audited_bytes(self):
+        elsewhere=self.root/'old-host-sources';elsewhere.mkdir()
+        with self.assertRaises(ValueError):self.validate({'primary_snapshots_dir':str(elsewhere)})

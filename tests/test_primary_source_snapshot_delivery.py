@@ -33,7 +33,7 @@ class PortableSourceTests(unittest.TestCase):
             retrieved_from_network=True,retrieved_utc='now',byte_count=len(self.data))
         value={'schema':sources.RECEIPT_SCHEMA,'pass':True,'complete':True,'fresh_official_https_retrieval':True,
             'registry_sha256':sources.digest(self.inputs/sources.REGISTRY_NAME),
-            'snapshots_directory':str(self.directory),'documents':{'doc':row}}
+            'snapshots_directory':str(self.directory),'documents':{'doc':row},'errors':[]}
         self.report.write_text(json.dumps(value)); return value
     def test_complete_fresh_http_receipt_and_bytes_pass(self):
         self.make_receipt(); self.assertTrue(sources.require_fresh_retrieval(self.report,self.inputs,self.directory)['pass'])

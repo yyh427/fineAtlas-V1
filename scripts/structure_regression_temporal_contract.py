@@ -23,9 +23,10 @@ def json_hash(value):
 
 
 class TemporalContract:
-    def __init__(self, database, inputs, output, connection):
+    def __init__(self, database, inputs, output, connection, primary_snapshots_dir=None):
         self.database = Path(database).resolve(); self.inputs = Path(inputs).resolve()
         self.output = Path(output); self.c = connection
+        self.primary_snapshots_dir = Path(primary_snapshots_dir).resolve() if primary_snapshots_dir else None
         self.meta = {r['key']:json.loads(r['value']) for r in self.c.execute('SELECT * FROM metadata')}
         self.reference_path = self.inputs / REFERENCE
         reference = json.loads(self.reference_path.read_text())
@@ -61,8 +62,11 @@ class TemporalContract:
         self.owned_report = self.output.with_name(self.output.stem + '-owned-actual.json')
 
     def run_owned_actual_audit(self):
+        if self.primary_snapshots_dir is None or not self.primary_snapshots_dir.is_dir():
+            raise ValueError('Actual later-stage audit requires an explicit primary snapshots directory')
         subprocess.run([sys.executable,'-B',str(ROOT / 'scripts/audit_owned_scope_repairs.py'),
-            '--database',str(self.database),'--inputs',str(self.inputs),'--output',str(self.owned_report)],check=True)
+            '--database',str(self.database),'--inputs',str(self.inputs),'--output',str(self.owned_report),
+            '--primary-snapshots-dir',str(self.primary_snapshots_dir)],check=True)
         require_owned_scope_receipt(self.owned_report,self.database,self.inputs,
                                     self.meta['database_revision'],ROOT)
 
@@ -134,6 +138,7 @@ class TemporalContract:
     def receipt_binding(self):
         return {'temporal_contract':'FINEATLAS_EXACT_LATER_SCOPE_TRANSITIONS_V1',
                 'database_revision':self.meta['database_revision'],
+                'primary_snapshots_dir':str(self.primary_snapshots_dir),
                 'temporal_parent_reference_sha256':sha(self.reference_path.read_bytes()),
                 'owned_manifest_sha256':sha((self.inputs / 'structure_owned_scope_repairs.json').read_bytes()),
                 'owned_actual_audit':{'path':str(self.owned_report.resolve()),'sha256':sha(self.owned_report.read_bytes())},
@@ -155,5 +160,8 @@ def require_temporal_receipt(report, database, inputs, revision):
     owned = value.get('owned_actual_audit',{})
     if sha(Path(owned.get('path','/MISSING')).read_bytes()) != owned.get('sha256'):
         raise ValueError('Actual independent later-stage audit evidence changed')
-    require_owned_scope_receipt(owned['path'],database,inputs,revision,ROOT)
+    actual=require_owned_scope_receipt(owned['path'],database,inputs,revision,ROOT)
+    directory=Path(value.get('primary_snapshots_dir')or '/MISSING').resolve()
+    if not directory.is_dir() or Path(actual.get('primary_snapshots_dir')or '/MISSING').resolve()!=directory:
+        raise ValueError('Temporal and actual later-stage audits must bind the same explicit source snapshots')
     return value

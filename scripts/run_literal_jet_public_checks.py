@@ -1,7 +1,7 @@
 """Execute independent checks on an actual fresh public download; never simulates receipts."""
 import argparse,concurrent.futures,datetime,hashlib,json,os,pathlib,subprocess,sys,time,uuid
 p=argparse.ArgumentParser()
-for k in ('code','python','database','inputs','baseline','reference','inventory','manifest','expected','acceptance','output','primary-build','reproduction-build','legacy-reference','legacy-baseline-matrix','legacy-dispositions'):p.add_argument('--'+k,type=pathlib.Path,required=True)
+for k in ('code','python','database','inputs','baseline','reference','inventory','manifest','expected','acceptance','output','primary-build','reproduction-build','legacy-reference','legacy-baseline-matrix','legacy-dispositions','regression-support-registry','primary-snapshots-dir'):p.add_argument('--'+k,type=pathlib.Path,required=True)
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
 if a.code.resolve()!=pathlib.Path(__file__).resolve().parents[1]:raise RuntimeError('Executor must use its own frozen checkout')
 for k,v in vars(a).items():setattr(a,k,v.resolve())
@@ -28,7 +28,9 @@ if pathlib.Path(d['database']).resolve()!=a.database or stamp(a.database)!=d['ar
 for k in ('release','database_revision','database_sha256'):
  if d[k]!=accepted[k]:raise RuntimeError('Accepted public artifact differs: '+k)
 env=dict(os.environ);env.pop('PYTHONPATH',None);env.pop('PYTHONOPTIMIZE',None);temp=a.output/'tmp';temp.mkdir(exist_ok=True);env.update(TMPDIR=str(temp),SQLITE_TMPDIR=str(temp),PYTHONPYCACHEPREFIX=str(temp/uuid.uuid4().hex),PYTHONDONTWRITEBYTECODE='1')
-def cmd(script,*args):return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]
+def cmd(script,*args):
+ if script in {'audit_owned_source_preservation.py','audit_temporal_structure_regression_repairs.py','audit_temporal_complete_subject_scope_repairs.py'}:args=(*args,'--primary-snapshots-dir',a.primary_snapshots_dir)
+ return [str(a.python),'-B',str(a.code/'scripts'/script),*map(str,args)]
 jobs={
  'resumed-source-preservation':cmd('audit_owned_source_preservation.py','--baseline',a.baseline,'--candidate',a.database,'--inputs',a.inputs,'--reference',a.reference,'--output',a.output/'resumed-source-preservation.json'),
  'installed-sdk':cmd('verify_unified_install.py','--database',a.database,'--manifest',a.manifest,'--expected-validation',a.expected,'--output',a.output/'installed-sdk'),
@@ -70,7 +72,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
 if results['full-six-matrix'].get('pass'):results['exports']=execute('exports',cmd('audit_structure_exports.py','--database',a.database,'--inputs',a.inputs,'--matrix',a.output/'matrix','--output',a.output/'exports','--installed-sdk'))
 else:results['exports']={'pass':False,'error':'Complete actual public matrix failed','exit_code':-1}
 if results['full-six-matrix'].get('pass'):
- results['legacy-regressions']=execute('legacy-regressions',cmd('audit_legacy_pair_regressions.py','--reference',a.legacy_reference,'--baseline',a.legacy_baseline_matrix,'--candidate',a.output/'matrix','--policy',a.inputs/'legacy_policies.json','--dispositions',a.legacy_dispositions,'--output',a.output/'legacy-regressions'))
+ results['legacy-regressions']=execute('legacy-regressions',cmd('audit_portable_legacy_pair_regressions.py','--reference',a.legacy_reference,'--baseline',a.legacy_baseline_matrix,'--candidate',a.output/'matrix','--policy',a.inputs/'legacy_policies.json','--dispositions',a.legacy_dispositions,'--output',a.output/'legacy-regressions','--support-registry',a.regression_support_registry))
 else:results['legacy-regressions']={'pass':False,'exit_code':-1,'error':'Public matrix failed'}
 write(a.output/'execution.json',results)
 if not all(z.get('pass') for z in results.values()) or stamp(a.database)!=start_stamp:raise RuntimeError('Actual public checks failed or downloaded artifact changed')

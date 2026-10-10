@@ -15,7 +15,7 @@ SOURCE = 'Reviewed retained whole-object scope recovery'
 def digest(raw):
     return hashlib.sha256(raw.encode() if isinstance(raw, str) else raw).hexdigest()
 
-def run(database: Path, inputs: Path, output: Path, preflight: bool = False):
+def run(database: Path, inputs: Path, output: Path, preflight: bool = False, primary_snapshots_dir=None):
     manifest = json.loads((inputs / 'structure_regression_repairs.json').read_text())
     raw = (inputs / manifest['operations_file']).read_bytes()
     if digest(raw) != manifest['operations_sha256']:
@@ -24,7 +24,7 @@ def run(database: Path, inputs: Path, output: Path, preflight: bool = False):
     c = sqlite3.connect(database.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
     c.row_factory = sqlite3.Row
     errors, counts = [], Counter()
-    temporal = TemporalContract(database, inputs, output, c)
+    temporal = TemporalContract(database, inputs, output, c, primary_snapshots_dir)
     temporal.run_owned_actual_audit()
     for op in ops:
         proof = op['proof']; uid, parent = op['uid'], op['parent']
@@ -117,5 +117,5 @@ def run(database: Path, inputs: Path, output: Path, preflight: bool = False):
     return not errors
 
 if __name__ == '__main__':
-    p = argparse.ArgumentParser(description=__doc__); p.add_argument('--database', type=Path, required=True); p.add_argument('--inputs', type=Path, required=True); p.add_argument('--output', type=Path, required=True); p.add_argument('--preflight', action='store_true'); a = p.parse_args()
-    raise SystemExit(0 if run(a.database, a.inputs, a.output, a.preflight) else 1)
+    p = argparse.ArgumentParser(description=__doc__); p.add_argument('--database', type=Path, required=True); p.add_argument('--inputs', type=Path, required=True); p.add_argument('--output', type=Path, required=True); p.add_argument('--preflight', action='store_true'); p.add_argument('--primary-snapshots-dir',type=Path,required=True); a = p.parse_args()
+    raise SystemExit(0 if run(a.database, a.inputs, a.output, a.preflight,a.primary_snapshots_dir) else 1)

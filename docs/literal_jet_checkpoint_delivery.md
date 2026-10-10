@@ -168,3 +168,49 @@ Both local databases and the fresh public database require this temporal report;
 the raw preservation compatibility audit calls the same real SQL auditor before
 permitting the previously frozen 170 visibility changes.
 
+
+
+The delivery config must also set `formal_baseline_verification_record` to the
+retained v1.10.1 public prerequisite record. Packaging copies that record and its
+five hash-bound historical public proofs into a separate regression support
+archive. This records historical verification; it does not claim a fresh formal
+download during this candidate turn.
+
+The support archive contains the original disposition ledger bytes, the formal
+pair reference, baseline pair and label snapshots, source-row digests, domain
+inventory, and every hash-bound ledger evidence file. Historical absolute
+locators remain unchanged in the ledger and act only as registry keys. The public
+auditor never opens those historical paths. Whole external manufacturer PDFs or
+HTML documents require explicit source retrieval or redistribution authorization;
+packaging rejects them as implicit support members.
+
+`package` adds `regression_support_manifest.json` and the named
+`fineatlas-<release>-regression-support.tar.zst` to `delivery_assets.json`. Upload
+these assets together with the SDK, inputs, and data. `public` downloads both
+assets over unauthenticated HTTPS into the new public directory, validates their
+SHA and size, safely extracts only declared regular files, and invokes
+`audit_portable_legacy_pair_regressions.py`. The manifest, original ledger hash,
+actual final candidate matrix, and policy must agree. Finalize and stable
+preparation reject missing fresh transfer receipts or a host-file fallback.
+
+The same explicit `primary_snapshots_directory` is passed to local first/third
+temporal audits, the owned-scope auditor, and source preservation. Public retrieval
+first obtains the eight sixth-delta documents, then retrieves only the additional
+seventh-delta documents from `structure_owned_source_snapshots.json` into
+`public/source-snapshots`. Shared documents retain their first fresh retrieval
+receipt and bytes. Both registries, all required source byte hashes, the full nine
+author annotation files, and all 10,000 annotations are checked. A failed request
+or changed source response is preserved and blocks continuation; no absolute
+agent-path fallback is available.
+
+For a clean external environment, obtain the formal baseline from the official
+[v1.10.1 release](https://github.com/yyh427/fineAtlas-V1/releases/tag/v1.10.1).
+Use its `scripts/download_single.py --output-dir ./formal-data`, then verify
+`fineatlas.sqlite` against SHA-256
+`804192429ffda283da6b509d344778c3ebebbe4f34e59db82c32ea23e9957bc5` and
+size `68495904768` bytes before supplying its explicit path as `baseline` in the
+delivery config. The verified formal revision is
+`1325af79323e77270650075f01bf22d34bbf2f9a072f22cdc651019e615f5b77`.
+An existing read-only copy with the retained complete public verification may be
+reused. Candidate data, SDK, frozen inputs, runtime support, and official source
+snapshots still require their own actual fresh public transfers.

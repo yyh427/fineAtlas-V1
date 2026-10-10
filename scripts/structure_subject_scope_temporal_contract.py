@@ -30,8 +30,8 @@ def validate_subject_parent_reference(reference,inputs,code_root=ROOT):
 
 
 class SubjectTemporalContract(TemporalContract):
-    def __init__(self,database,inputs,output,connection):
-        super().__init__(database,inputs,output,connection)
+    def __init__(self,database,inputs,output,connection,primary_snapshots_dir=None):
+        super().__init__(database,inputs,output,connection,primary_snapshots_dir)
         validate_subject_parent_reference(json.loads(self.reference_path.read_text()),self.inputs)
 
     def receipt_binding(self):
