@@ -4,13 +4,19 @@ import importlib.util
 import itertools
 import json
 from pathlib import Path
+import sqlite3
+import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('legacy_gate', ROOT / 'scripts/audit_legacy_pair_regressions.py')
 gate = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(gate)
+sys.path.insert(0, str(ROOT / 'scripts'))
+import promote_structure_with_regression_gate as promotion
 
 
 class RegressionGateTest(unittest.TestCase):
@@ -93,6 +99,48 @@ class RegressionGateTest(unittest.TestCase):
     def test_wrong_endpoint_uid_is_rejected(self):
         report = self.run_manifest(lambda x: x['groups'][0]['labels'][0].update(new_uid='other:model'))
         self.assertFalse(report['pass'])
+
+    def promotion_args(self):
+        self.run_manifest()
+        source = self.root / 'source.sqlite'
+        with sqlite3.connect(source) as con:
+            con.execute('CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY,value TEXT)')
+            con.executemany('INSERT OR REPLACE INTO metadata VALUES(?,?)', [
+                ('database_revision', json.dumps('candidate-revision')),
+                ('structure_frozen_build_manifest', json.dumps({'inputs': {'legacy_policies.json': gate.sha256(self.policy)}}))])
+        inputs = self.root / 'inputs'
+        inputs.mkdir(exist_ok=True)
+        (inputs / 'legacy_policies.json').write_bytes(self.policy.read_bytes())
+        return SimpleNamespace(source=source, source_inputs=inputs, reports=self.root / 'promotion-output',
+                               legacy_reference=self.baseline / 'legacy-pairs.csv',
+                               legacy_baseline_matrix=self.baseline, legacy_candidate_matrix=self.candidate,
+                               legacy_dispositions=self.root / 'dispositions.json')
+
+    def test_wrapper_accepts_complete_documented_accounting(self):
+        report = promotion.validate_regressions(self.promotion_args())
+        self.assertTrue(report['pass'])
+
+    def test_wrapper_rejects_missing_gate_arguments_before_delegation(self):
+        with patch.object(promotion.subprocess, 'run') as delegate:
+            with self.assertRaises(SystemExit):
+                promotion.main([])
+            delegate.assert_not_called()
+
+    def test_wrapper_rejects_actual_source_revision_mismatch(self):
+        args = self.promotion_args()
+        with sqlite3.connect(args.source) as con:
+            con.execute('UPDATE metadata SET value=? WHERE key=?',
+                        (json.dumps('other-build'), 'database_revision'))
+        with self.assertRaisesRegex(ValueError, 'stable promotion blocked'):
+            promotion.validate_regressions(args)
+
+    def test_wrapper_rejects_policy_not_bound_to_database_freeze(self):
+        args = self.promotion_args()
+        with sqlite3.connect(args.source) as con:
+            con.execute('UPDATE metadata SET value=? WHERE key=?',
+                        (json.dumps({'inputs': {'legacy_policies.json': 'wrong-hash'}}), 'structure_frozen_build_manifest'))
+        with self.assertRaisesRegex(ValueError, 'source database freeze'):
+            promotion.validate_regressions(args)
 
 
 if __name__ == '__main__':

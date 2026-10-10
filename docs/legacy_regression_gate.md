@@ -39,9 +39,13 @@ present among lost pairs. Legal connection checks must say `NO_LEGAL_CONNECTION_
 or `FIXED` and supply independently reviewable evidence. The auditor verifies
 bindings and coverage; source truth still requires the cited independent review.
 
-`promote_structure_stable.py` requires `--legacy-reference`,
+Use `promote_structure_with_regression_gate.py` with every original
+`promote_structure_stable.py` argument and the required `--legacy-reference`,
 `--legacy-baseline-matrix`, `--legacy-candidate-matrix`, and
 `--legacy-dispositions`. It reruns the gate and matches its candidate revision to
-the accepted database before its first database mutation. A candidate or policy
+the accepted database and frozen policy before invoking the unmodified promotion
+implementation. Its public verification and independent-build requirements
+remain mandatory. The additive wrapper preserves all parent recipe hashes during
+checkpoint continuation. A candidate or policy
 change requires fresh matrices and fresh adjudication; rebinding an old report
 without checking the actual candidate is insufficient.
