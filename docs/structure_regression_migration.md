@@ -43,7 +43,8 @@ the original label remains available for class accuracy supervision.
 ## Resume without discarding verified source work
 
 `scripts/resume_structure_repairs.py` takes an independently copied, completed
-structural parent and its actual build receipt. It verifies every original
+structural parent, its actual build receipt, and its independent whole-file
+integrity report (`--parent-integrity`). It verifies every original
 source input and executed implementation fingerprint. Only additive frozen
 repair inputs and implementation files are admitted. Changed original inputs
 require replay of their affected source stages instead of silent reuse.
@@ -53,6 +54,34 @@ freezes a new revision, and rebuilds and embeds browser indexes. Use two
 separately built parent artifacts, distinct output files, and a clean matching
 environment for reproduction. Parent source stages retain their historical
 fingerprints; they are not relabeled as newly executed stages.
+
+Run the recipe once for each independently completed parent. Substitute actual
+completed paths; never copy or read a database while its build is writing it:
+
+```bash
+python -B scripts/resume_structure_repairs.py \
+  --source /run/artifacts/parent-primary/fineatlas.sqlite \
+  --parent-build /run/reports/parent-primary/build_complete.json \
+  --parent-integrity /run/reports/parent-acceptance/primary-integrity.json \
+  --baseline /formal/v1.10.1/fineatlas-primary.sqlite \
+  --database /run/artifacts/repair-primary/fineatlas.sqlite \
+  --inputs /run/inputs-repair \
+  --reports /run/reports/repair-primary \
+  --browse-staging /run/artifacts/repair-primary/browse.sqlite
+```
+
+The reproduction command must instead use the independently built
+`parent-reproduction` source, its build receipt, its `reproduction-integrity.json`,
+and distinct repair output/report paths. Copy each source to its corresponding
+output before invoking the recipe. Both copies are checked against the original
+independent whole-file SHA-256 before mutation. A matching SQLite revision alone
+does not establish unchanged source bytes.
+
+Before acceptance and promotion,
+`validate_resumed_parent_independence(primary_receipt, reproduction_receipt)`
+must verify distinct original build IDs and source inodes, distinct resumed
+build IDs, matching parent semantic revisions, and intact lineage receipts.
+Two copies of the same completed parent do not qualify as independent builds.
 
 The resulting `build_complete.json` still requires independent full-library
 contracts, all labels and pairs, search/pagination/export checks, the fixed
