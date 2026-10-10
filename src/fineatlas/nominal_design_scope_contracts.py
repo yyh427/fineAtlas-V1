@@ -308,7 +308,7 @@ def validate_operations(c, manifest, operations, source_review, semantic_reviews
             raise ValueError('Nominal scope operations must be exact and attributed')
         relation = op['relation']
         axis = op['classification_axis']
-        expected_axes = {'DESIGN_TYPE_OF': {'purpose', 'function', 'physical_intension'}, 'INSTANCE_OF': {'physical_intension'}, 'NATIVE_DESIGN_PARENT': {'design_family'}, 'IS_A': {'physical_intension'}, 'ROLE_ADJUDICATION': {'source_grain'}}
+        expected_axes = {'DESIGN_TYPE_OF': {'purpose', 'function', 'physical_intension'}, 'INSTANCE_OF': {'physical_intension'}, 'NATIVE_DESIGN_PARENT': {'design_family'}, 'IS_A': {'physical_intension', 'class_intension'}, 'ROLE_ADJUDICATION': {'source_grain'}}
         if op['op'] == 'review_class_edge':
             expected_axes['IS_A'].add('class_intension')
         if relation not in expected_axes or axis not in expected_axes[relation]:

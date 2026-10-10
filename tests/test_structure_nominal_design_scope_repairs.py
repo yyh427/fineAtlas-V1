@@ -242,6 +242,12 @@ class NominalScopeContractTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'original description column'):
             self.validate()
 
+    def test_source_approved_abstract_class_intension_has_distinct_axis(self):
+        self.ops[2]['classification_axis']='class_intension';self.ops[2]['proof']['classification_axis']='class_intension'
+        self.freeze_changed_operations();self.write_inputs();apply_nominal_design_scope_repairs(self.migration())
+        row=self.c.execute('SELECT data FROM edges WHERE source=?',(SOURCE,)).fetchone()
+        self.assertEqual(json.loads(row[0])['classification_axis'],'class_intension')
+
     def test_all_three_scoped_relations_validate(self):
         self.validate()
 
