@@ -423,7 +423,8 @@ def raw_parents(con, uid):
         if peer['visibility'] != 'ACTIVE':
             continue
         rows = list(con.execute("SELECT parent_uid AS parent,relation FROM edges WHERE child_uid=? "
-            "AND relation='IS_A' AND status IN ('ACTIVE','BACKBONE_ACTIVE')", (peer['uid'],)))
+            "AND ((relation='IS_A' AND status IN ('ACTIVE','BACKBONE_ACTIVE')) "
+            "OR (relation IN ('TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT') AND status='TYPED_ACTIVE'))", (peer['uid'],)))
         rows.extend(con.execute("SELECT object_uid AS parent,relation FROM entity_relations "
             "WHERE subject_uid=? AND status='ACTIVE'", (peer['uid'],)))
         for row in rows:
@@ -618,11 +619,12 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                         and not identity_peer(con, child['uid'], witnesses[0]['uid'], role_overrides if preflight else None)):
                     raise ValueError('Attached different-source object cannot supply the own scope')
                 if not preflight:
-                    table = 'edges' if op['relation'] == 'IS_A' else 'entity_relations'
+                    table = 'edges' if op['relation'] in {'IS_A','TAXONOMIC_PARENT'} else 'entity_relations'
                     left, right = ('child_uid', 'parent_uid') if table == 'edges' else ('subject_uid', 'object_uid')
                     rows = con.execute('SELECT * FROM ' + table + ' WHERE ' + left + '=? AND ' + right + '=? AND relation=? AND source=?',
                                        (op['uid'], op['parent'], op['relation'], SOURCE)).fetchall()
-                    if len(rows) != 1 or rows[0]['status'] != 'ACTIVE' or json.loads(rows[0]['data']).get('admission_basis') != proof:
+                    expected_status = 'TYPED_ACTIVE' if op['relation'] == 'TAXONOMIC_PARENT' else 'ACTIVE'
+                    if len(rows) != 1 or rows[0]['status'] != expected_status or json.loads(rows[0]['data']).get('admission_basis') != proof:
                         raise ValueError('Actual new scoped link is absent or differs')
                     eid = 'usability:' + sha(dump(proof)); evidence = row_at(con, 'evidence', eid, 'evidence_id')
                     if not evidence or evidence['payload'] != dump(proof) or evidence['payload_sha256'] != sha(dump(proof)):
