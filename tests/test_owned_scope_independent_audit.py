@@ -35,6 +35,38 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
     def test_shared_component_and_name_do_not_prove_owned_source_identity(self):
         self.assertFalse(audit.identity_peer(self.con, 'design-a', 'source-a'))
 
+    def test_nominal_family_requires_preserved_source_bridge_and_original_claim(self):
+        self.con.execute("INSERT INTO nodes VALUES('parent-own','{}','model',1,'ACTIVE','Shared name')")
+        self.con.execute("INSERT INTO node_profiles VALUES('parent-own','MODEL')")
+        self.con.execute("INSERT INTO bridges VALUES(1,'source-a','parent-own','SAME_CONCEPT','ACTIVE')")
+        self.con.execute('CREATE TABLE entity_relations(id INTEGER,subject_uid TEXT,object_uid TEXT,relation TEXT,status TEXT,data TEXT)')
+        self.con.execute("INSERT INTO entity_relations VALUES(1,'design-a','source-a','NATIVE_DESIGN_PARENT','SOURCE_SCOPE_REVIEW','{}')")
+        own, parent = [], []
+        for uid,text in [('design-a','training version of the model family'),('parent-own','The model family includes its training variants.')]:
+            raw=audit.dump({'definition':text});self.con.execute('UPDATE nodes SET data=? WHERE uid=?',(raw,uid))
+            witness={'uid':uid,'data_sha256':audit.sha(raw),'field':'definition','statement':text}
+            (own if uid=='design-a' else parent).append(witness)
+        record={'uid':'design-a','parent':'source-a','proposed_relation':'NATIVE_DESIGN_PARENT',
+                'status':'SOURCE_DIRECTION_SUPPORTED_PENDING_EXACT_OPERATION_AND_SAFE_PARENT_ROLE',
+                'identity_or_mapping_promotion':False,'configuration_equality_assertion':False,
+                'child_source_objects':[{'node':audit.row_at(self.con,'nodes','design-a','uid')}],
+                'parent_source_objects':[{'node':audit.row_at(self.con,'nodes','source-a','uid')},
+                                         {'node':audit.row_at(self.con,'nodes','parent-own','uid')}],
+                'preserved_original_relations':[audit.row_at(self.con,'entity_relations',1)],
+                'parent_own_same_primary_source_bridge':[audit.row_at(self.con,'bridges',1)]}
+        doc={'schema':'FINEATLAS_SEVENTH_FIVE_ADDITIONAL_OWNED_NOMINAL_FAMILY_DIRECTIONS_SOURCE_REVIEW_V1',
+             'source_revision':'parent','records':[record]};path=self.root/'family.json';path.write_text(json.dumps(doc));digest=audit.sha(path.read_bytes())
+        manifest={'source_family_review_file':path.name,'source_family_review_sha256':digest,'completed_parent_revision':'parent'}
+        op={'uid':'design-a','parent':'source-a','relation':'NATIVE_DESIGN_PARENT','proof':{
+            'nominal_family_scope_review':record,'classification_axis':'design_family','source_witnesses':own+parent,
+            'native_record_sha256':audit.sha(audit.row_at(self.con,'nodes','design-a','uid')['data']),
+            'parent_native_record_sha256':audit.sha(audit.row_at(self.con,'nodes','source-a','uid')['data']),
+            'source_review_locator':{'file':path.name,'sha256':digest,'uid':'design-a','parent':'source-a','relation':'NATIVE_DESIGN_PARENT'}}}
+        audit.verify_nominal_family_source(self.con,self.root,manifest,op)
+        self.con.execute("UPDATE bridges SET status='SOURCE_SCOPE_REVIEW'")
+        with self.assertRaisesRegex(ValueError,'active own source bridge'):
+            audit.verify_nominal_family_source(self.con,self.root,manifest,op)
+
     def test_source_evidence_must_be_attached_to_the_navigable_edge(self):
         row = {'status': 'TYPED_ACTIVE', 'provenance': json.dumps({'evidence_ids': ['own']}),
                'data': json.dumps({'eligible_for_final_typed_graph': True, 'eligible_for_final_dag': False})}

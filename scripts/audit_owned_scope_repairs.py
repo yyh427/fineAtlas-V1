@@ -400,6 +400,53 @@ def verify_nominal_purpose_source(con, inputs, manifest, op, reviewed=None):
     return {'file': filename, 'sha256': sha(raw), 'uid': op['uid'], 'parent': op['parent']}
 
 
+def verify_nominal_family_source(con, inputs, manifest, op, role_overrides=None):
+    proof = op['proof']; locator = proof.get('source_review_locator', {})
+    name = manifest.get('source_family_review_file', '')
+    if not name or Path(name).name != name or '\\' in name or locator.get('file') != name:
+        raise ValueError('Family direction requires its portable independent complete source review')
+    raw = (Path(inputs) / name).read_bytes(); digest = sha(raw); source = json.loads(raw)
+    if (digest != manifest.get('source_family_review_sha256') or locator.get('sha256') != digest
+            or source.get('schema') != 'FINEATLAS_SEVENTH_FIVE_ADDITIONAL_OWNED_NOMINAL_FAMILY_DIRECTIONS_SOURCE_REVIEW_V1'
+            or source.get('source_revision') != manifest.get('completed_parent_revision')):
+        raise ValueError('Independent family review changed or belongs to another source snapshot')
+    records = [item for item in source['records'] if (item['uid'],item['parent'],item['proposed_relation']) ==
+               (op['uid'],op['parent'],op['relation'])]
+    if (len(records) != 1 or op['relation'] != 'NATIVE_DESIGN_PARENT'
+            or (locator.get('uid'),locator.get('parent'),locator.get('relation')) !=
+               (op['uid'],op['parent'],op['relation'])):
+        raise ValueError('Independent family review does not approve this exact nominal direction')
+    record = records[0]
+    if (proof.get('nominal_family_scope_review') != record
+            or record['status'] != 'SOURCE_DIRECTION_SUPPORTED_PENDING_EXACT_OPERATION_AND_SAFE_PARENT_ROLE'
+            or record['identity_or_mapping_promotion'] is not False
+            or record['configuration_equality_assertion'] is not False
+            or proof.get('physical_genus') or proof.get('classification_axis') != 'design_family'):
+        raise ValueError('Nominal family scope cannot imply physical type, configuration or identity equality')
+    for group in ('child_source_objects', 'parent_source_objects'):
+        for item in record[group]:
+            before = item['node']; actual = row_at(con,'nodes',before['uid'],'uid')
+            if not actual or {k:v for k,v in actual.items() if k!='component_id'} != {
+                    k:v for k,v in before.items() if k!='component_id'}:
+                raise ValueError('Independent family source object changed')
+    for before in record['preserved_original_relations']:
+        if row_at(con,'entity_relations',before['id']) != before:
+            raise ValueError('Original native family claim must remain preserved separately')
+    bridges = record['parent_own_same_primary_source_bridge']
+    if not bridges:
+        raise ValueError('Parent programme definition lacks its retained active own source bridge')
+    for bridge in bridges:
+        if row_at(con,'bridges',bridge['id']) != bridge or bridge['status'] != 'ACTIVE':
+            raise ValueError('Parent programme definition lacks its retained active own source bridge')
+    own, parent = proof['source_witnesses']
+    source_witness(con,own); source_witness(con,parent)
+    if (own['uid'] != op['uid'] or not identity_peer(con,op['parent'],parent['uid'],role_overrides)
+            or proof.get('native_record_sha256') != sha(row_at(con,'nodes',op['uid'],'uid')['data'])
+            or proof.get('parent_native_record_sha256') != sha(row_at(con,'nodes',op['parent'],'uid')['data'])):
+        raise ValueError('Family direction does not bind both correct original endpoints')
+    return {'file':name,'sha256':digest,'uid':op['uid'],'parent':op['parent']}
+
+
 def independently_declared_role(statement, label, scope_kind, generation_review=None):
     if scope_kind is None:
         named_instance_phrase(statement, label)
@@ -637,6 +684,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
     metadata = {r['key']: json.loads(r['value']) for r in con.execute('SELECT * FROM metadata')}
     errors, partition_sets, routes, verified_sources = [], set(), {}, {}
     verified_purpose_sources = []
+    verified_family_sources = []
     author_records = None
     if any(o['op'] == 'migrate_nominal_design_mapping' for o in operations):
         try:
@@ -730,6 +778,10 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                     verified_purpose_sources.append(verify_nominal_purpose_source(
                         con, inputs, manifest, op, reviewed if not preflight else None))
                     phrase = own_assertion_phrase(own)
+                elif proof.get('owned_physical_scope_kind') == 'OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION':
+                    verified_family_sources.append(verify_nominal_family_source(
+                        con, inputs, manifest, op, role_overrides if preflight else None))
+                    phrase = own_assertion_phrase(own)
                 elif manufacturer_design:
                     phrase = manufacturer_vehicle_phrase(proof, child, parent, retained_own_statements,
                                                          primary_snapshots_dir, verified_sources)
@@ -747,8 +799,8 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
                 if not biological_host and re.search(r'\b(?:not|never|fictional|virtual|imaginary|toy|scale model|parts? of|engine for)\b', phrase, re.I):
                     raise ValueError('Incidental or incompatible clause cannot supply the own physical genus')
                 genus = proof.get('physical_genus')
-                literal_physical_scope = (not biological_host and proof.get('owned_physical_scope_kind') !=
-                                          'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE')
+                literal_physical_scope = (not biological_host and proof.get('owned_physical_scope_kind') not in
+                                          {'OWNED_NOMINAL_DESIGN_FUNCTION_OR_PURPOSE','OWNED_COMPLETE_NOMINAL_FAMILY_DIRECTION'})
                 words = lambda value: re.findall(r'[^\W_]+', value.casefold(), re.UNICODE)
                 if literal_physical_scope and (not isinstance(genus, str) or not words(genus)):
                     raise ValueError('Physical genus must be explicit in the whole source review')
@@ -956,6 +1008,7 @@ def run(database, inputs, output, preflight=False, primary_snapshots_dir=None, a
               'primary_snapshots_dir': str(Path(primary_snapshots_dir).resolve()) if primary_snapshots_dir else None,
               'verified_primary_sources': verified_sources, 'identity_component_censuses': len(partition_sets),
               'verified_purpose_source_reviews': verified_purpose_sources,
+              'verified_family_source_reviews': verified_family_sources,
               'author_annotations_verified': len(author_records) if author_records else 0,
               'actual_new_link_root_reachability': routes, 'new_nodes': 0, 'positive_identity_merges': 0,
               'errors': errors}
