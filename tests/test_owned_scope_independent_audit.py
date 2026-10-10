@@ -110,6 +110,11 @@ class IndependentOwnedSourceAuditTests(unittest.TestCase):
             audit.verify_nominal_purpose_source(self.con, self.root, manifest, op,
                                               {('edges', 1): {'before_assertion': before}})
         op['proof']['parent_conditions'][0]['complete_parent_definition'] = True
+        op['proof']['physical_genus'] = 'aircraft'
+        with self.assertRaisesRegex(ValueError, 'literal own physical genus'):
+            audit.verify_nominal_purpose_source(self.con, self.root, manifest, op,
+                                              {('edges', 1): {'before_assertion': before}})
+        op['proof'].pop('physical_genus')
         with self.assertRaisesRegex(ValueError, 'exact scope review'):
             audit.verify_nominal_purpose_source(self.con, self.root, manifest, op)
         op['source_review_locator']['parent'] = 'another-scope'
