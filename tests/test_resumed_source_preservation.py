@@ -2,6 +2,7 @@
 from pathlib import Path
 import sqlite3
 import sys
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +57,27 @@ class VisibilityPreservation(unittest.TestCase):
         resumed = resumed.replace("command('audit_resumed_source_preservation.py'", "command('audit_structure_preservation.py'")
         resumed = resumed.replace("'--inputs',a.inputs,'--reference',a.reference", "'--reference',a.reference")
         self.assertEqual(resumed, original)
+
+    def test_report_cannot_overwrite_original_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'original.sqlite'
+            source.write_bytes(b'protected source bytes')
+            inputs = root / 'inputs'
+            inputs.mkdir()
+            with self.assertRaises(ValueError):
+                audit.run(source, source, inputs, source)
+            self.assertEqual(source.read_bytes(), b'protected source bytes')
+
+    def test_report_cannot_modify_frozen_input_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'original.sqlite'
+            source.write_bytes(b'protected source bytes')
+            inputs = root / 'inputs'
+            inputs.mkdir()
+            with self.assertRaises(ValueError):
+                audit.run(source, source, inputs, inputs / 'report.json')
 
 
 if __name__ == '__main__':

@@ -87,6 +87,11 @@ def digest_rows(con, table, columns, maximum, permissions=None):
 def run(baseline, candidate, inputs, output, reference=None):
     if not __debug__:
         raise RuntimeError('Optimized Python is forbidden for source preservation')
+    protected = [baseline, candidate, *(path for path in inputs.rglob('*') if path.is_file())]
+    if (output.resolve().is_relative_to(inputs.resolve()) or
+            any(output.resolve() == path.resolve() or
+                (output.exists() and output.samefile(path)) for path in protected)):
+        raise ValueError('Source preservation reports must not overwrite source artifacts or frozen inputs')
     output.parent.mkdir(parents=True, exist_ok=True)
     permissions, audits, revision, frozen_inputs = independent_permissions(candidate, inputs, output)
     base = sqlite3.connect(baseline.resolve().as_uri() + '?mode=ro&immutable=1', uri=True)
