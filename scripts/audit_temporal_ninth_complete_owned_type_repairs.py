@@ -132,17 +132,27 @@ def reviewed_prior_status(con, inputs, prior, operations, preflight):
     return review['after_status']
 
 
-def temporal_row(table, before, operations):
+def temporal_row(table, before, operations, *, uid=None):
     """Derive an exact later state from independently verified operations."""
     if table in {'node_profiles', 'normalization_roles'}:
-        matches = [o for o in operations if o['op'] == 'correct_role' and o['uid'] == before['uid']]
+        if before is None:
+            if not isinstance(uid, str) or not uid:
+                raise ValueError('Absent historical role requires explicit parent UID')
+        elif uid is None:
+            uid = before['uid']
+        elif before['uid'] != uid:
+            raise ValueError('Historical role belongs to another parent UID')
+        matches = [o for o in operations if o['op'] == 'correct_role' and o['uid'] == uid]
         if len(matches) > 1:
             raise ValueError('Duplicate later role adjudication')
         if matches:
             key = 'profile' if table == 'node_profiles' else 'normalization_role'
             if matches[0]['before_' + key] != before:
                 raise ValueError('Later role correction differs from exact source-eight timepoint')
-            return matches[0]['after_' + key]
+            after = matches[0]['after_' + key]
+            if after is not None and after['uid'] != uid:
+                raise ValueError('Later role correction belongs to another parent UID')
+            return after
     if table in {'edges', 'entity_relations'}:
         kind = 'review_class_edge' if table == 'edges' else 'review_typed_relation'
         matches = [o for o in operations if o['op'] == kind and o['before_assertion']['id'] == before['id']]
@@ -174,7 +184,7 @@ def verify_parent_component(con, manifest, uid, later_operations=()):
         raise ValueError('Whole parent source node changed')
     for table, key in (('node_profiles', 'before_profile'),
                        ('normalization_roles', 'before_normalization_role')):
-        if row_at(con, table, uid) != temporal_row(table, reviewed[key], later_operations):
+        if row_at(con, table, uid) != temporal_row(table, reviewed[key], later_operations, uid=uid):
             raise ValueError('Independent whole parent role declaration changed')
     nodes = [dict(r) for r in con.execute('SELECT * FROM nodes WHERE component_id=? ORDER BY uid',
                                          (parent['component_id'],))]

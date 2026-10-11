@@ -70,6 +70,52 @@ class ExactTemporalWithdrawals(unittest.TestCase):
     def test_no_review_keeps_prior_status(self):
         self.assertEqual(AUDIT.reviewed_prior_status(None, None, self.prior, [], False), 'ACTIVE')
 
+    def test_absent_parent_roles_remain_absent_without_exact_correction(self):
+        for table in ('node_profiles', 'normalization_roles'):
+            self.assertIsNone(AUDIT.temporal_row(table, None, [], uid='source:parent'))
+            with self.assertRaisesRegex(ValueError, 'explicit parent UID'):
+                AUDIT.temporal_row(table, None, [])
+
+    def test_exact_creation_from_absent_parent_role(self):
+        for table, key in (('node_profiles', 'profile'),
+                           ('normalization_roles', 'normalization_role')):
+            after = {'uid': 'source:parent', 'node_kind': 'CLASS'}
+            correction = {'op': 'correct_role', 'uid': after['uid'],
+                          'before_' + key: None, 'after_' + key: after}
+            self.assertEqual(AUDIT.temporal_row(table, None, [correction], uid=after['uid']), after)
+            self.assertIsNone(AUDIT.temporal_row(table, None, [correction], uid='source:other'))
+            with self.assertRaisesRegex(ValueError, 'Duplicate'):
+                AUDIT.temporal_row(table, None, [correction, correction], uid=after['uid'])
+            correction['before_' + key] = after
+            with self.assertRaisesRegex(ValueError, 'exact source-eight'):
+                AUDIT.temporal_row(table, None, [correction], uid=after['uid'])
+
+    def test_wrong_uid_in_history_or_new_role_is_rejected(self):
+        before = {'uid': 'source:parent', 'node_kind': 'MODEL'}
+        with self.assertRaisesRegex(ValueError, 'another parent UID'):
+            AUDIT.temporal_row('node_profiles', before, [], uid='source:other')
+        correction = {'op': 'correct_role', 'uid': before['uid'], 'before_profile': before,
+                      'after_profile': {'uid': 'source:other', 'node_kind': 'CLASS'}}
+        with self.assertRaisesRegex(ValueError, 'another parent UID'):
+            AUDIT.temporal_row('node_profiles', before, [correction])
+
+    def test_unapproved_creation_of_absent_parent_role_fails_sql_audit(self):
+        parent = {'uid': 'source:parent', 'component_id': 1}
+        manifest = {'parent_components': {parent['uid']: {
+            'before_node': parent, 'before_profile': None, 'before_normalization_role': None,
+            'component_nodes': [parent], 'component_bridges': [], 'parent_edges': [],
+            'parent_typed': []}}}
+        with sqlite3.connect(':memory:') as con:
+            con.row_factory = sqlite3.Row
+            con.execute('CREATE TABLE nodes(uid TEXT, component_id INTEGER)')
+            con.execute('CREATE TABLE node_profiles(uid TEXT, node_kind TEXT)')
+            con.execute('CREATE TABLE normalization_roles(uid TEXT)')
+            con.execute('INSERT INTO nodes VALUES (?, ?)', (parent['uid'], 1))
+            AUDIT.verify_parent_component(con, manifest, parent['uid'])
+            con.execute('INSERT INTO node_profiles VALUES (?, ?)', (parent['uid'], 'CLASS'))
+            with self.assertRaisesRegex(ValueError, 'parent role declaration changed'):
+                AUDIT.verify_parent_component(con, manifest, parent['uid'])
+
 
 if __name__ == '__main__':
     unittest.main()
