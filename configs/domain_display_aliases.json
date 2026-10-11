@@ -1,0 +1,81 @@
+{
+  "schema": "FINEATLAS_NAVIGATION_NAMES_V1",
+  "source_uri": "https://github.com/yyh427/fineAtlas-V1/blob/repair/v1.11-structure-expansion-20261009/configs/domain_display_aliases.json",
+  "domains": [
+    {
+      "domain": "furniture",
+      "definition": "One domain entry collects independently identified, root-connected source scopes.",
+      "root_uids": [
+        "wikidata:Q14745",
+        "wordnet31:03410635-n"
+      ],
+      "aliases": [
+        "家具"
+      ]
+    },
+    {
+      "domain": "kitchen_and_tableware",
+      "definition": "Physical utensils for preparing food and articles for use at the table; prepared food is excluded.",
+      "root_uids": [
+        "wordnet31:03626258-n",
+        "wordnet31:04389081-n"
+      ],
+      "aliases": [
+        "厨具餐具",
+        "厨具",
+        "餐具",
+        "厨房用品"
+      ]
+    },
+    {
+      "domain": "bags_and_luggage",
+      "definition": "Backpacks, personal handbags and travel luggage; unrelated senses of bag are excluded.",
+      "root_uids": [
+        "wordnet31:02772753-n",
+        "wordnet31:02777157-n",
+        "wordnet31:02777635-n"
+      ],
+      "aliases": [
+        "背包箱包",
+        "箱包",
+        "背包",
+        "手提包",
+        "行李箱"
+      ]
+    },
+    {
+      "domain": "lighting",
+      "definition": "Physical lamps, lamp furniture and lighting fixtures, using distinct source synsets without merging senses.",
+      "root_uids": [
+        "wordnet31:03641539-n",
+        "wordnet31:03641940-n",
+        "wordnet31:03672706-n"
+      ],
+      "aliases": [
+        "照明",
+        "灯具"
+      ]
+    },
+    {
+      "domain": "toys",
+      "definition": "Artifacts designed to be played with; arbitrary scale models and generic objects are not inferred to be toys.",
+      "root_uids": [
+        "wordnet31:03971038-n"
+      ],
+      "aliases": [
+        "玩具"
+      ]
+    },
+    {
+      "domain": "hand_tools",
+      "definition": "One domain entry collects independently identified, root-connected source scopes.",
+      "root_uids": [
+        "wikidata:Q2578402",
+        "wordnet31:03494245-n"
+      ],
+      "aliases": [
+        "手工具"
+      ]
+    }
+  ]
+}

@@ -84,11 +84,13 @@ def install(root: Path, metadata: dict) -> Path:
     downloads = root / 'downloads'
     downloads.mkdir(exist_ok=True)
     assets = []
+    asset_proofs = []
     for item in metadata['assets']:
         if Path(item['name']).name != item['name']:
             raise ValueError('Invalid asset filename')
         path = downloads / item['name']
-        download(metadata['base_url'] + '/' + item['name'], path, item)
+        disposition=download(metadata['base_url'] + '/' + item['name'], path, item)
+        asset_proofs.append(disposition or {'fresh_download':False,'network_request':False,'disposition':'UNKNOWN'})
         assets.append(path)
     compressed = downloads / 'fineatlas.sqlite.zst'
     with compressed.open('wb') as target:
@@ -119,6 +121,13 @@ def install(root: Path, metadata: dict) -> Path:
             process.terminate()
         process.wait()
     compressed.unlink()
+    proof={'schema':'FINEATLAS_PUBLIC_DOWNLOAD_PROOF_V1','authenticated':False,
+           'database':str(database.resolve()),'artifact_stamp':[database.stat().st_size,database.stat().st_mtime_ns,database.stat().st_ino],
+           'fresh_download':bool(asset_proofs) and all(row.get('fresh_download') is True and row.get('network_request') is True for row in asset_proofs),
+           'asset_proofs':asset_proofs,'database_sha256':h.hexdigest(),'database_bytes':total,
+           'database_revision':metadata.get('database_revision'),'release':metadata.get('release'),
+           'public_download_urls':[metadata['base_url']+'/'+item['name'] for item in metadata['assets']]}
+    (root/'public_download_proof.json').write_text(json.dumps(proof,indent=2)+'\n')
     write_receipt(root,metadata)
     print(f'Verified {database}', flush=True)
     return database
@@ -147,7 +156,11 @@ def verify_revision(database,manifest):
             raise RuntimeError('Snapshot supported views differ from the release manifest')
         sdk = runtime_sdk(manifest)
         source = Path(sdk.__file__).resolve().parent
-        code = meta.get('unified_frozen_build_manifest',{}).get('code',{})
+        freeze_key = 'structure_frozen_build_manifest' if 'structure_frozen_build_manifest' in meta else 'unified_frozen_build_manifest'
+        frozen_code = meta.get(freeze_key,{}).get('code',{})
+        code = {name:value for name,value in frozen_code.items() if name.startswith('src/fineatlas/')}
+        if freeze_key == 'structure_frozen_build_manifest' and {Path(name).name for name in code} != {p.name for p in source.glob('*.py')}:
+            raise RuntimeError('Installed SDK inventory differs from frozen structure build')
         if not code or 'src/fineatlas/__init__.py' not in code:
             raise RuntimeError('Snapshot has no frozen SDK manifest')
         for name, expected in code.items():

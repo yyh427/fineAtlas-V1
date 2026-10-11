@@ -94,6 +94,20 @@ class LivingPortalTests(unittest.TestCase):
             self.assertEqual(LIVING.apply_living_inputs(m)['status'], 'VERIFIED_NO_OP')
             self.assertEqual(len(m.changes), changes)
 
+    def test_additive_stage_keeps_the_original_application_receipt(self):
+        with tempfile.TemporaryDirectory() as folder:
+            m = self.fixture(folder)
+            old = {'input_sha256': 'protected-history', 'summary': {'original': True}}
+            m.meta('living_domains_application', old)
+            with self.assertRaisesRegex(ValueError, 'already applied'):
+                LIVING.apply_living_inputs(m)
+            result=LIVING.apply_living_inputs(m, stage_key='living_coverage_extension_application')
+            self.assertEqual(result['status'], 'APPLIED')
+            actual=json.loads(m.c.execute("SELECT value FROM metadata WHERE key='living_domains_application'").fetchone()[0])
+            self.assertEqual(actual, old)
+            repeated=LIVING.apply_living_inputs(m, stage_key='living_coverage_extension_application')
+            self.assertEqual(repeated['status'], 'VERIFIED_NO_OP')
+
     def test_historical_broader_raw_entry_does_not_replace_reviewed_registry_scope(self):
         with tempfile.TemporaryDirectory() as folder:
             m = self.fixture(folder)

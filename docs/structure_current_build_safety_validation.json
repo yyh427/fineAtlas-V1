@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "cases": {
+    "independent_copy_positive": {
+      "status": "PASS",
+      "result": {
+        "database": "/data/yaoyuhan/FineAtlas-Eval/v1/v1_structure_expansion_20261009.d_yco_te/agents/delivery-tools-review/current-path-fixtures/candidate.sqlite",
+        "registry_sha256": "6abeb392af2a9e592382d6ca65a0b73848386a7876d01ee542fd0b4b7441992e",
+        "protected_files": 2,
+        "distinct_inode": true,
+        "baseline_is_registered_production": true
+      }
+    },
+    "production_output": {
+      "status": "REJECTED",
+      "reason": "Refusing to modify registered PRODUCTION: /data/yaoyuhan/FineAtlas-Eval/v1/v1_structure_expansion_20261009.d_yco_te/agents/delivery-tools-review/current-path-fixtures/production.sqlite"
+    },
+    "checkpoint_output": {
+      "status": "REJECTED",
+      "reason": "Refusing to modify registered SOURCE_CHECKPOINT: /data/yaoyuhan/FineAtlas-Eval/v1/v1_structure_expansion_20261009.d_yco_te/agents/delivery-tools-review/current-path-fixtures/source-checkpoint.sqlite"
+    },
+    "substituted_cli_baseline": {
+      "status": "REJECTED",
+      "reason": "Baseline must be the registered production inode; copies and metadata are insufficient"
+    },
+    "hardlink-production": {
+      "status": "REJECTED",
+      "reason": "Refusing to modify registered PRODUCTION: /data/yaoyuhan/FineAtlas-Eval/v1/v1_structure_expansion_20261009.d_yco_te/agents/delivery-tools-review/current-path-fixtures/production.sqlite"
+    },
+    "symlink-production": {
+      "status": "REJECTED",
+      "reason": "Refusing to modify registered PRODUCTION: /data/yaoyuhan/FineAtlas-Eval/v1/v1_structure_expansion_20261009.d_yco_te/agents/delivery-tools-review/current-path-fixtures/production.sqlite"
+    },
+    "actual_preimport_inventory_detects_loaded_disk_drift": {
+      "status": "REJECTED",
+      "old_inventory_sha": "b45a2eb0482f86e542db2278931d0dc0ae57bbcfa5ec87d7a5c9a3cca3b2a480",
+      "new_inventory_sha": "a67ef9fa8f946ec81c98e812cb9d59f3611b9d77ac9b95eeffb0dce174787823"
+    },
+    "actual_build_preimport_binding_and_private_cache": {
+      "status": "PASS",
+      "cache_prefix": "/data/yaoyuhan/FineAtlas-Eval/v1/v1_structure_expansion_20261009.d_yco_te/tmp/fineatlas-import-91a9a7ad4e7e471aab7452509cd173bb",
+      "current_inventory_equals_preimport": true
+    }
+  },
+  "production_or_candidate_writes": 0,
+  "actual_database_mutator_called": false,
+  "source_hashes": {
+    "scripts/structure_build_safety.py": "5a22a5b1d55c7270c855324e4a6c00adae0775c611f2cd2f8fd8efb1a3066ede",
+    "scripts/build_structure_candidate.py": "5330e2f3794ab6b76115b60711ba2a0e8f5a440d792aa77361c2f85f8cc12260",
+    "scripts/extend_structure_checkpoint.py": "5c8c404598f4fd3d09e48a32e2ec19d5537b2bee3eacb1ce9dca7f84ec3dc511",
+    "scripts/promote_structure_stable.py": "da6acb78b0f32784c8bdb8aefd8fd583b0d22c432d7399774b0ac96b1dccebc2"
+  }
+}

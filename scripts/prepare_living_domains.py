@@ -96,8 +96,10 @@ def prepare(database, output):
     return {k: manifest[k] for k in ('new_domains', 'new_root_rules', 'added_class_nodes', 'added_hierarchy_edges')}
 
 
-def apply_living_inputs(m):
+def apply_living_inputs(m, *, stage_key="living_domains_application"):
     """Extend canonical portals while verifying every protected attachment rule."""
+    if not stage_key or not stage_key.replace("_", "").isalnum():
+        raise ValueError("Explicit portal application namespace required")
     manifest_path = m.inputs / 'living_domains_manifest.json'
     if not manifest_path.exists():
         return {'living_domains': 0}
@@ -105,7 +107,7 @@ def apply_living_inputs(m):
     manifest = json.loads(manifest_path.read_text())
     fingerprint = hashlib.sha256(b''.join(name.encode() + b'\0' + (m.inputs / name).read_bytes() for name in
                                  ('new_domains.jsonl', 'living_domain_rules.json', 'living_backbone_nodes.json', 'living_domains_manifest.json'))).hexdigest()
-    stage = c.execute("SELECT value FROM metadata WHERE key='living_domains_application'").fetchone()
+    stage = c.execute("SELECT value FROM metadata WHERE key=?", (stage_key,)).fetchone()
     stage = json.loads(stage[0]) if stage else None
     if stage and stage['input_sha256'] != fingerprint:
         raise ValueError('Living portal inputs differ from an already applied stage; rebuild from the protected baseline')
@@ -181,7 +183,7 @@ def apply_living_inputs(m):
             'old_attachment_rules_checked': len(old_rules), 'old_attachment_rules_remapped': 0,
             'old_domain_ids_preserved': True, 'total_attachment_rules': len(by_key),
             'protected_original_domains': len(manifest['prior_domains']), 'portals': portals}
-    m.meta('living_domains_application', {'input_sha256': fingerprint, 'summary': summary})
+    m.meta(stage_key, {'input_sha256': fingerprint, 'summary': summary})
     c.commit()
     return {**summary, 'status': 'APPLIED'}
 

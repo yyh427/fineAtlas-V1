@@ -1,0 +1,68 @@
+{
+  "schema": "FINEATLAS_INDEPENDENT_EXTERNAL_AUDIT_SUPPLEMENT_CODE_V1",
+  "supplement_version": "source166-class-case-v2",
+  "created_utc": "2026-10-10T22:08:48.539306+00:00",
+  "frozen_source9_input_seal_sha256": "9e88436b7989843cf56c4186c8ba2060aed53e441ea6a963e2cb32864d173f68",
+  "frozen_build_code_commit": "934ad4e2b1d53242ae28f6f619a4ed44d3c78538",
+  "original_frozen_observer_failed": true,
+  "original_frozen_input_count": 152,
+  "original_exact_eight": {
+    "external_audits/nominal-design-scope-final-plan-v1/independent_nominal_design_scope_final_interface_audit.py": "eb865c1aa61434bc176764ae0c764d2141097a297603aa363859c5986403fc98",
+    "external_audits/nominal-design-scope-final-plan-v1/run_final_nominal_design_scope_external_audit.py": "d2ffc25e9a4b657d64a9cca12aae968af76c06463c832af6dce784de8e1bef61",
+    "external_audits/nominal-design-scope-final-plan-v1/test_exact_nominal_external_plan_binding.py": "13b3af4e1287440baa160a181a107992106d8a4da58f0b9951a7eca326c63b3f",
+    "external_audits/nominal-design-scope-final-plan-v1/test_nominal_external_transition_observers.py": "a7672e8b24d262c68d37937fd4244779f6cb60e3f1170e008eb6220fdb56eb84",
+    "external_audits/nominal-formal-final-plan-v1/independent_nominal_formal_binding.py": "97cb48872c810e9b994c12b703a30edcb27e53b192c3a2ae1083140bff749a29",
+    "external_audits/nominal-formal-final-plan-v1/independent_nominal_formal_final_interface_audit.py": "8737a421353e21fc3968185b6f6bafdcaf7c24e5ac2eb7cadc19873be04ec9d1",
+    "external_audits/nominal-formal-final-plan-v1/run_final_nominal_formal_external_audit.py": "7ce3fb7300502a04f198a0a74120a8951b49516f62c665cd8f894888cf9d107f",
+    "external_audits/nominal-formal-final-plan-v1/test_independent_nominal_formal_binding.py": "f70f48a439bcaffc93e2be68016e11e4a135a765aedcb7c11e67f9079015c2ae"
+  },
+  "preserved_failure_receipts": {
+    "sealed_axis_four_schema_failure": {
+      "sha256": "9845f0f190998a8fc5721c0de444941e7836be1f23ba867c2a77d51efe3719bf"
+    },
+    "initial_military_duplicate_hash_observer_failure": {
+      "sha256": "b7180cd05ec66941cc878fea8585c5b883476e6c4b029a28924db7a93e609130"
+    }
+  },
+  "source_operation_interface_fixture": {
+    "sha256": "b09bbe7f155c822f9617e3bfb9d82fb083c2829132fdc06a88184d6441261014",
+    "fixture_only": true,
+    "actual_final_acceptance": false,
+    "operations_checked": 166,
+    "operations": {
+      "link": 89,
+      "correct_role": 26,
+      "review_class_edge": 51
+    }
+  },
+  "control_receipt": {
+    "sha256": "dbc865e76a8a9d3548c47691d9b891c848bdd01b2bce037401744d6e61aa9ee8",
+    "tests": 78,
+    "optimized_subprocess_rejections": 33,
+    "fixture_only": true,
+    "actual_final_acceptance": false
+  },
+  "files": {
+    "README.txt": "10e1371390f6c0926b6f062e8c4e96faeead82e99297ffe13986724f513a9763",
+    "external_audit_supplement_binding.py": "cda4c9f796fa98b7ba055fbb8e2c9f3e5038b498973378a35af47dcee4fbe3d8",
+    "nominal-design-scope-final-plan-v1/independent_nominal_design_scope_final_interface_audit.py": "30250bcd8ce5c71f24c026bbfc5f664979f4c383da2d4824d06cfaa96cb19a7d",
+    "nominal-design-scope-final-plan-v1/run_final_nominal_design_scope_external_audit.py": "19d4bf3d5bef6668ed289a874e991ad82223dd224132175f6166f407527b334e",
+    "nominal-design-scope-final-plan-v1/test_complete_source_class_case_observers.py": "507b6b4e0e5dc1a24c9d603758395f33b6ade7658af5f008667d8d8b67cd2d21",
+    "nominal-design-scope-final-plan-v1/test_exact_nominal_external_plan_binding.py": "13b3af4e1287440baa160a181a107992106d8a4da58f0b9951a7eca326c63b3f",
+    "nominal-design-scope-final-plan-v1/test_nominal_external_transition_observers.py": "a7672e8b24d262c68d37937fd4244779f6cb60e3f1170e008eb6220fdb56eb84",
+    "nominal-formal-final-plan-v1/independent_nominal_formal_binding.py": "d9cc0275ff810f207422b3f32dac10270ca9f770467e1bf25fea95a99a70a604",
+    "nominal-formal-final-plan-v1/independent_nominal_formal_final_interface_audit.py": "a0c2781019cad89967da8a244b2a932d541751830f8d09f8f21027fe7d607bcd",
+    "nominal-formal-final-plan-v1/run_final_nominal_formal_external_audit.py": "22b63c32cdd71c98022f79e5b06f969eefae83f89c1c005089c2bef5a5821baf",
+    "nominal-formal-final-plan-v1/test_independent_nominal_formal_binding.py": "f70f48a439bcaffc93e2be68016e11e4a135a765aedcb7c11e67f9079015c2ae",
+    "package_external_audit_supplement.py": "1b8a883183235f3a0acb987dad289dceec37cfdec9a8b0fc68c2edb95e9980ad",
+    "test_external_supplement_binding.py": "0f298c6cf1f11ee1e1607ba55e0ab1dd85f3ab6ca16d4f1e9be8c21ebfff1c61",
+    "test_optimized_mandatory_gate_rejection.py": "e28a7247a601e10e1415d2b269a8d5add89f84ff777f572e3a754cb44f7c89e0",
+    "verify_sealed_source_operations.py": "6ce5b317222b1221af1356fa461fe403516b595c943e8a3cee0ab6ab3aa4451b"
+  },
+  "obsolete_supplement_v1": {
+    "archive_sha256": "b3be5866cfb68e07e2e2cdbe48e4776f84aa6eca2b9fc2b400fdfb48c129fb9d",
+    "actual_acceptance_authorization_allowed": false,
+    "reason": "assert __debug__ could be removed by optimization; v2 rejects before any mandatory module runs"
+  },
+  "source166_semantic_change_from_v1": false
+}

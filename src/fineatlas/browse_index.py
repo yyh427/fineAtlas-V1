@@ -131,6 +131,21 @@ def build_browse_index(database, reports, *, release=None, source=None):
 
     def native_facets():
         c.execute("DELETE FROM browse_facets WHERE facet<>'source'")
+        source_schema = "source" if source else "main"
+        if c.execute("SELECT 1 FROM " + source_schema +
+                     ".sqlite_master WHERE name='source_field_values'").fetchone():
+            c.execute("""INSERT OR IGNORE INTO browse_facets
+                SELECT s.uid,n.component_id,s.field,s.value,s.source
+                FROM source_field_values s JOIN browse_nodes n ON n.uid=s.uid
+                WHERE s.field IN ('manufacturer','catalogue','native_model','year','series',
+                                  'brand','color','material','native_product_type','organization_group')
+                AND s.value<>''""")
+        c.execute("""INSERT OR IGNORE INTO browse_facets
+            SELECT n.uid,n.component_id,'manufacturer',m.value,
+                   'node_profiles.attributes.source_native_manufacturers'
+            FROM node_profiles p JOIN browse_nodes n ON n.uid=p.uid
+            JOIN json_each(p.attributes,'$.source_native_manufacturers') m
+            WHERE m.type='text' AND m.value<>''""")
         conditions=[
             ('manufacturer',"trim(json_extract(n.data,'$.MFR'))","n.source='faa'",'nodes.data.MFR'),
             ('native_model',"trim(json_extract(n.data,'$.MODEL'))","n.source='faa'",'nodes.data.MODEL'),

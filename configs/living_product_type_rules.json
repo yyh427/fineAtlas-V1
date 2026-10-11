@@ -1,0 +1,596 @@
+{
+  "schema": "FINEATLAS_CATALOGUE_TYPE_RULES_V1",
+  "source": "Amazon Berkeley Objects",
+  "wordnet_version": "3.1",
+  "rules": [
+    {
+      "product_type": "CHAIR",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:03005231-n",
+      "title_patterns": [
+        "\\b(?:chair|recliner)\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*(?:Chairs|Recliners)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\b(?:chair|recliner)\\b.{0,80}\\b(?:with|and|&)\\b.{0,60}\\bottoman\\b",
+        "\\bottoman\\b.{0,80}\\b(?:with|and|&)\\b.{0,60}\\b(?:chair|recliner)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true,
+      "refinements": [
+        {
+          "parent_uid": "wordnet31:04069540-n",
+          "title_pattern": "\\brecliner\\b",
+          "catalogue_pattern": "Recliners"
+        }
+      ],
+      "scope_overrides": [
+        {
+          "parent_uid": "wordnet31:04169042-n",
+          "title_pattern": "\\b(?:love[ -]?seat|(?:two|2|three|3)[ -]?seater)\\b",
+          "allow_refinements": false,
+          "reason": "Native CHAIR catalogue contains declared multi-person seats; one-person chair definition is not entailed."
+        }
+      ]
+    },
+    {
+      "product_type": "SOFA",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:04263630-n",
+      "title_patterns": [
+        "\\b(?:sofa|couch)\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*(?:Sofas|Couches|Sectionals)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "TABLE",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:04386330-n",
+      "title_patterns": [
+        "\\btable\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*Tables"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true,
+      "refinements": [
+        {
+          "parent_uid": "wordnet31:03067971-n",
+          "title_pattern": "\\bcoffee table\\b",
+          "catalogue_pattern": "Coffee Tables"
+        },
+        {
+          "parent_uid": "wordnet31:03205892-n",
+          "title_pattern": "\\bdining table\\b",
+          "catalogue_pattern": "(?:Kitchen|Dining).*Tables"
+        }
+      ]
+    },
+    {
+      "product_type": "DESK",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:03184367-n",
+      "title_patterns": [
+        "\\bdesk\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*Desks"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "CABINET",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:02936496-n",
+      "title_patterns": [
+        "\\bcabinet\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*Cabinets"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "OTTOMAN",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:03863938-n",
+      "title_patterns": [
+        "\\b(?:ottoman|footstool)\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*(?:Ottomans|Footstools)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\b(?:chair|recliner)\\b.{0,80}\\b(?:with|and|&)\\b.{0,60}\\bottoman\\b",
+        "\\bottoman\\b.{0,80}\\b(?:with|and|&)\\b.{0,60}\\b(?:chair|recliner)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "STOOL_SEATING",
+      "domain": "furniture",
+      "parent_uid": "wordnet31:04169042-n",
+      "title_patterns": [
+        "\\b(?:stool|barstool)\\b"
+      ],
+      "catalogue_patterns": [
+        "Furniture.*(?:Stools|Barstools)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true,
+      "scope_review": "Native stool catalogue includes backed/armed seating; only a seat is entailed by every admitted listing.",
+      "refinements": [
+        {
+          "parent_uid": "wordnet31:04334034-n",
+          "title_pattern": "\\bbackless\\b",
+          "catalogue_pattern": "Stools|Barstools",
+          "required_evidence_patterns": [
+            "\\b(?:armless|without arms|no arms)\\b"
+          ],
+          "reject_evidence_patterns": [
+            "\\b(?:with arms|with a back|with back|with backrest)\\b"
+          ]
+        }
+      ]
+    },
+    {
+      "product_type": "LAMP",
+      "domain": "lighting",
+      "parent_uid": "wordnet31:03641539-n",
+      "title_patterns": [
+        "\\b(?:table lamp|floor lamp)\\b"
+      ],
+      "catalogue_patterns": [
+        "Lighting.*(?:Table Lamps|Floor Lamps)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\b(?:battery.operated|solar|strip light|spotlight)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true,
+      "refinements": [
+        {
+          "parent_uid": "wordnet31:03371905-n",
+          "title_pattern": "\\bfloor lamp\\b",
+          "catalogue_pattern": "Floor Lamps"
+        },
+        {
+          "parent_uid": "wordnet31:04387620-n",
+          "title_pattern": "\\btable lamp\\b",
+          "catalogue_pattern": "Table Lamps"
+        }
+      ]
+    },
+    {
+      "product_type": "LIGHT_FIXTURE",
+      "domain": "lighting",
+      "parent_uid": "wordnet31:03672706-n",
+      "title_patterns": [
+        "\\b(?:light fixture|pendant|chandelier|ceiling light|flush mount|sconce)\\b"
+      ],
+      "catalogue_patterns": [
+        "Lighting.*(?:Ceiling Lights|Wall Lights|Pendant Lights|Sconces)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "BACKPACK",
+      "domain": "bags_and_luggage",
+      "parent_uid": "wordnet31:02772753-n",
+      "title_patterns": [
+        "\\b(?:backpack|rucksack)\\b"
+      ],
+      "catalogue_patterns": [
+        "Backpacks|Rucksacks"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "HANDBAG",
+      "domain": "bags_and_luggage",
+      "parent_uid": "wordnet31:02777157-n",
+      "title_patterns": [
+        "\\b(?:handbag|tote|shoulder bag|clutch bag)\\b"
+      ],
+      "catalogue_patterns": [
+        "Handbags|Totes|Shoulder Bags|Clutches"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\b(?:laptop|notebook|computer|sleeve)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "SUITCASE",
+      "domain": "bags_and_luggage",
+      "parent_uid": "wordnet31:02776843-n",
+      "title_patterns": [
+        "\\b(?:suitcase|luggage|carry.on)\\b"
+      ],
+      "catalogue_patterns": [
+        "Luggage.*(?:Suitcases|Luggage Sets|Carry.ons)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\b(?:Nintendo|Switch|camera case|instrument case)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "LUGGAGE",
+      "domain": "bags_and_luggage",
+      "parent_uid": "wordnet31:02777635-n",
+      "title_patterns": [
+        "\\b(?:luggage|suitcase|carry.on)\\b"
+      ],
+      "catalogue_patterns": [
+        "Luggage|Suitcases"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\bpacking cube(?:s)?\\b",
+        "\\b(?:organizer|organiser|packing bag)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "DRINKING_CUP",
+      "domain": "kitchen_and_tableware",
+      "parent_uid": "wordnet31:03152175-n",
+      "title_patterns": [
+        "\\b(?:cup|mug)\\b"
+      ],
+      "catalogue_patterns": [
+        "(?:Tableware|Drinkware|Coffee|Glassware).*(?:Cups|Mugs)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "DISHWARE_PLATE",
+      "domain": "kitchen_and_tableware",
+      "parent_uid": "wordnet31:03965779-n",
+      "title_patterns": [
+        "\\bplate\\b"
+      ],
+      "catalogue_patterns": [
+        "Tableware.*Plates|Dinnerware.*Plates"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "DISHWARE_BOWL",
+      "domain": "kitchen_and_tableware",
+      "parent_uid": "wordnet31:02884182-n",
+      "title_patterns": [
+        "\\bbowl\\b"
+      ],
+      "catalogue_patterns": [
+        "Tableware.*Bowls|Dinnerware.*Bowls"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "FLATWARE",
+      "domain": "kitchen_and_tableware",
+      "parent_uid": "wordnet31:03158041-n",
+      "title_patterns": [
+        "\\b(?:flatware|cutlery|silverware)\\b"
+      ],
+      "catalogue_patterns": [
+        "Flatware|Cutlery"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "SAUTE_FRY_PAN",
+      "domain": "kitchen_and_tableware",
+      "parent_uid": "wordnet31:03405146-n",
+      "title_patterns": [
+        "\\b(?:frying pan|fry pan|skillet|saute pan)\\b"
+      ],
+      "catalogue_patterns": [
+        "Cookware.*(?:Pans|Skillets)|Kitchen.*(?:Pans|Skillets)"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "TOY_FIGURE",
+      "domain": "toys",
+      "parent_uid": "wordnet31:03971038-n",
+      "title_patterns": [
+        "\\b(?:figure|figurine|teddy|puppet|doll)\\b"
+      ],
+      "catalogue_patterns": [
+        "(?:Toys|Games).*Figures",
+        "Soft Toys/Stuffed Animals",
+        "Dolls.*Soft Dolls"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true,
+      "refinements": [
+        {
+          "parent_uid": "wordnet31:04406517-n",
+          "title_pattern": "\\bteddy\\b",
+          "catalogue_pattern": "Soft Toys/Stuffed Animals"
+        },
+        {
+          "parent_uid": "wordnet31:03223838-n",
+          "title_pattern": "\\bdoll\\b",
+          "catalogue_pattern": "Soft Toys|Dolls"
+        }
+      ]
+    },
+    {
+      "product_type": "TOY_BUILDING_BLOCK",
+      "domain": "toys",
+      "parent_uid": "wordnet31:03971038-n",
+      "title_patterns": [
+        "\\b(?:blocks?|building block)\\b"
+      ],
+      "catalogue_patterns": [
+        "Building Toys/Stacking Blocks",
+        "Building & Construction Toys"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "NON_RIDING_TOY_VEHICLE",
+      "domain": "toys",
+      "parent_uid": "wordnet31:03971038-n",
+      "title_patterns": [
+        "\\b(?:toy|die.cast|miniature|scale|RTR)\\b"
+      ],
+      "catalogue_patterns": [
+        "(?:Toys|Games).*(?:Vehicles|Cars)",
+        "Radio & Remote Control/Motor Vehicles"
+      ],
+      "reject_title_patterns": [
+        "\\bswatch(?:es)?\\b",
+        "\\bfabric sample\\b",
+        "\\breplacement\\b",
+        "\\b(?:chair|sofa|table|lamp) cover\\b",
+        "\\b(?:chair|table|lamp) leg(?:s)?\\b",
+        "\\b(?:pillow|cushion) cover\\b",
+        "\\b(?:throw pillow|lamp shade|lampshade|chair mat)\\b",
+        "\\bbatter(?:y|ies)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    },
+    {
+      "product_type": "MULTITOOL",
+      "domain": "hand_tools",
+      "parent_uid": "wordnet31:03494245-n",
+      "title_patterns": [
+        "\\b(?:multi.tool|multitool|multi.function tool)\\b"
+      ],
+      "catalogue_patterns": [
+        "Hand Tools/Multitools"
+      ],
+      "reject_title_patterns": [
+        "\\b(?:replacement|sheath only|case only|battery|charger)\\b"
+      ],
+      "semantic_scope": "SOURCE_LISTING_CONFIGURATION_ONLY",
+      "relation": "CONFIGURATION_TYPE_OF",
+      "no_cross_source_identity": true
+    }
+  ],
+  "exclude_broad_types": [
+    "HOME",
+    "KITCHEN",
+    "SPORTING_GOODS",
+    "PET_SUPPLIES",
+    "LIGHT_BULB"
+  ],
+  "excluded_type_reasons": {
+    "LIGHT_BULB": "The retained WordNet light_bulb sense requires an incandescent filament; LED/other source bulbs do not entail that definition. Independent broader type review required."
+  }
+}
