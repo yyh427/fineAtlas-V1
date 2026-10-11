@@ -65,7 +65,7 @@ jobs={
  'installed-sdk':cmd('verify_unified_install.py','--database',a.database,'--manifest',a.manifest,'--expected-validation',a.expected,'--output',a.output/'installed-sdk'),
  'full-six-matrix':cmd('audit_structure_rewards.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'matrix','--installed-sdk'),
  'living':cmd('audit_living_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'living','--installed-sdk'),
- 'whole-library':cmd('audit_structure_library.py','--baseline',a.baseline,'--database',a.database,'--inventory',a.inventory,'--output',a.output/'whole-library','--installed-sdk'),
+ 'whole-library':cmd('audit_reviewed_structure_library.py','--baseline',a.baseline,'--database',a.database,'--inventory',a.inventory,'--output',a.output/'whole-library','--installed-sdk','--inputs',a.inputs,'--complete-owned-audit',a.output/'complete-owned-type-source-first.json','--nominal-scope-audit',a.output/'nominal-design-scope-source-first.json'),
  'public-cli':cmd('audit_browse_cli.py','--database',a.database,'--output',a.output/'public-cli','--installed-sdk'),
  'regression-repairs':cmd('audit_temporal_ninth_structure_regression_repairs.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'regression-repairs.json'),
  'source-contracts':cmd('audit_ninth_source_contract_candidate.py','--database',a.database,'--inputs',a.inputs,'--output',a.output/'source-contracts'),
