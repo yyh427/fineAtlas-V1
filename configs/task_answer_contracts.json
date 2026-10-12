@@ -1,0 +1,38 @@
+{
+  "cub200": {
+    "definition": "Original CUB-200-2011 author classes; documentary labels survive historical species-range ambiguity",
+    "world_roles": ["CLASS"],
+    "world_ranks": ["species"],
+    "source_uri": "https://www.vision.caltech.edu/datasets/cub_200_2011/"
+  },
+  "fgvc_aircraft": {
+    "definition": "2013b publisher visual variant, separate from publisher family and world model/family ranges",
+    "world_roles": ["MODEL"],
+    "source_uri": "https://www.robots.ox.ac.uk/~vgg/data/fgvc-aircraft/"
+  },
+  "flowers102": {
+    "definition": "Original heterogeneous flower categories, including genus, species, cultivar and source color categories",
+    "world_roles": ["CLASS", "BIOLOGICAL_VARIANT", "ATTRIBUTE"],
+    "excluded_world_ranks": ["kingdom", "phylum", "class", "order", "family"],
+    "source_uri": "https://www.robots.ox.ac.uk/~vgg/data/flowers/102/categories.html"
+  },
+  "pets37": {
+    "definition": "Original 37 pet breed labels; known species/taxonomic ancestors are navigation",
+    "world_roles": ["CLASS"],
+    "excluded_world_ranks": ["kingdom", "phylum", "class", "order", "family", "genus", "species", "subspecies"],
+    "world_navigation_anchors": ["wordnet31:02086723-n", "wordnet31:02124460-n"],
+    "source_uri": "https://www.robots.ox.ac.uk/~vgg/data/pets/"
+  },
+  "stanford_dogs": {
+    "definition": "Original breed and wild-canid labels; dhole, dingo and African hunting dog are not forced into domestic breeds",
+    "world_roles": ["CLASS", "BIOLOGICAL_VARIANT"],
+    "excluded_world_ranks": ["kingdom", "phylum", "class", "order", "family", "genus"],
+    "world_navigation_anchors": ["wordnet31:02085998-n", "wikidata:Q25324"],
+    "source_uri": "https://people.csail.mit.edu/khosla/papers/fgvc2011.pdf"
+  },
+  "stanford_cars": {
+    "definition": "Original make/model/body/trim/year annotation classes, separate from exact EPA configurations",
+    "world_roles": ["CONFIGURATION"],
+    "source_uri": "https://ai.stanford.edu/~jkrause/cars/car_dataset.html"
+  }
+}

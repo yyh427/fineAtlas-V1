@@ -11,6 +11,7 @@ def main() -> None:
         description="Query the FineAtlas V1 SQLite database."
     )
     parser.add_argument("--data-dir", help="SQLite file or downloaded data directory")
+    parser.add_argument('--run-config', help='Explicit new-candidate run config; binds SDK, code, DB, view and scope rules')
     parser.add_argument('--browse-index',help='Readonly, revision-bound browse artifact for an unindexed frozen baseline')
     parser.add_argument(
         "--view", choices=["wordnet", "all"], help="Navigation view (default: wordnet)"
@@ -192,7 +193,45 @@ def main() -> None:
     p.add_argument("--page-size", type=int, default=1000)
     p.add_argument("--node-kind")
     p.add_argument("--requirement", choices=requirements, default="hierarchy")
+    for command in ('native-class', 'native-relations'):
+        p = sub.add_parser(command)
+        p.add_argument('dataset')
+        p.add_argument('class_id', help='Backend original annotation ID; never a model query input')
+    p = sub.add_parser('native-resolve')
+    p.add_argument('text')
+    p.add_argument('--dataset')
+    p.add_argument('--namespace')
+    p.add_argument('--source-version')
+    for command in ('candidate-search', 'candidate-page'):
+        p = sub.add_parser(command)
+        p.add_argument('text')
+        p.add_argument('--domain')
+        p.add_argument('--dataset', help='Optional task-unit context, not a gold class')
+        p.add_argument('--limit', type=int, default=10)
+        p.add_argument('--purpose', choices=('discovery', 'answers', 'navigation'), default='discovery')
+        p.add_argument('--answer-scope', choices=('mixed', 'source_native', 'world'), default='mixed')
+        p.add_argument('--raw-scan-budget', type=int, default=8192)
+        p.add_argument('--cursor')
+    p = sub.add_parser('evaluate-exact')
+    p.add_argument('dataset')
+    p.add_argument('class_id', help='Private evaluator ground truth ID')
+    p.add_argument('--predicted-uid')
+    p.add_argument('--predicted-label')
+    sub.add_parser('integrated-datasets')
+    p = sub.add_parser('integrated-relations')
+    p.add_argument('uid')
+    p.add_argument('--limit', type=int, default=100)
     args = parser.parse_args()
+    run_config = None
+    if args.run_config:
+        from .task_contract import RunConfig
+        run_config = RunConfig.read(args.run_config)
+        from pathlib import Path
+        if args.data_dir and Path(args.data_dir).resolve() != Path(run_config.database).resolve():
+            parser.error('--data-dir conflicts with pinned run configuration')
+        if args.relation_view and args.relation_view != run_config.relation_view:
+            parser.error('--relation-view conflicts with pinned run configuration')
+        args.data_dir, args.relation_view = run_config.database, run_config.relation_view
     with FineAtlas(
         args.data_dir,
         view=args.view,
@@ -201,6 +240,8 @@ def main() -> None:
         language=args.language,
         browse_index=args.browse_index,
     ) as graph:
+        if run_config:
+            run_config.validate(graph)
         if args.command == "stats":
             result = graph.stats()
         elif args.command == "domains":
@@ -323,6 +364,24 @@ def main() -> None:
                 node_kind=args.node_kind,
                 requirement=args.requirement,
             )
+        elif args.command == 'native-class':
+            result = graph.native_class(args.dataset, args.class_id)
+        elif args.command == 'native-relations':
+            result = graph.native_relations(args.dataset, args.class_id)
+        elif args.command == 'native-resolve':
+            result = graph.resolve_native_name(args.text, dataset=args.dataset,
+                                               namespace=args.namespace, source_version=args.source_version)
+        elif args.command in ('candidate-search', 'candidate-page'):
+            result = graph.candidate_search_page(args.text, args.limit, args.domain,
+                         dataset=args.dataset, purpose=args.purpose, answer_scope=args.answer_scope,
+                         raw_scan_budget=args.raw_scan_budget, cursor=args.cursor)
+        elif args.command == 'evaluate-exact':
+            result = graph.evaluate_exact(args.dataset, args.class_id, predicted_uid=args.predicted_uid,
+                                           predicted_label=args.predicted_label)
+        elif args.command == 'integrated-datasets':
+            result = graph.integrated_datasets()
+        elif args.command == 'integrated-relations':
+            result = graph.integrated_relations(args.uid, limit=args.limit)
         else:
             raise RuntimeError("Unimplemented CLI command")
         if hasattr(result, "has_more"):

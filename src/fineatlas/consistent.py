@@ -1164,12 +1164,14 @@ class ConsistentAtlas(SingleAtlas):
             match_args = [q, legacy_norm(text) or q]
             candidates = f"SELECT DISTINCT a.uid FROM aliases a WHERE {match}"
         elif "alias_search" in self._tables:
-            terms = tokens(text)[:6] or q.split()[:6]
+            # Short alphanumeric terms carry model/variant/year identity too
+            # (for example Z4 and 1 Series); do not silently omit them.
+            terms = q.split()[:6]
             fts = " AND ".join('"' + term.replace('"', '""') + '"' for term in terms)
             candidates = "SELECT DISTINCT a.uid FROM alias_search f CROSS JOIN aliases a ON a.rowid=f.rowid WHERE alias_search MATCH ?"
             match_args = [fts]
         else:
-            terms = tokens(text)[:6] or q.split()[:6]
+            terms = q.split()[:6]
             filters = ["a.alias LIKE ? ESCAPE '\\'" for _ in terms]
             candidates = "SELECT DISTINCT a.uid FROM aliases a WHERE " + " AND ".join(
                 filters
@@ -1950,6 +1952,18 @@ class ConsistentAtlas(SingleAtlas):
             )
             if result.get('mapping_review') and result['mapping_review']['status']=='ANNOTATION_SCOPE_REVIEW':
                 result['mapping_kind']='ANNOTATION_SCOPE_REVIEW'
+            if 'world_mapping_dispositions' in self._tables:
+                disposition = self.con.execute(
+                    'SELECT effective_status,reason,missing_evidence FROM world_mapping_dispositions WHERE dataset=? AND class_id=?',
+                    (dataset, str(class_id))).fetchone()
+                if disposition:
+                    result['effective_world_status'] = disposition['effective_status']
+                    result['effective_world_reason'] = disposition['reason']
+                    result['missing_world_evidence'] = disposition['missing_evidence']
+                    if disposition['effective_status'] != 'CONFIRMED':
+                        verified = False
+                        result['identity_verified'] = False
+                        result['mapping_kind'] = disposition['effective_status']
             result["task_admission"] = self.eligibility(
                 result["target_uid"], identity_verified=result["mapping_verified"]
             )
@@ -1995,11 +2009,11 @@ class ConsistentAtlas(SingleAtlas):
             'identity_scope':'SOURCE_NATIVE_LABEL','identity_verified':documentary,
             'world_identity_verified':bool(world and world['identity_verified']),
             'world_target_uid':world['target_uid'] if world else None,
-            'mapping_verified':documentary,'native_label_verified':True,
+            'mapping_verified':documentary,'native_label_verified':documentary,
             'mapping_kind':'SOURCE_NATIVE_DECLARATION','scope_proof':row['proof'],
         }
         result['task_admission'] = self.eligibility(uid,identity_verified=documentary)
-        result['native_label_admission'] = {**result['task_admission'],'usable':True,
+        result['native_label_admission'] = {**result['task_admission'],'usable':documentary,
                                            'requirement':'native_label','admission_scope':'SOURCE_NATIVE_LABEL'}
         return result
 
