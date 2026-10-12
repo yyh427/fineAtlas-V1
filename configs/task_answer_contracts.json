@@ -12,7 +12,11 @@
       "wordnet31:01505702-n",
       "v4root:bird",
       "ott:81461"
-    ]
+    ],
+    "world_navigation_anchors": [
+      "wordnet31:01505702-n"
+    ],
+    "require_world_class_unit_evidence": true
   },
   "fgvc_aircraft": {
     "definition": "2013b publisher visual variant, separate from publisher family and world model/family ranges",
@@ -21,6 +25,9 @@
     ],
     "source_uri": "https://www.robots.ox.ac.uk/~vgg/data/fgvc-aircraft/",
     "navigation_only_uids": [
+      "wordnet31:02689427-n"
+    ],
+    "world_navigation_anchors": [
       "wordnet31:02689427-n"
     ]
   },
@@ -41,7 +48,11 @@
     "source_uri": "https://www.robots.ox.ac.uk/~vgg/data/flowers/102/categories.html",
     "navigation_only_uids": [
       "wordnet31:00017402-n"
-    ]
+    ],
+    "world_navigation_anchors": [
+      "wordnet31:00017402-n"
+    ],
+    "require_world_class_unit_evidence": true
   },
   "pets37": {
     "definition": "Original 37 pet breed labels; known species/taxonomic ancestors are navigation",
@@ -65,7 +76,8 @@
     "source_uri": "https://www.robots.ox.ac.uk/~vgg/data/pets/",
     "navigation_only_uids": [
       "wordnet31:00015568-n"
-    ]
+    ],
+    "require_world_class_unit_evidence": true
   },
   "stanford_dogs": {
     "definition": "Original breed and wild-canid labels; dhole, dingo and African hunting dog are not forced into domestic breeds",
@@ -88,7 +100,8 @@
     "source_uri": "https://people.csail.mit.edu/khosla/papers/fgvc2011.pdf",
     "navigation_only_uids": [
       "wordnet31:02086723-n"
-    ]
+    ],
+    "require_world_class_unit_evidence": true
   },
   "stanford_cars": {
     "definition": "Original make/model/body/trim/year annotation classes, separate from exact EPA configurations",
@@ -98,6 +111,9 @@
     "source_uri": "https://ai.stanford.edu/~jkrause/cars/car_dataset.html",
     "navigation_only_uids": [
       "wordnet31:02961779-n"
+    ],
+    "world_navigation_anchors": [
+      "wordnet31:03796768-n"
     ]
   }
 }
