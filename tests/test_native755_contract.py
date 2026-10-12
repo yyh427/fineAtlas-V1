@@ -98,6 +98,18 @@ class NativeContractTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             RunConfig('db', 'revision', 'sdk', 'commit', hierarchy_reward_enabled=True)
 
+    def test_issued_constraints_reject_mutated_identity_or_task_context(self):
+        self.prepare()
+        config = RunConfig(str(self.path), 'fixture-revision', __version__, 'fixture-commit')
+        with FineAtlasExperimentTool(config) as tool:
+            result = tool.query('river/outdoor')
+            handle = result['candidates'][0]['handle']
+            original_uid = result['candidates'][0]['uid']
+            result['candidates'][0]['uid'] = 'type:river'
+            with self.assertRaisesRegex(ValueError, 'modified'):
+                tool.allowed_choices(result)
+            self.assertEqual(tool.select(handle)['uid'], original_uid)
+
     def test_short_model_tokens_are_not_silently_dropped(self):
         def change(c):
             c.execute("INSERT INTO aliases VALUES('bmw z4 convertible 2012','type:river')")

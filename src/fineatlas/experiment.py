@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import copy
 from typing import Any
 from .task_contract import RunConfig
 
@@ -23,6 +24,7 @@ class FineAtlasExperimentTool:
             raise
         self._choices: dict[str, dict[str, Any]] = {}
         self._result_choices: dict[str, tuple[str, ...]] = {}
+        self._result_fingerprints: dict[str, str] = {}
 
     def close(self) -> None:
         self.atlas.close()
@@ -51,18 +53,27 @@ class FineAtlasExperimentTool:
             row = {**item, **eligibility, 'handle': handle}
             (answers if eligibility['answer_eligible'] else navigation).append(row)
             if eligibility['answer_eligible']:
-                self._choices[handle] = row
+                self._choices[handle] = copy.deepcopy(row)
         for item in nav_page['items']:
             eligibility = item['answer_contract']
             navigation.append({**item, **eligibility, 'answer_eligible': False})
         result_id = hashlib.sha256(json.dumps([self.config.to_dict(), text, domain, dataset, limit,
                                                [r['handle'] for r in answers]], sort_keys=True).encode()).hexdigest()
         self._result_choices[result_id] = tuple(r['handle'] for r in answers)
-        return {'query': text, 'candidates': answers, 'navigation_candidates': navigation,
+        result = {'query': text, 'candidates': answers, 'navigation_candidates': navigation,
                 'candidate_count': len(answers), 'inference_mode': self.config.inference_mode,
                 'result_id': result_id, 'task_dataset_context': dataset,
                 'run_config': self.config.to_dict(), 'retrieval_diagnostics': page['diagnostics'],
                 'evaluation_rules': self.config.evaluation_rules}
+        self._result_fingerprints[result_id] = self._constraint_fingerprint(result)
+        return result
+
+    @staticmethod
+    def _constraint_fingerprint(result: dict) -> str:
+        fields = ('handle', 'uid', 'label', 'answer_eligible', 'identity_scope', 'role')
+        payload = [result['task_dataset_context'], result['inference_mode'],
+                   [{key: row[key] for key in fields} for row in result['candidates']]]
+        return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 
     @staticmethod
     def candidate_wire(result: dict) -> str:
@@ -87,6 +98,8 @@ class FineAtlasExperimentTool:
         actual = tuple(row['handle'] for row in result['candidates'])
         if expected is None or actual != expected:
             raise ValueError('Candidate result is unissued or was modified')
+        if self._result_fingerprints[result['result_id']] != self._constraint_fingerprint(result):
+            raise ValueError('Candidate identity/eligibility context was modified')
         dataset = result['task_dataset_context']
         return tuple(row['handle'] for row in result['candidates']
                      if row['answer_eligible'] and self.atlas.candidate_contract(row['uid'], dataset=dataset)['answer_eligible'])
