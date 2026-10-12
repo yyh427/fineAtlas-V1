@@ -147,8 +147,10 @@ class TaskContractAtlas:
             disposition = dict(row) if row else None
         native_target = bool(world and 'native_classes' in self._tables and self.con.execute(
             'SELECT 1 FROM native_classes WHERE uid=? LIMIT 1', (world['target_uid'],)).fetchone())
-        if world:
-            native_target = native_target or (self._basic(world['target_uid']) or {}).get('attributes', {}).get('identity_scope') in SOURCE_NATIVE_SCOPES
+        if world and 'node_profiles' in self._tables:
+            scope = self.con.execute("SELECT json_extract(attributes,'$.identity_scope') FROM node_profiles WHERE uid=?",
+                                     (world['target_uid'],)).fetchone()
+            native_target = native_target or bool(scope and scope[0] in SOURCE_NATIVE_SCOPES)
         confirmed = bool(world and not native_target and world.get('identity_verified') and
                          (not disposition or disposition['effective_status'] == 'CONFIRMED'))
         return {'uid': world.get('target_uid') if world else None,
