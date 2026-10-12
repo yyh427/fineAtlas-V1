@@ -169,6 +169,32 @@ class NativeContractTest(unittest.TestCase):
         self.assertEqual(result['reason'], 'TASK_COARSE_OBJECT_IS_NAVIGATION_ONLY')
         self.assertTrue(self.tree.candidate_contract('cat:1', dataset='fixture')['answer_eligible'])
 
+    def test_object_scope_preserves_unregistered_bird_and_rejects_other_species(self):
+        def change(c):
+            c.execute('CREATE TABLE dataset_answer_contracts(dataset TEXT,payload TEXT)')
+            c.execute('INSERT INTO dataset_answer_contracts VALUES(?,?)', ('cub200', json.dumps({
+                'world_roles':['CLASS'], 'world_ranks':['species'], 'world_navigation_anchors':['bird:root']})))
+            for uid,rank,comp in [('bird:root','class',33),('bird:outside','species',34),('other:species','species',35)]:
+                c.execute("INSERT INTO nodes SELECT ?,?,domain,domains,source,?,description,data,layer,visibility,? FROM nodes WHERE uid='type:root'", (uid,uid,rank,comp))
+                c.execute('INSERT INTO components VALUES(?,1,1,0,NULL)', (comp,))
+            c.execute("INSERT INTO edges VALUES(10,'bird:outside','bird:root','IS_A','ACTIVE','fixture',1,'[\"proof:1\"]','{}')")
+            c.execute("INSERT INTO edges VALUES(11,'bird:root','type:root','IS_A','ACTIVE','fixture',1,'[\"proof:1\"]','{}')")
+        self.prepare(change)
+        self.assertTrue(self.tree.candidate_contract('bird:outside', dataset='cub200')['world_answer_eligible'])
+        result = self.tree.candidate_contract('other:species', dataset='cub200')
+        self.assertFalse(result['world_answer_eligible'])
+        self.assertTrue(result['navigation_eligible'])
+
+    def test_unknown_world_class_unit_is_navigation_without_guessing_rank(self):
+        def change(c):
+            c.execute('CREATE TABLE dataset_answer_contracts(dataset TEXT,payload TEXT)')
+            c.execute('INSERT INTO dataset_answer_contracts VALUES(?,?)', ('cub200', json.dumps({
+                'world_roles':['CLASS'], 'require_world_class_unit_evidence':True})))
+        self.prepare(change)
+        result = self.tree.candidate_contract('type:river', dataset='cub200')
+        self.assertFalse(result['world_answer_eligible'])
+        self.assertEqual(result['reason'], 'WORLD_CLASS_UNIT_NOT_ESTABLISHED_FOR_TASK')
+
     def test_confirmed_object_scope_does_not_require_navigation_path(self):
         def change(c):
             c.execute("UPDATE dataset_mapping_checks SET status='VERIFIED'")

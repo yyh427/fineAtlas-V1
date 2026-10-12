@@ -180,6 +180,7 @@ class TaskContractAtlas:
         # Rank absence is reported, never repaired with a guessed species/breed.
         world_role = role in ('CLASS', 'BIOLOGICAL_VARIANT', 'MODEL', 'MODEL_FAMILY', 'CONFIGURATION', 'INSTANCE', 'ATTRIBUTE')
         source_scope = node.get('attributes', {}).get('identity_scope')
+        world_unit = node.get('normalized_rank') or node.get('attributes', {}).get('object_granularity')
         world_eligible = bool(node['visibility'] == 'ACTIVE' and world_role and role_consistent
                               and uid != self.root_uid
                               and not native_rows and source_scope not in (
@@ -210,6 +211,9 @@ class TaskContractAtlas:
                     world_eligible, task_reason = False, 'WORLD_GRAIN_NOT_TASK_ANSWER_UNIT_OR_UNKNOWN'
                 elif definition.get('excluded_world_ranks') and node.get('normalized_rank') in definition['excluded_world_ranks']:
                     world_eligible, task_reason = False, 'WORLD_GRAIN_NOT_TASK_ANSWER_UNIT'
+                elif (definition.get('require_world_class_unit_evidence') and role in ('CLASS', 'BIOLOGICAL_VARIANT')
+                      and not known_exact_scope and (not world_unit or str(world_unit).upper() in ('UNKNOWN', 'UNKNOWN_SOURCE_UNIT', 'CLASS', 'TAXON'))):
+                    world_eligible, task_reason = False, 'WORLD_CLASS_UNIT_NOT_ESTABLISHED_FOR_TASK'
                 elif definition.get('world_navigation_anchors'):
                     anchors = definition['world_navigation_anchors']
                     if not known_exact_scope and (uid in anchors or not self.path_result(uid, anchors=anchors)['path']):
@@ -219,7 +223,7 @@ class TaskContractAtlas:
                 world_eligible, task_reason = False, 'DATASET_WORLD_MAPPING_NOT_CONFIRMED'
         native_eligible = bool(usable_native)
         return {'uid': uid, 'identity_scope': 'SOURCE_NATIVE_LABEL' if native_rows else source_scope or 'WORLD',
-                'role': role, 'object_granularity': native_rows[0]['object_granularity'] if native_rows else node.get('normalized_rank'),
+                'role': role, 'object_granularity': native_rows[0]['object_granularity'] if native_rows else world_unit,
                 'granularity_status': 'SOURCE_DECLARED' if native_rows else node.get('rank_status', 'UNKNOWN'),
                 'native_answer_eligible': native_eligible, 'world_answer_eligible': world_eligible,
                 'answer_eligible': native_eligible or world_eligible,
