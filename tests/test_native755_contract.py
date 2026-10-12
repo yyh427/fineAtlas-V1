@@ -146,6 +146,18 @@ class NativeContractTest(unittest.TestCase):
         self.assertTrue(self.tree.candidate_contract('species:unregistered', dataset='cub200')['world_answer_eligible'])
         self.assertFalse(self.tree.candidate_contract('type:root')['answer_eligible'])
 
+    def test_task_navigation_component_is_not_a_final_answer(self):
+        def change(c):
+            c.execute('CREATE TABLE dataset_answer_contracts(dataset TEXT,payload TEXT)')
+            c.execute('INSERT INTO dataset_answer_contracts VALUES(?,?)',
+                      ('cub200', json.dumps({'world_roles':['CLASS'], 'navigation_only_uids':['type:river']})))
+        self.prepare(change)
+        result = self.tree.candidate_contract('type:river', dataset='cub200')
+        self.assertFalse(result['answer_eligible'])
+        self.assertTrue(result['navigation_eligible'])
+        self.assertEqual(result['reason'], 'TASK_COARSE_OBJECT_IS_NAVIGATION_ONLY')
+        self.assertTrue(self.tree.candidate_contract('cat:1', dataset='fixture')['answer_eligible'])
+
 
 class PresentationTest(unittest.TestCase):
     setUp = test_single.TypedInterfaceTest.setUp

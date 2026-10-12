@@ -186,7 +186,15 @@ class TaskContractAtlas:
             definition = self.con.execute('SELECT payload FROM dataset_answer_contracts WHERE dataset=?', (dataset,)).fetchone()
             if definition:
                 definition = json.loads(definition[0])
-                if role not in definition['world_roles']:
+                if not hasattr(self, '_task_navigation_components'):
+                    self._task_navigation_components = {}
+                if dataset not in self._task_navigation_components:
+                    self._task_navigation_components[dataset] = {
+                        row[0] for u in definition.get('navigation_only_uids', [])
+                        for row in self.con.execute('SELECT component_id FROM nodes WHERE uid=?', (u,))}
+                if node['component_id'] in self._task_navigation_components[dataset]:
+                    world_eligible, task_reason = False, 'TASK_COARSE_OBJECT_IS_NAVIGATION_ONLY'
+                elif role not in definition['world_roles']:
                     world_eligible, task_reason = False, 'WORLD_ROLE_NOT_TASK_ANSWER_UNIT'
                 elif definition.get('world_ranks') is not None and node.get('normalized_rank') not in definition['world_ranks']:
                     world_eligible, task_reason = False, 'WORLD_GRAIN_NOT_TASK_ANSWER_UNIT_OR_UNKNOWN'
