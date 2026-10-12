@@ -95,7 +95,7 @@ def main():
                                   'review_not_world_supervision': world['world_identity_verified'] or own_exact['world_exact'] is None,
                                   'confirmed_world_answer_eligibility': not world['world_identity_verified'] or atlas.candidate_contract(world['uid'], dataset=dataset)['world_answer_eligible'],
                                   'confirmed_world_exact_evaluation': not world['world_identity_verified'] or bool(world_prediction and world_prediction['native_exact'] and world_prediction['world_exact']),
-                                  'unconfirmed_world_not_native_exact': world['world_identity_verified'] or not world_prediction or not world_prediction['native_exact'],
+                                  'unconfirmed_world_not_native_exact': world['world_identity_verified'] or world['uid'] == native['uid'] or not world_prediction or not world_prediction['native_exact'],
                                   'relations_and_navigation_explained': relations['status'] == 'AVAILABLE' and bool(relations['source_relations']),
                                   'hierarchy_reward_disabled': own_exact['hierarchy_reward'] is None and not own_exact['hierarchy_reward_enabled']}
                         row = {'dataset': dataset, 'class_id': cid, 'original_label': label,

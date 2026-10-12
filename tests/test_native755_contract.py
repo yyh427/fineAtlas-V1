@@ -62,6 +62,17 @@ class NativeContractTest(unittest.TestCase):
         self.assertNotEqual(exact_name('BMW Z4 Convertible 2012'), exact_name('BMW Z4 Coupe 2012'))
         self.assertNotEqual(exact_name('BAE 146-200'), exact_name('BAE 146-300'))
 
+    def test_legacy_world_registry_native_reference_remains_native_exact(self):
+        def change(c):
+            c.execute("UPDATE dataset_targets SET target_uid='cat:1',decision_status='VERIFIED_NATIVE_LABEL'")
+            c.execute("UPDATE world_mapping_dispositions SET uid='cat:1'")
+        self.prepare(change)
+        world = self.tree.world_mapping_status('fixture','1')
+        self.assertEqual(world['target_object_scope'], 'SOURCE_NATIVE_LABEL')
+        result = self.tree.evaluate_exact('fixture','1', predicted_uid=world['uid'])
+        self.assertTrue(result['native_exact'])
+        self.assertIsNone(result['world_exact'])
+
     def test_ambiguous_full_name_returns_candidates_and_no_exact_guess(self):
         def change(c):
             c.execute("INSERT INTO native_classes SELECT dataset,'2',namespace,source_version,'type:root',label,raw_label,role,object_granularity,domain,training_id_verified,proof,evidence_ids FROM native_classes")

@@ -143,9 +143,12 @@ class TaskContractAtlas:
             row = self.con.execute('SELECT * FROM world_mapping_dispositions WHERE dataset=? AND class_id=?',
                                    (dataset, str(class_id))).fetchone()
             disposition = dict(row) if row else None
-        confirmed = bool(world and world.get('identity_verified') and
+        native_target = bool(world and 'native_classes' in self._tables and self.con.execute(
+            'SELECT 1 FROM native_classes WHERE uid=? LIMIT 1', (world['target_uid'],)).fetchone())
+        confirmed = bool(world and not native_target and world.get('identity_verified') and
                          (not disposition or disposition['effective_status'] == 'CONFIRMED'))
         return {'uid': world.get('target_uid') if world else None,
+                'target_object_scope': 'SOURCE_NATIVE_LABEL' if native_target else 'WORLD_OBJECT_TARGET' if world else 'NO_WORLD_TARGET',
                 'stored_status': world.get('decision_status') if world else None,
                 'stored_identity_claim_verified': bool(world and world.get('stored_identity_claim_verified')),
                 'effective_status': disposition['effective_status'] if disposition else 'CONFIRMED' if confirmed else 'REVIEW',
