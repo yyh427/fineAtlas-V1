@@ -35,7 +35,7 @@ def main():
     result = {'phase': args.phase, 'started_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
               'database': str(args.database.resolve()), 'sdk_version': __version__, 'datasets': {}, 'errors': [],
               'scope': 'All six original datasets;755 source classes;backend label probes are not visual recall'}
-    rows, queries = [], []
+    rows, queries, relation_rows = [], [], []
     with FineAtlas(args.database, relation_view='unified') as atlas:
         atlas.con.execute('PRAGMA query_only=ON')
         atlas.con.execute('PRAGMA cache_size=-65536')
@@ -81,6 +81,7 @@ def main():
                         label_exact = atlas.evaluate_exact(dataset, cid, predicted_label=label)
                         contract = atlas.candidate_contract(native['uid'], dataset=dataset)
                         relations = atlas.native_relations(dataset, cid)
+                        relation_rows.append({'dataset': dataset, 'class_id': cid, **relations})
                         world = native['world_mapping']
                         checks = {'stable_namespaced_id': ':' in native['uid'],
                                   'native_usable': native['native_usable'],
@@ -152,6 +153,8 @@ def main():
             result['datasets'][dataset] = dict(counts)
             save(args.output / (args.phase + '_summary.json'), result)
             save(args.output / ('native755_acceptance.json' if args.phase == 'classes' else 'fixed755_queries.json'), rows if args.phase == 'classes' else queries)
+            if args.phase == 'classes':
+                save(args.output / 'native755_relations_and_paths.json', relation_rows)
             print(args.phase, dataset, dict(counts), flush=True)
         result['finished_utc'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
         result['passed'] = not result['errors']
