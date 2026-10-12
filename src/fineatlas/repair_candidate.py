@@ -448,12 +448,13 @@ def repair_local_index_encoding(database: Path, expected_revision: str) -> dict:
     return result
 
 
-def install_answer_contracts(database: Path, expected_revision: str, configuration: Path) -> dict:
+def install_answer_contracts(database: Path, expected_revision: str, configuration: Path,
+                             *, package_id: str = 'dataset-answer-contracts-v1') -> dict:
     definitions = json.loads(configuration.read_text())
     if set(definitions) != set(CORE_COUNTS):
         raise ValueError('Six original dataset contracts required')
     writer = RepairWriter(database, expected_revision=expected_revision)
-    if not writer.begin('dataset-answer-contracts-v1', definitions):
+    if not writer.begin(package_id, definitions):
         writer.c.close()
         return {'status': 'ALREADY_APPLIED', 'changed_rows': 0}
     for dataset, definition in definitions.items():
