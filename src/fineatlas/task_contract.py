@@ -182,6 +182,13 @@ class TaskContractAtlas:
                               and not native_rows and source_scope not in (
                                   'SOURCE_NATIVE_LABEL', 'SOURCE_VERSION_CONCEPT', 'SOURCE_SUPERVISION_CATEGORY'))
         task_reason = None
+        mapped = []
+        mapped_statuses = []
+        if dataset is not None and 'world_mapping_dispositions' in self._tables:
+            mapped = list(self.con.execute('SELECT d.class_id,d.effective_status FROM world_mapping_dispositions d JOIN nodes n ON n.uid=d.uid WHERE d.dataset=? AND n.component_id=?',
+                                          (dataset, node['component_id'])))
+            mapped_statuses = [self.world_mapping_status(dataset, r['class_id']) for r in mapped]
+        known_exact_scope = any(s['world_identity_verified'] for s in mapped_statuses)
         if dataset is not None and 'dataset_answer_contracts' in self._tables and world_eligible:
             definition = self.con.execute('SELECT payload FROM dataset_answer_contracts WHERE dataset=?', (dataset,)).fetchone()
             if definition:
@@ -192,7 +199,7 @@ class TaskContractAtlas:
                     self._task_navigation_components[dataset] = {
                         row[0] for u in definition.get('navigation_only_uids', [])
                         for row in self.con.execute('SELECT component_id FROM nodes WHERE uid=?', (u,))}
-                if node['component_id'] in self._task_navigation_components[dataset]:
+                if node['component_id'] in self._task_navigation_components[dataset] and not known_exact_scope:
                     world_eligible, task_reason = False, 'TASK_COARSE_OBJECT_IS_NAVIGATION_ONLY'
                 elif role not in definition['world_roles']:
                     world_eligible, task_reason = False, 'WORLD_ROLE_NOT_TASK_ANSWER_UNIT'
@@ -202,13 +209,9 @@ class TaskContractAtlas:
                     world_eligible, task_reason = False, 'WORLD_GRAIN_NOT_TASK_ANSWER_UNIT'
                 elif definition.get('world_navigation_anchors'):
                     anchors = definition['world_navigation_anchors']
-                    if uid in anchors or not self.path_result(uid, anchors=anchors)['path']:
+                    if not known_exact_scope and (uid in anchors or not self.path_result(uid, anchors=anchors)['path']):
                         world_eligible, task_reason = False, 'NO_GROUNDED_TASK_OBJECT_SCOPE'
-        mapped_statuses = []
-        if dataset is not None and 'world_mapping_dispositions' in self._tables:
-            mapped = list(self.con.execute('SELECT d.class_id,d.effective_status FROM world_mapping_dispositions d JOIN nodes n ON n.uid=d.uid WHERE d.dataset=? AND n.component_id=?',
-                                          (dataset, node['component_id'])))
-            mapped_statuses = [self.world_mapping_status(dataset, r['class_id']) for r in mapped]
+        if mapped:
             if mapped and not any(r['effective_status'] == 'CONFIRMED' for r in mapped):
                 world_eligible, task_reason = False, 'DATASET_WORLD_MAPPING_NOT_CONFIRMED'
         native_eligible = bool(usable_native)

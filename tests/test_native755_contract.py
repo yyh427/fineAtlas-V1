@@ -158,6 +158,19 @@ class NativeContractTest(unittest.TestCase):
         self.assertEqual(result['reason'], 'TASK_COARSE_OBJECT_IS_NAVIGATION_ONLY')
         self.assertTrue(self.tree.candidate_contract('cat:1', dataset='fixture')['answer_eligible'])
 
+    def test_confirmed_object_scope_does_not_require_navigation_path(self):
+        def change(c):
+            c.execute("UPDATE dataset_mapping_checks SET status='VERIFIED'")
+            c.execute("UPDATE world_mapping_dispositions SET effective_status='CONFIRMED'")
+            c.execute("DELETE FROM edges WHERE child_uid='type:river'")
+            c.execute('CREATE TABLE dataset_answer_contracts(dataset TEXT,payload TEXT)')
+            c.execute('INSERT INTO dataset_answer_contracts VALUES(?,?)',
+                      ('fixture', json.dumps({'world_roles':['CLASS'], 'world_navigation_anchors':['unreachable:anchor']})))
+        self.prepare(change)
+        self.assertTrue(self.tree.world_mapping_status('fixture','1')['world_identity_verified'])
+        self.assertTrue(self.tree.candidate_contract('type:river', dataset='fixture')['world_answer_eligible'])
+        self.assertTrue(self.tree.evaluate_exact('fixture','1', predicted_uid='type:river')['native_exact'])
+
 
 class PresentationTest(unittest.TestCase):
     setUp = test_single.TypedInterfaceTest.setUp
