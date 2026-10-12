@@ -27,7 +27,7 @@ installer=importlib.util.module_from_spec(spec);spec.loader.exec_module(installe
 
 class DownloadEvidenceTests(unittest.TestCase):
     def setUp(self):
-        base=ROOT.parent/'tmp';base.mkdir(exist_ok=True)
+        base=Path(os.environ.get('FINEATLAS_TEST_TEMP_ROOT', ROOT.parent/'tmp'));base.mkdir(exist_ok=True)
         self.temp=tempfile.TemporaryDirectory(prefix='download-evidence-test-',dir=base)
         self.work=Path(self.temp.name)
         self.payload=b'actual tiny HTTP source bytes\n'*53

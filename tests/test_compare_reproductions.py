@@ -14,7 +14,7 @@ SCRIPT = ROOT/'scripts/compare_reproductions.py'
 
 class ReproductionComparisonTests(unittest.TestCase):
     def setUp(self):
-        base=ROOT.parent/'tmp';base.mkdir(exist_ok=True)
+        base=Path(os.environ.get('FINEATLAS_TEST_TEMP_ROOT', ROOT.parent/'tmp'));base.mkdir(exist_ok=True)
         self.temp=tempfile.TemporaryDirectory(prefix='compare-reproduction-test-',dir=base)
         self.work=Path(self.temp.name)
 
