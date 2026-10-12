@@ -105,6 +105,35 @@ class NativeContractTest(unittest.TestCase):
         self.prepare(change)
         self.assertEqual([n['uid'] for n in self.tree.search('BMW Z4 Convertible 2012')], ['type:river'])
 
+    def test_navigation_is_filtered_before_answer_budget(self):
+        def change(c):
+            c.execute("UPDATE nodes SET label='river/outdoor' WHERE uid='type:root'")
+            c.execute("UPDATE nodes SET label='Native river label' WHERE uid='cat:1'")
+            c.execute("INSERT INTO aliases VALUES('river outdoor','type:root')")
+        self.prepare(change)
+        page = self.tree.candidate_search('river/outdoor', 1, dataset='fixture', purpose='answers')
+        self.assertEqual(page['items'][0]['uid'], 'cat:1')
+        navigation = self.tree.candidate_search('river/outdoor', 1, dataset='fixture', purpose='navigation')
+        self.assertEqual(navigation['items'][0]['uid'], 'type:root')
+
+    def test_bad_native_role_or_missing_proof_cannot_enter_supervision(self):
+        for clause in ("role='MODEL'", "proof='{}'"):
+            if clause != "role='MODEL'":
+                self.tearDown(); self.setUp()
+            self.prepare(lambda c: c.execute('UPDATE native_classes SET ' + clause))
+            self.assertFalse(self.tree.native_class('fixture', '1')['native_usable'])
+            self.assertFalse(self.tree.candidate_contract('cat:1', dataset='fixture')['native_answer_eligible'])
+
+    def test_source_class_tables_are_not_an_open_world_whitelist(self):
+        def change(c):
+            c.execute('CREATE TABLE dataset_answer_contracts(dataset TEXT,payload TEXT)')
+            c.execute('INSERT INTO dataset_answer_contracts VALUES(?,?)', ('cub200', json.dumps({'world_roles':['CLASS'], 'world_ranks':['species']})))
+            c.execute("INSERT INTO nodes SELECT 'species:unregistered','Unregistered bird',domain,domains,source,'species',description,data,layer,visibility,33 FROM nodes WHERE uid='type:root'")
+            c.execute('INSERT INTO components VALUES(33,1,1,0,NULL)')
+        self.prepare(change)
+        self.assertTrue(self.tree.candidate_contract('species:unregistered', dataset='cub200')['world_answer_eligible'])
+        self.assertFalse(self.tree.candidate_contract('type:root')['answer_eligible'])
+
 
 class PresentationTest(unittest.TestCase):
     setUp = test_single.TypedInterfaceTest.setUp

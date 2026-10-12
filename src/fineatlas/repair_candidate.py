@@ -470,38 +470,158 @@ def install_answer_contracts(database: Path, expected_revision: str, configurati
     return result
 
 
+def reconcile_catalogue_receipts(database: Path, expected_revision: str, source_inventory: Path,
+                                 *, package_id: str = 'current-increment-catalogue-v1') -> dict:
+    """Recognize retained assertions, expose source groups, and mask old crosswalks."""
+    from .hierarchy import validate_link_roles
+    from .semantics import role_expression
+    inventory = json.loads(source_inventory.read_text())
+    if not inventory['passed']:
+        raise ValueError('Source bytes are not authenticated')
+    writer = RepairWriter(database, expected_revision=expected_revision)
+    if not writer.begin(package_id, inventory):
+        writer.c.close()
+        return {'status': 'ALREADY_APPLIED', 'changed_rows': 0}
+    counts = Counter()
+    inventory_eid = writer.evidence(inventory, uri='', source='Frozen increment source inventory',
+                                    claim='AUTHENTICATED_LOCAL_SOURCE_BYTES_AND_CAPTURE_URIS')
+    writer.meta('increment_source_inventory_evidence', inventory_eid)
+    for receipt in list(writer.c.execute("SELECT * FROM increment_reconciliation WHERE kind='relations' AND disposition='ISOLATED_CURRENT_CONFLICT'")):
+        relation = json.loads(receipt['payload'])
+        hierarchical = relation['relation'] in ('IS_A', 'TAXONOMIC_PARENT', 'NATIVE_CLASSIFICATION_PARENT')
+        table = 'edges' if hierarchical else 'entity_relations'
+        left, right = ('child_uid', 'parent_uid') if hierarchical else ('subject_uid', 'object_uid')
+        actual = writer.c.execute('SELECT * FROM ' + table + ' WHERE ' + left + '=? AND ' + right + "=? AND relation=? AND status IN ('ACTIVE','TYPED_ACTIVE','BACKBONE_ACTIVE') LIMIT 1",
+                                  (relation['child_uid'], relation['parent_uid'], relation['relation'])).fetchone()
+        if not actual:
+            continue
+        roles = [writer.c.execute('SELECT ' + role_expression('n', 'p') + ' role FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.uid=?', (u,)).fetchone()[0]
+                 for u in (relation['child_uid'], relation['parent_uid'])]
+        try:
+            validate_link_roles(relation['relation'], *roles)
+        except ValueError:
+            continue
+        row = dict(receipt)
+        row.update(disposition='RETAIN_CURRENT_COMPATIBLE_RELATION', reason='Same endpoint/relation assertion is already active in rc1; source provenance retained without duplicate insertion')
+        writer.put('increment_reconciliation', {'kind': row['kind'], 'object_key': row['object_key']}, row)
+        counts['already_present_compatible_relations'] += 1
+    for receipt in list(writer.c.execute("SELECT * FROM increment_reconciliation WHERE kind='mappings' AND disposition='ISOLATED_EXTENSION_WORLD_MAPPING'")):
+        mapping = json.loads(receipt['payload'])
+        old = writer.c.execute('SELECT * FROM dataset_targets WHERE dataset=? AND class_id=?',
+                               (mapping['dataset'], str(mapping['class_id']))).fetchone()
+        if not old:
+            continue
+        proof = {'isolated_world_mapping': mapping, 'reason': receipt['reason'],
+                 'raw_legacy_claim_is_not_current_world_approval': True, 'source_inventory_evidence': inventory_eid}
+        eid = writer.evidence(proof, uri=mapping.get('source_uri', ''), source=mapping['dataset'],
+                              claim='CURRENT_EXTENSION_WORLD_SCOPE_REVIEW')
+        writer.put('world_mapping_dispositions', {'dataset': mapping['dataset'], 'class_id': str(mapping['class_id'])},
+                   dict(dataset=mapping['dataset'], class_id=str(mapping['class_id']), uid=old['target_uid'],
+                        stored_status=old['decision_status'], effective_status='BROADER' if mapping.get('mapping_type') == 'BROADER' else 'REVIEW',
+                        reason='Isolated incremental crosswalk has not been reconciled against current full world range',
+                        missing_evidence='Source label scope to current world object full-range proof', evidence_ids=canonical([eid])))
+        counts['legacy_extension_world_claims_masked'] += 1
+    for receipt in list(writer.c.execute("SELECT * FROM increment_reconciliation WHERE kind='relations' AND disposition='INTEGRATED_CATALOGUE_RELATION'")):
+        relation = json.loads(receipt['payload'])
+        if relation['relation'] != 'GROUPED_IN_SOURCE':
+            continue
+        parent = json.loads(writer.c.execute("SELECT payload FROM integrated_fg_objects WHERE kind='nodes' AND key=?", (relation['parent_uid'],)).fetchone()[0])
+        child = json.loads(writer.c.execute("SELECT payload FROM integrated_fg_objects WHERE kind='nodes' AND key=?", (relation['child_uid'],)).fetchone()[0])
+        proof = {'source_relation': relation, 'parent_source_record': parent,
+                 'source_inventory_evidence': inventory_eid, 'strict_IS_A': False,
+                 'numeric_training_id_verified': False}
+        group = dict(group_uid=parent['uid'], namespace=parent['source'], source_version=parent['source_version'],
+                     source_group_id=parent['uid'].rsplit(':', 1)[-1], label=parent['label'], parent_group_uid=None,
+                     source_uri=parent.get('source_uri', ''), proof=canonical({
+                         'parent_source_record': parent, 'source_inventory_evidence': inventory_eid,
+                         'strict_IS_A': False, 'numeric_training_id_verified': False}))
+        writer.put('source_groups', {'group_uid': group['group_uid']}, group)
+        writer.put('source_group_members', {'group_uid': group['group_uid'], 'member_uid': child['uid']},
+                   dict(group_uid=group['group_uid'], member_uid=child['uid'], source_member_id=child['uid'],
+                        relation='GROUPED_IN_SOURCE', status='ACTIVE', proof=canonical(proof)))
+        counts['source_catalogue_members_exposed'] += 1
+    # Local withdrawals can remove a browse link while leaving its old parent
+    # count. Recompute only count keys touched by this repair's journal.
+    keys = set()
+    for row in writer.c.execute("SELECT key_json FROM repair_changes WHERE table_name='browse_links'"):
+        key = json.loads(row[0])
+        keys.add(tuple(key[k] for k in ('view', 'parent_component', 'role', 'relation')))
+    for values in keys:
+        key = dict(zip(('view', 'parent_component', 'role', 'relation'), values))
+        actual = writer.c.execute('SELECT count(*) n,coalesce(sum(source_arc_count),0) arcs FROM browse_links WHERE view=? AND parent_component=? AND role=? AND relation=?', values).fetchone()
+        old = writer.c.execute('SELECT * FROM browse_link_counts WHERE view=? AND parent_component=? AND role=? AND relation=?', values).fetchone()
+        corrected = {**key, 'concept_count': actual['n'], 'source_arc_count': actual['arcs']}
+        counts['corrected_browse_parent_counts'] += int(not old or dict(old) != corrected)
+        writer.put('browse_link_counts', key, corrected)
+    result = writer.finish({'status': 'APPLIED', **dict(counts), 'source_inventory_evidence': inventory_eid,
+                            'new_hierarchy_edges': 0, 'core_denominator': 755})
+    writer.c.close()
+    return result
+
+
+def _rollback_package(c: sqlite3.Connection, package_id: str) -> dict:
+    package = c.execute('SELECT * FROM repair_packages WHERE package_id=?', (package_id,)).fetchone()
+    if not package or package['status'] != 'APPLIED':
+        return {'status': 'NOT_APPLIED'}
+    newest = c.execute("SELECT ch.package_id FROM repair_changes ch JOIN repair_packages p USING(package_id) WHERE p.status='APPLIED' ORDER BY ch.sequence DESC LIMIT 1").fetchone()[0]
+    if newest != package_id:
+        raise ValueError('Rollback must follow reverse application order')
+    count = 0
+    for change in c.execute('SELECT * FROM repair_changes WHERE package_id=? ORDER BY sequence DESC', (package_id,)):
+        count += 1
+        table, key = change['table_name'], json.loads(change['key_json'])
+        where = ' AND '.join(k + '=?' for k in key)
+        actual = c.execute('SELECT * FROM ' + table + ' WHERE ' + where, tuple(key.values())).fetchone()
+        if canonical(dict(actual) if actual else None) != change['after_json']:
+            raise ValueError('Record changed after repair; refusing destructive rollback')
+        before = json.loads(change['before_json']) if change['before_json'] else None
+        if table == 'aliases':
+            c.execute('INSERT INTO alias_search(alias_search,rowid,alias) VALUES (\'delete\',?,?)',
+                      (key['rowid'], json.loads(change['after_json'])['alias']))
+        if before is None:
+            c.execute('DELETE FROM ' + table + ' WHERE ' + where, tuple(key.values()))
+        elif actual is not None:
+            c.execute('UPDATE ' + table + ' SET ' + ','.join(k + '=?' for k in before) + ' WHERE ' + where,
+                      [*before.values(), *key.values()])
+        else:
+            c.execute('INSERT INTO ' + table + '(' + ','.join(before) + ') VALUES (' + ','.join('?' for _ in before) + ')', tuple(before.values()))
+    c.execute("UPDATE repair_packages SET status='ROLLED_BACK' WHERE package_id=?", (package_id,))
+    return {'status': 'ROLLED_BACK', 'package_id': package_id, 'changed_rows': count}
+
+
 def rollback(database: Path, package_id: str) -> dict:
     c = sqlite3.connect(database)
     c.row_factory = sqlite3.Row
-    package = c.execute('SELECT * FROM repair_packages WHERE package_id=?', (package_id,)).fetchone()
-    if not package or package['status'] != 'APPLIED':
+    try:
+        with c:
+            return _rollback_package(c, package_id)
+    finally:
         c.close()
-        return {'status': 'NOT_APPLIED'}
-    newest = c.execute("SELECT package_id FROM repair_changes ORDER BY sequence DESC LIMIT 1").fetchone()[0]
-    if newest != package_id:
-        raise ValueError('Rollback must follow reverse application order')
-    changes = list(c.execute('SELECT * FROM repair_changes WHERE package_id=? ORDER BY sequence DESC', (package_id,)))
-    with c:
-        for change in changes:
-            table, key = change['table_name'], json.loads(change['key_json'])
-            where = ' AND '.join(k + '=?' for k in key)
-            actual = c.execute('SELECT * FROM ' + table + ' WHERE ' + where, tuple(key.values())).fetchone()
-            if canonical(dict(actual) if actual else None) != change['after_json']:
-                raise ValueError('Record changed after repair; refusing destructive rollback')
-            before = json.loads(change['before_json']) if change['before_json'] else None
-            if table == 'aliases':
-                c.execute('INSERT INTO alias_search(alias_search,rowid,alias) VALUES (\'delete\',?,?)',
-                          (key['rowid'], json.loads(change['after_json'])['alias']))
-            if before is None:
-                c.execute('DELETE FROM ' + table + ' WHERE ' + where, tuple(key.values()))
-            elif actual is not None:
-                c.execute('UPDATE ' + table + ' SET ' + ','.join(k + '=?' for k in before) + ' WHERE ' + where,
-                          [*before.values(), *key.values()])
-            else:
-                c.execute('INSERT INTO ' + table + '(' + ','.join(before) + ') VALUES (' + ','.join('?' for _ in before) + ')', tuple(before.values()))
-        c.execute("UPDATE repair_packages SET status='ROLLED_BACK' WHERE package_id=?", (package_id,))
-    c.close()
-    return {'status': 'ROLLED_BACK', 'changed_rows': len(changes)}
+
+
+def verify_rollback_stack(database: Path) -> dict:
+    """Exercise real reverse writes in one transaction, then discard all writes."""
+    c = sqlite3.connect(database)
+    c.row_factory = sqlite3.Row
+    c.execute('PRAGMA cache_size=-65536')
+    original = c.execute("SELECT value FROM metadata WHERE key='database_revision'").fetchone()[0]
+    packages = [r[0] for r in c.execute("SELECT p.package_id FROM repair_packages p JOIN repair_changes ch USING(package_id) WHERE p.status='APPLIED' GROUP BY p.package_id ORDER BY max(ch.sequence) DESC")]
+    results = []
+    try:
+        c.execute('BEGIN IMMEDIATE')
+        for package in packages:
+            results.append(_rollback_package(c, package))
+        restored = json.loads(c.execute("SELECT value FROM metadata WHERE key='database_revision'").fetchone()[0])
+        remaining = {name: c.execute('SELECT count(*) FROM ' + name).fetchone()[0]
+                     for name in ('native_classes', 'world_mapping_dispositions', 'integrated_fg_objects', 'integrated_dataset_versions')}
+        c.rollback()
+        preserved = c.execute("SELECT value FROM metadata WHERE key='database_revision'").fetchone()[0] == original
+        return {'passed': preserved and not any(remaining.values()), 'packages': results,
+                'restored_base_revision_in_transaction': restored, 'restored_table_counts': remaining,
+                'candidate_changes_committed': False, 'candidate_revision_preserved': preserved}
+    finally:
+        c.rollback()
+        c.close()
 
 
 def integrate_increment(database: Path, expected_revision: str, increment: Path, source_validation: Path) -> dict:
@@ -678,13 +798,14 @@ def integrate_increment(database: Path, expected_revision: str, increment: Path,
     return result
 
 
-def apply_scope_operations(database: Path, expected_revision: str, operations_file: Path) -> dict:
+def apply_scope_operations(database: Path, expected_revision: str, operations_file: Path,
+                           *, package_id: str = 'grounded-current-scope-v1') -> dict:
     """Execute explicitly evidenced repairs, checking current endpoint/record guards."""
     from .hierarchy import source_assertion_sha256
     from .semantics import edge_predicate, role_expression
     operations = json.loads(operations_file.read_text())
     writer = RepairWriter(database, expected_revision=expected_revision)
-    if not writer.begin('grounded-current-scope-v1', operations):
+    if not writer.begin(package_id, operations):
         writer.c.close()
         return {'status': 'ALREADY_APPLIED', 'changed_rows': 0}
     affected, counts = set(), Counter()
@@ -735,6 +856,15 @@ def apply_scope_operations(database: Path, expected_revision: str, operations_fi
                     queue.extend(r[0] for r in writer.c.execute("SELECT object_uid FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','SERIES_MEMBER_OF','CONFIGURATION_OF','CONFIGURATION_TYPE_OF','DEPICTS_TYPE')", (member,)))
             writer.add_relation(child, parent, operation['relation'], source=operation['source'],
                                 evidence_id=eid, proof=proof)
+            if operation.get('increment_relation_key'):
+                key = {'kind': 'relations', 'object_key': operation['increment_relation_key']}
+                old = writer.c.execute('SELECT * FROM increment_reconciliation WHERE kind=? AND object_key=?', tuple(key.values())).fetchone()
+                if not old or json.loads(old['payload'])['child_uid'] != child or json.loads(old['payload'])['parent_uid'] != parent:
+                    raise ValueError('Increment reconciliation receipt does not match grounded endpoints')
+                row = dict(old)
+                row.update(disposition='INTEGRATED_CURRENT_GROUNDED_RELATION',
+                           reason='Exact current endpoint roles and source range checked; affected current caches rebuilt')
+                writer.put('increment_reconciliation', key, row)
             affected.add(child_comp)
             counts['grounded_existing_component_connections'] += 1
         elif operation['op'] == 'revoke_world_exact':
@@ -768,6 +898,7 @@ def apply_scope_operations(database: Path, expected_revision: str, operations_fi
                 if row[0] not in affected:
                     affected.add(row[0]); queue.append(row[0])
     writer.added_nodes, writer.new_arcs = {}, []
+    old_browse_keys = set()
     domain_ids = [r[0] for r in writer.c.execute('SELECT domain_id FROM domain_registry')]
     for comp in sorted(affected):
         members = list(writer.c.execute('SELECT n.*,' + role_expression('n','p') + ' role,p.attributes FROM nodes n LEFT JOIN node_profiles p ON p.uid=n.uid WHERE n.component_id=?', (comp,)))
@@ -777,6 +908,7 @@ def apply_scope_operations(database: Path, expected_revision: str, operations_fi
             for domain in domain_ids:
                 writer.delete('domain_components', {'domain_id': domain, 'view': view, 'component_id': comp})
             for row in list(writer.c.execute('SELECT * FROM browse_links WHERE view=? AND child_component=?', (view, comp))):
+                old_browse_keys.add(tuple(row[k] for k in ('view', 'parent_component', 'role', 'relation')))
                 writer.delete('browse_links', {k: row[k] for k in ('view', 'parent_component', 'child_component', 'role', 'relation')})
             for node in members:
                 writer.delete('view_terminal_connections', {'view': view, 'uid': node['uid']})
@@ -794,6 +926,10 @@ def apply_scope_operations(database: Path, expected_revision: str, operations_fi
                                         'id': edge['id'], 'storage': 'entity', 'child_component': comp,
                                         'parent_component': edge['parent_component'], 'child_role': node['role'], 'parent_role': edge['parent_role']})
     indexes = writer.refresh_new_indexes()
+    for values in old_browse_keys:
+        key = dict(zip(('view', 'parent_component', 'role', 'relation'), values))
+        actual = writer.c.execute('SELECT count(*) n,coalesce(sum(source_arc_count),0) arcs FROM browse_links WHERE view=? AND parent_component=? AND role=? AND relation=?', values).fetchone()
+        writer.put('browse_link_counts', key, {**key, 'concept_count': actual['n'], 'source_arc_count': actual['arcs']})
     result = writer.finish({'status': 'APPLIED', **dict(counts), 'affected_components': len(affected), 'index_changes': indexes})
     writer.c.close()
     return result
@@ -804,6 +940,9 @@ def add_confirmed_identity_names(database: Path, expected_revision: str) -> dict
     from .api import FineAtlas
     additions, isolated = [], []
     with FineAtlas(database) as atlas:
+        prior = atlas.con.execute("SELECT status,summary FROM repair_packages WHERE package_id='confirmed-source-names-v1'").fetchone()
+        if prior and prior['status'] == 'APPLIED':
+            return {'status': 'ALREADY_APPLIED', 'changed_rows': 0}
         for row in atlas.con.execute('SELECT dataset,class_id FROM native_classes ORDER BY dataset,class_id'):
             if row['dataset'] not in CORE_COUNTS:
                 continue

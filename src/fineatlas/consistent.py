@@ -1166,12 +1166,16 @@ class ConsistentAtlas(SingleAtlas):
         elif "alias_search" in self._tables:
             # Short alphanumeric terms carry model/variant/year identity too
             # (for example Z4 and 1 Series); do not silently omit them.
-            terms = q.split()[:6]
+            terms = q.split()
+            if len(terms) > 64:
+                raise QueryLimitError('Search phrase exceeds 64 terms; no qualifiers were silently dropped')
             fts = " AND ".join('"' + term.replace('"', '""') + '"' for term in terms)
             candidates = "SELECT DISTINCT a.uid FROM alias_search f CROSS JOIN aliases a ON a.rowid=f.rowid WHERE alias_search MATCH ?"
             match_args = [fts]
         else:
-            terms = q.split()[:6]
+            terms = q.split()
+            if len(terms) > 64:
+                raise QueryLimitError('Search phrase exceeds 64 terms; no qualifiers were silently dropped')
             filters = ["a.alias LIKE ? ESCAPE '\\'" for _ in terms]
             candidates = "SELECT DISTINCT a.uid FROM aliases a WHERE " + " AND ".join(
                 filters
@@ -2001,6 +2005,11 @@ class ConsistentAtlas(SingleAtlas):
             proof = None
         documentary = bool(documentary and isinstance(proof,dict) and proof and row['namespace'] and row['source_version'] and own and
                            own['visibility'] == 'ACTIVE' and own['node_kind'] == row['role'])
+        if 'native_classes' in self._tables:
+            registered = self.con.execute('SELECT source_version FROM native_classes WHERE dataset=? AND class_id=? AND uid=? AND source_version=?',
+                                          (dataset, str(class_id), uid, row['source_version'])).fetchone()
+            documentary = bool(documentary and registered and self.native_class(
+                dataset, str(class_id), source_version=row['source_version'])['native_usable'])
         world = self.target(dataset,class_id)
         result = {
             'dataset':dataset,'class_id':str(class_id),'label':row.get('label') or (world or {}).get('label') or (own or {}).get('label') or str(class_id),

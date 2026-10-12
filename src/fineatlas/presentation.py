@@ -129,7 +129,13 @@ class PresentationAtlas:
                     node = self.node(row['uid'])
                     if node and (node_kind is None or node['node_kind'] == node_kind):
                         values[node['uid']] = node
-        ordered = sorted(values.values(), key=lambda n: (norm(n['label']) != norm(text), n['uid']))
+        exact_native = set()
+        if 'native_class_names' in self._tables:
+            from .task_contract import exact_name
+            exact_native = {r[0] for r in self.con.execute(
+                'SELECT uid FROM native_class_names WHERE normalized_name=?', (exact_name(text),))}
+        ordered = sorted(values.values(), key=lambda n: (
+            norm(n['label']) != norm(text) and n['uid'] not in exact_native, n['uid']))
         groups, conflicts = {}, {}
         for node in ordered:
             identity = self._presentation_identity(node['uid'])
@@ -167,6 +173,7 @@ class PresentationAtlas:
                                 'aggregated_slots': len(ordered) - len(all_presentations),
                                 'isolated_conflicts': list(conflicts.values()),
                                 'raw_scan_budget_per_stream': raw_scan_budget,
+                                'exact_source_name_priority': True,
                                 'scan_complete': not incomplete, 'incomplete_streams': incomplete,
                                 'ranking': 'existing exact-label priority then UID; aggregate before truncation',
                                 'visual_accuracy_claim': False}}

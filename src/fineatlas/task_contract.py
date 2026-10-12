@@ -159,6 +159,12 @@ class TaskContractAtlas:
         node = self.node(uid)
         if not node:
             return {'uid': uid, 'answer_eligible': False, 'navigation_eligible': False, 'reason': 'NOT_FOUND'}
+        if node.get('navigation_only') or node.get('node_kind') == 'DOMAIN_ENTRY':
+            return {'uid': uid, 'identity_scope': 'NAVIGATION', 'role': node['node_kind'],
+                    'object_granularity': None, 'granularity_status': 'NAVIGATION_ONLY',
+                    'native_answer_eligible': False, 'world_answer_eligible': False,
+                    'answer_eligible': False, 'navigation_eligible': True,
+                    'mapping_statuses': [], 'reason': 'NAVIGATION_ENTRY_NOT_EXACT_ANSWER'}
         native_rows = []
         if 'native_classes' in self._tables:
             native_rows = [dict(r) for r in self.con.execute('SELECT * FROM native_classes WHERE uid=?', (uid,))]
@@ -172,6 +178,7 @@ class TaskContractAtlas:
         world_role = role in ('CLASS', 'BIOLOGICAL_VARIANT', 'MODEL', 'MODEL_FAMILY', 'CONFIGURATION', 'INSTANCE', 'ATTRIBUTE')
         source_scope = node.get('attributes', {}).get('identity_scope')
         world_eligible = bool(node['visibility'] == 'ACTIVE' and world_role and role_consistent
+                              and uid != self.root_uid
                               and not native_rows and source_scope not in (
                                   'SOURCE_NATIVE_LABEL', 'SOURCE_VERSION_CONCEPT', 'SOURCE_SUPERVISION_CATEGORY'))
         task_reason = None
@@ -229,7 +236,8 @@ class TaskContractAtlas:
                 left, right = self.node(mapping['uid']), self.node(predicted_uid)
                 safe = self.candidate_contract(predicted_uid, dataset=dataset)
                 world_hit = bool(left and right and safe['world_answer_eligible'] and
-                                 left['component_id'] == right['component_id'])
+                                 left['component_id'] == right['component_id'] and
+                                 self._presentation_identity(mapping['uid'])['status'] == 'ACCEPTED')
                 if world_hit:
                     # A checked full-range class/world crosswalk permits both
                     # exact metrics, without merging the native and world UIDs.

@@ -27,6 +27,12 @@ class FineAtlasExperimentTool:
     def close(self) -> None:
         self.atlas.close()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
     def query(self, text: str, *, domain: str | None = None, dataset: str | None = None, limit: int = 10) -> dict:
         """Accept model phrases only; gold IDs/labels/target UIDs are not inputs."""
         if self.config.inference_mode == 'closed' and dataset != self.config.closed_dataset:

@@ -82,8 +82,8 @@ def main() -> None:
         elif command=='reward-pair':
             p.add_argument('left');p.add_argument('right')
         else:p.add_argument('output')
-        p.add_argument('--admission-mode',choices=['legacy','reviewed_paths'],default='legacy')
-        p.add_argument('--target-scope',choices=['world','source_native'],default='world')
+        p.add_argument('--admission-mode',choices=['legacy','reviewed_paths'],default=None)
+        p.add_argument('--target-scope',choices=['world','source_native'],default=None)
         p.add_argument('--source-namespace')
         p.add_argument('--source-version')
         p.add_argument('--task-boundary',action='append',default=[])
@@ -232,6 +232,13 @@ def main() -> None:
         if args.relation_view and args.relation_view != run_config.relation_view:
             parser.error('--relation-view conflicts with pinned run configuration')
         args.data_dir, args.relation_view = run_config.database, run_config.relation_view
+    if args.command in ('task-path', 'reward-pair', 'export-training'):
+        for name, fallback in [('admission_mode', 'legacy'), ('target_scope', 'world')]:
+            value = getattr(args, name)
+            expected = getattr(run_config, name) if run_config else fallback
+            if run_config and value is not None and value != expected:
+                parser.error('--' + name.replace('_', '-') + ' conflicts with pinned run configuration')
+            setattr(args, name, value or expected)
     with FineAtlas(
         args.data_dir,
         view=args.view,
@@ -277,7 +284,8 @@ def main() -> None:
         elif args.command == "equivalents":
             result = graph.equivalents(args.uid)
         elif args.command == "target":
-            result = graph.target(args.dataset, args.class_id)
+            result = graph.target(args.dataset, args.class_id,
+                                  target_scope=run_config.target_scope if run_config else 'world')
         elif args.command in ('task-path','reward-pair','export-training'):
             options={'admission_mode':args.admission_mode,'target_scope':args.target_scope,
                      'source_namespace':args.source_namespace,'source_version':args.source_version,
