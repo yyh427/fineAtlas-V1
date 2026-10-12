@@ -73,6 +73,14 @@ class NativeContractTest(unittest.TestCase):
         self.assertTrue(result['native_exact'])
         self.assertIsNone(result['world_exact'])
 
+    def test_unregistered_native_scope_is_never_a_world_answer(self):
+        def change(c):
+            c.execute('INSERT INTO node_profiles VALUES(?,?,?,?,?,?)', ('type:river','CLASS','fixture','',
+                'proof:1', json.dumps({'identity_scope':'SOURCE_NATIVE_DATASET_CATEGORY'})))
+        self.prepare(change)
+        self.assertFalse(self.tree.candidate_contract('type:river')['world_answer_eligible'])
+        self.assertEqual(self.tree.world_mapping_status('fixture','1')['target_object_scope'], 'SOURCE_NATIVE_LABEL')
+
     def test_ambiguous_full_name_returns_candidates_and_no_exact_guess(self):
         def change(c):
             c.execute("INSERT INTO native_classes SELECT dataset,'2',namespace,source_version,'type:root',label,raw_label,role,object_granularity,domain,training_id_verified,proof,evidence_ids FROM native_classes")

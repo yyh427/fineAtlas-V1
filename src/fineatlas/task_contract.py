@@ -15,6 +15,8 @@ from typing import Any
 
 RULE_VERSION = 'native-world-exact-v1'
 PRESENTATION_VERSION = 'reviewed-scope-aggregation-v1'
+SOURCE_NATIVE_SCOPES = frozenset(('SOURCE_NATIVE_LABEL', 'SOURCE_NATIVE_DATASET_CATEGORY',
+                                  'SOURCE_SUPERVISION_CATEGORY'))
 
 
 def exact_name(value: str) -> str:
@@ -145,6 +147,8 @@ class TaskContractAtlas:
             disposition = dict(row) if row else None
         native_target = bool(world and 'native_classes' in self._tables and self.con.execute(
             'SELECT 1 FROM native_classes WHERE uid=? LIMIT 1', (world['target_uid'],)).fetchone())
+        if world:
+            native_target = native_target or (self._basic(world['target_uid']) or {}).get('attributes', {}).get('identity_scope') in SOURCE_NATIVE_SCOPES
         confirmed = bool(world and not native_target and world.get('identity_verified') and
                          (not disposition or disposition['effective_status'] == 'CONFIRMED'))
         return {'uid': world.get('target_uid') if world else None,
@@ -183,8 +187,8 @@ class TaskContractAtlas:
         world_unit = node.get('normalized_rank') or node.get('attributes', {}).get('object_granularity')
         world_eligible = bool(node['visibility'] == 'ACTIVE' and world_role and role_consistent
                               and uid != self.root_uid
-                              and not native_rows and source_scope not in (
-                                  'SOURCE_NATIVE_LABEL', 'SOURCE_VERSION_CONCEPT', 'SOURCE_SUPERVISION_CATEGORY'))
+                              and not native_rows and source_scope not in SOURCE_NATIVE_SCOPES
+                              and source_scope != 'SOURCE_VERSION_CONCEPT')
         task_reason = None
         mapped = []
         mapped_statuses = []
