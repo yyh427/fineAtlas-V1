@@ -527,12 +527,15 @@ def reconcile_catalogue_receipts(database: Path, expected_revision: str, source_
             continue
         parent = json.loads(writer.c.execute("SELECT payload FROM integrated_fg_objects WHERE kind='nodes' AND key=?", (relation['parent_uid'],)).fetchone()[0])
         child = json.loads(writer.c.execute("SELECT payload FROM integrated_fg_objects WHERE kind='nodes' AND key=?", (relation['child_uid'],)).fetchone()[0])
+        source_evidence = writer.c.execute("SELECT payload FROM integrated_fg_objects WHERE kind='evidence' AND key=?",
+                                           (parent.get('evidence_id'),)).fetchone()
+        source_uri = parent.get('source_uri') or (json.loads(source_evidence[0]).get('source_uri', '') if source_evidence else '')
         proof = {'source_relation': relation, 'parent_source_record': parent,
                  'source_inventory_evidence': inventory_eid, 'strict_IS_A': False,
                  'numeric_training_id_verified': False}
         group = dict(group_uid=parent['uid'], namespace=parent['source'], source_version=parent['source_version'],
                      source_group_id=parent['uid'].rsplit(':', 1)[-1], label=parent['label'], parent_group_uid=None,
-                     source_uri=parent.get('source_uri', ''), proof=canonical({
+                     source_uri=source_uri, proof=canonical({
                          'parent_source_record': parent, 'source_inventory_evidence': inventory_eid,
                          'strict_IS_A': False, 'numeric_training_id_verified': False}))
         writer.put('source_groups', {'group_uid': group['group_uid']}, group)
