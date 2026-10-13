@@ -1,0 +1,391 @@
+{
+  "identity": {
+    "before": {
+      "CONFIRMED": 416,
+      "REVIEW": 333,
+      "BROADER": 5,
+      "REVOKED_EXACT": 1
+    },
+    "after": {
+      "CONFIRMED": 416,
+      "REVIEW": 333,
+      "REVOKED_EXACT": 1,
+      "BROADER": 5
+    },
+    "new_world_promotions": 0,
+    "source_investigations": 755,
+    "still_unresolved_world": 339
+  },
+  "granularity": {
+    "declared_source_units": 755,
+    "forced_species_or_domestic_breed": false,
+    "invalid_answer_slots_10": 0,
+    "invalid_answer_slots_80": 0
+  },
+  "duplicates": {
+    "before_query_totals": {
+      "raw_slots_10": 3737,
+      "raw_duplicates_10": 571,
+      "discovery_slots_10": 3603,
+      "discovery_duplicates_10": 0,
+      "answers_10": 2342,
+      "ineligible_answers_10": 0,
+      "empty_raw_10": 175,
+      "empty_discovery_10": 0,
+      "empty_answers_10": 0,
+      "backend_native_target_in_answers_10": 755,
+      "incomplete_scan_10": 0,
+      "raw_slots_80": 8057,
+      "raw_duplicates_80": 844,
+      "discovery_slots_80": 7655,
+      "discovery_duplicates_80": 0,
+      "answers_80": 5358,
+      "ineligible_answers_80": 0,
+      "empty_raw_80": 175,
+      "empty_discovery_80": 0,
+      "empty_answers_80": 0,
+      "backend_native_target_in_answers_80": 755,
+      "incomplete_scan_80": 0,
+      "queries": 755
+    },
+    "after_query_totals": {
+      "raw_slots_10": 3846,
+      "raw_duplicates_10": 571,
+      "discovery_slots_10": 3712,
+      "discovery_duplicates_10": 0,
+      "answers_10": 2342,
+      "ineligible_answers_10": 0,
+      "empty_raw_10": 175,
+      "empty_discovery_10": 0,
+      "empty_answers_10": 0,
+      "backend_native_target_in_answers_10": 755,
+      "incomplete_scan_10": 0,
+      "raw_slots_80": 8195,
+      "raw_duplicates_80": 844,
+      "discovery_slots_80": 7793,
+      "discovery_duplicates_80": 0,
+      "answers_80": 5358,
+      "ineligible_answers_80": 0,
+      "empty_raw_80": 175,
+      "empty_discovery_80": 0,
+      "empty_answers_80": 0,
+      "backend_native_target_in_answers_80": 755,
+      "incomplete_scan_80": 0,
+      "queries": 755
+    },
+    "model_scope_duplicates": 0
+  },
+  "hierarchy": {
+    "graph_acceptance": {
+      "node": 755,
+      "legal_path": 755,
+      "domain_entry_expand": 755,
+      "actual_expand": 755,
+      "dynamic_candidates": 755,
+      "answer_eligible": 755,
+      "native_exact": 755,
+      "navigation_not_identity": 755,
+      "duplicates": 755,
+      "classes": 755,
+      "passed": 755,
+      "world_CONFIRMED": 416,
+      "coarse_only": 9,
+      "world_REVIEW": 333,
+      "world_REVOKED_EXACT": 1,
+      "world_BROADER": 5
+    },
+    "coarse_only": 9,
+    "affected_graph": {
+      "passed": true,
+      "database_revision": "dad56fbeddac4b08db38f29d21465e0bc57248a2ac464e058a7941a96fb69deb",
+      "scope": "Every repair-written relation and affected component plus its current upward closure; inherited full graph semantics not claimed",
+      "added_nodes": 445,
+      "upward_components": 1193,
+      "acyclic_components": 1193,
+      "counts": {
+        "checked_edges": 567,
+        "active_IS_A": 566,
+        "documentary_review_assertions": 1,
+        "checked_entity_relations": 803,
+        "active_DEPICTS_TYPE": 354,
+        "active_HAS_ATTRIBUTE": 377,
+        "active_DESIGN_TYPE_OF": 70,
+        "active_DEPICTS_DESIGN": 1,
+        "active_SOURCE_TYPE_REFERENCE": 1,
+        "identity_ACCEPTED": 1007
+      },
+      "errors": [],
+      "isolated_identity_components": []
+    },
+    "fixed_pairs": [
+      {
+        "dataset": "cub200",
+        "mode": "legacy/world",
+        "denominator": 19900,
+        "before_applicable": 6971,
+        "after_applicable": 6971,
+        "statuses": {
+          "APPLICABLE": 6971,
+          "COARSE_COMMON_ANCESTOR_ONLY": 7907,
+          "ENDPOINT_NOT_APPLICABLE": 5022
+        },
+        "requirement": "species",
+        "source_scope": "avilist",
+        "admission_mode": "legacy",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "cub200",
+        "mode": "reviewed_paths/world",
+        "denominator": 19900,
+        "before_applicable": 957,
+        "after_applicable": 957,
+        "statuses": {
+          "APPLICABLE": 957,
+          "COARSE_COMMON_ANCESTOR_ONLY": 13921,
+          "ENDPOINT_NOT_APPLICABLE": 5022
+        },
+        "requirement": "species",
+        "source_scope": "avilist",
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "cub200",
+        "mode": "reviewed_paths/source_native",
+        "denominator": 19900,
+        "before_applicable": 6622,
+        "after_applicable": 6622,
+        "statuses": {
+          "APPLICABLE": 6622,
+          "COARSE_COMMON_ANCESTOR_ONLY": 13278
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "fgvc_aircraft",
+        "mode": "legacy/world",
+        "denominator": 4950,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "ENDPOINT_NOT_APPLICABLE": 4950
+        },
+        "requirement": "model_design",
+        "source_scope": null,
+        "admission_mode": "legacy",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "fgvc_aircraft",
+        "mode": "reviewed_paths/world",
+        "denominator": 4950,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "ENDPOINT_NOT_APPLICABLE": 4950
+        },
+        "requirement": "model_design",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "fgvc_aircraft",
+        "mode": "reviewed_paths/source_native",
+        "denominator": 4950,
+        "before_applicable": 62,
+        "after_applicable": 62,
+        "statuses": {
+          "COARSE_COMMON_ANCESTOR_ONLY": 4888,
+          "APPLICABLE": 62
+        },
+        "requirement": "model_design",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "flowers102",
+        "mode": "legacy/world",
+        "denominator": 5151,
+        "before_applicable": 1095,
+        "after_applicable": 1095,
+        "statuses": {
+          "APPLICABLE": 1095,
+          "COARSE_COMMON_ANCESTOR_ONLY": 1116,
+          "ENDPOINT_NOT_APPLICABLE": 2940
+        },
+        "requirement": "species",
+        "source_scope": null,
+        "admission_mode": "legacy",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "flowers102",
+        "mode": "reviewed_paths/world",
+        "denominator": 5151,
+        "before_applicable": 55,
+        "after_applicable": 55,
+        "statuses": {
+          "COARSE_COMMON_ANCESTOR_ONLY": 2156,
+          "ENDPOINT_NOT_APPLICABLE": 2940,
+          "APPLICABLE": 55
+        },
+        "requirement": "species",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "flowers102",
+        "mode": "reviewed_paths/source_native",
+        "denominator": 5151,
+        "before_applicable": 126,
+        "after_applicable": 126,
+        "statuses": {
+          "COARSE_COMMON_ANCESTOR_ONLY": 5025,
+          "APPLICABLE": 126
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "pets37",
+        "mode": "legacy/world",
+        "denominator": 666,
+        "before_applicable": 666,
+        "after_applicable": 666,
+        "statuses": {
+          "APPLICABLE": 666
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "legacy",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "pets37",
+        "mode": "reviewed_paths/world",
+        "denominator": 666,
+        "before_applicable": 16,
+        "after_applicable": 35,
+        "statuses": {
+          "COARSE_COMMON_ANCESTOR_ONLY": 631,
+          "APPLICABLE": 35
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "pets37",
+        "mode": "reviewed_paths/source_native",
+        "denominator": 666,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "ENDPOINT_NOT_APPLICABLE": 666
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "stanford_dogs",
+        "mode": "legacy/world",
+        "denominator": 7140,
+        "before_applicable": 717,
+        "after_applicable": 2427,
+        "statuses": {
+          "APPLICABLE": 2427,
+          "COARSE_COMMON_ANCESTOR_ONLY": 4594,
+          "ENDPOINT_NOT_APPLICABLE": 119
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "legacy",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "stanford_dogs",
+        "mode": "reviewed_paths/world",
+        "denominator": 7140,
+        "before_applicable": 716,
+        "after_applicable": 2427,
+        "statuses": {
+          "APPLICABLE": 2427,
+          "COARSE_COMMON_ANCESTOR_ONLY": 4594,
+          "ENDPOINT_NOT_APPLICABLE": 119
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "stanford_dogs",
+        "mode": "reviewed_paths/source_native",
+        "denominator": 7140,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "ENDPOINT_NOT_APPLICABLE": 7140
+        },
+        "requirement": "hierarchy",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "stanford_cars",
+        "mode": "legacy/world",
+        "denominator": 19110,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "ENDPOINT_NOT_APPLICABLE": 19110
+        },
+        "requirement": "configuration",
+        "source_scope": null,
+        "admission_mode": "legacy",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "stanford_cars",
+        "mode": "reviewed_paths/world",
+        "denominator": 19110,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "ENDPOINT_NOT_APPLICABLE": 19110
+        },
+        "requirement": "configuration",
+        "source_scope": null,
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      },
+      {
+        "dataset": "stanford_cars",
+        "mode": "reviewed_paths/source_native",
+        "denominator": 19110,
+        "before_applicable": 0,
+        "after_applicable": 0,
+        "statuses": {
+          "COARSE_COMMON_ANCESTOR_ONLY": 19110
+        },
+        "requirement": "hierarchy",
+        "source_scope": "stanford_cars_native",
+        "admission_mode": "reviewed_paths",
+        "hierarchy_reward_enabled": false
+      }
+    ]
+  }
+}

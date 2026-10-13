@@ -145,9 +145,15 @@ def verify_revision(database,manifest):
     expected_view=manifest.get('default_relation_view')
     if expected_view and meta.get('default_relation_view','strict')!=expected_view:
         raise RuntimeError('Snapshot default view differs from the release manifest')
-    if expected_view=='unified' and not(meta.get('unified_ready') and meta.get('usability_indexes_ready')
-                                     and meta.get('browse_indexes_ready')
-                                     and meta.get('browse_index_revision')==meta.get('database_revision')):
+    repaired_scope = bool(meta.get('native755_ready') and meta.get('searchable755_ready'))
+    if expected_view == 'unified' and repaired_scope:
+        if (manifest.get('navigation_interface') != 'scope_candidates'
+            or not meta.get('unified_ready')
+            or meta.get('searchable755_scope_rules') != manifest.get('scope_rules')):
+            raise RuntimeError('Repaired mixed-scope navigation contract mismatch')
+    elif expected_view=='unified' and not(meta.get('unified_ready') and meta.get('usability_indexes_ready')
+                                       and meta.get('browse_indexes_ready')
+                                       and meta.get('browse_index_revision')==meta.get('database_revision')):
         raise RuntimeError('Unified graph or browse caches are incomplete/stale')
     if expected_view=='unified':
         if meta.get('schema') != 'FINEATLAS_SINGLE_DB_V1':
@@ -156,6 +162,26 @@ def verify_revision(database,manifest):
             raise RuntimeError('Snapshot supported views differ from the release manifest')
         sdk = runtime_sdk(manifest)
         source = Path(sdk.__file__).resolve().parent
+        if meta.get('native755_ready'):
+            core = meta.get('repair_sdk_manifest')
+            if (not isinstance(core, dict) or not core
+                or not manifest.get('core_code_commit')
+                or manifest['core_code_commit'] != meta.get('repair_code_commit')):
+                raise RuntimeError('Repaired snapshot lacks matching core code receipt')
+            additions = manifest.get('sdk_additions', {})
+            if not isinstance(additions, dict) or set(additions) & set(core):
+                raise RuntimeError('Presentation additions cannot replace sealed SDK modules')
+            signatures = {**core, **additions}
+            if set(signatures) != {p.name for p in source.glob('*.py')}:
+                raise RuntimeError('Installed SDK inventory differs from repaired snapshot')
+            for name, signature in signatures.items():
+                if Path(name).name != name or not name.endswith('.py'):
+                    raise RuntimeError('Unexpected repaired SDK filename')
+                if not re.fullmatch('[0-9a-f]{64}', str(signature)):
+                    raise RuntimeError('Invalid repaired SDK checksum')
+                if digest(source / name) != signature:
+                    raise RuntimeError('Installed SDK differs from repaired snapshot: ' + name)
+            return
         freeze_key = 'structure_frozen_build_manifest' if 'structure_frozen_build_manifest' in meta else 'unified_frozen_build_manifest'
         frozen_code = meta.get(freeze_key,{}).get('code',{})
         code = {name:value for name,value in frozen_code.items() if name.startswith('src/fineatlas/')}

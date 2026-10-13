@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "inherited_and_display_regressions": 1175,
+  "additional_download_receipt_tests": 4,
+  "distinct_tests": 1179,
+  "core_sdk_unchanged": true,
+  "database_unchanged": true
+}

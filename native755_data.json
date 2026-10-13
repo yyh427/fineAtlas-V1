@@ -1,0 +1,69 @@
+{
+  "public_name": "FineAtlas native755 searchable graph",
+  "release": "v1.11.0rc1+native755.graph.20261013",
+  "release_tag": "v1.11.0rc1-native755-graph.20261013",
+  "graph_version": "V1",
+  "candidate": true,
+  "base_url": "https://github.com/yyh427/fineAtlas-V1/releases/download/v1.11.0rc1-native755-graph.20261013",
+  "database": {
+    "name": "fineatlas.sqlite",
+    "bytes": 76014833664,
+    "sha256": "aed35e92c0f1e5fd8b46462af1ef93af6853159c9edd50cefa9f86942807f8fc"
+  },
+  "assets": [
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-000",
+      "bytes": 1073741824,
+      "sha256": "76a3bc26d1b71f0aa03c78772d337e728d43323bbfa0e16af7851ffd17105a7b"
+    },
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-001",
+      "bytes": 1073741824,
+      "sha256": "617b5115cad449076aa30813bb2083654b8ab38d9ea43877913a2dd9e6c910af"
+    },
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-002",
+      "bytes": 1073741824,
+      "sha256": "5f89f30aa3b96e15af82f9556b30d3c3bcc84a96505c074aff9a778f425b5fb1"
+    },
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-003",
+      "bytes": 1073741824,
+      "sha256": "6719d07e55f520bb32a0e62dd940dbee983b45707d9b1b38e96f6f296619eb75"
+    },
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-004",
+      "bytes": 1073741824,
+      "sha256": "79c783db095205343b96b83f022fb810c5ea55654cff4c38223728a6315b8e7c"
+    },
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-005",
+      "bytes": 1073741824,
+      "sha256": "3e052d89df90b0e4c334e004f4fa4592f46e1a133bf821513977b6b0308ce2a4"
+    },
+    {
+      "name": "fineatlas-native755-20261013.sqlite.zst.part-006",
+      "bytes": 661703807,
+      "sha256": "e8ddacf89ef73e14ee5c0be8a236b403fbfa213d142d4deb0927d8e3b2bd7730"
+    }
+  ],
+  "database_revision": "563950e014f84b17401a39efc389672e9bb3032e4cc934cf43d0885168cf0002",
+  "artifact_kind": "single",
+  "default_relation_view": "unified",
+  "supported_relation_views": [
+    "strict",
+    "taxonomy",
+    "membership",
+    "unified"
+  ],
+  "sdk_version": "1.11.0rc1+native755.graph.20261013",
+  "navigation_interface": "scope_candidates",
+  "scope_rules": "grounded-mixed-range-v1",
+  "core_code_commit": "1cbc84aa57af48f00f3d5ae27b835ae1a8e8efe7",
+  "sdk_additions": {
+    "model_display.py": "eb37f64e0c9a1318a4349bf7a4d43f611cb5ccbe64f599df06db5faccfc834eb"
+  },
+  "native_core_classes": 755,
+  "visual_recognition_measured": false,
+  "full_world_semantic_certification": false
+}

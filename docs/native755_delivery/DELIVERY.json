@@ -1,0 +1,191 @@
+{
+  "status": "NATIVE755_GRAPH_ACCEPTED_WORLD_SEMANTICS_PARTIAL",
+  "production_switched": false,
+  "release_published": false,
+  "training_started": false,
+  "database": {
+    "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/fineatlas.sqlite",
+    "bytes": 76014833664,
+    "sha256": "aed35e92c0f1e5fd8b46462af1ef93af6853159c9edd50cefa9f86942807f8fc",
+    "database_revision": "563950e014f84b17401a39efc389672e9bb3032e4cc934cf43d0885168cf0002",
+    "stable_file_during_hash": true,
+    "utc": "2026-10-13T05:29:53.533788+00:00"
+  },
+  "run_config": {
+    "database": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/fineatlas.sqlite",
+    "database_revision": "563950e014f84b17401a39efc389672e9bb3032e4cc934cf43d0885168cf0002",
+    "sdk_version": "1.11.0rc1+native755.graph.20261013",
+    "code_commit": "1cbc84aa57af48f00f3d5ae27b835ae1a8e8efe7",
+    "relation_view": "unified",
+    "target_scope": "source_native",
+    "admission_mode": "reviewed_paths",
+    "evaluation_rules": "native-world-exact-v1",
+    "presentation_rules": "reviewed-scope-aggregation-v2",
+    "inference_mode": "open",
+    "closed_dataset": null,
+    "hierarchy_reward_enabled": false,
+    "scope_rules": "grounded-mixed-range-v1",
+    "scope_route_mode": "mixed"
+  },
+  "branch": "repair/native755-searchable-graph-20261013",
+  "base_commit": "f198381582283de8ab658d20dd55be6a90f725ed",
+  "code_commit": "1cbc84aa57af48f00f3d5ae27b835ae1a8e8efe7",
+  "git_clean": true,
+  "coverage": {
+    "node": 755,
+    "legal_path": 755,
+    "domain_entry_expand": 755,
+    "actual_expand": 755,
+    "dynamic_candidates": 755,
+    "answer_eligible": 755,
+    "native_exact": 755,
+    "navigation_not_identity": 755,
+    "duplicates": 755,
+    "classes": 755,
+    "passed": 755,
+    "world_CONFIRMED": 416,
+    "coarse_only": 9,
+    "world_REVIEW": 333,
+    "world_REVOKED_EXACT": 1,
+    "world_BROADER": 5
+  },
+  "world_status": {
+    "CONFIRMED": 416,
+    "REVIEW": 333,
+    "REVOKED_EXACT": 1,
+    "BROADER": 5
+  },
+  "new_world_confirmations": 0,
+  "coarse_only": 9,
+  "acceptance_checks": {
+    "graph": true,
+    "classes": true,
+    "queries": true,
+    "pairs": true,
+    "query_binding": true,
+    "model": true,
+    "subgraph": true,
+    "preservation": true,
+    "idempotence": true,
+    "rollback": true,
+    "installed_sdk": true,
+    "cases": true
+  },
+  "full_world_semantic_certification": false,
+  "visual_recognition_measured": false,
+  "reports": {
+    "reports/FINAL_REPORT.md": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/FINAL_REPORT.md",
+      "sha256": "90b9858b8bf9f05410bc16695ef6c622c050a686303ad51675ce995c2c5056da"
+    },
+    "reports/graph_acceptance/755类可搜索图逐项验收.csv": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/graph_acceptance/755类可搜索图逐项验收.csv",
+      "sha256": "b83ec41da17814b99c79328f1749bea228cee2a330ef3fe504b512a83533a412"
+    },
+    "reports/graph_acceptance/paths_and_checks755.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/graph_acceptance/paths_and_checks755.json",
+      "sha256": "d27637a95a86a2f857e55876ca5524ad84fc92e9919cb877364e7e1a37e504bf"
+    },
+    "reports/逐项剩余问题与处理清单.csv": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/逐项剩余问题与处理清单.csv",
+      "sha256": "7ec067245ee76b7875501617d53584d369b7e572ae54da0df713939fe47e98de"
+    },
+    "reports/世界身份待审及已查来源.csv": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/世界身份待审及已查来源.csv",
+      "sha256": "e6104003b664118fe39880711a4ef07adbc1114ebe8f6efb3608e152fb43f5b3"
+    },
+    "reports/755类身份核查记录.csv": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/755类身份核查记录.csv",
+      "sha256": "deddffb1a0a451eb96b9b29f51de1b4c207899ca5df565d4de6c51762e75bbe5"
+    },
+    "reports/固定56917对复算对照.csv": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/固定56917对复算对照.csv",
+      "sha256": "8fa38c00038f0c4d32ef2d23c24f3f9d3e3f72cc8a78935e13228b2e456b0870"
+    },
+    "reports/four_issue_before_after.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/four_issue_before_after.json",
+      "sha256": "8bf6e6fe6dc47d4c0de556c577975e67ef362750dff7f92d23fb7a90ea977268"
+    },
+    "reports/model_scope_acceptance.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/model_scope_acceptance.json",
+      "sha256": "fc4b28aa2c67b0e821c1ab25c2efe8647c3301485fd60a48177bafb5cde4005c"
+    },
+    "reports/query_acceptance_final_binding.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/query_acceptance_final_binding.json",
+      "sha256": "32b5f8fb56ce2709e4c7062816d4d00e4daa9a2e1276aab34888217768325215"
+    },
+    "reports/preservation_and_increment_acceptance.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/preservation_and_increment_acceptance.json",
+      "sha256": "abf66d85b6057f8f6417333c6a7db86091017029b063643bba5609af95e92974"
+    },
+    "reports/round_idempotence_acceptance.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/round_idempotence_acceptance.json",
+      "sha256": "9239c7940cac1e46bbfeef5e21b9a4ff2082c484ec38cb5ebd7b126b04d67520"
+    },
+    "reports/round_rollback_acceptance.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/round_rollback_acceptance.json",
+      "sha256": "112a3a058fd430b9c1f845ec376b72595fab85322486250e1dcfacb2fb1696e4"
+    },
+    "reports/installed_sdk_acceptance.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/installed_sdk_acceptance.json",
+      "sha256": "ac16d014f035bfe5e27a77d7b92332fe21a680cb4655f26b9d8720e893fca89e"
+    },
+    "reports/可复制中文摘要.txt": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/可复制中文摘要.txt",
+      "sha256": "d1b3306350b7192d39ab3dc11962ff302c713a9aaab2431050757adca68d1c27"
+    },
+    "reports/database_sha256.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/database_sha256.json",
+      "sha256": "8685b43d198466ee21127a37b55a432b939593189ca8f14a077f3d3e39529c87"
+    },
+    "reports/证据文件清单.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/证据文件清单.json",
+      "sha256": "6a7fb32272512ae04f8c4c075df5df88f0e75800fb916a22589a1e1b3725a9e6"
+    },
+    "reports/COMMITS.txt": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/COMMITS.txt",
+      "sha256": "e04fcb1bb87987b6751f399de6ef49a256a88647a2642822e546d2e2be853245"
+    },
+    "reports/USAGE_AND_ROLLBACK.md": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/USAGE_AND_ROLLBACK.md",
+      "sha256": "4881c185733e164c60d7a2c2584c77aa387c09903c61dc85eb370883708d237c"
+    },
+    "reports/重点案例与别名截断复核.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/重点案例与别名截断复核.json",
+      "sha256": "05d2f0df3167776f7160119a67cbe895c647122aa59d73decea1b8895bdf0aad"
+    },
+    "reports/755原生类别实际反馈.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/755原生类别实际反馈.json",
+      "sha256": "897da855b1880df8f92e1b635fcdadce1d130c5fa3e5e1a27ef3ff1c37e339c7"
+    },
+    "reports/755类接入原因与修复前后.csv": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/reports/755类接入原因与修复前后.csv",
+      "sha256": "b7a8e825e6f074647f7101234a66a895b03fd1f2796a2fb6bdeb71cd58458086"
+    }
+  },
+  "artifacts": {
+    "fineatlas_tree-1.11.0rc1+native755.graph.20261013-py3-none-any.whl": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/fineatlas_tree-1.11.0rc1+native755.graph.20261013-py3-none-any.whl",
+      "sha256": "be8631eaece5af0531d187fee1524afeffec1bf428ebbeb52246252f76127515"
+    },
+    "code-1cbc84a.tar.gz": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/code-1cbc84a.tar.gz",
+      "sha256": "8ed035b715fe7587ab140e88e88649f714715560cc8c6923e99ad77f7c84610f"
+    },
+    "run_config.json": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/run_config.json",
+      "sha256": "0b723f0c5b26735171f0e31881fe51156a3823ff422def19b5cfe07b1140095d"
+    },
+    "repair-755-graph.bundle": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/repair-755-graph.bundle",
+      "sha256": "aad9a558ceceaaa86addb64f3ea082b0ec01350ea765df14f392286772ddc485"
+    },
+    "code-acf3248.tar.gz": {
+      "path": "/data/yaoyuhan/FineAtlas-Eval/v1/repair_755_graph_20261013_020857/artifacts/code-acf3248.tar.gz",
+      "sha256": "088e4e3c80e1853ce02009a7304f257937f83ef44d2c2dfb2e812da4131d9771"
+    }
+  },
+  "external_pending_world": 339,
+  "extension_training_ids_blocked": 847,
+  "completed_utc": "2026-10-13T05:43:43.716003+00:00"
+}

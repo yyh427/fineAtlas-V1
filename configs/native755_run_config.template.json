@@ -1,0 +1,16 @@
+{
+  "database": "./data-native755/fineatlas.sqlite",
+  "database_revision": "563950e014f84b17401a39efc389672e9bb3032e4cc934cf43d0885168cf0002",
+  "sdk_version": "1.11.0rc1+native755.graph.20261013",
+  "code_commit": "1cbc84aa57af48f00f3d5ae27b835ae1a8e8efe7",
+  "relation_view": "unified",
+  "target_scope": "source_native",
+  "admission_mode": "reviewed_paths",
+  "evaluation_rules": "native-world-exact-v1",
+  "presentation_rules": "reviewed-scope-aggregation-v2",
+  "inference_mode": "open",
+  "closed_dataset": null,
+  "hierarchy_reward_enabled": false,
+  "scope_rules": "grounded-mixed-range-v1",
+  "scope_route_mode": "mixed"
+}

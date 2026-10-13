@@ -1,0 +1,19 @@
+﻿dataset,mode,denominator,before_applicable,after_applicable,statuses,requirement,source_scope,admission_mode,hierarchy_reward_enabled
+cub200,legacy/world,19900,6971,6971,"{""APPLICABLE"": 6971, ""COARSE_COMMON_ANCESTOR_ONLY"": 7907, ""ENDPOINT_NOT_APPLICABLE"": 5022}",species,avilist,legacy,False
+cub200,reviewed_paths/world,19900,957,957,"{""APPLICABLE"": 957, ""COARSE_COMMON_ANCESTOR_ONLY"": 13921, ""ENDPOINT_NOT_APPLICABLE"": 5022}",species,avilist,reviewed_paths,False
+cub200,reviewed_paths/source_native,19900,6622,6622,"{""APPLICABLE"": 6622, ""COARSE_COMMON_ANCESTOR_ONLY"": 13278}",hierarchy,,reviewed_paths,False
+fgvc_aircraft,legacy/world,4950,0,0,"{""ENDPOINT_NOT_APPLICABLE"": 4950}",model_design,,legacy,False
+fgvc_aircraft,reviewed_paths/world,4950,0,0,"{""ENDPOINT_NOT_APPLICABLE"": 4950}",model_design,,reviewed_paths,False
+fgvc_aircraft,reviewed_paths/source_native,4950,62,62,"{""COARSE_COMMON_ANCESTOR_ONLY"": 4888, ""APPLICABLE"": 62}",model_design,,reviewed_paths,False
+flowers102,legacy/world,5151,1095,1095,"{""APPLICABLE"": 1095, ""COARSE_COMMON_ANCESTOR_ONLY"": 1116, ""ENDPOINT_NOT_APPLICABLE"": 2940}",species,,legacy,False
+flowers102,reviewed_paths/world,5151,55,55,"{""COARSE_COMMON_ANCESTOR_ONLY"": 2156, ""ENDPOINT_NOT_APPLICABLE"": 2940, ""APPLICABLE"": 55}",species,,reviewed_paths,False
+flowers102,reviewed_paths/source_native,5151,126,126,"{""COARSE_COMMON_ANCESTOR_ONLY"": 5025, ""APPLICABLE"": 126}",hierarchy,,reviewed_paths,False
+pets37,legacy/world,666,666,666,"{""APPLICABLE"": 666}",hierarchy,,legacy,False
+pets37,reviewed_paths/world,666,16,35,"{""COARSE_COMMON_ANCESTOR_ONLY"": 631, ""APPLICABLE"": 35}",hierarchy,,reviewed_paths,False
+pets37,reviewed_paths/source_native,666,0,0,"{""ENDPOINT_NOT_APPLICABLE"": 666}",hierarchy,,reviewed_paths,False
+stanford_dogs,legacy/world,7140,717,2427,"{""APPLICABLE"": 2427, ""COARSE_COMMON_ANCESTOR_ONLY"": 4594, ""ENDPOINT_NOT_APPLICABLE"": 119}",hierarchy,,legacy,False
+stanford_dogs,reviewed_paths/world,7140,716,2427,"{""APPLICABLE"": 2427, ""COARSE_COMMON_ANCESTOR_ONLY"": 4594, ""ENDPOINT_NOT_APPLICABLE"": 119}",hierarchy,,reviewed_paths,False
+stanford_dogs,reviewed_paths/source_native,7140,0,0,"{""ENDPOINT_NOT_APPLICABLE"": 7140}",hierarchy,,reviewed_paths,False
+stanford_cars,legacy/world,19110,0,0,"{""ENDPOINT_NOT_APPLICABLE"": 19110}",configuration,,legacy,False
+stanford_cars,reviewed_paths/world,19110,0,0,"{""ENDPOINT_NOT_APPLICABLE"": 19110}",configuration,,reviewed_paths,False
+stanford_cars,reviewed_paths/source_native,19110,0,0,"{""COARSE_COMMON_ANCESTOR_ONLY"": 19110}",hierarchy,stanford_cars_native,reviewed_paths,False
