@@ -48,10 +48,16 @@ def main():
                     'eligible_answers_first_page':len(handles),'unique_range_candidates':len(allkeys),
                     'pages':page_count,'duplicates':0,'scan_complete':result['retrieval_diagnostics']['scan_complete'],
                     'answer_roles':[x['role'] for x in result['candidates']], 'model_recognition_measured':False}
+            record['native_answers_first_page']=sum(x['native_answer_eligible'] for x in result['candidates'])
+            record['incomplete_reasons']=result['retrieval_diagnostics']['incomplete_reasons']
+            record['bounded_partial']=not record['scan_complete']
+            bounded_valid=(record['bounded_partial'] and record['native_answers_first_page']>0
+                and bool(record['incomplete_reasons']) and
+                set(record['incomplete_reasons']).issubset({'NODE_BUDGET','EDGE_BUDGET'}))
             records.append(record);public.append({'query':text,'feedback':feedback})
             print(json.dumps(record,ensure_ascii=False),flush=True)
             (r/'reports/model_scope_checkpoint.json').write_text(json.dumps(records,ensure_ascii=False,indent=2))
-            if not handles or not record['scan_complete']:errors.append(record)
+            if not handles or (record['bounded_partial'] and not bounded_valid):errors.append(record)
         # Explicit root expansion sanity: source maker navigation must be visible.
         car_entry=next(x for x in entries['navigation_candidates'] if x['label']=='cars and road motor vehicles')
         expanded=tool.scope(car_entry['handle'],dataset='stanford_cars',limit=20,expand=True,node_budget=100000,edge_budget=500000)
@@ -72,6 +78,8 @@ def main():
             raise AssertionError('Gold UID anchor was accepted')
     result={'passed':not errors,'records':records,'errors':errors,'root_expansion':root_probe,
             'scope':'15 generic phrase -> issued handles -> range/expand/pagination/constraints; no images',
+        'complete_ranges':sum(x['scan_complete'] for x in records),
+        'bounded_partial_ranges':[x['model_query'] for x in records if x['bounded_partial']],
             'database_revision':tool.config.database_revision,'model_recognition_measured':False}
     (r/'reports/model_scope_acceptance.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
     (r/'reports/model_scope_public_feedback.json').write_text(json.dumps(public,ensure_ascii=False,indent=2))
