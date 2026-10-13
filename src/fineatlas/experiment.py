@@ -95,12 +95,15 @@ class FineAtlasExperimentTool:
             anchor_handles = [anchor_handles]
         if not anchor_handles or any(h not in self._anchors for h in anchor_handles):
             raise ValueError('Scope anchor was not issued to this model session')
+        if expand and len(anchor_handles)!=1:
+            raise ValueError('Expansion requires one issued anchor; ranges accept multiple anchors')
         if self.config.inference_mode == 'closed' and dataset != self.config.closed_dataset:
             raise ValueError('Explicit closed mode must select its configured dataset')
         anchors = [self._anchors[h] for h in anchor_handles]
         options = dict(limit=limit, cursor=cursor, dataset=dataset,
             target_granularity=target_granularity, node_budget=node_budget,
-            edge_budget=edge_budget, text=text, route_mode=self.config.scope_route_mode)
+            edge_budget=edge_budget, text=text, route_mode=self.config.scope_route_mode,
+            preferred_scope=self.config.target_scope)
         page = (self.atlas.expand_scope(anchors[0], **options) if expand and len(anchors)==1 else
             self.atlas.scope_candidates(anchors, max_depth=1 if expand else max_depth,
                 purpose='discovery' if expand else 'answers', **options))
@@ -152,11 +155,13 @@ class FineAtlasExperimentTool:
             via = '; via=' + ' / '.join(e['relation'] + ':' + e['from_label'] for e in route) if route else ''
             names = [n for n in item.get('name_index', []) if not re.match(r'^\d+[._]', n)]
             aliases = '; names=' + ' | '.join(names[:20]) if names else ''
-            rows.append(f"{item['label']} [choice={item['handle']}; source={item.get('source', 'UNKNOWN')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; world_mapping={statuses}{aliases}{via}]")
+            unit=item.get('attributes', {}).get('source_unit', 'UNKNOWN')
+            rows.append(f"{item['label']} [choice={item['handle']}; source={item.get('source', 'UNKNOWN')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; source_unit={unit}; world_mapping={statuses}{aliases}{via}]")
         for item in result['navigation_candidates']:
             statuses = ','.join(sorted({s['effective_status'] for s in item.get('mapping_statuses', [])})) or 'UNASSESSED_FOR_DATASET'
             grain = item.get('object_granularity') or 'UNKNOWN'
-            rows.append(f"{item['label']} [navigation={item.get('handle', 'unissued')}; source={item.get('source', 'UNKNOWN')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; world_mapping={statuses}; reason={item['reason']}]")
+            unit=item.get('attributes', {}).get('source_unit', 'UNKNOWN')
+            rows.append(f"{item['label']} [navigation={item.get('handle', 'unissued')}; source={item.get('source', 'UNKNOWN')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; source_unit={unit}; world_mapping={statuses}; reason={item['reason']}]")
         return '\n'.join(rows) or '(no candidates returned)'
 
     def allowed_choices(self, result: dict) -> tuple[str, ...]:

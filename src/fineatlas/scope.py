@@ -37,6 +37,25 @@ class ScopeAtlas:
             return
         seen = set()
         for member in self._scope_members(uid):
+            if mixed and 'entity_relations' in self._tables:
+                endpoint = 'object_uid' if direction == 'children' else 'subject_uid'
+                for row in self.con.execute(
+                        f"SELECT * FROM entity_relations WHERE {endpoint}=? AND status='ACTIVE' ORDER BY id",
+                        (member,)):
+                    child, parent = self._basic(row['subject_uid']), self._basic(row['object_uid'])
+                    if not self._node_admitted(child) or not self._node_admitted(parent):
+                        continue
+                    if row['relation'] not in terminal_relations(child['node_kind'], self.relation_view):
+                        continue
+                    try:
+                        validate_link_roles(row['relation'], child['node_kind'], parent['node_kind'])
+                    except ValueError:
+                        continue
+                    key = ('entity_relations', row['id'])
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    yield self._scope_arc(dict(row), 'entity_relations')
             endpoint = 'parent_uid' if direction == 'children' else 'child_uid'
             for row in self.con.execute(
                     f'SELECT * FROM edges e WHERE e.{endpoint}=? AND '
@@ -51,26 +70,6 @@ class ScopeAtlas:
                     continue
                 seen.add(key)
                 yield self._scope_arc(dict(row), 'edges')
-            if not mixed or 'entity_relations' not in self._tables:
-                continue
-            endpoint = 'object_uid' if direction == 'children' else 'subject_uid'
-            for row in self.con.execute(
-                    f"SELECT * FROM entity_relations WHERE {endpoint}=? AND status='ACTIVE' ORDER BY id",
-                    (member,)):
-                child, parent = self._basic(row['subject_uid']), self._basic(row['object_uid'])
-                if not self._node_admitted(child) or not self._node_admitted(parent):
-                    continue
-                if row['relation'] not in terminal_relations(child['node_kind'], self.relation_view):
-                    continue
-                try:
-                    validate_link_roles(row['relation'], child['node_kind'], parent['node_kind'])
-                except ValueError:
-                    continue
-                key = ('entity_relations', row['id'])
-                if key in seen:
-                    continue
-                seen.add(key)
-                yield self._scope_arc(dict(row), 'entity_relations')
 
     @staticmethod
     def _scope_arc(row, storage):
@@ -154,7 +153,8 @@ class ScopeAtlas:
 
     def scope_candidates(self, anchors, *, limit=20, cursor=None, dataset=None,
                          target_granularity=None, purpose='answers', route_mode='mixed',
-                         max_depth=16, node_budget=20000, edge_budget=100000, text=None):
+                         max_depth=16, node_budget=20000, edge_budget=100000, text=None,
+                         preferred_scope='mixed'):
         """Model-chosen anchors -> dynamic candidates, aliases and typed paths.
 
         source_category is an explicit annotation-unit request, not a dataset
@@ -164,6 +164,8 @@ class ScopeAtlas:
             anchors = [anchors]
         anchors = sorted(set(anchors))
         grains = sorted(set(target_granularity or []))
+        if preferred_scope not in ('mixed', 'source_native', 'world'):
+            raise ValueError('Unknown preferred answer scope')
         if (not anchors or len(anchors) > 16 or not 1 <= limit <= 1000
                 or not 1 <= max_depth <= 64 or not 1 <= node_budget <= 100000
                 or not 1 <= edge_budget <= 500000):
@@ -171,7 +173,7 @@ class ScopeAtlas:
         if purpose not in ('answers', 'navigation', 'discovery') or route_mode not in ('mixed', 'classification'):
             raise ValueError('Unknown scope purpose or route mode')
         context = hashlib.sha256(json.dumps([self._revision, SCOPE_RULES, self.relation_view,
-            anchors, dataset, grains, purpose, route_mode, max_depth, node_budget, edge_budget, text],
+            anchors, dataset, grains, purpose, route_mode, max_depth, node_budget, edge_budget, text, preferred_scope],
             sort_keys=True).encode()).hexdigest()
         offset = 0
         if cursor:
@@ -227,7 +229,10 @@ class ScopeAtlas:
                     'native_class_reference': native,
                     'world_identity_equivalence_implied': False,
                     'incoming_evidence': list(reached['incoming'].values())}})
-        candidates.sort(key=lambda r: (len(r['reachability']['path']),
+        candidates.sort(key=lambda r: (
+            not r['answer_contract']['native_answer_eligible'] if preferred_scope=='source_native' and purpose=='answers' else
+            not r['answer_contract']['world_answer_eligible'] if preferred_scope=='world' and purpose=='answers' else False,
+            len(r['reachability']['path']),
             r['answer_contract']['answer_eligible'] if max_depth==1 and purpose=='discovery' else False,
             r['label'].casefold() if max_depth==1 and purpose=='discovery' else '', r['uid']))
         if cached_items is None:
@@ -243,7 +248,8 @@ class ScopeAtlas:
                     'scan_complete': pool['scan_complete'], 'incomplete_reasons': pool['incomplete_reasons'],
                     'visited_presentations': len(pool['values']), 'edges_scanned': pool['edges_scanned'],
                     'declared_max_depth': max_depth,
-                    'ranking': 'depth; navigation first and label for direct expansion; UID otherwise',
+                    'ranking': 'preferred answer scope; depth; navigation first and label for direct expansion; UID otherwise',
+                    'preferred_scope':preferred_scope,
                     'eligible_presentations': len(candidates), 'aggregate_before_truncation': True,
                     'dataset_is_implicit_whitelist': False, 'model_recognition_measured': False}}
 

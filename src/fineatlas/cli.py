@@ -228,8 +228,9 @@ def main() -> None:
         p.add_argument('--max-depth', type=int, default=16)
         p.add_argument('--node-budget', type=int, default=20000)
         p.add_argument('--edge-budget', type=int, default=100000)
-        p.add_argument('--purpose', choices=('answers', 'navigation', 'discovery'), default='answers')
+        p.add_argument('--purpose', choices=('answers', 'navigation', 'discovery'), default='discovery' if command=='expand-scope' else 'answers')
         p.add_argument('--route-mode', choices=('mixed', 'classification'))
+        p.add_argument('--preferred-scope', choices=('mixed','source_native','world'))
         p.add_argument('--text')
     p = sub.add_parser('integrated-relations')
     p.add_argument('uid')
@@ -250,6 +251,12 @@ def main() -> None:
         if run_config and args.route_mode and args.route_mode != expected:
             parser.error('--route-mode conflicts with pinned range configuration')
         args.route_mode = args.route_mode or expected
+        preference = run_config.target_scope if run_config else 'mixed'
+        if run_config and args.preferred_scope and args.preferred_scope != preference:
+            parser.error('--preferred-scope conflicts with pinned target scope')
+        args.preferred_scope = args.preferred_scope or preference
+        if args.command=='expand-scope' and (len(args.anchor)!=1 or args.purpose!='discovery'):
+            parser.error('expand-scope requires one anchor and discovery purpose; use scope-candidates for ranges')
     if args.command in ('task-path', 'reward-pair', 'export-training'):
         for name, fallback in [('admission_mode', 'legacy'), ('target_scope', 'world')]:
             value = getattr(args, name)
@@ -268,11 +275,12 @@ def main() -> None:
         if run_config:
             run_config.validate(graph)
         if args.command in ('scope-candidates', 'expand-scope'):
-            result = graph.scope_candidates(args.anchor, limit=args.limit, cursor=args.cursor,
+            options = dict(limit=args.limit, cursor=args.cursor,
                 dataset=args.dataset, target_granularity=args.target_granularity,
-                max_depth=1 if args.command == 'expand-scope' else args.max_depth,
                 node_budget=args.node_budget, edge_budget=args.edge_budget,
-                purpose=args.purpose, route_mode=args.route_mode, text=args.text)
+                route_mode=args.route_mode, text=args.text, preferred_scope=args.preferred_scope)
+            result = (graph.expand_scope(args.anchor[0], **options) if args.command=='expand-scope' else
+                graph.scope_candidates(args.anchor,max_depth=args.max_depth,purpose=args.purpose,**options))
         elif args.command == "stats":
             result = graph.stats()
         elif args.command == "domains":

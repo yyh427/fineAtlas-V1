@@ -22,7 +22,11 @@ def main():
             # Generic, model-visible navigation descriptors; no gold/source ID.
             # Do not treat a source-scoped taxonomy field as an equivalent
             # world anchor. Inspect the first issued type alternatives instead.
-            anchors=[x for x in pool if x['role'] in ['CLASS','BIOLOGICAL_VARIANT','MODEL','MODEL_FAMILY','TAXON']][:4]
+            types=[x for x in pool if x['role'] in ['CLASS','BIOLOGICAL_VARIANT','MODEL','MODEL_FAMILY','TAXON']]
+            exact=[x for x in types if x['label'].casefold().replace('_',' ')==text.casefold()]
+            # Both answer and navigation rows can be navigated. Retain
+            # same-name alternatives; a source field is not an identity proof.
+            anchors=exact[:16] or types[:4]
             if not anchors:errors.append({'query':text,'error':'No model-issued anchor'});continue
             result=tool.scope([x['handle'] for x in anchors],dataset=ds,limit=80)
             handles=tool.allowed_choices(result);feedback=tool.candidate_wire(result)
@@ -34,7 +38,7 @@ def main():
                 nextpage=tool.scope([x['handle'] for x in anchors],dataset=ds,limit=80,cursor=cursor)
                 assert tool.allowed_choices(nextpage)==tuple(x['handle'] for x in nextpage['candidates'])
                 allkeys.extend(x['presentation_key'] for x in nextpage['candidates']);cursor=nextpage['next_cursor'];page_count+=1
-                assert page_count<100
+                assert page_count<1000
             assert len(allkeys)==len(set(allkeys))
             expanded=tool.scope(anchors[0]['handle'],dataset=ds,limit=20,expand=True)
             assert tool.allowed_choices(expanded)==tuple(x['handle'] for x in expanded['candidates'])

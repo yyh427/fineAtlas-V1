@@ -55,6 +55,7 @@ class SearchableScopeTest(unittest.TestCase):
             self.assertTrue(tool.allowed_choices(result))
             self.assertNotIn('cat:1',tool.candidate_wire(result))
             self.assertIn('source=',tool.candidate_wire(result))
+            self.assertIn('source_unit=UNKNOWN',tool.candidate_wire(result))
             result['candidates'][0]['uid']='type:root'
             with self.assertRaises(ValueError):tool.allowed_choices(result)
         finally:tool.close()
@@ -98,6 +99,27 @@ class SearchableScopeTest(unittest.TestCase):
         page=self.tree.scope_candidates('type:root',dataset='fixture')
         self.assertIn('world:new',[n['uid'] for n in page['items']])
         self.assertNotIn('world:new',self.tree._range_native_uids)
+
+    def test_source_preference_keeps_world_objects_and_binds_cursor(self):
+        def change(c):
+            c.execute("INSERT INTO nodes SELECT 'aaa:world','New type',domain,domains,source,'class',description,data,layer,visibility,6 FROM nodes WHERE uid='type:river'")
+            c.execute('INSERT INTO components VALUES(6,1,1,0,88)')
+            c.execute("INSERT INTO edges VALUES(88,'aaa:world','type:root','IS_A','ACTIVE','fixture',1,'{}','{}')")
+        self.prepare(change)
+        first=self.tree.scope_candidates('type:root',dataset='fixture',limit=1,preferred_scope='source_native')
+        self.assertEqual(first['items'][0]['uid'],'cat:1')
+        second=self.tree.scope_candidates('type:root',dataset='fixture',cursor=first['next_cursor'],preferred_scope='source_native')
+        self.assertIn('aaa:world',[n['uid'] for n in second['items']])
+        with self.assertRaises(ValueError):
+            self.tree.scope_candidates('type:root',dataset='fixture',cursor=first['next_cursor'],preferred_scope='mixed')
+
+    def test_mixed_reference_is_not_starved_by_classification_fanout(self):
+        def change(c):
+            c.execute("INSERT INTO entity_relations VALUES(99,'cat:1','type:root','DEPICTS_TYPE','ACTIVE','source','proof:2','{}')")
+        self.prepare(change)
+        page=self.tree.scope_candidates('type:root',dataset='fixture',node_budget=2,preferred_scope='source_native')
+        self.assertFalse(page['diagnostics']['scan_complete'])
+        self.assertEqual(page['items'][0]['uid'],'cat:1')
 
     def test_design_reference_has_its_own_role_contract(self):
         from fineatlas.hierarchy import validate_link_roles

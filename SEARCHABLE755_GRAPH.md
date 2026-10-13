@@ -113,3 +113,13 @@ Navigation feedback includes source provenance so same-name, unconfirmed
 representations can be distinguished. The acceptance fixture selects up to four
 issued type alternatives; it does not assume source-scoped fields are world
 identities or use gold classes to choose anchors.
+
+The range API accepts `preferred_scope` (`mixed`, `source_native`, `world`). It
+changes ordering only: for task answers, matching eligible answer units come
+first, followed by the existing depth/UID order. Other legal world answers stay
+in the pool. The experiment adapter takes this preference from run_config's
+`target_scope`; no gold label, correct-parent UID, or dataset class whitelist is
+used. Mixed traversal visits typed references before classification children so
+a large classification fanout cannot consume the bound before directly linked
+source categories are inspected. Partial work still has incomplete diagnostics.
+Public feedback exposes the declared source unit, with UNKNOWN kept explicit.
