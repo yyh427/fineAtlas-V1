@@ -35,6 +35,7 @@ class SearchableScopeTest(unittest.TestCase):
             result=tool.scope(anchors,dataset='fixture',target_granularity=['source_category'])
             self.assertTrue(tool.allowed_choices(result))
             self.assertNotIn('cat:1',tool.candidate_wire(result))
+            self.assertIn('source=',tool.candidate_wire(result))
             result['candidates'][0]['uid']='type:root'
             with self.assertRaises(ValueError):tool.allowed_choices(result)
         finally:tool.close()

@@ -20,8 +20,9 @@ def main():
             initial=tool.query(text,dataset=ds,limit=30)
             pool=initial['navigation_candidates']+initial['candidates']
             # Generic, model-visible navigation descriptors; no gold/source ID.
-            preferred=[x for x in pool if x['identity_scope']=='SOURCE_VERSION_CONCEPT']
-            anchors=preferred[:4] or [x for x in pool if x['role'] in ['CLASS','BIOLOGICAL_VARIANT','MODEL','MODEL_FAMILY']][:4]
+            # Do not treat a source-scoped taxonomy field as an equivalent
+            # world anchor. Inspect the first issued type alternatives instead.
+            anchors=[x for x in pool if x['role'] in ['CLASS','BIOLOGICAL_VARIANT','MODEL','MODEL_FAMILY','TAXON']][:4]
             if not anchors:errors.append({'query':text,'error':'No model-issued anchor'});continue
             result=tool.scope([x['handle'] for x in anchors],dataset=ds,limit=80)
             handles=tool.allowed_choices(result);feedback=tool.candidate_wire(result)

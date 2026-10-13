@@ -150,11 +150,11 @@ class FineAtlasExperimentTool:
             via = '; via=' + ' / '.join(e['relation'] + ':' + e['from_label'] for e in route) if route else ''
             names = [n for n in item.get('name_index', []) if not re.match(r'^\d+[._]', n)]
             aliases = '; names=' + ' | '.join(names[:20]) if names else ''
-            rows.append(f"{item['label']} [choice={item['handle']}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; world_mapping={statuses}{aliases}{via}]")
+            rows.append(f"{item['label']} [choice={item['handle']}; source={item.get('source', 'UNKNOWN')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; world_mapping={statuses}{aliases}{via}]")
         for item in result['navigation_candidates']:
             statuses = ','.join(sorted({s['effective_status'] for s in item.get('mapping_statuses', [])})) or 'UNASSESSED_FOR_DATASET'
             grain = item.get('object_granularity') or 'UNKNOWN'
-            rows.append(f"{item['label']} [navigation={item.get('handle', 'unissued')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; world_mapping={statuses}; reason={item['reason']}]")
+            rows.append(f"{item['label']} [navigation={item.get('handle', 'unissued')}; source={item.get('source', 'UNKNOWN')}; scope={item['identity_scope']}; role={item['role']}; grain={grain}; world_mapping={statuses}; reason={item['reason']}]")
         return '\n'.join(rows) or '(no candidates returned)'
 
     def allowed_choices(self, result: dict) -> tuple[str, ...]:
