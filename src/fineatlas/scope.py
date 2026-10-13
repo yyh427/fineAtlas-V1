@@ -248,6 +248,58 @@ class ScopeAtlas:
                     'dataset_is_implicit_whitelist': False, 'model_recognition_measured': False}}
 
     def expand_scope(self, anchor, **kwargs):
+        entry = self.domain(anchor)
+        if entry:
+            # A domain is a portal to its registered roots. Present those
+            # choices first, rather than silently expanding all roots together.
+            limit = kwargs.pop('limit', 20)
+            cursor = kwargs.pop('cursor', None)
+            dataset = kwargs.get('dataset')
+            context = hashlib.sha256(json.dumps([self._revision, self.relation_view,
+                entry['uid'], dataset, 'DOMAIN_ENTRY_ROOT', kwargs], sort_keys=True).encode()).hexdigest()
+            if not 1 <= limit <= 1000:
+                raise ValueError('Invalid domain-root page limit')
+            offset = 0
+            if cursor:
+                try:
+                    token = json.loads(base64.urlsafe_b64decode(cursor))
+                    if token['context'] != context or type(token['offset']) is not int or token['offset'] < 0:
+                        raise ValueError('Mismatched root cursor')
+                    offset = token['offset']
+                except Exception as exc:
+                    raise ValueError('Invalid or stale scope cursor') from exc
+            grouped = {}
+            for uid in sorted(entry['root_uids']):
+                node = self.node(uid)
+                if not node or not self._node_admitted(self._basic(uid)):
+                    continue
+                identity = self._presentation_identity(uid)
+                key = identity['key'] or 'uid:'+uid
+                arc = {'from_uid':entry['uid'], 'to_uid':uid,
+                    'from_label':entry['label'], 'to_label':node['label'],
+                    'relation':'DOMAIN_ENTRY_ROOT', 'strict_inclusion':False,
+                    'source':'domain_registry', 'evidence_id':None,
+                    'source_provenance':{'domain':entry['domain'], 'registered_root_uids':entry['root_uids'],
+                        'claim':'Configured navigation entrance, not biological or design inclusion'}}
+                if key in grouped:
+                    grouped[key]['reachability']['incoming_evidence'].append(arc)
+                    continue
+                contract = self.candidate_contract(uid, dataset=dataset)
+                contract.update(native_answer_eligible=False, world_answer_eligible=False,
+                    answer_eligible=False, navigation_eligible=True, reason='DOMAIN_ROOT_NAVIGATION_CHOICE')
+                grouped[key] = {**node, 'presentation_key':key, 'answer_contract':contract,
+                    'name_index':[node['label']], 'representations':[{'uid':u,'label':self._basic(u)['label']}
+                        for u in self._scope_members(uid)], 'reachability':{'path':[arc],
+                        'strict_descendant':False, 'world_identity_equivalence_implied':False,
+                        'incoming_evidence':[arc]}}
+            rows = sorted(grouped.values(), key=lambda n:(n['label'].casefold(),n['uid']))
+            more = offset+limit < len(rows)
+            token = base64.urlsafe_b64encode(json.dumps({'context':context,'offset':offset+limit}).encode()).decode() if more else None
+            return {'items':copy.deepcopy(rows[offset:offset+limit]), 'has_more':more, 'next_cursor':token,
+                'diagnostics':{'scan_complete':True, 'incomplete_reasons':[], 'eligible_presentations':len(rows),
+                    'aggregate_before_truncation':True, 'dataset_is_implicit_whitelist':False,
+                    'navigation_relation':'DOMAIN_ENTRY_ROOT', 'model_recognition_measured':False},
+                'scope_rules':SCOPE_RULES, 'database_revision':self._revision, 'relation_view':self.relation_view}
         return self.scope_candidates(anchor, max_depth=1, purpose='discovery', **kwargs)
 
     def scope_path(self, uid, domain, *, max_depth=64, node_budget=10000):

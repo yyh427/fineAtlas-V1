@@ -53,6 +53,10 @@ def main():
                 try:
                     node=a.node(n['uid']);world=a.world_mapping_status(ds,n['class_id']);path=a.scope_path(n['uid'],n['domain'])
                     steps=path.get('path',[]);expanded=[]
+                    portal=a.expand_scope(path['domain_entry'],limit=1000)
+                    portal_item=next((x for x in portal['items'] if path['root_uid'] in
+                        {z['uid'] for z in x['representations']}),None)
+                    entry_steps=portal_item['reachability']['path'] if portal_item else []
                     for step in steps:
                         page=collect(step['from_uid'],1)
                         expanded.append({'anchor':step['from_uid'],'child':step['to_uid'],
@@ -74,6 +78,7 @@ def main():
                             'kingdom','phylum','class','order','family'}
                     coarse=bool(native_parents) and all(coarse_parent(x['parent_uid']) for x in native_parents)
                     checks={'node':bool(node),'legal_path':path['status']=='CONNECTED' and bool(steps),
+                            'domain_entry_expand':bool(portal_item),
                             'actual_expand':bool(expanded) and all(x['found'] and x['scan_complete'] for x in expanded),
                             'dynamic_candidates':bool(dynamic and n['uid'] in dynamic['uids'] and dynamic['diagnostics']['scan_complete']),
                             'answer_eligible':eligible['native_answer_eligible'],'native_exact':evaluation['native_exact'],
@@ -87,7 +92,7 @@ def main():
                          'granularity':{'source':n['object_granularity'],'source_unit':source_unit,
                             'world_rank':a.node(world['uid']).get('normalized_rank') if world['uid'] else None},
                          'domain_entry':path.get('domain_entry'),'domain_root':path.get('root_uid'),
-                         'complete_path':steps,'relationship_types':[x['relation'] for x in steps],
+                         'complete_path':entry_steps+steps,'relationship_types':[x['relation'] for x in entry_steps+steps],
                          'evidence':[{'id':x['evidence_id'],'source':x['source'],'provenance':x['source_provenance']} for x in steps],
                          'expansion_reachability':expanded,'dynamic_anchor':anchor,'dynamic_max_depth':depth,
                          'dynamic_candidate_eligible':checks['dynamic_candidates'],'answer_eligible':checks['answer_eligible'],

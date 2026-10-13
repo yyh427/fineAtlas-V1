@@ -12,6 +12,25 @@ class SearchableScopeTest(unittest.TestCase):
     tearDown=native_fixture.NativeContractTest.tearDown
     prepare=native_fixture.NativeContractTest.prepare
 
+    def test_domain_expansion_issues_roots_before_descendants(self):
+        def change(c):
+            c.execute('INSERT OR REPLACE INTO metadata VALUES(?,?)', ('domain_roots', json.dumps([
+                {'domain':'fixture','uid':'fineatlas-domain:fixture','label':'fixture domain',
+                 'root_uids':['type:root'],'description':'Configured source root'}])))
+        self.prepare(change)
+        tool=FineAtlasExperimentTool(RunConfig(str(self.path),'fixture-revision',__version__,'fixture-commit'))
+        try:
+            entry=tool.entries()['navigation_candidates'][0]
+            roots=tool.scope(entry['handle'],dataset='fixture',expand=True)
+            self.assertEqual(roots['candidates'],[])
+            self.assertEqual([r['uid'] for r in roots['navigation_candidates']],['type:root'])
+            route=roots['navigation_candidates'][0]['reachability']['path'][0]
+            self.assertEqual(route['relation'],'DOMAIN_ENTRY_ROOT')
+            self.assertFalse(route['strict_inclusion'])
+            page=tool.scope(roots['navigation_candidates'][0]['handle'],dataset='fixture')
+            self.assertIn('cat:1',[r['uid'] for r in page['candidates']])
+        finally:tool.close()
+
     def test_reference_is_reachable_and_not_strict_inclusion(self):
         self.prepare()
         page=self.tree.scope_candidates('type:root',dataset='fixture',target_granularity=['source_category'])

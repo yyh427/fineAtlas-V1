@@ -103,3 +103,13 @@ then use the matching previous SDK and update only its explicit database path.
 Never run rollback on production or a database in use by another task. The
 round rollback validator performs inverse writes in a transaction and discards
 them; it checks logical restoration, not byte-identical file recovery.
+
+Domain expansion first returns the registered classification roots as navigation
+choices (`DOMAIN_ENTRY_ROOT`). This is a configured entrance relation, not an
+IS_A claim and not world identity proof. Continue expanding an issued root
+handle to inspect its real graph children. Scope ranges on a domain remain the
+explicit union of registered roots; bounded scans report incomplete ranges.
+Navigation feedback includes source provenance so same-name, unconfirmed
+representations can be distinguished. The acceptance fixture selects up to four
+issued type alternatives; it does not assume source-scoped fields are world
+identities or use gold classes to choose anchors.

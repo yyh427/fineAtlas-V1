@@ -98,10 +98,12 @@ class FineAtlasExperimentTool:
         if self.config.inference_mode == 'closed' and dataset != self.config.closed_dataset:
             raise ValueError('Explicit closed mode must select its configured dataset')
         anchors = [self._anchors[h] for h in anchor_handles]
-        page = self.atlas.scope_candidates(anchors, limit=limit, cursor=cursor, dataset=dataset,
-            target_granularity=target_granularity, max_depth=1 if expand else max_depth,
-            node_budget=node_budget, edge_budget=edge_budget, text=text, purpose='discovery' if expand else 'answers',
-            route_mode=self.config.scope_route_mode)
+        options = dict(limit=limit, cursor=cursor, dataset=dataset,
+            target_granularity=target_granularity, node_budget=node_budget,
+            edge_budget=edge_budget, text=text, route_mode=self.config.scope_route_mode)
+        page = (self.atlas.expand_scope(anchors[0], **options) if expand and len(anchors)==1 else
+            self.atlas.scope_candidates(anchors, max_depth=1 if expand else max_depth,
+                purpose='discovery' if expand else 'answers', **options))
         answers, navigation = [], []
         for item in page['items']:
             contract = item['answer_contract']

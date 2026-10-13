@@ -56,9 +56,12 @@ def main():
             page=tool.scope(car_entry['handle'],dataset='stanford_cars',limit=20,expand=True,cursor=root_cursor,node_budget=100000,edge_budget=500000)
             root_navigation.extend(page['navigation_candidates']);root_cursor=page['next_cursor'];root_pages+=1
             assert root_pages<1000
-        assert any('BMW' in x['label'] for x in root_navigation)
+        motor_entry=next(x for x in root_navigation if 'motor' in x['label'].lower())
+        maker_page=tool.scope(motor_entry['handle'],dataset='stanford_cars',limit=80,expand=True,
+            target_granularity=['source_make_scope'],node_budget=100000,edge_budget=500000)
+        assert any('BMW' in x['label'] for x in maker_page['navigation_candidates'])
         root_probe={'public_labels_first20':[x['label'] for x in expanded['navigation_candidates']],
-                    'scan_complete':expanded['retrieval_diagnostics']['scan_complete'], 'total_navigation_choices':len(root_navigation), 'pages':root_pages, 'BMW_present_in_paged_range':True}
+                    'scan_complete':expanded['retrieval_diagnostics']['scan_complete'], 'total_navigation_choices':len(root_navigation), 'pages':root_pages, 'typed_maker_navigation_count':len(maker_page['navigation_candidates']), 'BMW_present_in_paged_range':True}
         with __import__('contextlib').suppress(ValueError):
             # A UID string must never be accepted as an issued anchor handle.
             tool.scope('stanford-cars-2013:class:38')
