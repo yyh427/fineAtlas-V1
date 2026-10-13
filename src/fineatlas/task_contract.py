@@ -14,7 +14,7 @@ import unicodedata
 from typing import Any
 
 RULE_VERSION = 'native-world-exact-v1'
-PRESENTATION_VERSION = 'reviewed-scope-aggregation-v1'
+PRESENTATION_VERSION = 'reviewed-scope-aggregation-v2'
 SOURCE_NATIVE_SCOPES = frozenset(('SOURCE_NATIVE_LABEL', 'SOURCE_NATIVE_DATASET_CATEGORY',
                                   'SOURCE_SUPERVISION_CATEGORY'))
 
@@ -38,6 +38,8 @@ class RunConfig:
     inference_mode: str = 'open'
     closed_dataset: str | None = None
     hierarchy_reward_enabled: bool = False
+    scope_rules: str = 'grounded-mixed-range-v1'
+    scope_route_mode: str = 'mixed'
 
     def __post_init__(self) -> None:
         if self.target_scope not in ('source_native', 'world'):
@@ -54,6 +56,8 @@ class RunConfig:
             raise ValueError('Only an explicit closed mode may have a class whitelist')
         if self.hierarchy_reward_enabled:
             raise ValueError('Accuracy-priority experiments do not enable hierarchy rewards')
+        if self.scope_rules != 'grounded-mixed-range-v1' or self.scope_route_mode not in ('mixed','classification'):
+            raise ValueError('Unsupported dynamic range rules')
         if not all((self.database_revision, self.sdk_version, self.code_commit)):
             raise ValueError('Pin database, SDK and code versions')
 
@@ -69,6 +73,8 @@ class RunConfig:
             raise ValueError('Run config SDK or relationship view mismatch')
         if atlas.metadata.get('repair_code_commit') != self.code_commit:
             raise ValueError('Run config code receipt mismatch')
+        if atlas.metadata.get('searchable755_ready') and atlas.metadata.get('searchable755_scope_rules') != self.scope_rules:
+            raise ValueError('Run config dynamic range contract mismatch')
         manifest = atlas.metadata.get('repair_sdk_manifest')
         if atlas.metadata.get('native755_ready') and not manifest:
             raise ValueError('Repaired candidate code receipt is not sealed yet')
@@ -164,6 +170,33 @@ class TaskContractAtlas:
                 'missing_evidence': disposition['missing_evidence'] if disposition else None,
                 'historical_claim_retained': True}
 
+    def effective_granularity(self, uid: str) -> dict:
+        """Use declared ranks through proven identity; preserve raw absence."""
+        node = self.node(uid)
+        if not node:
+            return {'rank': None, 'unit': None, 'basis': 'NOT_FOUND'}
+        rank = node.get('normalized_rank')
+        attrs = node.get('attributes', {})
+        unit = attrs.get('object_granularity') if attrs.get('identity_scope') == 'SOURCE_VERSION_CONCEPT' else rank or attrs.get('object_granularity')
+        proof = self._presentation_identity(uid)
+        raw_rank = node.get('native_rank',node.get('rank'))
+        rank_status = node.get('rank_status','')
+        if rank_status.endswith('REVIEW'):
+            return {'rank':None,'unit':None,'basis':rank_status,'raw_rank':raw_rank}
+        peer_rank = rank_status == 'IDENTITY_PEER_SOURCE_DECLARED'
+        if peer_rank and proof['status'] != 'ACCEPTED':
+            return {'rank':None,'unit':None,'basis':'UNPROVEN_OR_CONFLICTING_PEER_UNIT','raw_rank':raw_rank}
+        if proof['status'] == 'ACCEPTED' and (peer_rank or not rank or str(rank).upper() == 'UNKNOWN'):
+            members = [self.node(u) for u in proof['member_uids']]
+            ranks = {n.get('normalized_rank') for n in members if n.get('normalized_rank') and str(n['normalized_rank']).upper() != 'UNKNOWN'}
+            if len(ranks) == 1:
+                rank = next(iter(ranks));unit = rank
+                return {'rank':rank,'unit':unit,'basis':'ACCEPTED_IDENTITY_COMPONENT_DECLARED_RANK',
+                        'member_uids':[n['uid'] for n in members if n.get('normalized_rank')==rank],
+                        'bridge_ids':proof['accepted_bridge_ids'],'raw_rank':raw_rank}
+        return {'rank':rank,'unit':unit,'basis':'DECLARED_NODE_UNIT' if unit else 'UNKNOWN',
+                'raw_rank':raw_rank}
+
     def candidate_contract(self, uid: str, *, dataset: str | None = None) -> dict:
         node = self.node(uid)
         if not node:
@@ -186,8 +219,10 @@ class TaskContractAtlas:
         # Rank absence is reported, never repaired with a guessed species/breed.
         world_role = role in ('CLASS', 'BIOLOGICAL_VARIANT', 'MODEL', 'MODEL_FAMILY', 'CONFIGURATION', 'INSTANCE', 'ATTRIBUTE')
         source_scope = node.get('attributes', {}).get('identity_scope')
-        world_unit = node.get('normalized_rank') or node.get('attributes', {}).get('object_granularity')
+        effective_grain = self.effective_granularity(uid)
+        world_unit = effective_grain['unit']
         world_eligible = bool(node['visibility'] == 'ACTIVE' and world_role and role_consistent
+                              and self._presentation_identity(uid)['status'] == 'ACCEPTED'
                               and uid != self.root_uid
                               and not native_rows and source_scope not in SOURCE_NATIVE_SCOPES
                               and source_scope != 'SOURCE_VERSION_CONCEPT')
@@ -213,9 +248,9 @@ class TaskContractAtlas:
                     world_eligible, task_reason = False, 'TASK_COARSE_OBJECT_IS_NAVIGATION_ONLY'
                 elif role not in definition['world_roles']:
                     world_eligible, task_reason = False, 'WORLD_ROLE_NOT_TASK_ANSWER_UNIT'
-                elif definition.get('world_ranks') is not None and node.get('normalized_rank') not in definition['world_ranks']:
+                elif definition.get('world_ranks') is not None and effective_grain['rank'] not in definition['world_ranks']:
                     world_eligible, task_reason = False, 'WORLD_GRAIN_NOT_TASK_ANSWER_UNIT_OR_UNKNOWN'
-                elif definition.get('excluded_world_ranks') and node.get('normalized_rank') in definition['excluded_world_ranks']:
+                elif definition.get('excluded_world_ranks') and effective_grain['rank'] in definition['excluded_world_ranks']:
                     world_eligible, task_reason = False, 'WORLD_GRAIN_NOT_TASK_ANSWER_UNIT'
                 elif (definition.get('require_world_class_unit_evidence') and role in ('CLASS', 'BIOLOGICAL_VARIANT')
                       and not known_exact_scope and (not world_unit or str(world_unit).upper() in ('UNKNOWN', 'UNKNOWN_SOURCE_UNIT', 'CLASS', 'TAXON'))):
@@ -231,6 +266,7 @@ class TaskContractAtlas:
         return {'uid': uid, 'identity_scope': 'SOURCE_NATIVE_LABEL' if native_rows else source_scope or 'WORLD',
                 'role': role, 'object_granularity': native_rows[0]['object_granularity'] if native_rows else world_unit,
                 'granularity_status': 'SOURCE_DECLARED' if native_rows else node.get('rank_status', 'UNKNOWN'),
+                'granularity_evidence': effective_grain,
                 'native_answer_eligible': native_eligible, 'world_answer_eligible': world_eligible,
                 'answer_eligible': native_eligible or world_eligible,
                 'navigation_eligible': bool(node['visibility'] == 'ACTIVE'),

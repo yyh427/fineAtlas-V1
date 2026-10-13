@@ -11,9 +11,10 @@ from .browsing import BrowsingAtlas
 from .source_groups import SourceGroupAtlas
 from .task_contract import TaskContractAtlas
 from .presentation import PresentationAtlas
+from .scope import ScopeAtlas
 
 
-class FineAtlas(TaskContractAtlas, PresentationAtlas, SourceGroupAtlas, BrowsingAtlas, ConsistentAtlas):
+class FineAtlas(ScopeAtlas, TaskContractAtlas, PresentationAtlas, SourceGroupAtlas, BrowsingAtlas, ConsistentAtlas):
     """Open a SQLite file or a directory containing ``fineatlas.sqlite``.
 
     The default location is FINEATLAS_DATA_DIR, then the working directory.

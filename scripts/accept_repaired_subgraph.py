@@ -12,13 +12,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--database', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--package-prefix', help='Restrict written-assertion audit to this repair round')
     args = parser.parse_args()
     errors, counts, isolated = [], Counter(), []
     with FineAtlas(args.database) as a:
         a.con.execute('PRAGMA cache_size=-65536')
-        added = {json.loads(r[0])['uid'] for r in a.con.execute("SELECT key_json FROM repair_changes WHERE table_name='nodes' AND before_json IS NULL")}
+        clause = ' AND package_id LIKE ?' if args.package_prefix else ''
+        params = (args.package_prefix+'%',) if args.package_prefix else ()
+        added = {json.loads(r[0])['uid'] for r in a.con.execute("SELECT key_json FROM repair_changes WHERE table_name='nodes' AND before_json IS NULL"+clause, params)}
         changed = defaultdict(set)
-        for row in a.con.execute("SELECT table_name,key_json FROM repair_changes WHERE table_name IN ('edges','entity_relations')"):
+        for row in a.con.execute("SELECT table_name,key_json FROM repair_changes WHERE table_name IN ('edges','entity_relations')"+clause, params):
             changed[row['table_name']].add(json.loads(row['key_json'])['id'])
         affected = set(added)
         for table, ids in changed.items():
@@ -52,7 +55,8 @@ def main():
         queue = deque(sorted(affected)); visited = set(); graph = defaultdict(set)
         structural = {'IS_A', 'TAXONOMIC_PARENT', 'NATIVE_CLASSIFICATION_PARENT', 'REUSABLE_TYPE_MEMBERSHIP',
                       'DESIGN_TYPE_OF', 'NATIVE_DESIGN_PARENT', 'SERIES_MEMBER_OF', 'CONFIGURATION_OF',
-                      'CONFIGURATION_TYPE_OF', 'DEPICTS_TYPE', 'INSTANCE_OF', 'ATTRIBUTE_KIND_OF', 'REGULATED_AS'}
+                      'CONFIGURATION_TYPE_OF', 'DEPICTS_TYPE', 'DEPICTS_DESIGN', 'SOURCE_TYPE_REFERENCE',
+                      'INSTANCE_OF', 'ATTRIBUTE_KIND_OF', 'REGULATED_AS'}
         while queue:
             uid = queue.popleft()
             node = a.node(uid)

@@ -35,6 +35,10 @@ class PresentationAtlas:
                 scopes.add(('native', tuple(tuple(r) for r in native)))
             elif member.get('attributes', {}).get('identity_scope') == 'SOURCE_NATIVE_LABEL':
                 scopes.add(('native_unregistered', member['uid']))
+            elif member.get('attributes', {}).get('identity_scope') == 'SOURCE_VERSION_CONCEPT':
+                # A source label partition or lexical sense cannot inherit
+                # world scope from a connected SAME_CONCEPT component alone.
+                scopes.add(('source_version_concept', member['uid']))
             else:
                 scopes.add(('world',))
             if member.get('normalized_rank'):

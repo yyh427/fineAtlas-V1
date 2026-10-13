@@ -28,9 +28,11 @@ def main():
                   evaluation_rules=RULE_VERSION, presentation_rules=PRESENTATION_VERSION,
                   relation_view='unified', target_scope='source_native', admission_mode='reviewed_paths',
                   inference_mode='open', hierarchy_reward_enabled=False)
+    inputs.update(scope_rules='grounded-mixed-range-v1',scope_route_mode='mixed')
     with FineAtlas(args.database) as a:
         revision = a._revision
     writer = RepairWriter(args.database, expected_revision=revision)
+    writer.release = 'v'+__version__
     if writer.begin('code-contract-seal-' + commit[:12], inputs):
         for key, value in inputs.items():
             writer.meta('repair_code_commit' if key == 'commit' else 'repair_' + key, value)

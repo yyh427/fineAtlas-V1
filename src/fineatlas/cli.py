@@ -218,6 +218,19 @@ def main() -> None:
     p.add_argument('--predicted-uid')
     p.add_argument('--predicted-label')
     sub.add_parser('integrated-datasets')
+    for command in ('scope-candidates', 'expand-scope'):
+        p = sub.add_parser(command)
+        p.add_argument('anchor', nargs='+')
+        p.add_argument('--dataset')
+        p.add_argument('--target-granularity', action='append')
+        p.add_argument('--limit', type=int, default=20)
+        p.add_argument('--cursor')
+        p.add_argument('--max-depth', type=int, default=16)
+        p.add_argument('--node-budget', type=int, default=20000)
+        p.add_argument('--edge-budget', type=int, default=100000)
+        p.add_argument('--purpose', choices=('answers', 'navigation', 'discovery'), default='answers')
+        p.add_argument('--route-mode', choices=('mixed', 'classification'))
+        p.add_argument('--text')
     p = sub.add_parser('integrated-relations')
     p.add_argument('uid')
     p.add_argument('--limit', type=int, default=100)
@@ -232,6 +245,11 @@ def main() -> None:
         if args.relation_view and args.relation_view != run_config.relation_view:
             parser.error('--relation-view conflicts with pinned run configuration')
         args.data_dir, args.relation_view = run_config.database, run_config.relation_view
+    if args.command in ('scope-candidates','expand-scope'):
+        expected = run_config.scope_route_mode if run_config else 'mixed'
+        if run_config and args.route_mode and args.route_mode != expected:
+            parser.error('--route-mode conflicts with pinned range configuration')
+        args.route_mode = args.route_mode or expected
     if args.command in ('task-path', 'reward-pair', 'export-training'):
         for name, fallback in [('admission_mode', 'legacy'), ('target_scope', 'world')]:
             value = getattr(args, name)
@@ -249,7 +267,13 @@ def main() -> None:
     ) as graph:
         if run_config:
             run_config.validate(graph)
-        if args.command == "stats":
+        if args.command in ('scope-candidates', 'expand-scope'):
+            result = graph.scope_candidates(args.anchor, limit=args.limit, cursor=args.cursor,
+                dataset=args.dataset, target_granularity=args.target_granularity,
+                max_depth=1 if args.command == 'expand-scope' else args.max_depth,
+                node_budget=args.node_budget, edge_budget=args.edge_budget,
+                purpose=args.purpose, route_mode=args.route_mode, text=args.text)
+        elif args.command == "stats":
             result = graph.stats()
         elif args.command == "domains":
             result = graph.domains()

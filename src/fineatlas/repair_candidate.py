@@ -131,7 +131,7 @@ class RepairWriter:
         revision = digest({'parent': prior_revision, 'package': self.stage, 'input': self.input_signature, 'changes': changes})
         self.meta('database_revision', revision)
         self.meta('repair_parent_revision', prior_revision)
-        self.meta('release', 'v1.11.0rc1+native755.integrated.20261012')
+        self.meta('release', getattr(self, 'release', 'v1.11.0rc1+native755.integrated.20261012'))
         summary.update(database_revision=revision, parent_revision=prior_revision, changed_rows=len(changes))
         self.c.execute('INSERT INTO repair_packages VALUES (?,?,?,?)', (self.stage, self.input_signature, 'APPLIED', canonical(summary)))
         self.c.commit()
@@ -857,7 +857,7 @@ def apply_scope_operations(database: Path, expected_revision: str, operations_fi
                 members = [r[0] for r in writer.c.execute('SELECT uid FROM nodes WHERE component_id=?', (n[0],))]
                 for member in members:
                     queue.extend(r[0] for r in writer.c.execute("SELECT parent_uid FROM edges WHERE child_uid=? AND status IN ('ACTIVE','TYPED_ACTIVE','BACKBONE_ACTIVE') AND relation IN ('IS_A','TAXONOMIC_PARENT','NATIVE_CLASSIFICATION_PARENT','REUSABLE_TYPE_MEMBERSHIP')", (member,)))
-                    queue.extend(r[0] for r in writer.c.execute("SELECT object_uid FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','SERIES_MEMBER_OF','CONFIGURATION_OF','CONFIGURATION_TYPE_OF','DEPICTS_TYPE')", (member,)))
+                    queue.extend(r[0] for r in writer.c.execute("SELECT object_uid FROM entity_relations WHERE subject_uid=? AND status='ACTIVE' AND relation IN ('DESIGN_TYPE_OF','NATIVE_DESIGN_PARENT','SERIES_MEMBER_OF','CONFIGURATION_OF','CONFIGURATION_TYPE_OF','DEPICTS_TYPE','DEPICTS_DESIGN','SOURCE_TYPE_REFERENCE')", (member,)))
             writer.add_relation(child, parent, operation['relation'], source=operation['source'],
                                 evidence_id=eid, proof=proof)
             if operation.get('increment_relation_key'):
