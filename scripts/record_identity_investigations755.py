@@ -42,6 +42,21 @@ def main():
                     'exact_identity_resolution':'EXISTING_CONFIRMATION_RETAINED' if w['world_identity_verified'] else 'UNRESOLVED_AFTER_SOURCE_CHECKS',
                     'missing':notes[ds][1] if not w['world_identity_verified'] else '',
                     'needs_external':not w['world_identity_verified'],'prior_evidence_ids':w['evidence_ids']})
+    receipt = r/'reports/identity_investigations755.json'
+    if receipt.exists():
+        frozen_rows = json.loads(receipt.read_text())
+        # Preserve the pre-application evidence IDs in the package signature.
+        # Our own appended investigation receipt must not change replay inputs.
+        by_class = {(row['dataset'], row['class_id']): row for row in rows}
+        if len(frozen_rows) != len(rows):
+            raise ValueError('Investigation receipt inventory changed')
+        for old in frozen_rows:
+            current = by_class[(old['dataset'], old['class_id'])]
+            for field in ('original_label', 'source_uid', 'world_uid', 'status',
+                          'sources', 'source_scope_facts'):
+                if old[field] != current[field]:
+                    raise ValueError('Investigation replay changed: '+field)
+        rows = frozen_rows
     w=SourceGraphWriter(db,expected_revision=revision)
     signature={'rows':rows,'rules':'record-checks-without-status-promotion-v1'}
     if w.begin('searchable755-identity-investigations-v1',signature):

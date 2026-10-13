@@ -12,6 +12,17 @@ from fineatlas import FineAtlas, __version__
 from fineatlas.repair_candidate import CORE_COUNTS
 
 
+def author_name(proof, fallback):
+    """Original records can be text lines, MAT values or nested objects."""
+    record = json.loads(proof).get('increment_native_record', {})
+    while isinstance(record, dict):
+        category = record.get('author_category')
+        if isinstance(category, dict) and category.get('name'):
+            return category['name']
+        record = record.get('raw_record')
+    return fallback
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);args=p.parse_args()
     r=args.root;db=r/'artifacts/fineatlas.sqlite';rows=[];counts={};expansion={};ranges={};errors=[]
@@ -71,7 +82,7 @@ def main():
                     source_unit=node.get('attributes',{}).get('source_unit','UNKNOWN')
                     row={'dataset':ds,'original_id':n['class_id'],'original_name':n['label'],'source_node':n['uid'],
                          'original_raw_label':n['raw_label'],
-                         'author_name':json.loads(n['proof']).get('increment_native_record',{}).get('raw_record',{}).get('raw_record',{}).get('author_category',{}).get('name',n['label']),
+                         'author_name':author_name(n['proof'], n['label']),
                          'world_node':world['uid'],'world_status':world['effective_status'],
                          'granularity':{'source':n['object_granularity'],'source_unit':source_unit,
                             'world_rank':a.node(world['uid']).get('normalized_rank') if world['uid'] else None},
